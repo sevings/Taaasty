@@ -7,7 +7,11 @@ CONFIG += c++11
 SOURCES += main.cpp \
     tasty.cpp \
     settings.cpp \
-    apirequest.cpp
+    apirequest.cpp \
+    feedmodel.cpp \
+    imagecache.cpp \
+    cachemanager.cpp \
+    commentsmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -20,4 +24,8 @@ include(deployment.pri)
 HEADERS += \
     tasty.h \
     settings.h \
-    apirequest.h
+    apirequest.h \
+    feedmodel.h \
+    imagecache.h \
+    cachemanager.h \
+    commentsmodel.h

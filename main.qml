@@ -1,19 +1,36 @@
-import QtQuick 2.6
-import QtQuick.Controls 1.5
+import QtQuick 2.3
+import QtQuick.Controls 1.2
+import org.binque.taaasty 1.0
 
 ApplicationWindow {
+    id: window
     visible: true
-    width: 640
-    height: 480
+    width: 480
+    height: 800
+    property color backgroundColor: 'black'
+    property color textColor: 'white'
+    property color secondaryTextColor: 'darkgrey'
+    property color brightColor: '#00DF84'
+    property bool unreadNotifications: false
+    property int unreadMessages: 0
+    property bool showNotifs: false
+    property bool showCommentMenu: false
+    property bool showSlugInput: false
+    property bool showConvers: false
+    property bool showDialog: false
+    property string mode: 'my'
+    property string secondMode: 'none'
+    property int busy: 0
     title: qsTr("Taaasty")
+    color: backgroundColor
     Component.onCompleted: {
-
+        //tasty.getMe();
     }
     LoginDialog {
         id: loginDialog
         visible: false
         Connections {
-            target: tasty
+            target: Tasty
             onAuthorizationNeeded: {
                 loginDialog.visible = true;
             }
@@ -23,5 +40,14 @@ ApplicationWindow {
             }
         }
     }
-
+    FeedView {
+        id: live
+        model: FeedModel {
+            mode: FeedModel.LiveMode
+        }
+    }
+//    FullEntryView {
+//        id: fullEntry
+//        entryId: 21046324
+//    }
 }

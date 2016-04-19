@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QNetworkAccessManager>
 
 #include "settings.h"
 
@@ -18,6 +19,7 @@ public:
 
     static Tasty* instance();
     Settings* settings() const { return _settings; }
+    QNetworkAccessManager* manager() const { return _manager; }
 
 signals:
     void authorizationNeeded();
@@ -36,6 +38,7 @@ private slots:
 
 private:
     Settings* _settings;
+    QNetworkAccessManager* _manager;
 };
 
 #endif // TASTY_H

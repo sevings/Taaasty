@@ -1,7 +1,6 @@
 #ifndef APIREQUEST_H
 #define APIREQUEST_H
 
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QJsonObject>
 
@@ -14,6 +13,7 @@ class ApiRequest : public QObject
     Q_OBJECT
 public:
     explicit ApiRequest(const QString url,
+                        const bool accessTokenRequired = false,
                         const QNetworkAccessManager::Operation method = QNetworkAccessManager::GetOperation,
                         const QString data = QString());
     ~ApiRequest();
@@ -27,8 +27,6 @@ private slots:
     void _finished();
 
 private:
-    QNetworkAccessManager* _manager() const;
-
     QNetworkReply* _reply;
 };
 

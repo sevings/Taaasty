@@ -2,5 +2,11 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>LoginDialog.qml</file>
+        <file>FeedView.qml</file>
+        <file>MyListView.qml</file>
+        <file>SmallAvatar.qml</file>
+        <file>MyImage.qml</file>
+        <file>ThemedButton.qml</file>
+        <file>FullEntryView.qml</file>
     </qresource>
 </RCC>

@@ -34,5 +34,5 @@ QDateTime Settings::expiresAt() const
 
 void Settings::setExpiresAt(const QString date)
 {
-    _settings.setValue("expires_at", QDateTime::fromString(date.left(19), "yyyy-MM-dd'T'HH:mm:ss"));
+    _settings.setValue("expires_at", QDateTime::fromString(date.left(19), "yyyy-MM-ddTHH:mm:ss"));
 }

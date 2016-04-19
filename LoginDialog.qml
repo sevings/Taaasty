@@ -1,5 +1,5 @@
-import QtQuick 2.6
-import QtQuick.Controls 1.5
+import QtQuick 2.3
+import QtQuick.Controls 1.2
 
 Rectangle {
     id: dialog
@@ -35,7 +35,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 20
     }
-    Button {
+    ThemedButton {
         id: loginButton
         text: 'Войти'
         anchors.top: password.bottom
@@ -43,7 +43,7 @@ Rectangle {
         anchors.margins: 20
         onClicked: tasty.authorize(mail.text, password.text)
     }
-    Button {
+    ThemedButton {
         id: registerButton
         text: 'Зарегистрироваться'
         anchors.top: loginButton.bottom

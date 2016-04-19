@@ -8,6 +8,7 @@
 Tasty::Tasty(QObject *parent)
     : QObject(parent)
     , _settings(new Settings(this))
+    , _manager(new QNetworkAccessManager(this))
 {
 
 }
@@ -37,7 +38,7 @@ void Tasty::authorize(const QString login, const QString password)
             .arg(login)
             .arg(password);
 
-    auto request = new ApiRequest("sessions.json",
+    auto request = new ApiRequest("sessions.json", false,
                                   QNetworkAccessManager::PostOperation, data);
 
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readAccessToken(const QJsonObject)));
@@ -55,7 +56,7 @@ void Tasty::postEntry(const QString title, const QString content)
 
     qDebug() << data;
 
-    auto request = new ApiRequest("entries/text.json",
+    auto request = new ApiRequest("entries/text.json", true,
                                   QNetworkAccessManager::PostOperation, data);
 
     Q_UNUSED(request);
@@ -65,7 +66,7 @@ void Tasty::postEntry(const QString title, const QString content)
 
 void Tasty::getMe()
 {
-    auto request = new ApiRequest("users/me.json");
+    auto request = new ApiRequest("users/me.json", true);
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readMe(const QJsonObject)));
 }
 

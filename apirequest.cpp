@@ -6,6 +6,7 @@
 
 
 ApiRequest::ApiRequest(const QString url,
+                       const bool accessTokenRequired,
                        const QNetworkAccessManager::Operation method,
                        const QString data)
     : _reply(nullptr)
@@ -16,9 +17,9 @@ ApiRequest::ApiRequest(const QString url,
     auto tasty = Tasty::instance();
     auto settings = tasty->settings();
     auto accessToken = settings->accessToken();
-    auto expiresAt = settings->expiresAt();
+    //auto expiresAt = settings->expiresAt();
 
-    if ((accessToken.isEmpty() || expiresAt <= QDateTime::currentDateTime()) && !url.startsWith("sessions"))
+    if (accessTokenRequired && (accessToken.isEmpty()))// || expiresAt <= QDateTime::currentDateTime()))
     {
         qDebug() << "authorization needed";
         emit tasty->authorizationNeeded();
@@ -32,19 +33,20 @@ ApiRequest::ApiRequest(const QString url,
     request.setRawHeader(QByteArray("X-User-Token"), accessToken.toUtf8());
     request.setRawHeader(QByteArray("Connection"), QByteArray("close"));
 
+    auto manager = tasty->manager();
     switch(method)
     {
     case QNetworkAccessManager::GetOperation:
-        _reply = _manager()->get(request);
+        _reply = manager->get(request);
         break;
     case QNetworkAccessManager::PutOperation:
-        _reply = _manager()->put(request, readyData);
+        _reply = manager->put(request, readyData);
         break;
     case QNetworkAccessManager::PostOperation:
-        _reply = _manager()->post(request, readyData);
+        _reply = manager->post(request, readyData);
         break;
     case QNetworkAccessManager::DeleteOperation:
-        _reply = _manager()->deleteResource(request);
+        _reply = manager->deleteResource(request);
         break;
     default:
         qDebug() << "Unsopperted operation in ApiRequest";
@@ -94,12 +96,4 @@ void ApiRequest::_finished()
 
     auto jsonObject = json.object();
     emit success(jsonObject);
-}
-
-
-
-QNetworkAccessManager *ApiRequest::_manager() const
-{
-    static auto manager = new QNetworkAccessManager;
-    return manager;
 }
