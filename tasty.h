@@ -7,11 +7,15 @@
 
 #include "settings.h"
 
+class ApiRequest;
+
 
 
 class Tasty : public QObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(int busy READ busy NOTIFY busyChanged)
 
 public:
     explicit Tasty(QObject *parent = 0);
@@ -21,24 +25,48 @@ public:
     Settings* settings() const { return _settings; }
     QNetworkAccessManager* manager() const { return _manager; }
 
+    void incBusy();
+    void decBusy();
+
 signals:
+    void busyChanged();
+
     void authorizationNeeded();
     void authorized();
 
+    void ratingChanged(const int entryId, const QJsonObject rating);
+
 public slots:
+    int busy() const { return _busy; }
+
     void authorize(const QString login, const QString password);
     void postEntry(const QString title, const QString content);
 
     void getMe();
 
+    void addComment(const int entryId, const QString text);
+    void editComment(const int id, const QString text);
+    void removeComment(const int id);
+
+    void vote(const int entryId);
+    void unvote(const int entryId);
+
 private slots:
     void _readAccessToken(const QJsonObject data);
+
+    void _readComment(const QJsonObject data);
+    void _readRating(const QJsonObject data);
 
     void _readMe(const QJsonObject data);
 
 private:
+    void _vote(const int entryId, const bool add);
+
     Settings* _settings;
     QNetworkAccessManager* _manager;
+    int _busy;
+
+    QMap<ApiRequest*, int> _votes;
 };
 
 #endif // TASTY_H

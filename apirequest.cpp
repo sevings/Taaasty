@@ -33,6 +33,8 @@ ApiRequest::ApiRequest(const QString url,
     request.setRawHeader(QByteArray("X-User-Token"), accessToken.toUtf8());
     request.setRawHeader(QByteArray("Connection"), QByteArray("close"));
 
+    tasty->incBusy();
+
     auto manager = tasty->manager();
     switch(method)
     {
@@ -64,6 +66,8 @@ ApiRequest::ApiRequest(const QString url,
 ApiRequest::~ApiRequest()
 {
     delete _reply;
+
+    Tasty::instance()->decBusy();
 }
 
 

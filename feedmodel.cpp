@@ -1,8 +1,6 @@
 #include "feedmodel.h"
 
-#include <QDateTime>
 #include <QDebug>
-#include <QJsonArray>
 
 #include "apirequest.h"
 
@@ -16,6 +14,16 @@ FeedModel::FeedModel(QObject* parent)
     , _lastEntry(0)
 {
     setMode(LiveMode);
+
+    connect(Tasty::instance(), SIGNAL(ratingChanged(int,QJsonObject)),
+            this, SLOT(_changeRating(int,QJsonObject)));
+}
+
+
+
+FeedModel::~FeedModel()
+{
+    qDeleteAll(_entries);
 }
 
 
@@ -24,51 +32,51 @@ int FeedModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
 
-    return _items.size();
+    return _entries.size();
 }
 
 
 
 QVariant FeedModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() < 0 || index.row() >= _items.size())
+    if (index.row() < 0 || index.row() >= _entries.size())
         return QVariant();
 
-    const auto entry = _items.at(index.row());
+    const auto entry = _entries.at(index.row());
     switch (role)
     {
     case IdRole:
-        return entry.value("id").toInt();
+        return entry->id;
     case CreatedAtRole:
-        return QDateTime::fromString(entry.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+        return entry->createdAt;
     case UrlRole:
-        return entry.value("url").toString();
+        return entry->url;
     case TypeRole:
-        return entry.value("type").toString();
+        return entry->type;
     case VotableRole:
-        return entry.value("is_voteable").toBool();
+        return entry->isVotable;
     case PrivateRole:
-        return entry.value("is_private").toBool();
+        return entry->isPrivate;
     case TlogRole:
-        return entry.value("tlog").toObject();
+        return entry->tlog;
     case AuthorRole:
-        return entry.value("author").toObject();
+        return entry->author;
     case RatingRole:
-        return entry.value("rating").toObject();
+        return entry->rating;
     case CommentsCountRole:
-        return entry.value("comments_count").toInt();
+        return entry->commentsCount;
     case TitleRole:
-        return entry.value("title").toString();
+        return entry->title;
     case TruncatedTitleRole:
-        return entry.value("title_truncated").toString();
+        return entry->truncatedTitle;
     case TextRole:
-        return entry.value("text").toString();
+        return entry->text;
     case TruncatedTextRole:
-        return entry.value("text_truncated").toString();
+        return entry->truncatedText;
     case ImageAttachRole:
-        return entry.value("image_attachments").toArray();
+        return entry->imageAttach;
     case ImagePreviewRole:
-        return entry.value("preview_image").toObject();
+        return entry->imagePreview;
     }
 
     qDebug() << "role" << role;
@@ -97,7 +105,7 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 
     _loading = true;
 
-    int limit = _items.isEmpty() ? 10 : 20;
+    int limit = _entries.isEmpty() ? 10 : 20;
     QString url = _url + QString("limit=%1").arg(limit);
     if (_lastEntry)
         url += QString("&since_entry_id=%1").arg(_lastEntry);
@@ -196,15 +204,69 @@ void FeedModel::_addItems(QJsonObject data)
         return;
     }
 
-    _lastEntry = feed.last().toObject().value("id").toInt();
+    for (int i = feed.size() - 1; i >= 0; i--)
+        if (feed.at(i).toObject().value("fixed_state").toString() != "fixed")
+        {
+            _lastEntry = feed.at(i).toObject().value("id").toInt();
+            break;
+        }
 
-    beginInsertRows(QModelIndex(), _items.size(), _items.size() + feed.size() - 1);
+    beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + feed.size() - 1);
 
-    _items.reserve(_items.size() + feed.size());
-    foreach(auto entry, feed)
-        _items << entry.toObject();
+    _entries.reserve(_entries.size() + feed.size());
+    int row = _entries.size();
+    foreach(auto item, feed)
+    {
+        auto entry = _createEntry(item.toObject());
+        _entries << entry;
+
+        _entriesById[entry->id] = entry;
+
+        entry->row = row;
+        row++;
+    }
 
     endInsertRows();
 
     _loading = false;
+}
+
+
+
+void FeedModel::_changeRating(const int entryId, const QJsonObject rating)
+{
+    if (!_entriesById.contains(entryId))
+        return;
+
+    auto entry = _entriesById.value(entryId);
+    entry->rating = rating;
+
+    auto row = entry->row;
+    emit dataChanged(index(row), index(row), QVector<int>(1, RatingRole));
+}
+
+
+
+FeedModel::Entry *FeedModel::_createEntry(QJsonObject data)
+{
+    auto entry = new Entry;
+
+    entry->id = data.value("id").toInt();
+    entry->createdAt = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+    entry->url = data.value("url").toString();
+    entry->type = data.value("type").toString();
+    entry->isVotable = data.value("is_voteable").toBool();
+    entry->isPrivate = data.value("is_private").toBool();
+    entry->tlog = data.value("tlog").toObject();
+    entry->author = data.value("author").toObject();
+    entry->rating = data.value("rating").toObject();
+    entry->commentsCount = data.value("comments_count").toInt();
+    entry->title = data.value("title").toString();
+    entry->truncatedTitle = data.value("title_truncated").toString();
+    entry->text = data.value("text").toString();
+    entry->truncatedText = data.value("text_truncated").toString();
+    entry->imageAttach = data.value("image_attachments").toArray();
+    entry->imagePreview = data.value("preview_image").toObject();
+
+    return entry;
 }

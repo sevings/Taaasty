@@ -11,7 +11,8 @@ SOURCES += main.cpp \
     feedmodel.cpp \
     imagecache.cpp \
     cachemanager.cpp \
-    commentsmodel.cpp
+    commentsmodel.cpp \
+    datastructures.cpp
 
 RESOURCES += qml.qrc
 
@@ -28,4 +29,5 @@ HEADERS += \
     feedmodel.h \
     imagecache.h \
     cachemanager.h \
-    commentsmodel.h
+    commentsmodel.h \
+    datastructures.h

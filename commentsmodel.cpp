@@ -12,8 +12,8 @@ CommentsModel::CommentsModel(QObject *parent)
     : QAbstractListModel(parent)
     , _entryId(0)
     , _loading(false)
-    , _totalCount(1)
     , _toComment(0)
+    , _totalCount(1)
     , _url("comments.json?entry_id=%1&limit=20&order=desc")
 {
 }

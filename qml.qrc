@@ -8,5 +8,6 @@
         <file>MyImage.qml</file>
         <file>ThemedButton.qml</file>
         <file>FullEntryView.qml</file>
+        <file>BusyBar.qml</file>
     </qresource>
 </RCC>

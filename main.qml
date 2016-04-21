@@ -20,11 +20,15 @@ ApplicationWindow {
     property bool showDialog: false
     property string mode: 'my'
     property string secondMode: 'none'
-    property int busy: 0
     title: qsTr("Taaasty")
     color: backgroundColor
     Component.onCompleted: {
         //tasty.getMe();
+    }
+    BusyBar {
+        id: bar
+        z: 100
+        busy: Tasty.busy > 0
     }
     LoginDialog {
         id: loginDialog
@@ -43,7 +47,7 @@ ApplicationWindow {
     FeedView {
         id: live
         model: FeedModel {
-            mode: FeedModel.LiveMode
+            mode: FeedModel.ExcellentMode
         }
     }
 //    FullEntryView {

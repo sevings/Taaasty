@@ -2,8 +2,10 @@
 #define FEEDMODEL_H
 
 #include <QObject>
+#include <QDateTime>
 #include <QAbstractListModel>
 #include <QJsonObject>
+#include <QJsonArray>
 
 
 
@@ -50,6 +52,7 @@ public:
     };
 
     FeedModel(QObject* parent = nullptr);
+    ~FeedModel();
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -68,8 +71,13 @@ protected:
 private slots:
     void _addItems(QJsonObject data);
 
+    void _changeRating(const int entryId, const QJsonObject rating);
+
 private:
-    QList<QJsonObject> _items;
+    Entry* _createEntry(QJsonObject data);
+
+    QList<Entry*> _entries;
+    QMap<int, Entry*> _entriesById;
     QString _url;
     int _tlog;
     Mode _mode;

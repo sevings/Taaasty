@@ -1,5 +1,5 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick 2.3
+import QtQuick.Controls 1.2
 
 MyListView {
     delegate: Item {
@@ -61,8 +61,16 @@ MyListView {
             width: parent.width / 5
             text: '+ ' + rating.votes
             visible: isVotable
-            enabled: isVotable && !rating.is_voted
+            enabled: isVotable
+            checked: !rating.is_voted
             fontSize: 20
+            onClicked: {
+                if (rating.is_voted)
+                    Tasty.unvote(model.id);
+                else
+                    Tasty.vote(model.id);
+            }
+
 //            onClicked: {
 //                var ix =  parent.x + mouseX;
 //                var iy =  parent.y + mouseY;
