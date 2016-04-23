@@ -2,7 +2,6 @@
 #define COMMENTSMODEL_H
 
 #include <QAbstractListModel>
-#include <QJsonObject>
 
 #include "datastructures.h"
 

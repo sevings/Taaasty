@@ -7,6 +7,7 @@
 #include "imagecache.h"
 #include "feedmodel.h"
 #include "commentsmodel.h"
+#include "attachedimagesmodel.h"
 
 
 
@@ -16,13 +17,15 @@ int main(int argc, char *argv[])
     app.setApplicationName("Taaasty");
     app.setOrganizationName("binque");
 
-    qmlRegisterType<FeedModel>("org.binque.taaasty", 1, 0, "FeedModel");
-    qmlRegisterType<CommentsModel>("org.binque.taaasty", 1, 0, "CommentsModel");
+    qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
+    qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
+    qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
 
-    qmlRegisterType<Entry>("org.binque.taaasty", 1, 0, "TlogEntry");
-    qmlRegisterType<Comment>("org.binque.taaasty", 1, 0, "Comment");
-    qmlRegisterType<User>("org.binque.taaasty", 1, 0, "User");
-    qmlRegisterType<Rating>("org.binque.taaasty", 1, 0, "Rating");
+    qmlRegisterType<Entry>          ("org.binque.taaasty", 1, 0, "TlogEntry");
+    qmlRegisterType<Comment>        ("org.binque.taaasty", 1, 0, "Comment");
+    qmlRegisterType<User>           ("org.binque.taaasty", 1, 0, "User");
+    qmlRegisterType<Rating>         ("org.binque.taaasty", 1, 0, "Rating");
+    qmlRegisterType<AttachedImage>  ("org.binque.taaasty", 1, 0, "AttachedImage");
 
     qmlRegisterType<ImageCache>("ImageCache", 1, 0, "ImageCache");
 

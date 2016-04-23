@@ -2,7 +2,7 @@
 
 #include "apirequest.h"
 #include "commentsmodel.h"
-//#include "tasty.h"
+#include "attachedimagesmodel.h"
 
 
 
@@ -28,16 +28,12 @@ Entry::Entry(const QJsonObject data, QObject *parent)
     _truncatedTitle  = data.value("title_truncated").toString();
     _text            = data.value("text").toString();
     _truncatedText   = data.value("text_truncated").toString();
-    _imageAttach     = data.value("image_attachments").toArray();
     _imagePreview    = data.value("preview_image").toObject();
-}
 
-CommentsModel *Entry::commentsModel()
-{
-    if (!_commentsModel)
-        _commentsModel = new CommentsModel(this);
+    _commentsModel = new CommentsModel(this);
 
-    return _commentsModel;
+    auto imageAttach = data.value("image_attachments").toArray();
+    _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
 }
 
 
@@ -126,6 +122,21 @@ void Entry::_changeFavorited(const QJsonObject data)
 
     _isFavorited = !_isFavorited;
     emit favoritedChanged();
+}
+
+
+
+AttachedImage::AttachedImage(const QJsonObject data, QObject *parent)
+    : QObject(parent)
+{
+    _type = data.value("content_type").toString().split("/").last();
+
+    auto image = data.value("image").toObject();
+    _url = image.value("url").toString();
+
+    auto geometry = image.value("geometry").toObject();
+    _width = geometry.value("width").toInt();
+    _height = geometry.value("height").toInt();
 }
 
 

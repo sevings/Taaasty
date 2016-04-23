@@ -11,15 +11,14 @@ ApplicationWindow {
     property color textColor: 'white'
     property color secondaryTextColor: 'darkgrey'
     property color brightColor: '#00DF84'
-    property bool unreadNotifications: false
-    property int unreadMessages: 0
-    property bool showNotifs: false
-    property bool showCommentMenu: false
-    property bool showSlugInput: false
-    property bool showConvers: false
-    property bool showDialog: false
-    property string mode: 'my'
-    property string secondMode: 'none'
+    property bool cashedImages: false
+//    property bool unreadNotifications: false
+//    property int unreadMessages: 0
+//    property bool showNotifs: false
+//    property bool showCommentMenu: false
+//    property bool showSlugInput: false
+//    property bool showConvers: false
+//    property bool showDialog: false
     title: qsTr("Taaasty")
     color: backgroundColor
     Component.onCompleted: {

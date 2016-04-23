@@ -82,18 +82,41 @@ Rectangle {
             height: fullTitle.height + fullContent.height + 100
                     + fullEntryFavButton.height + fullEntryDate.height
                     + loadMoreButton.height
-            // + fullEntryImages.height
+                    + fullEntryImages.height
             //        ImagesView {
             //            id: fullEntryImages
             //            model: fullEntryAttach
             //            height: fullEntry.wholeHeight * width
             //            anchors.top: parent.top
             //        }
+            ListView {
+                id: fullEntryImages
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.topMargin: 10
+                anchors.bottomMargin: 10
+                interactive: false
+                //spacing: 10
+                property AttachedImagesModel imagesModel: entry.attachedImagesModel()
+                height: imagesModel.listRatio() * width
+                        + (imagesModel.rowCount() - 1) * 10
+                model: imagesModel
+                delegate: MyImage {
+                    id: picture
+                    anchors.topMargin: 10
+                    anchors.bottomMargin: 10
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: image.height / image.width * width
+                    source: image.url
+                    type: image.type
+                }
+            }
             Text {
                 id: fullTitle
                 text: entry.title
-//            anchors.top: fullEntryImages.bottom
-                anchors.top: parent.top
+                anchors.top: fullEntryImages.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10

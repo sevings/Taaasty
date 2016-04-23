@@ -22,7 +22,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             property color fontColor: window.textColor
-            height: 50 + content.height + entryTitle.height + entryAvatar.height + comments.height// + images.height
+            height: 50 + content.height + entryTitle.height + entryAvatar.height + comments.height + firstImage.height
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
@@ -72,18 +72,36 @@ Rectangle {
                     entry.rating.vote();
                 }
             }
-
-            //         ImagesView {
-            //             id: images
-            //             anchors.top: entryAvatar.bottom
-            //             model: attach
-            //             height: wholeHeight * width
-            //         }
+            MyImage {
+                id: firstImage
+                property AttachedImage image: entry.attachedImagesModel().first()
+                visible: image
+                anchors.top: entryAvatar.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.topMargin: 10
+                anchors.bottomMargin: 10
+                height: visible ? (image.height / image.width * width) : 0
+                source: visible ? image.url : ''
+                type: visible ? image.type : ''
+                Text {
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.margins: 5
+                    font.pointSize: 14
+                    color: window.textColor
+                    style: Text.Outline
+                    styleColor: window.backgroundColor
+                    property int total: entry.attachedImagesModel().rowCount()
+                    text: total + ' images'
+                    visible: total > 1
+                }
+            }
             Text {
                 id: entryTitle
                 text: entry.truncatedTitle
-//            anchors.top: images.bottom
-                anchors.top: entryAvatar.bottom
+                anchors.top: firstImage.bottom
+//                anchors.top: entryAvatar.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10

@@ -5,6 +5,7 @@ ImageCache {
     id: cache
     clip: true
     property int fillMode: Image.PreserveAspectFit
+    property string type
     onSourceChanged: {
         //window.busy++;
         image.visible = false;
@@ -26,11 +27,12 @@ ImageCache {
         //window.busy--;
     }
     onReadyToDownload: {
-        if (width < 100 || height < 100 || !Ctrl.cashedImages) {
+        if (!window.cashedImages
+                || (width > 0 && width < 100)
+                || (height > 0 && height < 100)) {
             download();
         }
     }
-
     Rectangle {
         anchors.fill: parent
         color: '#373737'
@@ -61,7 +63,7 @@ ImageCache {
             Text {
                 id: bytesText
                 font.pointSize: 18
-                text: cache.isDownloading ? cache.kbytesReceived + ' / ' + cache.kbytesTotal + ' KB' : cache.extension
+                text: cache.isDownloading ? cache.kbytesReceived + ' / ' + cache.kbytesTotal + ' KB' : cache.type//cache.extension
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -78,7 +80,8 @@ ImageCache {
         asynchronous: true
         anchors.fill: parent
         cache: true
-        sourceSize.width: 800
+        sourceSize.width: 1920
+        smooth: true
         visible: false
     }
     AnimatedImage {
@@ -87,6 +90,7 @@ ImageCache {
         asynchronous: image.asynchronous
         anchors.fill: parent
         cache: image.cache
+//        sourceSize.width: window.width
         visible: false
     }
 }

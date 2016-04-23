@@ -10,8 +10,10 @@ class Entry;
 class Comment;
 class User;
 class Rating;
+class AttachedImage;
 
 class CommentsModel;
+class AttachedImagesModel;
 
 
 
@@ -39,13 +41,13 @@ class Entry: public QObject
     Q_PROPERTY(QString     truncatedTitle MEMBER _truncatedTitle    CONSTANT)
     Q_PROPERTY(QString     text           MEMBER _text              CONSTANT)
     Q_PROPERTY(QString     truncatedText  MEMBER _truncatedText     CONSTANT)
-    Q_PROPERTY(QJsonArray  imageAttach    MEMBER _imageAttach       CONSTANT)
     Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      CONSTANT)
 
 public:
     Entry(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
 
-    Q_INVOKABLE CommentsModel* commentsModel();
+    Q_INVOKABLE CommentsModel*       commentsModel()       { return _commentsModel; }
+    Q_INVOKABLE AttachedImagesModel* attachedImagesModel() { return _attachedImagesModel; }
 
 public slots:
     void addComment(const QString text);
@@ -82,10 +84,33 @@ private:
     QString     _truncatedTitle;
     QString     _text;
     QString     _truncatedText;
-    QJsonArray  _imageAttach;
     QJsonObject _imagePreview;
 
-    CommentsModel* _commentsModel;
+    CommentsModel*       _commentsModel;
+    AttachedImagesModel* _attachedImagesModel;
+};
+
+
+
+class AttachedImage: public QObject
+{
+    Q_OBJECT
+
+    friend class AttachedImagesModel;
+
+    Q_PROPERTY(QString url    MEMBER _url    CONSTANT)
+    Q_PROPERTY(int     height MEMBER _height CONSTANT)
+    Q_PROPERTY(int     width  MEMBER _width  CONSTANT)
+    Q_PROPERTY(QString type   MEMBER _type   CONSTANT)
+
+public:
+    AttachedImage(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+
+private:
+    QString _url;
+    QString _type;
+    int     _width;
+    int     _height;
 };
 
 
