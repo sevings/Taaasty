@@ -12,7 +12,7 @@ Entry::Entry(const QJsonObject data, QObject *parent)
 {
     _id              = data.value("id").toInt();
     _createdAt       = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
-    _url             = data.value("url").toString();
+    _url             = data.value("entry_url").toString();
     _type            = data.value("type").toString();
     _isVotable       = data.value("is_voteable").toBool();
     _isFavoritable   = data.value("can_favorite").toBool();

@@ -141,6 +141,15 @@ ApplicationWindow {
     }
     MainMenu {
         onModeChanged: {
+            var item = stack.find(function (item) {
+                return item.mode === mode;
+            });
+            if (item) {
+                console.log('found');
+                stack.pop(item);
+                return;
+            }
+
             stack.push({
                            item: feed,
                            properties: {

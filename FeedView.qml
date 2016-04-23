@@ -32,7 +32,7 @@ Rectangle {
             SmallAvatar {
                 id: entryAvatar
                 anchors.margins: 10
-                source: entry.author.userpic.thumb64_url
+                source: entry.author.userpic.thumb64_url || ''
                 symbol: entry.author.userpic.symbol
             }
             Text {
