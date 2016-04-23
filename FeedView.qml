@@ -4,10 +4,9 @@ import org.binque.taaasty 1.0
 
 Rectangle {
     id: back
-    property TlogEntry currentEntry
     property int mode: FeedModel.LiveMode
     property string slug
-    signal entryClicked
+    signal entryClicked(TlogEntry entry)
     signal popped
     property bool poppable
     color: window.backgroundColor
@@ -22,15 +21,12 @@ Rectangle {
             id: entryView
             anchors.left: parent.left
             anchors.right: parent.right
-            //        color: window.backgroundColor
             property color fontColor: window.textColor
             height: 50 + content.height + entryTitle.height + entryAvatar.height + comments.height// + images.height
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    currentEntry = feedModel.entry(model.id);
-                    //                console.log(currentEntry.truncatedText);
-                    entryClicked();
+                    entryClicked(entry);
                 }
             }
             SmallAvatar {
@@ -38,7 +34,7 @@ Rectangle {
                 anchors.margins: 10
                 source: !symbol ? entry.author.userpic.thumb64_url : ''
                 name: entry.author.name
-                symbol: !author.userpic.hasOwnProperty('thumb64_url')
+                symbol: !entry.author.userpic.hasOwnProperty('thumb64_url')
             }
             Text {
                 id: nick
@@ -74,7 +70,7 @@ Rectangle {
                 anchors.margins: 10
                 height: 64
                 width: parent.width / 5
-                text: '+ ' + rating.votes
+                text: '+ ' + entry.rating.votes
                 visible: entry.isVotable
                 enabled: entry.isVotable
                 checked: entry.rating.isVoted
@@ -112,7 +108,7 @@ Rectangle {
                 anchors.margins: 10
                 wrapMode: Text.Wrap
                 //            font.family: tlog.design.feedFont
-                font.pointSize: truncatedText.length > 0 ? 25 : 20
+                font.pointSize: entry.truncatedText.length > 0 ? 25 : 20
                 color: parent.fontColor
                 textFormat: Text.RichText
                 height: entry.truncatedTitle.length > 0 ? paintedHeight

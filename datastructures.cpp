@@ -28,7 +28,7 @@ Entry::Entry(const QJsonObject data, QObject *parent)
 
 
 
-Comment::Comment(const QJsonObject &data, QObject *parent)
+Comment::Comment(const QJsonObject data, QObject *parent)
     : QObject(parent)
 {
     _id             = data.value("id").toInt();
@@ -42,7 +42,7 @@ Comment::Comment(const QJsonObject &data, QObject *parent)
 
 
 
-User::User(const QJsonObject &data, QObject *parent)
+User::User(const QJsonObject data, QObject *parent)
     : QObject(parent)
 {
     _id         = data.value("id").toInt();

@@ -15,9 +15,6 @@ FeedModel::FeedModel(QObject* parent)
     , _lastEntry(0)
 {
     setMode(LiveMode);
-
-//    connect(Tasty::instance(), SIGNAL(ratingChanged(int,QJsonObject)),
-//            this, SLOT(_changeRating(int,QJsonObject)));
 }
 
 
@@ -43,44 +40,8 @@ QVariant FeedModel::data(const QModelIndex &index, int role) const
     if (index.row() < 0 || index.row() >= _entries.size())
         return QVariant();
 
-    const auto entry = _entries.at(index.row());
-    switch (role)
-    {
-    case IdRole:
-        return entry->id();
-    case CreatedAtRole:
-        return entry->createdAt();
-    case UrlRole:
-        return entry->url();
-    case TypeRole:
-        return entry->type();
-    case VotableRole:
-        return entry->isVotable();
-    case PrivateRole:
-        return entry->isPrivate();
-    case TlogRole:
-        return entry->tlog();
-    case AuthorRole:
-        return entry->author();
-    case RatingRole:
-        return QVariant::fromValue<Rating*>(entry->rating());
-    case CommentsCountRole:
-        return entry->commentsCount();
-    case TitleRole:
-        return entry->title();
-    case TruncatedTitleRole:
-        return entry->truncatedTitle();
-    case TextRole:
-        return entry->text();
-    case TruncatedTextRole:
-        return entry->truncatedText();
-    case ImageAttachRole:
-        return entry->imageAttach();
-    case ImagePreviewRole:
-        return entry->imagePreview();
-    case EntryRole:
-        return QVariant::fromValue<Entry*>(entry);
-    }
+    if (role == Qt::UserRole)
+        return QVariant::fromValue<Entry*>(_entries.at(index.row()));
 
     qDebug() << "role" << role;
 
@@ -173,25 +134,7 @@ void FeedModel::setTlog(const int tlog)
 QHash<int, QByteArray> FeedModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-
-    roles[IdRole]              = "id";
-    roles[CreatedAtRole]       = "createdAt";
-    roles[UrlRole]             = "url";
-    roles[TypeRole]            = "type";
-    roles[VotableRole]         = "isVotable";
-    roles[PrivateRole]         = "isPrivate";
-    roles[TlogRole]            = "tlog";
-    roles[AuthorRole]          = "author";
-    roles[RatingRole]          = "rating";
-    roles[CommentsCountRole]   = "commentsCount";
-    roles[TitleRole]           = "title";
-    roles[TruncatedTitleRole]  = "truncatedTitle";
-    roles[TextRole]            = "text";
-    roles[TruncatedTextRole]   = "truncatedText";
-    roles[ImageAttachRole]     = "imageAttach";
-    roles[ImagePreviewRole]    = "imagePreview";
-    roles[EntryRole]           = "entry";
-
+    roles[Qt::UserRole] = "entry";
     return roles;
 }
 
@@ -224,7 +167,7 @@ void FeedModel::_addItems(QJsonObject data)
         auto entry = new Entry(item.toObject(), this);
         _entries << entry;
 
-        _entriesById[entry->id()] = entry;
+        _entriesById[entry->_id] = entry;
 
         entry->_row = row;
         row++;

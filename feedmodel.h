@@ -34,26 +34,6 @@ public:
 
     Q_ENUMS(Mode)
 
-    enum FeedRoles {
-        IdRole = Qt::UserRole + 1,
-        CreatedAtRole,
-        UrlRole,
-        TypeRole,
-        VotableRole,
-        PrivateRole,
-        TlogRole,
-        AuthorRole,
-        RatingRole,
-        CommentsCountRole,
-        TitleRole,
-        TruncatedTitleRole,
-        TextRole,
-        TruncatedTextRole,
-        ImageAttachRole,
-        ImagePreviewRole,
-        EntryRole
-    };
-
     FeedModel(QObject* parent = nullptr);
     ~FeedModel();
 
@@ -67,8 +47,6 @@ public:
 
     Q_INVOKABLE void setTlog(const int tlog);
     Q_INVOKABLE int tlog() const {return _tlog; }
-
-    Q_INVOKABLE Entry* entry(const int entryId) const { return _entriesById.value(entryId); }
 
 protected:
     QHash<int, QByteArray> roleNames() const override;

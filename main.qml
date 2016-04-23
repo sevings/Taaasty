@@ -101,7 +101,7 @@ ApplicationWindow {
                     stack.push({
                                    item: fullEntry,
                                    properties: {
-                                       entry: currentEntry
+                                       entry: entry
                                    }
                                })
                 }

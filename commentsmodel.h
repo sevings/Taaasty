@@ -16,21 +16,6 @@ class CommentsModel : public QAbstractListModel
     Q_PROPERTY(bool hasMore READ hasMore NOTIFY hasMoreChanged)
 
 public:
-    enum CommentRoles {
-        CommentIdRole = Qt::UserRole + 1,
-        UserIdRole,
-        UserNameRole,
-        UserUrlRole,
-        Thumb64Role,
-        Thumb128Role,
-        SymbolRole,
-        CommentHtmlRole,
-        CreatedAtRole,
-        EditableRole,
-        DeletableRole,
-        CommentObjectRole
-    };
-
     explicit CommentsModel(QObject *parent = 0);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;

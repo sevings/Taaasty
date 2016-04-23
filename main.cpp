@@ -18,7 +18,10 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<FeedModel>("org.binque.taaasty", 1, 0, "FeedModel");
     qmlRegisterType<CommentsModel>("org.binque.taaasty", 1, 0, "CommentsModel");
+
     qmlRegisterType<Entry>("org.binque.taaasty", 1, 0, "TlogEntry");
+    qmlRegisterType<Comment>("org.binque.taaasty", 1, 0, "Comment");
+    qmlRegisterType<User>("org.binque.taaasty", 1, 0, "User");
     qmlRegisterType<Rating>("org.binque.taaasty", 1, 0, "Rating");
 
     qmlRegisterType<ImageCache>("ImageCache", 1, 0, "ImageCache");
