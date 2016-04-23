@@ -26,6 +26,10 @@ class Entry: public QObject
     Q_PROPERTY(QString     url            MEMBER _url               CONSTANT)
     Q_PROPERTY(QString     type           MEMBER _type              CONSTANT)
     Q_PROPERTY(bool        isVotable      MEMBER _isVotable         CONSTANT)
+    Q_PROPERTY(bool        isWatchable    MEMBER _isWatchable       CONSTANT)
+    Q_PROPERTY(bool        isWatched      MEMBER _isWatched         NOTIFY watchedChanged)
+    Q_PROPERTY(bool        isFavoritable  MEMBER _isFavoritable     CONSTANT)
+    Q_PROPERTY(bool        isFavorited    MEMBER _isFavorited       NOTIFY favoritedChanged)
     Q_PROPERTY(bool        isPrivate      MEMBER _isPrivate         CONSTANT)
     Q_PROPERTY(QJsonObject tlog           MEMBER _tlog              CONSTANT)
     Q_PROPERTY(QJsonObject author         MEMBER _author            CONSTANT)
@@ -45,13 +49,19 @@ public:
 
 public slots:
     void addComment(const QString text);
+    void watch();
+    void favorite();
 
 signals:
     void commentsCountChanged();
+    void watchedChanged();
+    void favoritedChanged();
     void commentAdded(const QJsonObject data);
 
 private slots:
     void _addComment();
+    void _changeWatched(const QJsonObject data);
+    void _changeFavorited(const QJsonObject data);
 
 private:
     int         _id;
@@ -59,6 +69,10 @@ private:
     QString     _url;
     QString     _type;
     bool        _isVotable;
+    bool        _isWatchable;
+    bool        _isWatched;
+    bool        _isFavoritable;
+    bool        _isFavorited;
     bool        _isPrivate;
     QJsonObject _tlog;
     QJsonObject _author;

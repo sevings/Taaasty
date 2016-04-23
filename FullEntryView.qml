@@ -163,9 +163,10 @@ Rectangle {
                 height: 64
                 width: (parent.width - 40) / 3
                 fontSize: 20
-                //            visible: entry.canFavorite
-                //            enabled: !fullEntry.favorited
-                //            onClicked: Ctrl.favorites(fullEntry.entryId)
+                visible: entry.isFavoritable
+                checked: entry.isFavorited
+//            enabled: !fullEntry.favorited
+                onClicked: entry.favorite()
             }
             ThemedButton {
                 id: fullEntryWatchButton
@@ -177,9 +178,10 @@ Rectangle {
                 height: 64
                 width: fullEntryFavButton.width
                 fontSize: fullEntryFavButton.fontSize
-                //            visible: fullEntry.canWatch // http delete?
-                //            enabled: !fullEntry.watching
-                //            onClicked: Ctrl.watchEntry(fullEntry.entryId, fullEntry.watching)
+                visible: entry.isWatchable
+                checked: entry.isWatched
+//              enabled: entry.isWatchable
+                onClicked: entry.watch()
             }
             ThemedButton {
                 id: fullEntryVoteButton
@@ -191,8 +193,9 @@ Rectangle {
                 text: '+ ' + entry.rating.votes
                 height: 64
                 fontSize: fullEntryFavButton.fontSize
-                //            visible: fullEntry.voteable
-                //            enabled: fullEntry.canVote && !fullEntry.voted // not working on the site?
+                visible: entry.isVotable
+                enabled: entry.rating.isVotable
+                checked: entry.rating.isVoted
                 onClicked: entry.rating.vote()
             }
             ThemedButton {

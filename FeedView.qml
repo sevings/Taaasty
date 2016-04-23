@@ -72,7 +72,7 @@ Rectangle {
                 width: parent.width / 5
                 text: '+ ' + entry.rating.votes
                 visible: entry.isVotable
-                enabled: entry.isVotable
+                enabled: entry.rating.isVotable
                 checked: entry.rating.isVoted
                 fontSize: 20
                 onClicked: {
