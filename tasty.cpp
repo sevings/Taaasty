@@ -122,20 +122,6 @@ void Tasty::removeComment(const int id)
 
 
 
-void Tasty::vote(const int entryId)
-{
-    _vote(entryId, true);
-}
-
-
-
-void Tasty::unvote(const int entryId)
-{
-    _vote(entryId, false);
-}
-
-
-
 void Tasty::_readAccessToken(const QJsonObject data)
 {
     auto apiKey = data.value("api_key").toObject();
@@ -160,36 +146,7 @@ void Tasty::_readComment(const QJsonObject data)
 
 
 
-void Tasty::_readRating(const QJsonObject data)
-{
-//    qDebug() << data;
-
-    auto request = static_cast<ApiRequest*>(sender());
-    if (!request || !_votes.contains(request))
-        return;
-
-    auto entryId = _votes.take(request);
-    emit ratingChanged(entryId, data);
-}
-
-
-
 void Tasty::_readMe(const QJsonObject data)
 {
     qDebug() << data.value("title").toString();
-}
-
-
-
-void Tasty::_vote(const int entryId, const bool add)
-{
-    auto url = QString("entries/%1/votes.json").arg(entryId);
-    auto operation = (add ? QNetworkAccessManager::PostOperation
-                          : QNetworkAccessManager::DeleteOperation);
-    auto request = new ApiRequest(url, true, operation);
-
-    connect(request, SIGNAL(success(const QJsonObject)),
-            this, SLOT(_readRating(const QJsonObject)));
-
-    _votes[request] = entryId;
 }

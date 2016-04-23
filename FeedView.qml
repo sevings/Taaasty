@@ -1,128 +1,150 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
+import org.binque.taaasty 1.0
 
-MyListView {
-    delegate: Item {
-        id: entry
-        anchors.left: parent.left
-        anchors.right: parent.right
-//        color: window.backgroundColor
-        property color fontColor: window.textColor
-        height: 50 + content.height + entryTitle.height + entryAvatar.height + comments.height// + images.height
-        //                    MouseArea {
-        //                        anchors.fill: parent
-        //                        onClicked: {
-        //                            var ix =  parent.x + mouseX;
-        //                            var iy =  parent.y + mouseY;
-        //                            thisTlog.currentIndex = thisTlog.indexAt(ix, iy);
-        //                            Ctrl.showFullEntry(thisTlog.model.get(thisTlog.currentIndex));
-        //                        }
-        //                    }
-        SmallAvatar {
-            id: entryAvatar
-            anchors.margins: 10
-            source: !symbol ? author.userpic.thumb64_url : ''
-            name: author.name
-            symbol: !author.userpic.hasOwnProperty('thumb64_url')
+Rectangle {
+    id: back
+    property TlogEntry currentEntry
+    property int mode: FeedModel.LiveMode
+    property string slug
+    signal entryClicked
+    signal popped
+    property bool poppable
+    color: window.backgroundColor
+    MyListView {
+        anchors.fill: parent
+        model: FeedModel {
+            id: feedModel
+            mode: back.mode
+            tlog: back.slug
         }
-        Text {
-            id: nick
-            text: author.name
-            color: entry.fontColor
-            font.pointSize: 20
-            anchors.top: parent.top
-            anchors.left: entryAvatar.right
-            anchors.right: entryVoteButton.left
-            anchors.margins: 10
-            elide: Text.AlignRight
-            horizontalAlignment: Text.AlignLeft
-        }
-        Text {
-            id: date
-            text: createdAt
-            color: window.secondaryTextColor
-            font.pointSize: 14
-            anchors.top: nick.bottom
-            anchors.left: entryAvatar.right
-            anchors.margins: 10
-        }
-        //                    function updateRating(eid, newRating) {
-        //                        rating.votes = newRating.votes
-        //                        rating.is_voted = newRating.is_voted;
-        //                        entryVoteButton.label = '+ ' + newRating.votes;
-        //                        entryVoteButton.enabled = can_vote && !newRating.is_voted;
-        //                    }
-        ThemedButton {
-            id: entryVoteButton
-            anchors.top: parent.top
+        delegate: Item {
+            id: entryView
+            anchors.left: parent.left
             anchors.right: parent.right
-            anchors.margins: 10
-            height: 64
-            width: parent.width / 5
-            text: '+ ' + rating.votes
-            visible: isVotable
-            enabled: isVotable
-            checked: !rating.is_voted
-            fontSize: 20
-            onClicked: {
-                if (rating.is_voted)
-                    Tasty.unvote(model.id);
-                else
-                    Tasty.vote(model.id);
+            //        color: window.backgroundColor
+            property color fontColor: window.textColor
+            height: 50 + content.height + entryTitle.height + entryAvatar.height + comments.height// + images.height
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    currentEntry = feedModel.entry(model.id);
+                    //                console.log(currentEntry.truncatedText);
+                    entryClicked();
+                }
+            }
+            SmallAvatar {
+                id: entryAvatar
+                anchors.margins: 10
+                source: !symbol ? entry.author.userpic.thumb64_url : ''
+                name: entry.author.name
+                symbol: !author.userpic.hasOwnProperty('thumb64_url')
+            }
+            Text {
+                id: nick
+                text: entry.author.name
+                color: entryView.fontColor
+                font.pointSize: 20
+                anchors.top: parent.top
+                anchors.left: entryAvatar.right
+                anchors.right: entryVoteButton.left
+                anchors.margins: 10
+                elide: Text.AlignRight
+                horizontalAlignment: Text.AlignLeft
+            }
+            Text {
+                id: date
+                text: entry.createdAt
+                color: window.secondaryTextColor
+                font.pointSize: 14
+                anchors.top: nick.bottom
+                anchors.left: entryAvatar.right
+                anchors.margins: 10
+            }
+            //                    function updateRating(eid, newRating) {
+            //                        rating.votes = newRating.votes
+            //                        rating.is_voted = newRating.is_voted;
+            //                        entryVoteButton.label = '+ ' + newRating.votes;
+            //                        entryVoteButton.enabled = can_vote && !newRating.is_voted;
+            //                    }
+            ThemedButton {
+                id: entryVoteButton
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.margins: 10
+                height: 64
+                width: parent.width / 5
+                text: '+ ' + rating.votes
+                visible: entry.isVotable
+                enabled: entry.isVotable
+                checked: entry.rating.isVoted
+                fontSize: 20
+                onClicked: {
+                    entry.rating.vote();
+//                    if (entry.rating.isVoted)
+//                        Tasty.unvote(model.id);
+//                    else
+//                        Tasty.vote(model.id);
+                }
+
+                //            onClicked: {
+                //                var ix =  parent.x + mouseX;
+                //                var iy =  parent.y + mouseY;
+                //                //console.log('x: ' + ix + ', y: ' + iy);
+                //                thisTlog.currentIndex = thisTlog.indexAt(ix, iy);
+                //                Ctrl.voteForEntry(thisTlog.model.get(thisTlog.currentIndex).id, rating.is_voted);
+                //            }
             }
 
-//            onClicked: {
-//                var ix =  parent.x + mouseX;
-//                var iy =  parent.y + mouseY;
-//                //console.log('x: ' + ix + ', y: ' + iy);
-//                thisTlog.currentIndex = thisTlog.indexAt(ix, iy);
-//                Ctrl.voteForEntry(thisTlog.model.get(thisTlog.currentIndex).id, rating.is_voted);
-//            }
+            //         ImagesView {
+            //             id: images
+            //             anchors.top: entryAvatar.bottom
+            //             model: attach
+            //             height: wholeHeight * width
+            //         }
+            Text {
+                id: entryTitle
+                text: entry.truncatedTitle
+                //            anchors.top: images.bottom
+                anchors.top: entryAvatar.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 10
+                wrapMode: Text.Wrap
+                //            font.family: tlog.design.feedFont
+                font.pointSize: truncatedText.length > 0 ? 25 : 20
+                color: parent.fontColor
+                textFormat: Text.RichText
+                height: entry.truncatedTitle.length > 0 ? paintedHeight
+                                                        : entry.truncatedText.length > 0 ? -20 : 0
+            }
+            Text {
+                id: content
+                text: entry.truncatedText
+                anchors.top: entryTitle.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 10
+                wrapMode: Text.Wrap
+                //            font.family: tlog.design.feedFont
+                font.pointSize: 20
+                color: parent.fontColor
+                textFormat: Text.RichText
+                height: entry.truncatedText.length > 0 ? paintedHeight
+                                                       : entry.truncatedTitle.length > 0 ? -20 : 0
+            }
+            Text {
+                id: comments
+                text: entry.commentsCount + ' коммент.'
+                color: entryView.fontColor
+                font.pointSize: 15
+                anchors.top: content.bottom
+                anchors.right: parent.right
+                anchors.margins: 10
+            }
         }
-
-//         ImagesView {
-//             id: images
-//             anchors.top: entryAvatar.bottom
-//             model: attach
-//             height: wholeHeight * width
-//         }
-        Text {
-            id: entryTitle
-            text: truncatedTitle
-//            anchors.top: images.bottom
-            anchors.top: entryAvatar.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 10
-            wrapMode: Text.Wrap
-//            font.family: tlog.design.feedFont
-            font.pointSize: truncatedText.length > 0 ? 25 : 20
-            color: parent.fontColor
-            textFormat: Text.RichText
-            height: truncatedTitle.length > 0 ? paintedHeight : truncatedText.length > 0 ? -20 : 0
-        }
-        Text {
-            id: content
-            text: truncatedText
-            anchors.top: entryTitle.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 10
-            wrapMode: Text.Wrap
-//            font.family: tlog.design.feedFont
-            font.pointSize: 20
-            color: parent.fontColor
-            textFormat: Text.RichText
-            height: truncatedText.length > 0 ? paintedHeight : truncatedTitle.length > 0 ? -20 : 0
-        }
-        Text {
-            id: comments
-            text: commentsCount + ' коммент.'
-            color: entry.fontColor
-            font.pointSize: 15
-            anchors.top: content.bottom
-            anchors.right: parent.right
-            anchors.margins: 10
+        Poppable {
+            body: back
         }
     }
 }

@@ -9,5 +9,7 @@
         <file>ThemedButton.qml</file>
         <file>FullEntryView.qml</file>
         <file>BusyBar.qml</file>
+        <file>Poppable.qml</file>
+        <file>MainMenu.qml</file>
     </qresource>
 </RCC>

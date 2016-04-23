@@ -2,12 +2,14 @@ import QtQuick 2.3
 
 ListView {
     id: list
-    anchors.fill: parent
+//    anchors.fill: parent
     anchors.topMargin: 10
     anchors.bottomMargin: 10
     highlightFollowsCurrentItem: false
     cacheBuffer: 1000
     flickableDirection: Flickable.VerticalFlick
+    property bool poppable: true
+    signal popped
 //    signal aboveBegin
 //    signal nearEnd
 //    property int endHeight: 2

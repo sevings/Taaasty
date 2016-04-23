@@ -6,7 +6,7 @@ Rectangle {
     height: 5
     color: window.textColor
     x: 0
-    y: busy > 0 ? 0 : 20 -height
+    y: busy ? 0 : -height
 //    visible: busy
     property bool busy: false
     SequentialAnimation {

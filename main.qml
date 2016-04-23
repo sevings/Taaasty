@@ -30,28 +30,123 @@ ApplicationWindow {
         z: 100
         busy: Tasty.busy > 0
     }
-    LoginDialog {
-        id: loginDialog
-        visible: false
+    StackView {
+        id: stack
+        anchors.fill: parent
+        initialItem: feed
+        delegate: StackViewDelegate {
+            function transitionFinished(properties)
+            {
+                properties.exitItem.opacity = 1;
+                properties.enterItem.opacity = 1;
+            }
+            pushTransition: StackViewTransition {
+                PropertyAnimation {
+                    target: enterItem
+                    property: "opacity"
+                    duration: 300
+                    from: 0
+                    to: 1
+                }
+                NumberAnimation {
+                    target: enterItem
+                    property: "x"
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                    from: enterItem.width
+                    to: 0
+                }
+                PropertyAnimation {
+                    target: exitItem
+                    property: "opacity"
+                    duration: 300
+                    from: 1
+                    to: 0
+                }
+            }
+            popTransition: StackViewTransition {
+                PropertyAnimation {
+                    target: exitItem
+                    property: "opacity"
+                    to: 0
+                }
+                NumberAnimation {
+                    target: exitItem
+                    property: "x"
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                    to: exitItem.width
+                }
+                PropertyAnimation {
+                    target: enterItem
+                    property: "opacity"
+                    duration: 300
+                    from: 0
+                    to: 1
+                }
+                PropertyAnimation {
+                    target: enterItem
+                    property: "scale"
+                    duration: 300
+                    from: 0.8
+                    to: 1
+                }
+            }
+        }
+
+        Component {
+            id: feed
+            FeedView {
+                onEntryClicked: {
+                    stack.push({
+                                   item: fullEntry,
+                                   properties: {
+                                       entry: currentEntry
+                                   }
+                               })
+                }
+                onPopped: stack.pop()
+                poppable: Stack.index > 0
+            }
+        }
+        Component {
+            id: fullEntry
+            FullEntryView {
+                onPopped: stack.pop()
+                poppable: Stack.index > 0
+            }
+        }
+        Component {
+            id: loginDialog
+            LoginDialog { }
+        }
         Connections {
             target: Tasty
             onAuthorizationNeeded: {
-                loginDialog.visible = true;
+                stack.push(loginDialog);
             }
             onAuthorized: {
+                stack.pop(loginDialog);
                 loginDialog.clear();
-                loginDialog.visible = false;
             }
         }
+//        MouseArea {
+//            enabled: stack.depth > 1
+//            anchors.fill: parent
+//            drag.target: stack.currentItem
+//            drag.axis: Drag.XAxis
+//            drag.minimumX: 0
+//            drag.maximumX: stack.width
+//        }
     }
-    FeedView {
-        id: live
-        model: FeedModel {
-            mode: FeedModel.ExcellentMode
+    MainMenu {
+        onModeChanged: {
+            stack.push({
+                           item: feed,
+                           properties: {
+                               mode: mode
+                           }
+                       })
         }
     }
-//    FullEntryView {
-//        id: fullEntry
-//        entryId: 21046324
-//    }
 }

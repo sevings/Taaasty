@@ -7,6 +7,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+class Entry;
+
 
 
 class FeedModel : public QAbstractListModel
@@ -48,7 +50,8 @@ public:
         TextRole,
         TruncatedTextRole,
         ImageAttachRole,
-        ImagePreviewRole
+        ImagePreviewRole,
+        EntryRole
     };
 
     FeedModel(QObject* parent = nullptr);
@@ -65,17 +68,15 @@ public:
     Q_INVOKABLE void setTlog(const int tlog);
     Q_INVOKABLE int tlog() const {return _tlog; }
 
+    Q_INVOKABLE Entry* entry(const int entryId) const { return _entriesById.value(entryId); }
+
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
     void _addItems(QJsonObject data);
 
-    void _changeRating(const int entryId, const QJsonObject rating);
-
 private:
-    Entry* _createEntry(QJsonObject data);
-
     QList<Entry*> _entries;
     QMap<int, Entry*> _entriesById;
     QString _url;

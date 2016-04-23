@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include "apirequest.h"
+#include "datastructures.h"
 
 
 
@@ -15,8 +16,8 @@ FeedModel::FeedModel(QObject* parent)
 {
     setMode(LiveMode);
 
-    connect(Tasty::instance(), SIGNAL(ratingChanged(int,QJsonObject)),
-            this, SLOT(_changeRating(int,QJsonObject)));
+//    connect(Tasty::instance(), SIGNAL(ratingChanged(int,QJsonObject)),
+//            this, SLOT(_changeRating(int,QJsonObject)));
 }
 
 
@@ -46,37 +47,39 @@ QVariant FeedModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
     case IdRole:
-        return entry->id;
+        return entry->id();
     case CreatedAtRole:
-        return entry->createdAt;
+        return entry->createdAt();
     case UrlRole:
-        return entry->url;
+        return entry->url();
     case TypeRole:
-        return entry->type;
+        return entry->type();
     case VotableRole:
-        return entry->isVotable;
+        return entry->isVotable();
     case PrivateRole:
-        return entry->isPrivate;
+        return entry->isPrivate();
     case TlogRole:
-        return entry->tlog;
+        return entry->tlog();
     case AuthorRole:
-        return entry->author;
+        return entry->author();
     case RatingRole:
-        return entry->rating;
+        return QVariant::fromValue<Rating*>(entry->rating());
     case CommentsCountRole:
-        return entry->commentsCount;
+        return entry->commentsCount();
     case TitleRole:
-        return entry->title;
+        return entry->title();
     case TruncatedTitleRole:
-        return entry->truncatedTitle;
+        return entry->truncatedTitle();
     case TextRole:
-        return entry->text;
+        return entry->text();
     case TruncatedTextRole:
-        return entry->truncatedText;
+        return entry->truncatedText();
     case ImageAttachRole:
-        return entry->imageAttach;
+        return entry->imageAttach();
     case ImagePreviewRole:
-        return entry->imagePreview;
+        return entry->imagePreview();
+    case EntryRole:
+        return QVariant::fromValue<Entry*>(entry);
     }
 
     qDebug() << "role" << role;
@@ -187,6 +190,7 @@ QHash<int, QByteArray> FeedModel::roleNames() const
     roles[TruncatedTextRole]   = "truncatedText";
     roles[ImageAttachRole]     = "imageAttach";
     roles[ImagePreviewRole]    = "imagePreview";
+    roles[EntryRole]           = "entry";
 
     return roles;
 }
@@ -217,56 +221,16 @@ void FeedModel::_addItems(QJsonObject data)
     int row = _entries.size();
     foreach(auto item, feed)
     {
-        auto entry = _createEntry(item.toObject());
+        auto entry = new Entry(item.toObject(), this);
         _entries << entry;
 
-        _entriesById[entry->id] = entry;
+        _entriesById[entry->id()] = entry;
 
-        entry->row = row;
+        entry->_row = row;
         row++;
     }
 
     endInsertRows();
 
     _loading = false;
-}
-
-
-
-void FeedModel::_changeRating(const int entryId, const QJsonObject rating)
-{
-    if (!_entriesById.contains(entryId))
-        return;
-
-    auto entry = _entriesById.value(entryId);
-    entry->rating = rating;
-
-    auto row = entry->row;
-    emit dataChanged(index(row), index(row), QVector<int>(1, RatingRole));
-}
-
-
-
-FeedModel::Entry *FeedModel::_createEntry(QJsonObject data)
-{
-    auto entry = new Entry;
-
-    entry->id = data.value("id").toInt();
-    entry->createdAt = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
-    entry->url = data.value("url").toString();
-    entry->type = data.value("type").toString();
-    entry->isVotable = data.value("is_voteable").toBool();
-    entry->isPrivate = data.value("is_private").toBool();
-    entry->tlog = data.value("tlog").toObject();
-    entry->author = data.value("author").toObject();
-    entry->rating = data.value("rating").toObject();
-    entry->commentsCount = data.value("comments_count").toInt();
-    entry->title = data.value("title").toString();
-    entry->truncatedTitle = data.value("title_truncated").toString();
-    entry->text = data.value("text").toString();
-    entry->truncatedText = data.value("text_truncated").toString();
-    entry->imageAttach = data.value("image_attachments").toArray();
-    entry->imagePreview = data.value("preview_image").toObject();
-
-    return entry;
 }

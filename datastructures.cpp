@@ -1,0 +1,103 @@
+#include "datastructures.h"
+
+#include "apirequest.h"
+//#include "tasty.h"
+
+
+
+Entry::Entry(const QJsonObject data, QObject *parent)
+    : QObject(parent)
+{
+    _id              = data.value("id").toInt();
+    _createdAt       = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+    _url             = data.value("url").toString();
+    _type            = data.value("type").toString();
+    _isVotable       = data.value("is_voteable").toBool();
+    _isPrivate       = data.value("is_private").toBool();
+    _tlog            = data.value("tlog").toObject();
+    _author          = data.value("author").toObject();
+    _rating          = new Rating(data.value("rating").toObject(), this);
+    _commentsCount   = data.value("comments_count").toInt();
+    _title           = data.value("title").toString();
+    _truncatedTitle  = data.value("title_truncated").toString();
+    _text            = data.value("text").toString();
+    _truncatedText   = data.value("text_truncated").toString();
+    _imageAttach     = data.value("image_attachments").toArray();
+    _imagePreview    = data.value("preview_image").toObject();
+}
+
+
+
+Comment::Comment(const QJsonObject &data, QObject *parent)
+    : QObject(parent)
+{
+    _id             = data.value("id").toInt();
+    _user           = new User(data.value("user").toObject(), this);
+    _html           = data.value("comment_html").toString();
+    _createdAt      = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+    _isEditable     = data.value("can_edit").toBool();
+    _isReportable   = data.value("can_report").toBool();
+    _isDeletable    = data.value("can_delete").toBool();
+}
+
+
+
+User::User(const QJsonObject &data, QObject *parent)
+    : QObject(parent)
+{
+    _id         = data.value("id").toInt();
+    _tlogUrl    = data.value("tlog_url").toString();
+    _name       = data.value("name").toString();
+    _slug       = data.value("slug").toString();
+
+    auto userpic = data.value("userpic").toObject();
+
+    _originalPic    = userpic.value("original_url").toString();
+    _largePic       = userpic.value("large_url").toString();
+    _thumb128       = userpic.value("thumb128_url").toString();
+    _thumb64        = userpic.value("thumb64_url").toString();
+    _symbol         = userpic.value("symbol").toString();
+}
+
+
+
+Rating::Rating(const QJsonObject data, QObject *parent)
+    : QObject(parent)
+    , _entryId(0)
+{
+    _init(data);
+
+    connect(Tasty::instance(), SIGNAL(ratingChanged(QJsonObject)), this, SLOT(_init(QJsonObject)));
+}
+
+
+
+void Rating::vote()
+{
+    if (!_isVotable)
+        return;
+
+    auto url = QString("entries/%1/votes.json").arg(_entryId);
+    auto operation = (_isVoted ? QNetworkAccessManager::DeleteOperation
+                               : QNetworkAccessManager::PostOperation);
+    auto request = new ApiRequest(url, true, operation);
+
+    connect(request, SIGNAL(success(const QJsonObject)),
+            this, SLOT(_init(const QJsonObject)));
+}
+
+
+
+void Rating::_init(const QJsonObject data)
+{
+    int id = data.value("entry_id").toInt();
+    if (id)
+        _entryId    = id;
+
+    _votes      = data.value("votes").toInt();
+    _rating     = data.value("rating").toInt();
+    _isVoted    = data.value("is_voted").toBool();
+    _isVotable  = data.value("is_voteable").toBool();
+
+    emit dataChanged();
+}

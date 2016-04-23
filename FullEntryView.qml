@@ -1,28 +1,40 @@
 import QtQuick 2.3
 import org.binque.taaasty 1.0
 
+Rectangle {
+    id: back
+    color: window.backgroundColor
+    property TlogEntry entry
+    signal popped
+    property bool poppable
 MyListView {
     id: fullEntry
-    property int entryId
-    property string title: ''
-    property string content: ''
-    property string date: ''
-    property string type: ''
-    property string commentAuthor: ''
-    property bool watching: false
-    property bool voted: false
-    property int votes: 0
-    property bool voteable: false
-    property bool canVote: false
-    property bool canWatch: false
-    property bool canFavorite: false
-    property bool favorited: false
-    property string url: ''
-    property int commentsCount: 0
+    anchors.fill: parent
+//    property int entryId
+//    property string title: ''
+//    property string content: ''
+//    property string date: ''
+//    property string type: ''
+//    property string commentAuthor: ''
+//    property bool watching: false
+//    property bool voted: false
+//    property int votes: 0
+//    property bool voteable: false
+//    property bool canVote: false
+//    property bool canWatch: false
+//    property bool canFavorite: false
+//    property bool favorited: false
+//    property string url: ''
+//    property int commentsCount: 0
 //    property double wholeHeight: 0
+    onPopped: back.popped()
+    Component.onCompleted: {
+        commentsModel.loadMore()
+    }
+
     model: CommentsModel {
         id: commentsModel
-        entryId: fullEntry.entryId
+        entryId: entry.id
     }
 
     delegate: Item {
@@ -100,21 +112,21 @@ MyListView {
 //        }
         Text {
             id: fullTitle
-            text: fullEntry.title
+            text: entry.title
 //            anchors.top: fullEntryImages.bottom
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.margins: 10
             wrapMode: Text.Wrap
-            font.pointSize: fullEntry.content.length > 0 ? 25 : 20
+            font.pointSize: entry.text.length > 0 ? 25 : 20
             color: window.textColor
             textFormat: Text.RichText
-            height: fullEntry.title.length > 0 ? paintedHeight : fullEntry.content.length > 0 ? -20 : 0
+            height: entry.title.length > 0 ? paintedHeight : entry.text.length > 0 ? -20 : 0
         }
         Text {
             id: fullContent
-            text: fullEntry.content
+            text: entry.text
             anchors.top: fullTitle.bottom
             anchors.left: parent.left
             anchors.right: parent.right
@@ -123,11 +135,11 @@ MyListView {
             font.pointSize: 20
             color: window.textColor
             textFormat: Text.RichText
-            height: fullEntry.content.length > 0 ? paintedHeight : fullEntry.title.length > 0 ? -20 : 0
+            height: entry.text.length > 0 ? paintedHeight : entry.title.length > 0 ? -20 : 0
         }
         Text {
             id: fullEntryDate
-            text: fullEntry.date
+            text: entry.createdAt
             color: window.secondaryTextColor
             anchors.top: fullContent.bottom
             anchors.left: parent.left
@@ -136,7 +148,7 @@ MyListView {
         }
         Text {
             id: fullEntryCommentsCount
-            text: fullEntry.commentsCount + ' коммент.'
+            text: entry.commentsCount + ' коммент.'
             color: window.secondaryTextColor
             anchors.top: fullContent.bottom
             anchors.right: parent.right
@@ -153,8 +165,8 @@ MyListView {
             height: 64
             width: (parent.width - 40) / 3
             fontSize: 20
-            visible: fullEntry.canFavorite
-            enabled: !fullEntry.favorited
+//            visible: entry.canFavorite
+//            enabled: !fullEntry.favorited
 //            onClicked: Ctrl.favorites(fullEntry.entryId)
         }
         ThemedButton {
@@ -167,8 +179,8 @@ MyListView {
             height: 64
             width: fullEntryFavButton.width
             fontSize: fullEntryFavButton.fontSize
-            visible: fullEntry.canWatch // http delete?
-            enabled: !fullEntry.watching
+//            visible: fullEntry.canWatch // http delete?
+//            enabled: !fullEntry.watching
 //            onClicked: Ctrl.watchEntry(fullEntry.entryId, fullEntry.watching)
         }
         ThemedButton {
@@ -178,12 +190,12 @@ MyListView {
             anchors.right: parent.right
             anchors.margins: 10
             anchors.topMargin: 20
-            text: '+ ' + fullEntry.votes
+            text: '+ ' + entry.rating.votes
             height: 64
             fontSize: fullEntryFavButton.fontSize
-            visible: fullEntry.voteable
-            enabled: fullEntry.canVote && !fullEntry.voted // not working on the site?
-//            onClicked: Ctrl.voteForEntry(fullEntry.entryId, fullEntry.voted)
+//            visible: fullEntry.voteable
+//            enabled: fullEntry.canVote && !fullEntry.voted // not working on the site?
+            onClicked: entry.rating.vote()
         }
         ThemedButton {
             id: loadMoreButton
@@ -205,4 +217,8 @@ MyListView {
 //            Ctrl.addComment(commentEditor.message);
 //        }
 //    }
+    Poppable {
+        body: back
+    }
+}
 }

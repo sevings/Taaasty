@@ -4,6 +4,8 @@
 #include <QAbstractListModel>
 #include <QJsonObject>
 
+#include "datastructures.h"
+
 
 
 class CommentsModel : public QAbstractListModel
@@ -25,7 +27,8 @@ public:
         CommentHtmlRole,
         CreatedAtRole,
         EditableRole,
-        DeletableRole
+        DeletableRole,
+        CommentObjectRole
     };
 
     explicit CommentsModel(QObject *parent = 0);
@@ -51,7 +54,7 @@ private slots:
     void _addComments(QJsonObject data);
 
 private:
-    QList<QJsonObject> _comments;
+    QList<Comment*> _comments;
     int _entryId;
     bool _loading;
     int _toComment;

@@ -34,27 +34,29 @@ QVariant CommentsModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
     case CommentIdRole:
-        return comment.value("id").toInt();
+        return comment->id();
     case UserIdRole:
-        return comment.value("user").toObject().value("id").toInt();
+        return comment->user()->id();
     case UserNameRole:
-        return comment.value("user").toObject().value("name").toString();
+        return comment->user()->name();
     case UserUrlRole:
-        return comment.value("user").toObject().value("tlog_url").toString();
+        return comment->user()->tlogUrl();
     case Thumb64Role:
-        return comment.value("user").toObject().value("userpic").toObject().value("thumb64_url").toString();
+        return comment->user()->thumb64();
     case Thumb128Role:
-        return comment.value("user").toObject().value("userpic").toObject().value("thumb128_url").toString();
+        return comment->user()->thumb128();
     case SymbolRole:
-        return comment.value("user").toObject().value("userpic").toObject().value("symbol").toString();
+        return comment->user()->symbol();
     case CommentHtmlRole:
-        return comment.value("comment_html").toString();
+        return comment->html();
     case CreatedAtRole:
-        return QDateTime::fromString(comment.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+        return comment->createdAt();
     case EditableRole:
-        return comment.value("can_edit").toBool();
+        return comment->isEditable();
     case DeletableRole:
-        return comment.value("can_delete").toBool();
+        return comment->isDeletable();
+//    case CommentObjectRole:
+//        return comment;
     }
 
     qDebug() << "role" << role;
@@ -87,17 +89,18 @@ QHash<int, QByteArray> CommentsModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
 
-    roles[CommentIdRole]    = "commentId";
-    roles[UserIdRole]       = "userId";
-    roles[UserNameRole]     = "userName";
-    roles[UserUrlRole]      = "userUrl";
-    roles[Thumb64Role]      = "thumb64";
-    roles[Thumb128Role]     = "thumb128";
-    roles[SymbolRole]       = "symbol";
-    roles[CommentHtmlRole]  = "commentHtml";
-    roles[CreatedAtRole]    = "createdAt";
-    roles[EditableRole]     = "editable";
-    roles[DeletableRole]    = "deletable";
+    roles[CommentIdRole]     = "commentId";
+    roles[UserIdRole]        = "userId";
+    roles[UserNameRole]      = "userName";
+    roles[UserUrlRole]       = "userUrl";
+    roles[Thumb64Role]       = "thumb64";
+    roles[Thumb128Role]      = "thumb128";
+    roles[SymbolRole]        = "symbol";
+    roles[CommentHtmlRole]   = "commentHtml";
+    roles[CreatedAtRole]     = "createdAt";
+    roles[EditableRole]      = "editable";
+    roles[DeletableRole]     = "deletable";
+    roles[CommentObjectRole] = "comment";
 
     return roles;
 }
@@ -117,10 +120,10 @@ void CommentsModel::_addComments(QJsonObject data)
 
     beginInsertRows(QModelIndex(), 0, feed.size() - 1);
 
-    QList<QJsonObject> comments;
+    QList<Comment*> comments;
     comments.reserve(feed.size());
     foreach(auto comment, feed)
-        comments << comment.toObject();
+        comments << new Comment(comment.toObject(), this);
 
     _comments = comments + _comments;
 
