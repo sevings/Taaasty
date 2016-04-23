@@ -7,15 +7,15 @@ MyImage {
     //anchors.margins: 10
     width: 64
     height: 64
-    //source: url.length === 0 ? '' : url
-    property bool symbol: false
-    //property url url
-    property string name: '?'
+    property string symbol: '?'
+    onAvailable: {
+        letter.visible = false;
+    }
     Text {
+        id: letter
         color: window.textColor
         font.pixelSize: 32
         anchors.centerIn: parent
-        text: parent.name.length > 3 ? parent.name[0].toUpperCase() : parent.name //user.userpic.symbol
-        visible: parent.symbol
+        text: parent.symbol.toUpperCase()
     }
 }

@@ -11,30 +11,12 @@ Rectangle {
     MyListView {
         id: fullEntry
         anchors.fill: parent
-        //    property int entryId
-        //    property string title: ''
-        //    property string content: ''
-        //    property string date: ''
-        //    property string type: ''
-        //    property string commentAuthor: ''
-        //    property bool watching: false
-        //    property bool voted: false
-        //    property int votes: 0
-        //    property bool voteable: false
-        //    property bool canVote: false
-        //    property bool canWatch: false
-        //    property bool canFavorite: false
-        //    property bool favorited: false
-        //    property string url: ''
-        //    property int commentsCount: 0
-        //    property double wholeHeight: 0
         onPopped: back.popped()
         Component.onCompleted: {
-            commentsModel.loadMore()
+            commentsModel.loadMore();
+//            console.log(entry.url);
         }
-
         model: commentsModel
-
         delegate: Item {
             anchors.left: parent.left
             anchors.right: parent.right
@@ -45,9 +27,8 @@ Rectangle {
                 anchors.margins: 10
                 width: 64
                 height: 64
-                source: !symbol ? comment.thumb64 : ''
-                name: comment.user.name
-                symbol: !comment.thumb64
+                source: comment.user.thumb64
+                symbol: comment.user.symbol
             }
             Text {
                 id: nameText
@@ -111,7 +92,7 @@ Rectangle {
             Text {
                 id: fullTitle
                 text: entry.title
-                //            anchors.top: fullEntryImages.bottom
+//            anchors.top: fullEntryImages.bottom
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right

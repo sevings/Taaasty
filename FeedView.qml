@@ -32,9 +32,8 @@ Rectangle {
             SmallAvatar {
                 id: entryAvatar
                 anchors.margins: 10
-                source: !symbol ? entry.author.userpic.thumb64_url : ''
-                name: entry.author.name
-                symbol: !entry.author.userpic.hasOwnProperty('thumb64_url')
+                source: entry.author.userpic.thumb64_url
+                symbol: entry.author.userpic.symbol
             }
             Text {
                 id: nick
@@ -57,12 +56,6 @@ Rectangle {
                 anchors.left: entryAvatar.right
                 anchors.margins: 10
             }
-            //                    function updateRating(eid, newRating) {
-            //                        rating.votes = newRating.votes
-            //                        rating.is_voted = newRating.is_voted;
-            //                        entryVoteButton.label = '+ ' + newRating.votes;
-            //                        entryVoteButton.enabled = can_vote && !newRating.is_voted;
-            //                    }
             ThemedButton {
                 id: entryVoteButton
                 anchors.top: parent.top
@@ -77,19 +70,7 @@ Rectangle {
                 fontSize: 20
                 onClicked: {
                     entry.rating.vote();
-//                    if (entry.rating.isVoted)
-//                        Tasty.unvote(model.id);
-//                    else
-//                        Tasty.vote(model.id);
                 }
-
-                //            onClicked: {
-                //                var ix =  parent.x + mouseX;
-                //                var iy =  parent.y + mouseY;
-                //                //console.log('x: ' + ix + ', y: ' + iy);
-                //                thisTlog.currentIndex = thisTlog.indexAt(ix, iy);
-                //                Ctrl.voteForEntry(thisTlog.model.get(thisTlog.currentIndex).id, rating.is_voted);
-                //            }
             }
 
             //         ImagesView {
@@ -101,13 +82,12 @@ Rectangle {
             Text {
                 id: entryTitle
                 text: entry.truncatedTitle
-                //            anchors.top: images.bottom
+//            anchors.top: images.bottom
                 anchors.top: entryAvatar.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
                 wrapMode: Text.Wrap
-                //            font.family: tlog.design.feedFont
                 font.pointSize: entry.truncatedText.length > 0 ? 25 : 20
                 color: parent.fontColor
                 textFormat: Text.RichText
@@ -122,7 +102,6 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.margins: 10
                 wrapMode: Text.Wrap
-                //            font.family: tlog.design.feedFont
                 font.pointSize: 20
                 color: parent.fontColor
                 textFormat: Text.RichText
