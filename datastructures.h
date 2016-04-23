@@ -11,13 +11,15 @@ class Comment;
 class User;
 class Rating;
 
+class CommentsModel;
+
 
 
 class Entry: public QObject
 {
     Q_OBJECT
 
-    friend class FeedModel;
+    friend class CommentsModel;
 
     Q_PROPERTY(int         id             MEMBER _id                CONSTANT)
     Q_PROPERTY(QDateTime   createdAt      MEMBER _createdAt         CONSTANT)
@@ -39,8 +41,17 @@ class Entry: public QObject
 public:
     Entry(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
 
+    Q_INVOKABLE CommentsModel* commentsModel();
+
+public slots:
+    void addComment(const QString text);
+
 signals:
     void commentsCountChanged();
+    void commentAdded(const QJsonObject data);
+
+private slots:
+    void _addComment();
 
 private:
     int         _id;
@@ -60,7 +71,7 @@ private:
     QJsonArray  _imageAttach;
     QJsonObject _imagePreview;
 
-    int _row;
+    CommentsModel* _commentsModel;
 };
 
 
@@ -79,6 +90,16 @@ class Comment: public QObject
 
 public:
     Comment(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+
+public slots:
+    void edit(const QString text);
+    void remove();
+
+signals:
+    void htmlChanged();
+
+private slots:
+    void _init(const QJsonObject data);
 
 private:
     int         _id;

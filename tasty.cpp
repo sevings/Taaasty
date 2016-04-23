@@ -89,39 +89,6 @@ void Tasty::getMe()
 }
 
 
-
-void Tasty::addComment(const int entryId, const QString text)
-{
-    auto data = QString("entry_id=%1&text=%2").arg(entryId).arg(text);
-    auto request = new ApiRequest("comments.json", true,
-                                  QNetworkAccessManager::PostOperation, data);
-
-    connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readComment(const QJsonObject)));
-}
-
-
-
-void Tasty::editComment(const int id, const QString text)
-{
-    auto url = QString("comments/%1.json").arg(id);
-    auto data = QString("text=%1").arg(text);
-    auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation, data);
-
-    connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readComment(const QJsonObject)));
-}
-
-
-
-void Tasty::removeComment(const int id)
-{
-    auto url = QString("comments/%1.json").arg(id);
-    auto request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
-
-    //connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readComment(const QJsonObject)));
-}
-
-
-
 void Tasty::_readAccessToken(const QJsonObject data)
 {
     auto apiKey = data.value("api_key").toObject();

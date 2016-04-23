@@ -16,7 +16,7 @@ class CommentsModel : public QAbstractListModel
     Q_PROPERTY(bool hasMore READ hasMore NOTIFY hasMoreChanged)
 
 public:
-    explicit CommentsModel(QObject *parent = 0);
+    explicit CommentsModel(Entry* entry = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -36,7 +36,8 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void _addComments(QJsonObject data);
+    void _addComments(const QJsonObject data);
+    void _addComment(const QJsonObject data);
 
 private:
     QList<Comment*> _comments;

@@ -8,14 +8,19 @@
 
 
 
-CommentsModel::CommentsModel(QObject *parent)
-    : QAbstractListModel(parent)
-    , _entryId(0)
+CommentsModel::CommentsModel(Entry *entry)
+    : QAbstractListModel(entry)
     , _loading(false)
     , _toComment(0)
-    , _totalCount(1)
     , _url("comments.json?entry_id=%1&limit=20&order=desc")
 {
+    if (!entry)
+        return;
+
+    _entryId = entry->_id;
+    _totalCount = entry->_commentsCount;
+
+    connect(entry, SIGNAL(commentAdded(QJsonObject)), this, SLOT(_addComment(QJsonObject)));
 }
 
 
@@ -78,7 +83,7 @@ QHash<int, QByteArray> CommentsModel::roleNames() const
 
 
 
-void CommentsModel::_addComments(QJsonObject data)
+void CommentsModel::_addComments(const QJsonObject data)
 {
     auto feed = data.value("comments").toArray();
     if (feed.isEmpty())
@@ -107,3 +112,15 @@ void CommentsModel::_addComments(QJsonObject data)
 
     _loading = false;
 }
+
+
+
+void CommentsModel::_addComment(const QJsonObject data)
+{
+    beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
+
+    _comments << new Comment(data, this);
+
+    endInsertRows();
+}
+

@@ -70,7 +70,10 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     _loading = true;
 
     int limit = _entries.isEmpty() ? 10 : 20;
-    QString url = _url + QString("limit=%1").arg(limit);
+    QString url = _url;
+    if (_mode == TlogMode)
+        url = url.arg(_tlog);
+    url += QString("limit=%1").arg(limit);
     if (_lastEntry)
         url += QString("&since_entry_id=%1").arg(_lastEntry);
 
@@ -125,8 +128,18 @@ void FeedModel::setMode(const FeedModel::Mode mode)
 
 void FeedModel::setTlog(const int tlog)
 {
-    if (tlog > 0)
-        _tlog = tlog;
+    if (tlog <= 0)
+        return;
+
+    beginResetModel();
+
+    _tlog = tlog;
+    _hasMore = true;
+    _lastEntry = 0;
+    _loading = false;
+    qDeleteAll(_entries);
+
+    endResetModel();
 }
 
 
@@ -161,16 +174,10 @@ void FeedModel::_addItems(QJsonObject data)
     beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + feed.size() - 1);
 
     _entries.reserve(_entries.size() + feed.size());
-    int row = _entries.size();
     foreach(auto item, feed)
     {
         auto entry = new Entry(item.toObject(), this);
         _entries << entry;
-
-        _entriesById[entry->_id] = entry;
-
-        entry->_row = row;
-        row++;
     }
 
     endInsertRows();

@@ -5,7 +5,7 @@ import org.binque.taaasty 1.0
 Rectangle {
     id: back
     property int mode: FeedModel.LiveMode
-    property string slug
+    property int tlog
     signal entryClicked(TlogEntry entry)
     signal popped
     property bool poppable
@@ -15,7 +15,7 @@ Rectangle {
         model: FeedModel {
             id: feedModel
             mode: back.mode
-            tlog: back.slug
+            tlog: back.tlog
         }
         delegate: Item {
             id: entryView

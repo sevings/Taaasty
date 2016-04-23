@@ -13,7 +13,6 @@ MouseArea {
     Component.onCompleted: {
         enabled = true;
     }
-
     onReleased: {
         if (body.poppable && body.x > body.width / 3)
             body.popped();

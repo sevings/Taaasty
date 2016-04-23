@@ -56,7 +56,6 @@ private slots:
 
 private:
     QList<Entry*> _entries;
-    QMap<int, Entry*> _entriesById;
     QString _url;
     int _tlog;
     Mode _mode;

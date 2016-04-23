@@ -44,10 +44,6 @@ public slots:
 
     void getMe();
 
-    void addComment(const int entryId, const QString text);
-    void editComment(const int id, const QString text);
-    void removeComment(const int id);
-
 private slots:
     void _readAccessToken(const QJsonObject data);
 

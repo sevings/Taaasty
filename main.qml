@@ -144,7 +144,8 @@ ApplicationWindow {
             stack.push({
                            item: feed,
                            properties: {
-                               mode: mode
+                               mode: mode,
+                               tlog: 281926
                            }
                        })
         }

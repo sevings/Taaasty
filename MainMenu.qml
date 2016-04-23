@@ -83,6 +83,12 @@ MouseArea {
                 text: 'Best'
                 onClicked: { modeChanged(FeedModel.BestMode) }
             }
+            ThemedButton {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                text: 'Tlog'
+                onClicked: { modeChanged(FeedModel.TlogMode) }
+            }
         }
     }
 }

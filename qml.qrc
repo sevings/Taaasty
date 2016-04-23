@@ -11,5 +11,7 @@
         <file>BusyBar.qml</file>
         <file>Poppable.qml</file>
         <file>MainMenu.qml</file>
+        <file>TextEditor.qml</file>
+        <file>MessageEditor.qml</file>
     </qresource>
 </RCC>

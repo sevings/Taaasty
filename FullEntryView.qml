@@ -5,6 +5,7 @@ Rectangle {
     id: back
     color: window.backgroundColor
     property TlogEntry entry
+    property CommentsModel commentsModel: entry.commentsModel()
     signal popped
     property bool poppable
     MyListView {
@@ -32,10 +33,7 @@ Rectangle {
             commentsModel.loadMore()
         }
 
-        model: CommentsModel {
-            id: commentsModel
-            entryId: entry.id
-        }
+        model: commentsModel
 
         delegate: Item {
             anchors.left: parent.left
@@ -211,12 +209,12 @@ Rectangle {
                 onClicked: commentsModel.loadMore()
             }
         }
-        //    footer: MessageEditor {
-        //        id: commentEditor
-        //        onSent: {
-        //            Ctrl.addComment(commentEditor.message);
-        //        }
-        //    }
+        footer: MessageEditor {
+            id: commentEditor
+            onSent: {
+                entry.addComment(commentEditor.message);
+            }
+        }
         Poppable {
             body: back
         }
