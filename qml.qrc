@@ -13,5 +13,6 @@
         <file>MainMenu.qml</file>
         <file>TextEditor.qml</file>
         <file>MessageEditor.qml</file>
+        <file>ProfileView.qml</file>
     </qresource>
 </RCC>

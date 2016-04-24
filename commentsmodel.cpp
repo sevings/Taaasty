@@ -63,6 +63,7 @@ void CommentsModel::loadMore()
         return;
 
     _loading = true;
+    emit loadingChanged();
 
     QString url = _url.arg(_entryId);
     if (_toComment)
@@ -111,6 +112,7 @@ void CommentsModel::_addComments(const QJsonObject data)
         emit hasMoreChanged();
 
     _loading = false;
+    emit loadingChanged();
 }
 
 

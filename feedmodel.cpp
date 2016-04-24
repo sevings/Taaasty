@@ -140,6 +140,8 @@ void FeedModel::setTlog(const int tlog)
     qDeleteAll(_entries);
 
     endResetModel();
+
+    emit hasMoreChanged();
 }
 
 
@@ -161,6 +163,7 @@ void FeedModel::_addItems(QJsonObject data)
     if (feed.isEmpty())
     {
         _hasMore = false;
+        emit hasMoreChanged();
         return;
     }
 

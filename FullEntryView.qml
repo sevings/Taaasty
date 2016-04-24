@@ -6,15 +6,23 @@ Rectangle {
     color: window.backgroundColor
     property TlogEntry entry
     property CommentsModel commentsModel: entry.commentsModel()
+    property bool showProfiles: true
+    signal avatarClicked(int tlogId)
     signal popped
     property bool poppable
+    Poppable {
+        body: back
+    }
     MyListView {
         id: fullEntry
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: contentHeight > parent.height ? parent.height : contentHeight
         onPopped: back.popped()
         Component.onCompleted: {
-            commentsModel.loadMore();
-//            console.log(entry.url);
+            if (commentsModel.rowCount() === 0)
+                commentsModel.loadMore();
         }
         model: commentsModel
         delegate: Item {
@@ -32,6 +40,11 @@ Rectangle {
                 height: 64
                 source: comment.user.thumb64
                 symbol: comment.user.symbol
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: back.avatarClicked(comment.user.id);
+                    enabled: showProfiles
+                }
             }
             Text {
                 id: nameText
@@ -206,7 +219,7 @@ Rectangle {
                 height: visible ? 64 : 0
                 width: parent.width / 3
                 fontSize: fullEntryFavButton.fontSize
-                visible: commentsModel.hasMore
+                visible: commentsModel.hasMore && !commentsModel.loading
                 onClicked: commentsModel.loadMore()
             }
         }

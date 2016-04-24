@@ -11,8 +11,9 @@ class CommentsModel : public QAbstractListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(int entryId READ entryId WRITE setEntryId)
+    Q_PROPERTY(int entryId  READ entryId WRITE setEntryId)
     Q_PROPERTY(bool hasMore READ hasMore NOTIFY hasMoreChanged)
+    Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 
 public:
     explicit CommentsModel(Entry* entry = nullptr);
@@ -24,9 +25,11 @@ public:
     Q_INVOKABLE void setEntryId(const int id);
 
     Q_INVOKABLE bool hasMore() const { return _comments.size() < _totalCount; }
+    Q_INVOKABLE bool loading() const { return _loading; }
 
 signals:
     void hasMoreChanged();
+    void loadingChanged();
 
 public slots:
     void loadMore();

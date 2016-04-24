@@ -8,6 +8,8 @@
 class Entry;
 class Comment;
 class User;
+class Author;
+class Tlog;
 class Rating;
 class AttachedImage;
 
@@ -32,8 +34,8 @@ class Entry: public QObject
     Q_PROPERTY(bool        isFavoritable  MEMBER _isFavoritable     CONSTANT)
     Q_PROPERTY(bool        isFavorited    MEMBER _isFavorited       NOTIFY favoritedChanged)
     Q_PROPERTY(bool        isPrivate      MEMBER _isPrivate         CONSTANT)
-    Q_PROPERTY(QJsonObject tlog           MEMBER _tlog              CONSTANT)
-    Q_PROPERTY(QJsonObject author         MEMBER _author            CONSTANT)
+    Q_PROPERTY(Tlog*       tlog           MEMBER _tlog              CONSTANT)
+    Q_PROPERTY(Author*     author         MEMBER _author            CONSTANT)
     Q_PROPERTY(Rating*     rating         MEMBER _rating            CONSTANT)
     Q_PROPERTY(int         commentsCount  MEMBER _commentsCount     NOTIFY commentsCountChanged)
     Q_PROPERTY(QString     title          MEMBER _title             CONSTANT)
@@ -75,8 +77,8 @@ private:
     bool        _isFavoritable;
     bool        _isFavorited;
     bool        _isPrivate;
-    QJsonObject _tlog;
-    QJsonObject _author;
+    Tlog*       _tlog;
+    Author*     _author;
     Rating*     _rating;
     int         _commentsCount;
     QString     _title;
@@ -180,6 +182,86 @@ private:
     QString _thumb128;
     QString _thumb64;
     QString _symbol;
+};
+
+
+
+class Author: public User
+{
+    Q_OBJECT
+
+    Q_PROPERTY(bool    isFemale            MEMBER _isFemale            CONSTANT)
+    Q_PROPERTY(bool    isPrivacy           MEMBER _isPrivacy           CONSTANT)
+    Q_PROPERTY(bool    isOnline            MEMBER _isOnline            CONSTANT)
+    Q_PROPERTY(bool    isFlow              MEMBER _isFlow              CONSTANT)
+    Q_PROPERTY(QString title               MEMBER _title               CONSTANT)
+    Q_PROPERTY(QString entriesCount        MEMBER _entriesCount        CONSTANT)
+    Q_PROPERTY(QString publicEntriesCount  MEMBER _publicEntriesCount  CONSTANT)
+    Q_PROPERTY(QString privateEntriesCount MEMBER _privateEntriesCount CONSTANT)
+    Q_PROPERTY(QString daysCount           MEMBER _daysCount           CONSTANT)
+    Q_PROPERTY(QString followingsCount     MEMBER _followingsCount     CONSTANT)
+
+public:
+    Author(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+
+private:
+    bool    _isFemale;
+    bool    _isPrivacy;
+    bool    _isOnline;
+    bool    _isFlow;
+    QString _title;
+    QString _entriesCount;
+    QString _publicEntriesCount;
+    QString _privateEntriesCount;
+    QString _daysCount;
+    QString _followingsCount;
+};
+
+
+
+class Tlog: public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int     tlogId              READ tlogId   WRITE setId   NOTIFY updated)
+    Q_PROPERTY(QString title               MEMBER _title               NOTIFY updated)
+    Q_PROPERTY(QString entriesCount        MEMBER _entriesCount        NOTIFY updated)
+    Q_PROPERTY(QString publicEntriesCount  MEMBER _publicEntriesCount  NOTIFY updated)
+    Q_PROPERTY(QString privateEntriesCount MEMBER _privateEntriesCount NOTIFY updated)
+    Q_PROPERTY(QString daysCount           MEMBER _daysCount           NOTIFY updated)
+    Q_PROPERTY(QString followersCount      MEMBER _followersCount      NOTIFY updated)
+    Q_PROPERTY(QString followingsCount     MEMBER _followingsCount     NOTIFY updated)
+    Q_PROPERTY(QString ignoredCount        MEMBER _ignoredCount        NOTIFY updated)
+    Q_PROPERTY(bool    isFollowingMe       MEMBER _isFollowingMe       NOTIFY updated)
+    Q_PROPERTY(bool    amIFollowing        MEMBER _amIFollowing        NOTIFY updated)
+    Q_PROPERTY(Author* author              MEMBER _author              NOTIFY updated)
+
+public:
+    Tlog(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+
+public slots:
+    int tlogId() const { return _id; }
+    void setId(const int id);
+
+signals:
+    void updated();
+
+private slots:
+    void _init(const QJsonObject data);
+
+private:
+    int     _id;
+    QString _title;
+    QString _entriesCount;
+    QString _publicEntriesCount;
+    QString _privateEntriesCount;
+    QString _daysCount;
+    QString _followersCount;
+    QString _followingsCount;
+    QString _ignoredCount;
+    bool    _isFollowingMe;
+    bool    _amIFollowing;
+    Author* _author;
 };
 
 

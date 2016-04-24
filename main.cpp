@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<Entry>          ("org.binque.taaasty", 1, 0, "TlogEntry");
     qmlRegisterType<Comment>        ("org.binque.taaasty", 1, 0, "Comment");
     qmlRegisterType<User>           ("org.binque.taaasty", 1, 0, "User");
+    qmlRegisterType<Author>         ("org.binque.taaasty", 1, 0, "Author");
+    qmlRegisterType<Tlog>           ("org.binque.taaasty", 1, 0, "Tlog");
     qmlRegisterType<Rating>         ("org.binque.taaasty", 1, 0, "Rating");
     qmlRegisterType<AttachedImage>  ("org.binque.taaasty", 1, 0, "AttachedImage");
 

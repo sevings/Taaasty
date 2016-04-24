@@ -120,7 +120,17 @@ ApplicationWindow {
                     stack.push({
                                    item: fullEntry,
                                    properties: {
-                                       entry: entry
+                                       entry: entry,
+                                       showProfiles: mode !== FeedModel.AnonymousMode
+                                   }
+                               })
+                }
+                onAvatarClicked: {
+                    stack.push({
+                                   item: profile,
+                                   properties: {
+                                       tlog: tlog,
+                                       author: author
                                    }
                                })
                 }
@@ -133,6 +143,30 @@ ApplicationWindow {
             FullEntryView {
                 onPopped: stack.pop()
                 poppable: Stack.index > 0
+                onAvatarClicked: {
+                    stack.push({
+                                   item: profile,
+                                   properties: {
+                                       tlogId: tlogId
+                                   }
+                               })
+                }
+            }
+        }
+        Component {
+            id: profile
+            ProfileView {
+                onPopped: stack.pop()
+                poppable: Stack.index > 0
+                onTlogRequested: {
+                    stack.push({
+                                   item: feed,
+                                   properties: {
+                                       mode: FeedModel.TlogMode,
+                                       tlog: author.id
+                                   }
+                               })
+                }
             }
         }
         Component {

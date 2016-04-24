@@ -1,5 +1,5 @@
 import QtQuick 2.3
-import QtQuick.Controls 1.2
+//import QtQuick.Controls 1.2
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -7,11 +7,29 @@ Rectangle {
     property int mode: FeedModel.LiveMode
     property int tlog
     signal entryClicked(TlogEntry entry)
+    signal avatarClicked(Tlog tlog, Author author)
     signal popped
     property bool poppable
     color: window.backgroundColor
+    Poppable {
+        body: back
+        Text {
+            visible: listView.count === 0 && !feedModel.hasMore
+            anchors.centerIn: parent
+            color: window.secondaryTextColor
+            horizontalAlignment: Text.AlignHCenter
+            font.pointSize: 30
+            wrapMode: Text.Wrap
+            text: 'Нет записей'
+        }
+    }
     MyListView {
-        anchors.fill: parent
+        id: listView
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: contentHeight > parent.height ? parent.height : contentHeight
+        visible: count > 0
         model: FeedModel {
             id: feedModel
             mode: back.mode
@@ -22,7 +40,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             property color fontColor: window.textColor
-            height: 50 + content.height + entryTitle.height + entryAvatar.height + comments.height + firstImage.height
+            height: 70 + content.height + entryTitle.height + entryAvatar.height + comments.height + firstImage.height
             Poppable {
                 body: back
                 onClicked: {
@@ -32,8 +50,13 @@ Rectangle {
             SmallAvatar {
                 id: entryAvatar
                 anchors.margins: 10
-                source: entry.author.userpic.thumb64_url || ''
-                symbol: entry.author.userpic.symbol
+                source: entry.author.thumb64
+                symbol: entry.author.symbol
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: back.avatarClicked(entry.tlog, entry.author)
+                    enabled: mode !== FeedModel.AnonymousMode
+                }
             }
             Text {
                 id: nick

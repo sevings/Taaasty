@@ -16,7 +16,8 @@ class FeedModel : public QAbstractListModel
     Q_OBJECT
 
     Q_PROPERTY(Mode mode READ mode WRITE setMode)
-    Q_PROPERTY(int tlog READ tlog WRITE setTlog)
+    Q_PROPERTY(int  tlog READ tlog WRITE setTlog)
+    Q_PROPERTY(bool hasMore MEMBER _hasMore NOTIFY hasMoreChanged)
 
 public:
     enum Mode {
@@ -47,6 +48,9 @@ public:
 
     Q_INVOKABLE void setTlog(const int tlog);
     Q_INVOKABLE int tlog() const {return _tlog; }
+
+signals:
+    void hasMoreChanged();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
