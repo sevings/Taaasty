@@ -56,11 +56,25 @@ ApplicationWindow {
                     to: 0
                 }
                 PropertyAnimation {
+                    target: enterItem
+                    property: "scale"
+                    duration: 300
+                    from: 1.2
+                    to: 1
+                }
+                PropertyAnimation {
                     target: exitItem
                     property: "opacity"
                     duration: 300
                     from: 1
                     to: 0
+                }
+                PropertyAnimation {
+                    target: exitItem
+                    property: "scale"
+                    duration: 300
+                    from: 1
+                    to: 0.8
                 }
             }
             popTransition: StackViewTransition {
@@ -75,6 +89,13 @@ ApplicationWindow {
                     duration: 300
                     easing.type: Easing.InOutQuad
                     to: exitItem.width
+                }
+                PropertyAnimation {
+                    target: exitItem
+                    property: "scale"
+                    duration: 300
+                    from: 1
+                    to: 1.2
                 }
                 PropertyAnimation {
                     target: enterItem
@@ -92,7 +113,6 @@ ApplicationWindow {
                 }
             }
         }
-
         Component {
             id: feed
             FeedView {
@@ -129,22 +149,14 @@ ApplicationWindow {
                 loginDialog.clear();
             }
         }
-//        MouseArea {
-//            enabled: stack.depth > 1
-//            anchors.fill: parent
-//            drag.target: stack.currentItem
-//            drag.axis: Drag.XAxis
-//            drag.minimumX: 0
-//            drag.maximumX: stack.width
-//        }
     }
     MainMenu {
         onModeChanged: {
             var item = stack.find(function (item) {
-                return item.mode === mode;
+                return item.mode === mode //&& (mode !== FeedModel.TlogMode || item.tlog === tlog)
             });
             if (item) {
-                console.log('found');
+//                console.log('found');
                 stack.pop(item);
                 return;
             }

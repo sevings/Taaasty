@@ -23,8 +23,8 @@ Rectangle {
             anchors.right: parent.right
             property color fontColor: window.textColor
             height: 50 + content.height + entryTitle.height + entryAvatar.height + comments.height + firstImage.height
-            MouseArea {
-                anchors.fill: parent
+            Poppable {
+                body: back
                 onClicked: {
                     entryClicked(entry);
                 }
@@ -135,9 +135,6 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.margins: 10
             }
-        }
-        Poppable {
-            body: back
         }
     }
 }

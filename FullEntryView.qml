@@ -22,6 +22,9 @@ Rectangle {
             anchors.right: parent.right
             //color: window.backgroundColor
             height: 40 + commentText.paintedHeight + nameText.paintedHeight
+            Poppable {
+                body: back
+            }
             SmallAvatar {
                 id: commentAvatar
                 anchors.margins: 10
@@ -67,13 +70,7 @@ Rectangle {
                 font.pointSize: 17
                 textFormat: Text.RichText
             }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    fullEntry.commentAuthor = comment.userName;
-                    //window.showCommentMenu = true;
-                }
-            }
+
         }
         header: Item {
             id: fullEntryContent
@@ -83,12 +80,9 @@ Rectangle {
                     + fullEntryFavButton.height + fullEntryDate.height
                     + loadMoreButton.height
                     + fullEntryImages.height
-            //        ImagesView {
-            //            id: fullEntryImages
-            //            model: fullEntryAttach
-            //            height: fullEntry.wholeHeight * width
-            //            anchors.top: parent.top
-            //        }
+            Poppable {
+                body: back
+            }
             ListView {
                 id: fullEntryImages
                 anchors.top: parent.top
@@ -209,7 +203,7 @@ Rectangle {
                 anchors.margins: 10
                 anchors.topMargin: 20
                 text: 'Еще'
-                height: 64
+                height: visible ? 64 : 0
                 width: parent.width / 3
                 fontSize: fullEntryFavButton.fontSize
                 visible: commentsModel.hasMore
@@ -221,9 +215,6 @@ Rectangle {
             onSent: {
                 entry.addComment(commentEditor.message);
             }
-        }
-        Poppable {
-            body: back
         }
     }
 }
