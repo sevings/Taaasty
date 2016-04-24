@@ -28,6 +28,10 @@ public:
     void incBusy();
     void decBusy();
 
+    Q_INVOKABLE static QString num2str(const int n, const QString str1,
+                    const QString str234, const QString str5);
+    static QString parseDate(const QString d);
+
 signals:
     void busyChanged();
 

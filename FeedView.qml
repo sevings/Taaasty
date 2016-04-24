@@ -93,7 +93,7 @@ Rectangle {
                     style: Text.Outline
                     styleColor: window.backgroundColor
                     property int total: entry.attachedImagesModel().rowCount()
-                    text: total + ' images'
+                    text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
                     visible: total > 1
                 }
             }

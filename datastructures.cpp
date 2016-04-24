@@ -1,5 +1,6 @@
 #include "datastructures.h"
 
+#include "tasty.h"
 #include "apirequest.h"
 #include "commentsmodel.h"
 #include "attachedimagesmodel.h"
@@ -11,7 +12,7 @@ Entry::Entry(const QJsonObject data, QObject *parent)
     , _commentsModel(nullptr)
 {
     _id              = data.value("id").toInt();
-    _createdAt       = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+    _createdAt       = Tasty::parseDate(data.value("created_at").toString());
     _url             = data.value("entry_url").toString();
     _type            = data.value("type").toString();
     _isVotable       = data.value("is_voteable").toBool();
@@ -177,7 +178,7 @@ void Comment::_init(const QJsonObject data)
     _id             = data.value("id").toInt();
     _user           = new User(data.value("user").toObject(), this);
     _html           = data.value("comment_html").toString();
-    _createdAt      = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+    _createdAt      = Tasty::parseDate(data.value("created_at").toString());
     _isEditable     = data.value("can_edit").toBool();
     _isReportable   = data.value("can_report").toBool();
     _isDeletable    = data.value("can_delete").toBool();

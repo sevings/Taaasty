@@ -1,6 +1,7 @@
 #include "tasty.h"
 #include "apirequest.h"
 
+#include <QDateTime>
 #include <QDebug>
 
 
@@ -29,11 +30,15 @@ Tasty* Tasty::instance()
     return tasty;
 }
 
+
+
 void Tasty::incBusy()
 {
     _busy++;
     emit busyChanged();
 }
+
+
 
 void Tasty::decBusy()
 {
@@ -42,6 +47,38 @@ void Tasty::decBusy()
         _busy--;
         emit busyChanged();
     }
+}
+
+
+
+QString Tasty::num2str(const int n, const QString str1, const QString str234, const QString str5)
+{
+    QString res = QString("%1 %2").arg(n);
+    if (n % 10 == 1 && n % 100 != 11)
+        res = res.arg(str1);
+    else if ((n % 10 > 1 && n % 10 < 5) && (n % 100 < 10 || n % 100 > 20))
+        res = res.arg(str234);
+    else
+        res = res.arg(str5);
+    return res;
+}
+
+
+
+QString Tasty::parseDate(const QString d)
+{
+    auto datetime = QDateTime::fromString(d.left(19), "yyyy-MM-ddTHH:mm:ss");
+    auto date = datetime.date();
+    auto today = QDate::currentDate();
+
+    if (today == date)
+        return datetime.toString("Сегодня в HH:mm");
+    if (today == date.addDays(1))
+        return datetime.toString("Вчера в HH:mm");
+
+    bool showYear = date.year() != today.year();
+    QString format = showYear ? "d MMM yyyy" : "d MMM в HH:mm";
+    return datetime.toString(format);
 }
 
 

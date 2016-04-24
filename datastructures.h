@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QDateTime>
 
 class Entry;
 class Comment;
@@ -24,7 +23,7 @@ class Entry: public QObject
     friend class CommentsModel;
 
     Q_PROPERTY(int         id             MEMBER _id                CONSTANT)
-    Q_PROPERTY(QDateTime   createdAt      MEMBER _createdAt         CONSTANT)
+    Q_PROPERTY(QString     createdAt      MEMBER _createdAt         CONSTANT)
     Q_PROPERTY(QString     url            MEMBER _url               CONSTANT)
     Q_PROPERTY(QString     type           MEMBER _type              CONSTANT)
     Q_PROPERTY(bool        isVotable      MEMBER _isVotable         CONSTANT)
@@ -67,7 +66,7 @@ private slots:
 
 private:
     int         _id;
-    QDateTime   _createdAt;
+    QString     _createdAt;
     QString     _url;
     QString     _type;
     bool        _isVotable;
@@ -122,7 +121,7 @@ class Comment: public QObject
     Q_PROPERTY(int         id           MEMBER _id             CONSTANT)
     Q_PROPERTY(User*       user         MEMBER _user           CONSTANT)
     Q_PROPERTY(QString     html         MEMBER _html           CONSTANT)
-    Q_PROPERTY(QDateTime   createdAt    MEMBER _createdAt      CONSTANT)
+    Q_PROPERTY(QString     createdAt    MEMBER _createdAt      CONSTANT)
     Q_PROPERTY(bool        isEditable   MEMBER _isEditable     CONSTANT)
     Q_PROPERTY(bool        isReportable MEMBER _isReportable   CONSTANT)
     Q_PROPERTY(bool        isDeletable  MEMBER _isDeletable    CONSTANT)
@@ -144,7 +143,7 @@ private:
     int         _id;
     User*       _user;
     QString     _html;
-    QDateTime   _createdAt;
+    QString     _createdAt;
     bool        _isEditable;
     bool        _isReportable;
     bool        _isDeletable;
