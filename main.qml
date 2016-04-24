@@ -180,7 +180,7 @@ ApplicationWindow {
             }
             onAuthorized: {
                 stack.pop(loginDialog);
-                loginDialog.clear();
+//                loginDialog.clear();
             }
         }
     }

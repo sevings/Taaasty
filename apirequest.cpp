@@ -74,7 +74,7 @@ ApiRequest::~ApiRequest()
 
 void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 {
-    qDebug() << code << _reply->errorString();
+    qDebug() << code << _reply->errorString(); //AuthenticationRequiredError 204, UnknownContentError 299
 
     emit error(code);
 }
