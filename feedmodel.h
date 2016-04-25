@@ -2,10 +2,8 @@
 #define FEEDMODEL_H
 
 #include <QObject>
-#include <QDateTime>
 #include <QAbstractListModel>
 #include <QJsonObject>
-#include <QJsonArray>
 
 class Entry;
 

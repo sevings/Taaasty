@@ -13,7 +13,8 @@ SOURCES += main.cpp \
     cachemanager.cpp \
     commentsmodel.cpp \
     datastructures.cpp \
-    attachedimagesmodel.cpp
+    attachedimagesmodel.cpp \
+    usersmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -32,4 +33,5 @@ HEADERS += \
     cachemanager.h \
     commentsmodel.h \
     datastructures.h \
-    attachedimagesmodel.h
+    attachedimagesmodel.h \
+    usersmodel.h

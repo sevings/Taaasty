@@ -4,13 +4,13 @@ import org.binque.taaasty 1.0
 
 Rectangle {
     id: back
+    color: window.backgroundColor
+    signal popped
+    property bool poppable
     property int mode: FeedModel.LiveMode
     property int tlog
     signal entryClicked(TlogEntry entry)
     signal avatarClicked(Tlog tlog, Author author)
-    signal popped
-    property bool poppable
-    color: window.backgroundColor
     Poppable {
         body: back
         Text {

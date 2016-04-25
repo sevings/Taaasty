@@ -167,8 +167,43 @@ ApplicationWindow {
                                    }
                                })
                 }
+                onFollowersRequested: {
+                    stack.push({
+                                   item: users,
+                                   properties: {
+                                       mode: UsersModel.FollowersMode,
+                                       tlog: author.id
+                                   }
+                               })
+                }
+                onFollowingsRequested: {
+                    stack.push({
+                                   item: users,
+                                   properties: {
+                                       mode: UsersModel.FollowingsMode,
+                                       tlog: author.id
+                                   }
+                               })
+                }
             }
         }
+        Component {
+            id: users
+            UsersView {
+                onPopped: stack.pop()
+                poppable: Stack.index > 0
+                onTlogRequested: {
+                    stack.push({
+                                   item: feed,
+                                   properties: {
+                                       mode: FeedModel.TlogMode,
+                                       tlog: tlog
+                                   }
+                               })
+                }
+            }
+        }
+
         Component {
             id: loginDialog
             LoginDialog { }

@@ -1,5 +1,7 @@
 #include "feedmodel.h"
 
+#include <QDateTime>
+#include <QJsonArray>
 #include <QDebug>
 
 #include "apirequest.h"
@@ -21,7 +23,7 @@ FeedModel::FeedModel(QObject* parent)
 
 FeedModel::~FeedModel()
 {
-    qDeleteAll(_entries);
+//    qDeleteAll(_entries);
 }
 
 

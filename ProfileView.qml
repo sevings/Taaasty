@@ -11,6 +11,8 @@ Rectangle {
     }
     property Author author: tlog.author
     signal tlogRequested
+    signal followersRequested
+    signal followingsRequested
     signal popped
     property bool poppable
     Flickable {
@@ -130,12 +132,14 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: tlog.followersCount
+                onClicked: profileView.followersRequested()
             }
             ThemedButton {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: tlog.followingsCount
                 visible: !author.isFlow
+                onClicked: profileView.followingsRequested()
             }
         }
     }

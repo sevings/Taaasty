@@ -8,6 +8,7 @@
 #include "feedmodel.h"
 #include "commentsmodel.h"
 #include "attachedimagesmodel.h"
+#include "usersmodel.h"
 
 
 
@@ -20,6 +21,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
     qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
+    qmlRegisterType<UsersModel>         ("org.binque.taaasty", 1, 0, "UsersModel");
 
     qmlRegisterType<Entry>          ("org.binque.taaasty", 1, 0, "TlogEntry");
     qmlRegisterType<Comment>        ("org.binque.taaasty", 1, 0, "Comment");

@@ -15,5 +15,6 @@
         <file>MessageEditor.qml</file>
         <file>ProfileView.qml</file>
         <file>LineInput.qml</file>
+        <file>UsersView.qml</file>
     </qresource>
 </RCC>
