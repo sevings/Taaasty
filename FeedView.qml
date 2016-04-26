@@ -40,7 +40,8 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             property color fontColor: window.textColor
-            height: 70 + content.height + entryTitle.height + entryAvatar.height + comments.height + firstImage.height
+            height: 80 + content.height + entryTitle.height + entryAvatar.height + comments.height
+                    + firstImage.height + quoteSource.height
             Poppable {
                 body: back
                 onClicked: {
@@ -124,7 +125,6 @@ Rectangle {
                 id: entryTitle
                 text: entry.truncatedTitle
                 anchors.top: firstImage.bottom
-//                anchors.top: entryAvatar.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
@@ -142,6 +142,8 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
+                anchors.leftMargin: entry.type === 'quote' ? 50 : 10
+                anchors.rightMargin: anchors.leftMargin
                 wrapMode: Text.Wrap
                 font.pointSize: 20
                 color: parent.fontColor
@@ -150,11 +152,26 @@ Rectangle {
                                                        : entry.truncatedTitle.length > 0 ? -20 : 0
             }
             Text {
+                id: quoteSource
+                text: entry.source
+                anchors.top: content.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 10
+                wrapMode: Text.Wrap
+                font.pointSize: 16
+                font.italic: true
+                color: parent.fontColor
+                textFormat: Text.RichText
+                height: entry.source.length > 0 ? paintedHeight : 0
+                horizontalAlignment: Text.AlignRight
+            }
+            Text {
                 id: comments
                 text: entry.commentsCount + ' коммент.'
                 color: entryView.fontColor
                 font.pointSize: 15
-                anchors.top: content.bottom
+                anchors.top: quoteSource.bottom
                 anchors.right: parent.right
                 anchors.margins: 10
             }

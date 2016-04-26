@@ -29,6 +29,7 @@ Entry::Entry(const QJsonObject data, QObject *parent)
     _truncatedTitle  = data.value("title_truncated").toString();
     _text            = data.value("text").toString();
     _truncatedText   = data.value("text_truncated").toString();
+    _source          = data.value("source").toString();
     _imagePreview    = data.value("preview_image").toObject();
 
     _commentsModel = new CommentsModel(this);

@@ -89,7 +89,7 @@ Rectangle {
             id: fullEntryContent
             anchors.left: parent.left
             anchors.right: parent.right
-            height: fullTitle.height + fullContent.height + 100
+            height: 90 + fullTitle.height + fullContent.height + quoteSource.height
                     + fullEntryFavButton.height + fullEntryDate.height
                     + loadMoreButton.height
                     + fullEntryImages.height
@@ -140,6 +140,8 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
+                anchors.leftMargin: entry.type === 'quote' ? 50 : 10
+                anchors.rightMargin: anchors.leftMargin
                 wrapMode: Text.Wrap
                 font.pointSize: 20
                 color: window.textColor
@@ -147,10 +149,25 @@ Rectangle {
                 height: entry.text.length > 0 ? paintedHeight : entry.title.length > 0 ? -20 : 0
             }
             Text {
+                id: quoteSource
+                text: entry.source
+                anchors.top: fullContent.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 10
+                wrapMode: Text.Wrap
+                font.pointSize: 16
+                font.italic: true
+                color: window.textColor
+                textFormat: Text.RichText
+                height: entry.source.length > 0 ? paintedHeight : 0
+                horizontalAlignment: Text.AlignRight
+            }
+            Text {
                 id: fullEntryDate
                 text: entry.createdAt
                 color: window.secondaryTextColor
-                anchors.top: fullContent.bottom
+                anchors.top: quoteSource.bottom
                 anchors.left: parent.left
                 anchors.margins: 10
                 font.pointSize: 15

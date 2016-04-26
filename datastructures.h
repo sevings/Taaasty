@@ -42,6 +42,7 @@ class Entry: public QObject
     Q_PROPERTY(QString     truncatedTitle MEMBER _truncatedTitle    CONSTANT)
     Q_PROPERTY(QString     text           MEMBER _text              CONSTANT)
     Q_PROPERTY(QString     truncatedText  MEMBER _truncatedText     CONSTANT)
+    Q_PROPERTY(QString     source         MEMBER _source            CONSTANT)
     Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      CONSTANT)
 
 public:
@@ -85,6 +86,7 @@ private:
     QString     _truncatedTitle;
     QString     _text;
     QString     _truncatedText;
+    QString     _source;
     QJsonObject _imagePreview;
 
     CommentsModel*       _commentsModel;
