@@ -9,6 +9,7 @@
 #include "commentsmodel.h"
 #include "attachedimagesmodel.h"
 #include "usersmodel.h"
+#include "notificationsmodel.h"
 
 
 
@@ -22,6 +23,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
     qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
     qmlRegisterType<UsersModel>         ("org.binque.taaasty", 1, 0, "UsersModel");
+    qmlRegisterType<NotificationsModel> ("org.binque.taaasty", 1, 0, "NotificationsModel");
 
     qmlRegisterType<Entry>          ("org.binque.taaasty", 1, 0, "TlogEntry");
     qmlRegisterType<Comment>        ("org.binque.taaasty", 1, 0, "Comment");
@@ -30,6 +32,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Tlog>           ("org.binque.taaasty", 1, 0, "Tlog");
     qmlRegisterType<Rating>         ("org.binque.taaasty", 1, 0, "Rating");
     qmlRegisterType<AttachedImage>  ("org.binque.taaasty", 1, 0, "AttachedImage");
+    qmlRegisterType<Notification>   ("org.binque.taaasty", 1, 0, "Notification");
 
     qmlRegisterType<ImageCache>("ImageCache", 1, 0, "ImageCache");
 

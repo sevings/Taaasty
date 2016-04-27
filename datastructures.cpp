@@ -326,3 +326,21 @@ void Rating::_init(const QJsonObject data)
 
     emit dataChanged();
 }
+
+
+
+Notification::Notification(const QJsonObject data, QObject *parent)
+    : QObject(parent)
+{
+    _id         = data.value("id").toInt();
+    _createdAt  = Tasty::parseDate(data.value("created_at").toString());
+    _sender     = new User(data.value("sender").toObject(), this);
+    _read       = data.value("read_at").toBool(true); // that's there actually?
+    _action     = data.value("action").toString();
+    _actionText = data.value("action_text").toString();
+    _text       = data.value("text").toString();
+    _entityId   = data.value("entity_id").toInt();
+    _entityType = data.value("entity_type").toString();
+    _parentId   = data.value("parent_id").toInt();
+    _parentType = data.value("parent_type").toString();
+}

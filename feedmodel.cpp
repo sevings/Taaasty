@@ -166,6 +166,7 @@ void FeedModel::_addItems(QJsonObject data)
     {
         _hasMore = false;
         emit hasMoreChanged();
+        _loading = false;
         return;
     }
 

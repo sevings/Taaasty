@@ -91,6 +91,7 @@ void CommentsModel::_addComments(const QJsonObject data)
     {
         _totalCount = _comments.size();
         emit hasMoreChanged();
+        _loading = false;
         return;
     }
 

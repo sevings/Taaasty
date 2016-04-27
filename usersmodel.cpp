@@ -155,6 +155,7 @@ void UsersModel::_addItems(QJsonObject data)
     {
         _total = _users.size();
         emit hasMoreChanged();
+        _loading = false;
         return;
     }
 

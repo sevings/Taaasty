@@ -239,4 +239,7 @@ ApplicationWindow {
                        })
         }
     }
+    NotificationsView {
+        anchors.fill: parent
+    }
 }

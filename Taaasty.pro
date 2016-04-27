@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     commentsmodel.cpp \
     datastructures.cpp \
     attachedimagesmodel.cpp \
-    usersmodel.cpp
+    usersmodel.cpp \
+    notificationsmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -34,4 +35,5 @@ HEADERS += \
     commentsmodel.h \
     datastructures.h \
     attachedimagesmodel.h \
-    usersmodel.h
+    usersmodel.h \
+    notificationsmodel.h
