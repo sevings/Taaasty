@@ -39,7 +39,7 @@ Rectangle {
                 anchors.leftMargin: 10
                 anchors.rightMargin: 10
                 wrapMode: Text.Wrap
-                font.pointSize: 18
+                font.pointSize: window.fontSmaller
                 style: Text.Raised
                 styleColor: 'lightblue'
             }
@@ -63,7 +63,7 @@ Rectangle {
                 anchors.left: notifName.left
                 anchors.right: parent.right
                 wrapMode: Text.Wrap
-                font.pointSize: 17
+                font.pointSize: window.fontSmaller
             }
         }
     }

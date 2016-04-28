@@ -6,7 +6,7 @@ MouseArea {
     height: 80
     property color textColor: window.textColor
     property string text
-    property int fontSize: 25
+    property int fontSize: window.fontNormal
     property bool checked: false
     preventStealing: true
     Rectangle {

@@ -44,7 +44,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
-                font.pointSize: 35
+                font.pointSize: window.fontBiggest
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 color: window.textColor
@@ -55,7 +55,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
-                font.pointSize: 25
+                font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 color: window.textColor
@@ -66,7 +66,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
-                font.pointSize: 25
+                font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 color: window.textColor
@@ -78,7 +78,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
-                font.pointSize: 25
+                font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 color: window.textColor
@@ -90,7 +90,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
-                font.pointSize: 25
+                font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 color: window.textColor
@@ -101,7 +101,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
-                font.pointSize: 25
+                font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 color: window.textColor
@@ -113,7 +113,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
-                font.pointSize: 25
+                font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 color: window.textColor

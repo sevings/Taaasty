@@ -56,7 +56,7 @@ Rectangle {
                 anchors.leftMargin: 10
                 anchors.rightMargin: 10
                 wrapMode: Text.Wrap
-                font.pointSize: 20
+                font.pointSize: window.fontNormal
                 font.bold: true
                 style: Text.Raised
                 styleColor: window.brightColor
@@ -69,7 +69,7 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.leftMargin: 10
                 anchors.rightMargin: 10
-                font.pointSize: 15
+                font.pointSize: window.fontSmaller
             }
             Text {
                 id: commentText
@@ -80,7 +80,7 @@ Rectangle {
                 anchors.left: nameText.left
                 anchors.right: parent.right
                 wrapMode: Text.Wrap
-                font.pointSize: 17
+                font.pointSize: window.fontSmaller
                 textFormat: Text.RichText
             }
 
@@ -128,7 +128,8 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.margins: 10
                 wrapMode: Text.Wrap
-                font.pointSize: entry.text.length > 0 ? 25 : 20
+                font.pointSize: (entry.text.length > 0 ? window.fontBigger
+                                                      : window.fontNormal)
                 color: window.textColor
                 textFormat: Text.RichText
                 height: entry.title.length > 0 ? paintedHeight : entry.text.length > 0 ? -20 : 0
@@ -143,7 +144,7 @@ Rectangle {
                 anchors.leftMargin: entry.type === 'quote' ? 50 : 10
                 anchors.rightMargin: anchors.leftMargin
                 wrapMode: Text.Wrap
-                font.pointSize: 20
+                font.pointSize: window.fontNormal
                 color: window.textColor
                 textFormat: Text.RichText
                 height: entry.text.length > 0 ? paintedHeight : entry.title.length > 0 ? -20 : 0
@@ -156,11 +157,11 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.margins: 10
                 wrapMode: Text.Wrap
-                font.pointSize: 16
+                font.pointSize: window.fontSmaller
                 font.italic: true
                 color: window.textColor
                 textFormat: Text.RichText
-                height: entry.source.length > 0 ? paintedHeight : 0
+                height: entry.source.length > 0 ? paintedHeight : -10
                 horizontalAlignment: Text.AlignRight
             }
             Text {
@@ -170,16 +171,16 @@ Rectangle {
                 anchors.top: quoteSource.bottom
                 anchors.left: parent.left
                 anchors.margins: 10
-                font.pointSize: 15
+                font.pointSize: window.fontSmallest
             }
             Text {
                 id: fullEntryCommentsCount
                 text: entry.commentsCount + ' коммент.'
                 color: window.secondaryTextColor
-                anchors.top: fullContent.bottom
+                anchors.top: quoteSource.bottom
                 anchors.right: parent.right
                 anchors.margins: 10
-                font.pointSize: 15
+                font.pointSize: window.fontSmallest
             }
             ThemedButton {
                 id: fullEntryFavButton

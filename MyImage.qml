@@ -62,7 +62,7 @@ ImageCache {
             }
             Text {
                 id: bytesText
-                font.pointSize: 18
+                font.pointSize: window.fontSmaller
                 text: cache.isDownloading ? cache.kbytesReceived + ' / ' + cache.kbytesTotal + ' KB' : cache.type//cache.extension
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left

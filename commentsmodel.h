@@ -18,7 +18,7 @@ class CommentsModel : public QAbstractListModel
 public:
     explicit CommentsModel(Entry* entry = nullptr);
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    Q_INVOKABLE int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
     Q_INVOKABLE int entryId() const { return _entryId; }

@@ -18,7 +18,7 @@ Rectangle {
         anchors.bottom: mail.top
         anchors.horizontalCenter: parent.horizontalCenter
         color: window.textColor
-        font.pointSize: 25
+        font.pointSize: window.fontBigger
     }
     LineInput {
         id: mail
@@ -34,7 +34,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 20
         color: window.textColor
-        font.pointSize: 25
+        font.pointSize: window.fontBigger
     }
     LineInput {
         id: password

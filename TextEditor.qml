@@ -43,7 +43,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             color: window.textColor
-            font.pointSize: 20
+            font.pointSize: window.fontNormal
             wrapMode: TextEdit.Wrap
             onCursorRectangleChanged: flickText.ensureVisible(cursorRectangle)
             textFormat: Text.PlainText

@@ -18,7 +18,7 @@ Rectangle {
             anchors.centerIn: parent
             color: window.secondaryTextColor
             horizontalAlignment: Text.AlignHCenter
-            font.pointSize: 30
+            font.pointSize: window.fontBigger
             wrapMode: Text.Wrap
             text: 'Нет записей'
         }
@@ -63,7 +63,7 @@ Rectangle {
                 id: nick
                 text: entry.author.name
                 color: entryView.fontColor
-                font.pointSize: 20
+                font.pointSize: window.fontSmaller
                 anchors.top: parent.top
                 anchors.left: entryAvatar.right
                 anchors.right: entryVoteButton.left
@@ -75,10 +75,11 @@ Rectangle {
                 id: date
                 text: entry.createdAt
                 color: window.secondaryTextColor
-                font.pointSize: 14
-                anchors.top: nick.bottom
+                font.pointSize: window.fontSmallest
+//                anchors.top: nick.bottom
                 anchors.left: entryAvatar.right
-                anchors.margins: 10
+                anchors.bottom: entryAvatar.bottom
+                anchors.leftMargin: 10
             }
             ThemedButton {
                 id: entryVoteButton
@@ -112,7 +113,7 @@ Rectangle {
                     anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.margins: 5
-                    font.pointSize: 14
+                    font.pointSize: window.fontSmallest
                     color: window.textColor
                     style: Text.Outline
                     styleColor: window.backgroundColor
@@ -129,7 +130,8 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.margins: 10
                 wrapMode: Text.Wrap
-                font.pointSize: entry.truncatedText.length > 0 ? 25 : 20
+                font.pointSize: entry.truncatedText.length > 0 ? window.fontBigger
+                                                               : window.fontNormal
                 color: parent.fontColor
                 textFormat: Text.RichText
                 height: entry.truncatedTitle.length > 0 ? paintedHeight
@@ -145,7 +147,7 @@ Rectangle {
                 anchors.leftMargin: entry.type === 'quote' ? 50 : 10
                 anchors.rightMargin: anchors.leftMargin
                 wrapMode: Text.Wrap
-                font.pointSize: 20
+                font.pointSize: window.fontNormal
                 color: parent.fontColor
                 textFormat: Text.RichText
                 height: entry.truncatedText.length > 0 ? paintedHeight
@@ -159,7 +161,7 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.margins: 10
                 wrapMode: Text.Wrap
-                font.pointSize: 16
+                font.pointSize: window.fontSmaller
                 font.italic: true
                 color: parent.fontColor
                 textFormat: Text.RichText
@@ -170,7 +172,7 @@ Rectangle {
                 id: comments
                 text: entry.commentsCount + ' коммент.'
                 color: entryView.fontColor
-                font.pointSize: 15
+                font.pointSize: window.fontSmallest
                 anchors.top: quoteSource.bottom
                 anchors.right: parent.right
                 anchors.margins: 10

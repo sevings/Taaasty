@@ -27,7 +27,7 @@ Rectangle {
             anchors.centerIn: parent
             color: window.secondaryTextColor
             horizontalAlignment: Text.AlignHCenter
-            font.pointSize: 30
+            font.pointSize: window.fontBiggest
             wrapMode: Text.Wrap
             text: 'Список пуст'
         }
@@ -67,7 +67,7 @@ Rectangle {
             }
             Text {
                 id: usersName
-                font.pointSize: 25
+                font.pointSize: window.fontBigger
                 color: window.textColor //(window.secondMode === 'bayes' && !bayes_include) ? '#808080' : window.textColor
                 text: user.name
                 anchors.verticalCenter: parent.verticalCenter
@@ -83,7 +83,7 @@ Rectangle {
             height: usersTitle.paintedHeight + 20
             Text {
                 id: usersTitle
-                font.pointSize: 25
+                font.pointSize: window.fontBigger
                 color: window.textColor
                 text: back.title
                 anchors.centerIn: parent

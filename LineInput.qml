@@ -31,7 +31,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.margins: 5
         color: window.textColor
-        font.pointSize: 20
+        font.pointSize: window.fontNormal
         onAccepted: parent.accepted()
         echoMode: parent.echoMode
     }

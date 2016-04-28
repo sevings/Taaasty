@@ -11,6 +11,11 @@ ApplicationWindow {
     property color textColor: 'white'
     property color secondaryTextColor: 'darkgrey'
     property color brightColor: '#00DF84'
+    property int fontBiggest: 30
+    property int fontBigger: 25
+    property int fontNormal: 20
+    property int fontSmaller: 17
+    property int fontSmallest: 14
     property bool cashedImages: false
 //    property bool unreadNotifications: false
 //    property int unreadMessages: 0
@@ -239,7 +244,7 @@ ApplicationWindow {
                        })
         }
     }
-    NotificationsView {
-        anchors.fill: parent
-    }
+//    NotificationsView {
+//        anchors.fill: parent
+//    }
 }
