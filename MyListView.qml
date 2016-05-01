@@ -1,28 +1,22 @@
 import QtQuick 2.3
+import org.binque.taaasty 1.0
 
 ListView {
     id: list
-//    anchors.fill: parent
-    anchors.topMargin: 10
-    anchors.bottomMargin: 10
     highlightFollowsCurrentItem: false
     cacheBuffer: 1000
     flickableDirection: Flickable.VerticalFlick
     property bool poppable: true
-    signal popped
-//    signal aboveBegin
-//    signal nearEnd
-//    property int endHeight: 2
-//    onContentYChanged: {
-//        if (contentHeight - contentY < window.height * endHeight || atYEnd) {
-//            list.nearEnd();
-//        }
-//    }
-//    onFlickStarted: {
-//        if (contentY < 0) {
-//            list.aboveBegin();
-//        }
-//    }
+    boundsBehavior: Flickable.DragOverBounds
+    onContentYChanged: {
+        if (!dragging)
+            return;
+
+        if (verticalVelocity > 0)
+            window.hideFooter();
+        else
+            window.showFooter();
+    }
     Rectangle {
         id: scrollbar
         anchors.right: parent.right

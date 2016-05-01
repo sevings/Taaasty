@@ -4,13 +4,16 @@ import org.binque.taaasty 1.0
 Rectangle {
     id: back
     color: window.backgroundColor
+    clip: true
+    signal avatarClicked(int tlog)
+    signal entryRequested(int entry, bool showProfile)
+    property NotificationsModel notifs: NotificationsModel { }
     Poppable {
         body: back
     }
     MyListView {
         id: notifsView
         anchors.fill: parent
-        property NotificationsModel notifs: NotificationsModel { }
         model:  notifs
         spacing: 20
         delegate: MouseArea {
@@ -19,14 +22,29 @@ Rectangle {
             anchors.right: parent.right
             height: notifName.paintedHeight + notifText.paintedHeight + 20
 //            body: back
+            readonly property bool showProfile: notification.parentType !== 'AnonymousEntry'
             onClicked: {
-                // Ctrl.goToNotificationSource(notifsModel.get(notifsView.indexAt(ix, iy)));
+                window.hideNotifs();
+                if (notification.entityType === 'Entry')
+                    entryRequested(notification.entityId, showProfile);
+                else if (notification.entityType === 'Comment')
+                    entryRequested(notification.parentId, showProfile);
+                else
+                    console.log(notification.entityType);
             }
             SmallAvatar {
                 id: notifAvatar
                 anchors.margins: 10
                 source: notification.sender.thumb64
                 symbol: notification.sender.symbol
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: showProfile
+                    onClicked: {
+                        window.hideNotifs();
+                        avatarClicked(notification.sender.id);
+                    }
+                }
             }
             Text {
                 id: notifName

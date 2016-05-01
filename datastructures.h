@@ -24,26 +24,29 @@ class Entry: public QObject
 
     friend class CommentsModel;
 
-    Q_PROPERTY(int         id             MEMBER _id                CONSTANT)
-    Q_PROPERTY(QString     createdAt      MEMBER _createdAt         CONSTANT)
-    Q_PROPERTY(QString     url            MEMBER _url               CONSTANT)
-    Q_PROPERTY(QString     type           MEMBER _type              CONSTANT)
-    Q_PROPERTY(bool        isVotable      MEMBER _isVotable         CONSTANT)
-    Q_PROPERTY(bool        isWatchable    MEMBER _isWatchable       CONSTANT)
+    Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated)
+    Q_PROPERTY(QString     createdAt      MEMBER _createdAt         NOTIFY updated)
+    Q_PROPERTY(QString     url            MEMBER _url               NOTIFY updated)
+    Q_PROPERTY(QString     type           MEMBER _type              NOTIFY updated)
+    Q_PROPERTY(bool        isVotable      MEMBER _isVotable         NOTIFY updated)
+    Q_PROPERTY(bool        isWatchable    MEMBER _isWatchable       NOTIFY updated)
     Q_PROPERTY(bool        isWatched      MEMBER _isWatched         NOTIFY watchedChanged)
-    Q_PROPERTY(bool        isFavoritable  MEMBER _isFavoritable     CONSTANT)
+    Q_PROPERTY(bool        isFavoritable  MEMBER _isFavoritable     NOTIFY updated)
     Q_PROPERTY(bool        isFavorited    MEMBER _isFavorited       NOTIFY favoritedChanged)
-    Q_PROPERTY(bool        isPrivate      MEMBER _isPrivate         CONSTANT)
-    Q_PROPERTY(Tlog*       tlog           MEMBER _tlog              CONSTANT)
-    Q_PROPERTY(Author*     author         MEMBER _author            CONSTANT)
-    Q_PROPERTY(Rating*     rating         MEMBER _rating            CONSTANT)
+    Q_PROPERTY(bool        isPrivate      MEMBER _isPrivate         NOTIFY updated)
+    Q_PROPERTY(Tlog*       tlog           MEMBER _tlog              NOTIFY updated)
+    Q_PROPERTY(Author*     author         MEMBER _author            NOTIFY updated)
+    Q_PROPERTY(Rating*     rating         MEMBER _rating            NOTIFY updated)
     Q_PROPERTY(int         commentsCount  MEMBER _commentsCount     NOTIFY commentsCountChanged)
-    Q_PROPERTY(QString     title          MEMBER _title             CONSTANT)
-    Q_PROPERTY(QString     truncatedTitle MEMBER _truncatedTitle    CONSTANT)
-    Q_PROPERTY(QString     text           MEMBER _text              CONSTANT)
-    Q_PROPERTY(QString     truncatedText  MEMBER _truncatedText     CONSTANT)
-    Q_PROPERTY(QString     source         MEMBER _source            CONSTANT)
-    Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      CONSTANT)
+    Q_PROPERTY(QString     title          MEMBER _title             NOTIFY updated)
+    Q_PROPERTY(QString     truncatedTitle MEMBER _truncatedTitle    NOTIFY updated)
+    Q_PROPERTY(QString     text           MEMBER _text              NOTIFY updated)
+    Q_PROPERTY(QString     truncatedText  MEMBER _truncatedText     NOTIFY updated)
+    Q_PROPERTY(QString     source         MEMBER _source            NOTIFY updated)
+    Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      NOTIFY updated)
+
+    Q_PROPERTY(CommentsModel*       commentsModel       READ commentsModel       NOTIFY updated)
+    Q_PROPERTY(AttachedImagesModel* attachedImagesModel READ attachedImagesModel NOTIFY updated)
 
 public:
     Entry(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
@@ -52,17 +55,23 @@ public:
     Q_INVOKABLE AttachedImagesModel* attachedImagesModel() { return _attachedImagesModel; }
 
 public slots:
+    int entryId() const { return _id; }
+    void setId(const int id);
+
     void addComment(const QString text);
     void watch();
     void favorite();
 
 signals:
+    void updated();
+
     void commentsCountChanged();
     void watchedChanged();
     void favoritedChanged();
     void commentAdded(const QJsonObject data);
 
 private slots:
+    void _init(const QJsonObject data);
     void _addComment();
     void _changeWatched(const QJsonObject data);
     void _changeFavorited(const QJsonObject data);

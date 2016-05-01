@@ -4,8 +4,11 @@ import org.binque.taaasty 1.0
 Rectangle {
     id: back
     color: window.backgroundColor
-    property TlogEntry entry
-    property CommentsModel commentsModel: entry.commentsModel()
+    property int entryId
+    property TlogEntry entry: TlogEntry {
+        entryId: back.entryId
+    }
+    property CommentsModel commentsModel: entry.commentsModel
     property bool showProfiles: true
     signal avatarClicked(int tlogId)
     signal popped
@@ -19,7 +22,6 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         height: contentHeight > parent.height ? parent.height : contentHeight
-        onPopped: back.popped()
         Component.onCompleted: {
             if (commentsModel.rowCount() === 0)
                 commentsModel.loadMore();
@@ -105,9 +107,9 @@ Rectangle {
                 anchors.bottomMargin: 10
                 interactive: false
                 //spacing: 10
-                property AttachedImagesModel imagesModel: entry.attachedImagesModel()
-                height: imagesModel.listRatio() * width
-                        + (imagesModel.rowCount() - 1) * 10
+                property AttachedImagesModel imagesModel: entry.attachedImagesModel
+                height: imagesModel ? (imagesModel.listRatio() * width
+                        + (imagesModel.rowCount() - 1) * 10) : 0
                 model: imagesModel
                 delegate: MyImage {
                     id: picture
@@ -237,7 +239,7 @@ Rectangle {
                 height: visible ? 64 : 0
                 width: parent.width / 3
                 fontSize: fullEntryFavButton.fontSize
-                visible: commentsModel.hasMore && !commentsModel.loading
+                visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
                 onClicked: commentsModel.loadMore()
             }
         }
@@ -245,6 +247,12 @@ Rectangle {
             id: commentEditor
             onSent: {
                 entry.addComment(commentEditor.message);
+            }
+            Connections {
+                target: entry
+                onCommentAdded: {
+                    commentEditor.clear();
+                }
             }
         }
     }

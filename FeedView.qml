@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 //import QtQuick.Controls 1.2
 import org.binque.taaasty 1.0
 
@@ -99,7 +99,7 @@ Rectangle {
             }
             MyImage {
                 id: firstImage
-                property AttachedImage image: entry.attachedImagesModel().first()
+                property AttachedImage image: entry.attachedImagesModel.first()
                 visible: image
                 anchors.top: entryAvatar.bottom
                 anchors.left: parent.left
@@ -117,7 +117,7 @@ Rectangle {
                     color: window.textColor
                     style: Text.Outline
                     styleColor: window.backgroundColor
-                    property int total: entry.attachedImagesModel().rowCount()
+                    property int total: entry.attachedImagesModel.rowCount()
                     text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
                     visible: total > 1
                 }

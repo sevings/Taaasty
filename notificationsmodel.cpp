@@ -81,6 +81,13 @@ void NotificationsModel::fetchMore(const QModelIndex& parent)
 
 
 
+bool NotificationsModel::unread() const
+{
+    return !_notifs.isEmpty() && !_notifs.first()->_read;
+}
+
+
+
 void NotificationsModel::markAsRead()
 {
     if (_notifs.isEmpty())
@@ -91,6 +98,7 @@ void NotificationsModel::markAsRead()
     
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
     connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_readSuccess(QJsonObject)));
+    connect(request, SIGNAL(success(QJsonObject)), this, SIGNAL(unreadChanged()));
 }
 
 
@@ -162,6 +170,9 @@ void NotificationsModel::_addItems(QJsonObject data)
         emit hasMoreChanged();
 
     _loading = false;
+
+    if (_notifs.size() <= list.size())
+        emit unreadChanged();
 }
 
 
@@ -190,4 +201,6 @@ void NotificationsModel::_addNewest(QJsonObject data)
     endInsertRows();
 
     _loading = false;
+
+    emit unreadChanged();
 }

@@ -15,6 +15,9 @@ Rectangle {
     signal followingsRequested
     signal popped
     property bool poppable
+    Component.onCompleted: {
+        window.hideFooter();
+    }
     Flickable {
         id: flickable
         anchors.fill: parent

@@ -17,5 +17,6 @@
         <file>LineInput.qml</file>
         <file>UsersView.qml</file>
         <file>NotificationsView.qml</file>
+        <file>Footer.qml</file>
     </qresource>
 </RCC>

@@ -7,6 +7,9 @@ Item {
     height: input.height + 20
     property string message
     signal sent
+    function clear() {
+        input.clear();
+    }
     TextEditor {
         id: input
         anchors.top: parent.top
@@ -22,7 +25,7 @@ Item {
         text: '+'
         onClicked: {
             editor.message = input.text;
-            input.clear();
+//            input.clear();
             editor.sent();
         }
     }

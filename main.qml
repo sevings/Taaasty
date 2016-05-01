@@ -17,7 +17,7 @@ ApplicationWindow {
     property int fontSmaller: 17
     property int fontSmallest: 14
     property bool cashedImages: false
-//    property bool unreadNotifications: false
+    property bool unreadNotifications: notifsModel.unread
 //    property int unreadMessages: 0
 //    property bool showNotifs: false
 //    property bool showCommentMenu: false
@@ -28,6 +28,27 @@ ApplicationWindow {
     color: backgroundColor
     Component.onCompleted: {
         //tasty.getMe();
+    }
+    function showNotifs() {
+        notifsView.y = 0;
+    }
+    function hideNotifs() {
+        notifsView.y = window.height;
+    }
+    function toggleNotifs() {
+        if (notifsView.y)
+            showNotifs();
+        else
+            hideNotifs();
+    }
+    function showFooter() {
+        footer.y = window.height - footer.height;
+    }
+    function hideFooter() {
+        footer.y = window.height;
+    }
+    NotificationsModel {
+        id: notifsModel
     }
     BusyBar {
         id: bar
@@ -244,7 +265,38 @@ ApplicationWindow {
                        })
         }
     }
-//    NotificationsView {
-//        anchors.fill: parent
-//    }
+    NotificationsView {
+        id: notifsView
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: parent.height
+        y: height
+        notifs: notifsModel
+        z: 5
+        Behavior on y {
+            NumberAnimation {
+                duration: 300
+            }
+        }
+        onAvatarClicked: {
+            stack.push({
+                           item: profile,
+                           properties: {
+                               tlogId: tlog
+                           }
+                       })
+        }
+        onEntryRequested: {
+            stack.push({
+                           item: fullEntry,
+                           properties: {
+                               entryId: entry,
+                               showProfiles: showProfile
+                           }
+                       })
+        }
+    }
+    Footer {
+        id: footer
+    }
 }

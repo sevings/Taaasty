@@ -10,32 +10,22 @@
 Entry::Entry(const QJsonObject data, QObject *parent)
     : QObject(parent)
     , _commentsModel(nullptr)
+    , _attachedImagesModel(nullptr)
 {
-    _id              = data.value("id").toInt();
-    _createdAt       = Tasty::parseDate(data.value("created_at").toString());
-    _url             = data.value("entry_url").toString();
-    _type            = data.value("type").toString();
-    _isVotable       = data.value("is_voteable").toBool();
-    _isFavoritable   = data.value("can_favorite").toBool();
-    _isFavorited     = data.value("is_favorited").toBool();
-    _isWatchable     = data.value("can_watch").toBool();
-    _isWatched       = data.value("is_watching").toBool();
-    _isPrivate       = data.value("is_private").toBool();
-    _tlog            = new Tlog(data.value("tlog").toObject(), this);
-    _author          = new Author(data.value("author").toObject(), this);
-    _rating          = new Rating(data.value("rating").toObject(), this);
-    _commentsCount   = data.value("comments_count").toInt();
-    _title           = data.value("title").toString();
-    _truncatedTitle  = data.value("title_truncated").toString();
-    _text            = data.value("text").toString();
-    _truncatedText   = data.value("text_truncated").toString();
-    _source          = data.value("source").toString();
-    _imagePreview    = data.value("preview_image").toObject();
+    _init(data);
+}
 
-    _commentsModel = new CommentsModel(this);
 
-    auto imageAttach = data.value("image_attachments").toArray();
-    _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
+
+void Entry::setId(const int id)
+{
+    if (id <= 0)
+        return;
+
+    _id = id;
+
+    auto request = new ApiRequest(QString("entries/%1.json").arg(_id));
+    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
 }
 
 
@@ -88,6 +78,42 @@ void Entry::favorite()
     }
 
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeFavorited(QJsonObject)));
+}
+
+
+
+void Entry::_init(const QJsonObject data)
+{
+    _id              = data.value("id").toInt();
+    _createdAt       = Tasty::parseDate(data.value("created_at").toString());
+    _url             = data.value("entry_url").toString();
+    _type            = data.value("type").toString();
+    _isVotable       = data.value("is_voteable").toBool();
+    _isFavoritable   = data.value("can_favorite").toBool();
+    _isFavorited     = data.value("is_favorited").toBool();
+    _isWatchable     = data.value("can_watch").toBool();
+    _isWatched       = data.value("is_watching").toBool();
+    _isPrivate       = data.value("is_private").toBool();
+    _tlog            = new Tlog(data.value("tlog").toObject(), this);
+    _author          = new Author(data.value("author").toObject(), this);
+    _rating          = new Rating(data.value("rating").toObject(), this);
+    _commentsCount   = data.value("comments_count").toInt();
+    _title           = data.value("title").toString();
+    _truncatedTitle  = data.value("title_truncated").toString();
+    _text            = data.value("text").toString();
+    _truncatedText   = data.value("text_truncated").toString();
+    _source          = data.value("source").toString();
+    _imagePreview    = data.value("preview_image").toObject();
+
+    delete _commentsModel;
+    _commentsModel = new CommentsModel(this);
+    _commentsModel->loadMore();
+
+    auto imageAttach = data.value("image_attachments").toArray();
+    delete _attachedImagesModel;
+    _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
+
+    emit updated();
 }
 
 
