@@ -107,7 +107,8 @@ void Entry::_init(const QJsonObject data)
 
     delete _commentsModel;
     _commentsModel = new CommentsModel(this);
-    _commentsModel->loadMore();
+//    if (_commentsModel->rowCount() == 0)
+//        _commentsModel->loadMore();
 
     auto imageAttach = data.value("image_attachments").toArray();
     delete _attachedImagesModel;

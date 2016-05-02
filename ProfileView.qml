@@ -15,9 +15,7 @@ Rectangle {
     signal followingsRequested
     signal popped
     property bool poppable
-    Component.onCompleted: {
-        window.hideFooter();
-    }
+//    Component.onCompleted: console.log(tlog.tlogId)
     Flickable {
         id: flickable
         anchors.fill: parent
@@ -110,7 +108,7 @@ Rectangle {
                 color: window.textColor
                 text: tlog.amIFollowing ? 'Вы подписаны' : 'Вы не подписаны'
                 height: text.length > 0 ? paintedHeight : 0
-                visible: tlog.id === author.id
+                visible: tlog.tlogId === author.id
             }
             Text {
                 anchors.left: parent.left
@@ -123,7 +121,7 @@ Rectangle {
                 text: tlog.isFollowingMe ? 'Следит за вашим тлогом'
                                          : 'Не следит за вашим тлогом'
                 height: text.length > 0 ? paintedHeight : 0
-                visible: tlog.id === author.id && !author.isFlow
+                visible: tlog.tlogId === author.id && !author.isFlow
             }
             ThemedButton {
                 anchors.left: parent.left
@@ -136,13 +134,14 @@ Rectangle {
                 anchors.right: parent.right
                 text: tlog.followersCount
                 onClicked: profileView.followersRequested()
+                visible: tlog.tlogId === author.id && !author.isFlow
             }
             ThemedButton {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: tlog.followingsCount
-                visible: !author.isFlow
                 onClicked: profileView.followingsRequested()
+                visible: tlog.tlogId === author.id && !author.isFlow
             }
         }
     }

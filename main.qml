@@ -59,6 +59,25 @@ ApplicationWindow {
         id: stack
         anchors.fill: parent
         initialItem: feed
+        onCurrentItemChanged: {
+            if (!stack.currentItem)
+                return;
+
+            if (stack.currentItem.customTitle) {
+                footer.title = stack.currentItem.title;
+                footer.tlog = emptyTlog;
+            }
+            else {
+                footer.title = '';
+                footer.tlog = stack.currentItem.tlog;
+            }
+
+            window.hideFooter()
+        }
+        Tlog {
+            id: emptyTlog
+        }
+
         delegate: StackViewDelegate {
             function transitionFinished(properties)
             {
@@ -189,7 +208,7 @@ ApplicationWindow {
                                    item: feed,
                                    properties: {
                                        mode: FeedModel.TlogMode,
-                                       tlog: author.id
+                                       tlogId: author.id
                                    }
                                })
                 }
@@ -198,7 +217,8 @@ ApplicationWindow {
                                    item: users,
                                    properties: {
                                        mode: UsersModel.FollowersMode,
-                                       tlog: author.id
+                                       tlogId: author.id,
+                                       tlog: tlog
                                    }
                                })
                 }
@@ -207,7 +227,8 @@ ApplicationWindow {
                                    item: users,
                                    properties: {
                                        mode: UsersModel.FollowingsMode,
-                                       tlog: author.id
+                                       tlogId: author.id,
+                                       tlog: tlog
                                    }
                                })
                 }
@@ -223,7 +244,7 @@ ApplicationWindow {
                                    item: feed,
                                    properties: {
                                        mode: FeedModel.TlogMode,
-                                       tlog: tlog
+                                       tlogId: tlog
                                    }
                                })
                 }
@@ -260,7 +281,7 @@ ApplicationWindow {
                            item: feed,
                            properties: {
                                mode: mode,
-                               tlog: 281926
+                               tlogId: 281926
                            }
                        })
         }
@@ -298,5 +319,13 @@ ApplicationWindow {
     }
     Footer {
         id: footer
+        onAvatarClicked: {
+            stack.push({
+                           item: profile,
+                           properties: {
+                               tlog: tlog
+                           }
+                       })
+        }
     }
 }

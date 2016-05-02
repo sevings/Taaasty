@@ -8,7 +8,33 @@ Rectangle {
     signal popped
     property bool poppable
     property int mode: FeedModel.LiveMode
-    property int tlog
+    property int tlogId: 0
+    property Tlog tlog: Tlog {
+        tlogId: back.tlogId
+    }
+    readonly property string title: { // for footer
+        switch (back.mode) {
+        case FeedModel.MyTlogMode:
+            'My tlog'; break;
+        case FeedModel.LiveMode:
+            'Live'; break;
+        case FeedModel.FriendsMode:
+            'Friends'; break;
+        case FeedModel.ExcellentMode:
+            'Excellent'; break;
+        case FeedModel.BestMode:
+            'Best'; break;
+        case FeedModel.GoodMode:
+            'Good'; break;
+        case FeedModel.WellMode:
+            'Well'; break;
+        case FeedModel.AnonymousMode:
+            'Anonymous'; break;
+        default:
+            'Tlog'
+        }
+    }
+    readonly property bool customTitle: mode !== FeedModel.TlogMode && mode !== FeedModel.MyTlogMode
     signal entryClicked(TlogEntry entry)
     signal avatarClicked(Tlog tlog, Author author)
     Poppable {
@@ -33,7 +59,7 @@ Rectangle {
         model: FeedModel {
             id: feedModel
             mode: back.mode
-            tlog: back.tlog
+            tlog: back.tlogId
         }
         delegate: Item {
             id: entryView

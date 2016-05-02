@@ -8,7 +8,10 @@ Rectangle {
     property bool poppable
     property string title: 'Мои подписки'
     property int mode: UsersModel.MyFollowingsMode
-    property string tlog
+    property int tlogId
+    property Tlog tlog: Tlog {
+        tlogId: back.tlogId
+    }
     signal tlogRequested(int tlog)
     onModeChanged: {
         if (mode === UsersModel.FollowersMode)
@@ -38,7 +41,7 @@ Rectangle {
         model: UsersModel {
             id: usersModel
             mode: back.mode
-            tlog: back.tlog
+            tlog: back.tlogId
         }
         delegate: Rectangle {
             anchors.left: parent.left

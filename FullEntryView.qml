@@ -8,11 +8,16 @@ Rectangle {
     property TlogEntry entry: TlogEntry {
         entryId: back.entryId
     }
+    readonly property Tlog tlog: entry.tlog
     property CommentsModel commentsModel: entry.commentsModel
     property bool showProfiles: true
     signal avatarClicked(int tlogId)
     signal popped
     property bool poppable
+    Component.onCompleted: {
+        if (commentsModel.rowCount() === 0)
+            commentsModel.loadMore()
+    }
     Poppable {
         body: back
     }
@@ -22,10 +27,6 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         height: contentHeight > parent.height ? parent.height : contentHeight
-        Component.onCompleted: {
-            if (commentsModel.rowCount() === 0)
-                commentsModel.loadMore();
-        }
         model: commentsModel
         delegate: Item {
             anchors.left: parent.left
@@ -65,7 +66,7 @@ Rectangle {
             }
             Text {
                 id: commentDate
-                text: comment.createdAt //Ctrl.parseDate(updated_at)
+                text: comment.createdAt
                 color: window.secondaryTextColor
                 anchors.baseline: nameText.baseline
                 anchors.right: parent.right
@@ -85,7 +86,6 @@ Rectangle {
                 font.pointSize: window.fontSmaller
                 textFormat: Text.RichText
             }
-
         }
         header: Item {
             id: fullEntryContent
@@ -248,11 +248,15 @@ Rectangle {
             onSent: {
                 entry.addComment(commentEditor.message);
             }
-            Connections {
-                target: entry
-                onCommentAdded: {
-                    commentEditor.clear();
-                }
+        }
+        Connections {
+            target: entry
+            onCommentAdded: {
+                commentEditor.clear();
+            }
+            onUpdated: {
+                if (commentsModel.rowCount() === 0)
+                    commentsModel.loadMore()
             }
         }
     }
