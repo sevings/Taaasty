@@ -15,6 +15,7 @@ MouseArea {
     propagateComposedEvents: true
     enabled: false
     signal modeChanged(int mode)
+    signal settingsRequested
     onModeChanged: backAnimation.start();
     Component.onCompleted: {
         enabled = true;
@@ -125,7 +126,7 @@ MouseArea {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     text: 'Settings'
-//                    onClicked: { modeChanged(FeedModel.GoodMode) }
+                    onClicked: { area.settingsRequested() }
                 }
             }
         }

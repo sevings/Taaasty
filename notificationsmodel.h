@@ -2,10 +2,9 @@
 #define NOTIFICATIONSMODEL_H
 
 #include <QObject>
-#include <QDateTime>
 #include <QAbstractListModel>
 #include <QJsonObject>
-#include <QJsonArray>
+#include <QTimer>
 
 class Notification;
 
@@ -16,7 +15,7 @@ class NotificationsModel : public QAbstractListModel
     Q_OBJECT
 
     Q_PROPERTY(bool hasMore READ hasMore NOTIFY hasMoreChanged)
-    Q_PROPERTY(bool unread READ unread NOTIFY unreadChanged)
+    Q_PROPERTY(bool unread  READ unread  NOTIFY unreadChanged)
 
 public:
     NotificationsModel(QObject* parent = nullptr);
@@ -30,16 +29,14 @@ public:
     Q_INVOKABLE bool hasMore() const { return canFetchMore(QModelIndex()); }
     Q_INVOKABLE bool unread() const;
     Q_INVOKABLE void markAsRead();
-    
-public slots:
-    void check();
-    
+
 signals:
     void hasMoreChanged();
     void unreadChanged();
     
 private slots:
-    void _readSuccess(QJsonObject data);
+    void _check();
+    void _readSuccess();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
@@ -53,6 +50,7 @@ private:
     QString _url;
     bool _loading;
     int _totalCount;
+    QTimer _timer;
 };
 
 #endif // NOTIFICATIONSMODEL_H

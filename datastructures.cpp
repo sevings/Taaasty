@@ -107,14 +107,13 @@ void Entry::_init(const QJsonObject data)
 
     delete _commentsModel;
     _commentsModel = new CommentsModel(this);
-//    if (_commentsModel->rowCount() == 0)
-//        _commentsModel->loadMore();
 
     auto imageAttach = data.value("image_attachments").toArray();
     delete _attachedImagesModel;
     _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
 
     emit updated();
+    emit commentsCountChanged();
 }
 
 
@@ -362,7 +361,7 @@ Notification::Notification(const QJsonObject data, QObject *parent)
     _id         = data.value("id").toInt();
     _createdAt  = Tasty::parseDate(data.value("created_at").toString());
     _sender     = new User(data.value("sender").toObject(), this);
-    _read       = data.value("read_at").toBool(true); // that's there actually?
+    _read       = !data.value("read_at").isNull();
     _action     = data.value("action").toString();
     _actionText = data.value("action_text").toString();
     _text       = data.value("text").toString();

@@ -7,6 +7,7 @@ Rectangle {
     clip: true
     signal avatarClicked(int tlog)
     signal entryRequested(int entry, bool showProfile)
+    signal tlogRequested(int tlogId)
     property NotificationsModel notifs: NotificationsModel { }
     Poppable {
         body: back
@@ -24,11 +25,30 @@ Rectangle {
 //            body: back
             readonly property bool showProfile: notification.parentType !== 'AnonymousEntry'
             onClicked: {
-                window.hideNotifs();
                 if (notification.entityType === 'Entry')
+                {
+                    if (!notification.entityId)
+                        return;
+
+                    window.hideNotifs();
                     entryRequested(notification.entityId, showProfile);
+                }
                 else if (notification.entityType === 'Comment')
+                {
+                    if (!notification.parentId)
+                        return;
+
+                    window.hideNotifs();
                     entryRequested(notification.parentId, showProfile);
+                }
+                else if (notification.entityType === 'Relationship')
+                {
+                    if (!notification.parentId)
+                        return;
+
+                    window.hideNotifs();
+                    tlogRequested(notification.sender.id);
+                }
                 else
                     console.log(notification.entityType);
             }
@@ -51,7 +71,7 @@ Rectangle {
                 text: '<b>' + notification.sender.name + '</b> ' 
                         + notification.actionText
                 color: window.textColor
-                anchors.top: parent.top
+                anchors.top: notifAvatar.top
                 anchors.left: notifAvatar.right
                 anchors.right: unreadNotice.left
                 anchors.leftMargin: 10
@@ -63,7 +83,7 @@ Rectangle {
             }
             Rectangle {
                 id: unreadNotice
-                anchors.verticalCenter: notifName.verticalCenter
+                anchors.verticalCenter: notifAvatar.verticalCenter
                 anchors.right: parent.right
                 anchors.margins: 20
                 width: 15
@@ -76,10 +96,10 @@ Rectangle {
                 id: notifText
                 text: notification.text
                 color: window.textColor
-                anchors.rightMargin: 10
+                anchors.topMargin: 10
                 anchors.top: notifName.bottom
                 anchors.left: notifName.left
-                anchors.right: parent.right
+                anchors.right: notifName.right
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
             }

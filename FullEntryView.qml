@@ -108,7 +108,7 @@ Rectangle {
                 interactive: false
                 //spacing: 10
                 property AttachedImagesModel imagesModel: entry.attachedImagesModel
-                height: imagesModel ? (imagesModel.listRatio() * width
+                height: imagesModel ? (imagesModel.listRatio() * window.width
                         + (imagesModel.rowCount() - 1) * 10) : 0
                 model: imagesModel
                 delegate: MyImage {
@@ -248,15 +248,17 @@ Rectangle {
             onSent: {
                 entry.addComment(commentEditor.message);
             }
-        }
-        Connections {
-            target: entry
-            onCommentAdded: {
-                commentEditor.clear();
-            }
-            onUpdated: {
-                if (commentsModel.rowCount() === 0)
-                    commentsModel.loadMore()
+            Connections {
+                target: entry
+                onCommentAdded: {
+                    commentEditor.clear();
+                }
+                onUpdated: {
+                    if (commentsModel.rowCount() === 0)
+                        commentsModel.loadMore();
+
+                    window.setFooterTlog(entry.tlog);
+                }
             }
         }
     }

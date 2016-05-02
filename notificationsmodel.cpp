@@ -1,5 +1,6 @@
 #include "notificationsmodel.h"
 
+#include <QJsonArray>
 #include <QDebug>
 
 #include "apirequest.h"
@@ -13,7 +14,11 @@ NotificationsModel::NotificationsModel(QObject* parent)
     , _loading(false)
     , _totalCount(1)
 {
+    _timer.setInterval(30000);
+    _timer.setSingleShot(false);
+    _timer.start();
 
+    Q_ASSERT(connect(&_timer, SIGNAL(timeout()), this, SLOT(_check())));
 }
 
 
@@ -97,13 +102,13 @@ void NotificationsModel::markAsRead()
     QString data = QString("last_id=%1").arg(_notifs.first()->_id);
     
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_readSuccess(QJsonObject)));
-    connect(request, SIGNAL(success(QJsonObject)), this, SIGNAL(unreadChanged()));
+    Q_ASSERT(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_readSuccess())));
+    Q_ASSERT(connect(request, SIGNAL(success(QJsonObject)), this, SIGNAL(unreadChanged())));
 }
 
 
 
-void NotificationsModel::check()
+void NotificationsModel::_check()
 {
     if (_loading)
         return;
@@ -113,8 +118,8 @@ void NotificationsModel::check()
     QString url = _url;
     if (!_notifs.isEmpty())
     {
-        auto lastId = _notifs.last()->_id;
-        url += QString("&from_notification_id=%1").arg(lastId);
+        auto firstId = _notifs.first()->_id;
+        url += QString("&from_notification_id=%1").arg(firstId);
     }
     
     auto request = new ApiRequest(url, true);
@@ -123,9 +128,16 @@ void NotificationsModel::check()
 
 
 
-void NotificationsModel::_readSuccess(QJsonObject data)
+void NotificationsModel::_readSuccess()
 {
-    qDebug() << data;
+    for (int i = 0; i < _notifs.size(); i++)
+        if (!_notifs.at(i)->_read)
+        {
+            _notifs.at(i)->_read = true;
+            emit _notifs.at(i)->read();
+        }
+        else
+            break;
 }
 
 

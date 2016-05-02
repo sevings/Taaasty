@@ -34,6 +34,7 @@ ApplicationWindow {
     }
     function hideNotifs() {
         notifsView.y = window.height;
+        notifsModel.markAsRead();
     }
     function toggleNotifs() {
         if (notifsView.y)
@@ -46,6 +47,16 @@ ApplicationWindow {
     }
     function hideFooter() {
         footer.y = window.height;
+    }
+    function setFooterTlog(tlog) {
+        if (!tlog)
+            tlog = emptyTlog;
+
+        footer.tlog = tlog;
+    }
+
+    Tlog {
+        id: emptyTlog
     }
     NotificationsModel {
         id: notifsModel
@@ -65,19 +76,15 @@ ApplicationWindow {
 
             if (stack.currentItem.customTitle) {
                 footer.title = stack.currentItem.title;
-                footer.tlog = emptyTlog;
+                setFooterTlog();
             }
             else {
                 footer.title = '';
-                footer.tlog = stack.currentItem.tlog;
+                setFooterTlog(stack.currentItem.tlog);
             }
 
             window.hideFooter()
         }
-        Tlog {
-            id: emptyTlog
-        }
-
         delegate: StackViewDelegate {
             function transitionFinished(properties)
             {
@@ -294,6 +301,7 @@ ApplicationWindow {
         y: height
         notifs: notifsModel
         z: 5
+        visible: y < height
         Behavior on y {
             NumberAnimation {
                 duration: 300
@@ -313,6 +321,15 @@ ApplicationWindow {
                            properties: {
                                entryId: entry,
                                showProfiles: showProfile
+                           }
+                       })
+        }
+        onTlogRequested: {
+            stack.push({
+                           item: feed,
+                           properties: {
+                               mode: FeedModel.TlogMode,
+                               tlogId: tlogId
                            }
                        })
         }
