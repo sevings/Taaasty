@@ -8,7 +8,6 @@ MouseArea {
     property string text
     property int fontSize: window.fontNormal
     property bool checked: false
-    preventStealing: true
     Rectangle {
         anchors.fill: parent
         radius: 10
@@ -16,16 +15,16 @@ MouseArea {
             GradientStop {
                 position: 0
                 color: {
-                    if (button.enabled && !button.containsMouse)
-                        '#575757';
+                    if (!button.enabled || button.pressed)
+                        '#000000';
                     else
-                        '#000000'
+                        '#575757';
                 }
             }
             GradientStop {
                 position: 1
                 color: {
-                    if (!button.enabled || button.containsMouse)
+                    if (!button.enabled || button.pressed)
                         '#000000';
                     else if (button.checked)
                         window.brightColor;

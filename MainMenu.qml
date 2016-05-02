@@ -50,44 +50,83 @@ MouseArea {
         anchors.left: parent.left
         width: parent.minWidth
         color: window.backgroundColor
-        Column {
+        Flickable {
             anchors.fill: parent
-            spacing: 10
-            ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                text: 'My tlog'
-                onClicked: { modeChanged(FeedModel.MyTlogMode) }
-            }
-            ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                text: 'Friends'
-                onClicked: { modeChanged(FeedModel.FriendsMode) }
-            }
-            ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                text: 'Live'
-                onClicked: { modeChanged(FeedModel.LiveMode) }
-            }
-            ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                text: 'Anonymous'
-                onClicked: { modeChanged(FeedModel.AnonymousMode) }
-            }
-            ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                text: 'Best'
-                onClicked: { modeChanged(FeedModel.BestMode) }
-            }
-            ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                text: 'Tlog'
-                onClicked: { modeChanged(FeedModel.TlogMode) }
+            flickableDirection: Flickable.VerticalFlick
+            topMargin: 10
+            bottomMargin: 10
+            contentWidth: parent.width
+            contentHeight: 90 * 11 - 10
+            Column {
+                id: column
+                anchors.fill: parent
+                spacing: 10
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'My tlog'
+                    onClicked: { modeChanged(FeedModel.MyTlogMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Friends'
+                    onClicked: { modeChanged(FeedModel.FriendsMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Live'
+                    onClicked: { modeChanged(FeedModel.LiveMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Anonymous'
+                    onClicked: { modeChanged(FeedModel.AnonymousMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Best'
+                    onClicked: { modeChanged(FeedModel.BestMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Excellent'
+                    onClicked: { modeChanged(FeedModel.ExcellentMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Well'
+                    onClicked: { modeChanged(FeedModel.WellMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Good'
+                    onClicked: { modeChanged(FeedModel.GoodMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Favorites'
+                    onClicked: { modeChanged(FeedModel.FavoritesMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Tlog'
+                    onClicked: { modeChanged(FeedModel.TlogMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Settings'
+//                    onClicked: { modeChanged(FeedModel.GoodMode) }
+                }
             }
         }
     }
