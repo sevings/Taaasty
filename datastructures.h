@@ -23,6 +23,7 @@ class Entry: public QObject
     Q_OBJECT
 
     friend class CommentsModel;
+    friend class Bayes;
 
     Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated)
     Q_PROPERTY(QString     createdAt      MEMBER _createdAt         NOTIFY updated)
@@ -168,6 +169,8 @@ class User: public QObject
 {
     Q_OBJECT
 
+    friend class Bayes;
+
     Q_PROPERTY(int     id           MEMBER _id          CONSTANT)
     Q_PROPERTY(QString tlogUrl      MEMBER _tlogUrl     CONSTANT)
     Q_PROPERTY(QString name         MEMBER _name        CONSTANT)
@@ -201,10 +204,14 @@ class Author: public User
 {
     Q_OBJECT
 
+    friend class Bayes;
+
     Q_PROPERTY(bool    isFemale            MEMBER _isFemale            CONSTANT)
     Q_PROPERTY(bool    isPrivacy           MEMBER _isPrivacy           CONSTANT)
     Q_PROPERTY(bool    isOnline            MEMBER _isOnline            CONSTANT)
     Q_PROPERTY(bool    isFlow              MEMBER _isFlow              CONSTANT)
+    Q_PROPERTY(bool    isPremium           MEMBER _isPremium           CONSTANT)
+    Q_PROPERTY(bool    isDaylog            MEMBER _isDaylog            CONSTANT)
     Q_PROPERTY(QString title               MEMBER _title               CONSTANT)
     Q_PROPERTY(QString entriesCount        MEMBER _entriesCount        CONSTANT)
     Q_PROPERTY(QString publicEntriesCount  MEMBER _publicEntriesCount  CONSTANT)
@@ -220,6 +227,8 @@ private:
     bool    _isPrivacy;
     bool    _isOnline;
     bool    _isFlow;
+    bool    _isPremium;
+    bool    _isDaylog;
     QString _title;
     QString _entriesCount;
     QString _publicEntriesCount;

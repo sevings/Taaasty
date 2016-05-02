@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("Tasty", Tasty::instance());
-    engine.rootContext()->setContextProperty("Bayes", Bayes::instance());
+    engine.rootContext()->setContextProperty("Bayes", Bayes::instance(Tasty::instance()));
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     int res = app.exec();

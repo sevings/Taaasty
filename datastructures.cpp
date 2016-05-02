@@ -241,6 +241,8 @@ Author::Author(const QJsonObject data, QObject *parent)
     _isPrivacy = data.value("is_privacy").toBool();
     _isOnline  = data.value("is_online").toBool();
     _isFlow    = data.value("is_flow").toBool();
+    _isPremium = data.value("is_premium").toBool();
+    _isDaylog  = data.value("is_daylog").toBool();
     _title     = data.value("title").toString();
 
     _entriesCount = Tasty::num2str(data.value("total_entries_count").toInt(),
