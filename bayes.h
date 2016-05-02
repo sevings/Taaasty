@@ -35,14 +35,16 @@ private:
 //    };
     struct BayesTlog {
         BayesTlog(int tlogId, int last)
-            : id (tlogId), latest(last), include(true) { }
+            : id (tlogId), latest(last), include(true), removed(false) { }
         int id;
         int latest;
         bool include;
+        bool removed;
     };
 
     void _initDb();
     void _loadDb();
+    void _saveDb();
 
     bool _loaded;
 

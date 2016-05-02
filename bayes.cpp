@@ -5,6 +5,10 @@
 #include <QSqlError>
 #include <QDebug>
 
+#ifdef QT_DEBUG
+#   include <QDateTime>
+#endif
+
 
 
 Bayes::Bayes(QObject *parent)
@@ -73,4 +77,55 @@ void Bayes::_loadDb()
         _entriesChanged[query.value(0).toInt()][query.value(1).toInt()] = false;
 
     _loaded = true;
+}
+
+
+
+void Bayes::_saveDb()
+{
+    if (!_loaded)
+        return;
+
+#ifdef QT_DEBUG
+    auto now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+#endif
+
+    QSqlQuery query;
+    for (int type = 0; type < 2; type++)
+    {
+        foreach (auto word, _wordCounts[type].keys())
+            if (_wordCounts[type][word].changed)
+            {
+                Q_ASSERT(query.prepare("INSERT OR REPLACE INTO bayes VALUES (?, ?, ?)"));
+                query.addBindValue(type);
+                query.addBindValue(word);
+                query.addBindValue(_wordCounts[type][word].count);
+                Q_ASSERT(query.exec());
+            }
+
+        for (int tlog = 0; tlog < _tlogs[type].size(); tlog++)
+            if (_tlogs[type].at(tlog).include && !_tlogs[type].at(tlog).removed)
+            {
+                Q_ASSERT(query.prepare("INSERT OR REPLACE INTO bayes_tlogs VALUES (?, ?, ?, ?)"));
+                query.addBindValue(type);
+                query.addBindValue(_tlogs[tlog].at(tlog).id);
+                query.addBindValue(_tlogs[tlog].at(tlog).latest);
+                query.addBindValue(tlog);
+                Q_ASSERT(query.exec());
+            }
+
+        foreach (auto entry, _entriesChanged[type].keys())
+            if (_entriesChanged[type][entry])
+            {
+                Q_ASSERT(query.prepare("INSERT OR REPLACE INTO bayes_entries VALUES (?, ?)"));
+                query.addBindValue(type);
+                query.addBindValue(entry);
+                Q_ASSERT(query.exec());
+            }
+    }
+
+#ifdef QT_DEBUG
+    auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
+    qDebug() << "Saved in" << ms << "ms";
+#endif
 }
