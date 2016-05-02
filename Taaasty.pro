@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick
+QT += qml quick sql
 
 CONFIG += c++11
 
@@ -15,7 +15,8 @@ SOURCES += main.cpp \
     datastructures.cpp \
     attachedimagesmodel.cpp \
     usersmodel.cpp \
-    notificationsmodel.cpp
+    notificationsmodel.cpp \
+    bayes.cpp
 
 RESOURCES += qml.qrc
 
@@ -36,4 +37,5 @@ HEADERS += \
     datastructures.h \
     attachedimagesmodel.h \
     usersmodel.h \
-    notificationsmodel.h
+    notificationsmodel.h \
+    bayes.h
