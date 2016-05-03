@@ -56,10 +56,31 @@ Rectangle {
         anchors.right: parent.right
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
+        onAboveBegin: feedModel.reset()
         model: FeedModel {
             id: feedModel
             mode: back.mode
             tlog: back.tlogId
+        }
+        header: Item {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 0
+            Item {
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 80
+                Text {
+                    text: 'Обновить'
+                    color: window.secondaryTextColor
+                    font.pointSize: window.fontBigger
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
         }
         delegate: Item {
             id: entryView

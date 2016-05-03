@@ -8,7 +8,12 @@ ListView {
     flickableDirection: Flickable.VerticalFlick
     property bool poppable: true
     boundsBehavior: Flickable.DragOverBounds
-    onContentYChanged: {
+    signal aboveBegin
+    onDraggingVerticallyChanged: {
+        if (!draggingVertically && contentY < -80)
+            list.aboveBegin();
+    }
+    onVerticalVelocityChanged: {
         if (!dragging)
             return;
 

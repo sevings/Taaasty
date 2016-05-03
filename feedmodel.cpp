@@ -140,6 +140,24 @@ void FeedModel::setTlog(const int tlog)
     _lastEntry = 0;
     _loading = false;
     qDeleteAll(_entries);
+    _entries.clear();
+
+    endResetModel();
+
+    emit hasMoreChanged();
+}
+
+
+
+void FeedModel::reset()
+{
+    beginResetModel();
+
+    _hasMore = true;
+    _lastEntry = 0;
+    _loading = false;
+    qDeleteAll(_entries);
+    _entries.clear();
 
     endResetModel();
 

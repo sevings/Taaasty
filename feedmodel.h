@@ -47,6 +47,8 @@ public:
     Q_INVOKABLE void setTlog(const int tlog);
     Q_INVOKABLE int tlog() const {return _tlog; }
 
+    Q_INVOKABLE void reset();
+
 signals:
     void hasMoreChanged();
 

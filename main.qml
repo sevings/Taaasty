@@ -279,6 +279,7 @@ ApplicationWindow {
         }
     }
     MainMenu {
+        z: 30
         onModeChanged: {
             var item = stack.find(function (item) {
                 return item.mode === mode //&& (mode !== FeedModel.TlogMode || item.tlog === tlog)
