@@ -4,13 +4,13 @@ import org.binque.taaasty 1.0
 ListView {
     id: list
     highlightFollowsCurrentItem: false
-    cacheBuffer: 1000
+//    cacheBuffer: 1000
     flickableDirection: Flickable.VerticalFlick
     property bool poppable: true
     boundsBehavior: Flickable.DragOverBounds
     signal aboveBegin
     onDraggingVerticallyChanged: {
-        if (!draggingVertically && contentY < -80)
+        if (!draggingVertically && contentY < -8 * mm)
             list.aboveBegin();
     }
     onVerticalVelocityChanged: {
@@ -36,11 +36,11 @@ ListView {
     Rectangle {
         id: scrollbar
         anchors.right: parent.right
-        anchors.margins: 5
+        anchors.margins: 0.5 * mm
         y: parent.visibleArea.yPosition * (parent.height - height + h)
         width: 10
         property int h: parent.visibleArea.heightRatio * parent.height
-        height: h > 50 ? h : 50
+        height: h > 5 * mm ? h : 5 * mm
         color: window.textColor
         opacity: parent.movingVertically ? 0.7 : 0
         visible: height < parent.height * 0.9
@@ -50,6 +50,6 @@ ListView {
         Behavior on height {
             NumberAnimation { duration: 500 }
         }
-        radius: 5
+        radius: 0.5 * mm
     }
 }

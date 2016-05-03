@@ -32,16 +32,14 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             //color: window.backgroundColor
-            height: 40 + commentText.paintedHeight + nameText.paintedHeight
+            height: 4 * mm + commentText.paintedHeight + nameText.paintedHeight
             Poppable {
                 body: back
             }
             SmallAvatar {
                 id: commentAvatar
-                anchors.margins: 10
-                width: 64
-                height: 64
-                source: comment.user.thumb64
+                anchors.margins: 1 * mm
+                source: dp < 2 ? comment.user.thumb64 : comment.user.thumb128
                 symbol: comment.user.symbol
                 MouseArea {
                     anchors.fill: parent
@@ -56,8 +54,8 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.left: commentAvatar.right
                 anchors.right: commentDate.left
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
+                anchors.leftMargin: 1 * mm
+                anchors.rightMargin: 1 * mm
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontNormal
                 font.bold: true
@@ -70,15 +68,15 @@ Rectangle {
                 color: window.secondaryTextColor
                 anchors.baseline: nameText.baseline
                 anchors.right: parent.right
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
+                anchors.leftMargin: 1 * mm
+                anchors.rightMargin: 1 * mm
                 font.pointSize: window.fontSmaller
             }
             Text {
                 id: commentText
                 text: comment.html
                 color: window.textColor
-                anchors.rightMargin: 10
+                anchors.rightMargin: 1 * mm
                 anchors.top: nameText.bottom
                 anchors.left: nameText.left
                 anchors.right: parent.right
@@ -91,7 +89,7 @@ Rectangle {
             id: fullEntryContent
             anchors.left: parent.left
             anchors.right: parent.right
-            height: 90 + fullTitle.height + fullContent.height + quoteSource.height
+            height: 9 * mm + fullTitle.height + fullContent.height + quoteSource.height
                     + fullEntryFavButton.height + fullEntryDate.height
                     + loadMoreButton.height
                     + fullEntryImages.height
@@ -103,8 +101,8 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.topMargin: 10
-                anchors.bottomMargin: 10
+                anchors.topMargin: 1 * mm
+                anchors.bottomMargin: 1 * mm
                 interactive: false
                 //spacing: 10
                 property AttachedImagesModel imagesModel: entry.attachedImagesModel
@@ -113,8 +111,8 @@ Rectangle {
                 model: imagesModel
                 delegate: MyImage {
                     id: picture
-                    anchors.topMargin: 10
-                    anchors.bottomMargin: 10
+                    anchors.topMargin: 1 * mm
+                    anchors.bottomMargin: 1 * mm
                     anchors.left: parent.left
                     anchors.right: parent.right
                     height: image.height / image.width * width
@@ -128,13 +126,13 @@ Rectangle {
                 anchors.top: fullEntryImages.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 wrapMode: Text.Wrap
                 font.pointSize: (entry.text.length > 0 ? window.fontBigger
                                                       : window.fontNormal)
                 color: window.textColor
                 textFormat: Text.RichText
-                height: entry.title.length > 0 ? paintedHeight : entry.text.length > 0 ? -20 : 0
+                height: entry.title.length > 0 ? paintedHeight : entry.text.length > 0 ? -2 * mm : 0
             }
             Text {
                 id: fullContent
@@ -142,14 +140,14 @@ Rectangle {
                 anchors.top: fullTitle.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
-                anchors.leftMargin: entry.type === 'quote' ? 50 : 10
+                anchors.margins: 1 * mm
+                anchors.leftMargin: entry.type === 'quote' ? 5 * mm : 1 * mm
                 anchors.rightMargin: anchors.leftMargin
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontNormal
                 color: window.textColor
                 textFormat: Text.RichText
-                height: entry.text.length > 0 ? paintedHeight : entry.title.length > 0 ? -20 : 0
+                height: entry.text.length > 0 ? paintedHeight : entry.title.length > 0 ? -2 * mm : 0
             }
             Text {
                 id: quoteSource
@@ -157,13 +155,13 @@ Rectangle {
                 anchors.top: fullContent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
                 font.italic: true
                 color: window.textColor
                 textFormat: Text.RichText
-                height: entry.source.length > 0 ? paintedHeight : -10
+                height: entry.source.length > 0 ? paintedHeight : -1 * mm
                 horizontalAlignment: Text.AlignRight
             }
             Text {
@@ -172,7 +170,7 @@ Rectangle {
                 color: window.secondaryTextColor
                 anchors.top: quoteSource.bottom
                 anchors.left: parent.left
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 font.pointSize: window.fontSmallest
             }
             Text {
@@ -181,18 +179,18 @@ Rectangle {
                 color: window.secondaryTextColor
                 anchors.top: quoteSource.bottom
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 font.pointSize: window.fontSmallest
             }
             ThemedButton {
                 id: fullEntryFavButton
                 anchors.top: fullEntryDate.bottom
                 anchors.left: parent.left
-                anchors.margins: 10
-                anchors.topMargin: 20
+                anchors.margins: 1 * mm
+                anchors.topMargin: 2 * mm
                 text: '*'
-                height: 64
-                width: (parent.width - 40) / 3
+                height: 6 * mm
+                width: (parent.width - 4 * mm) / 3
                 fontSize: 20
                 visible: entry.isFavoritable
                 checked: entry.isFavorited
@@ -203,10 +201,10 @@ Rectangle {
                 id: fullEntryWatchButton
                 anchors.top: fullEntryDate.bottom
                 anchors.left: fullEntryFavButton.right
-                anchors.margins: 10
-                anchors.topMargin: 20
+                anchors.margins: 1 * mm
+                anchors.topMargin: 2 * mm
                 text: 'V'
-                height: 64
+                height: 6 * mm
                 width: fullEntryFavButton.width
                 fontSize: fullEntryFavButton.fontSize
                 visible: entry.isWatchable
@@ -219,10 +217,10 @@ Rectangle {
                 anchors.top: fullEntryDate.bottom
                 anchors.left: fullEntryWatchButton.right
                 anchors.right: parent.right
-                anchors.margins: 10
-                anchors.topMargin: 20
+                anchors.margins: 1 * mm
+                anchors.topMargin: 2 * mm
                 text: '+ ' + entry.rating.votes
-                height: 64
+                height: 6 * mm
                 fontSize: fullEntryFavButton.fontSize
                 visible: entry.isVotable
                 enabled: entry.rating.isVotable
@@ -233,10 +231,10 @@ Rectangle {
                 id: loadMoreButton
                 anchors.top: fullEntryVoteButton.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.margins: 10
-                anchors.topMargin: 20
+                anchors.margins: 1 * mm
+                anchors.topMargin: 2 * mm
                 text: 'Еще'
-                height: visible ? 64 : 0
+                height: visible ? 6 * mm : 0
                 width: parent.width / 3
                 fontSize: fullEntryFavButton.fontSize
                 visible: commentsModel && commentsModel.hasMore && !commentsModel.loading

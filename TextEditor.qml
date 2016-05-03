@@ -3,15 +3,15 @@ import QtQuick 2.3
 Rectangle {
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.margins: 10
+    anchors.margins: 1 * mm
     //color: window.backgroundColor
     gradient: Gradient {
         GradientStop { position: 0; color: 'black' }
         GradientStop { position: 1; color: '#181818' }
     }
     border.color: window.textColor
-    border.width: 2
-    radius: 8
+    border.width: 0.2 * mm
+    radius: 0.8 * mm
     clip: true
     property string text: input.text
     function clear() {
@@ -34,8 +34,8 @@ Rectangle {
     Flickable {
         id: flickText
         anchors.fill: parent
-        anchors.margins: 5
-        contentHeight: input.paintedHeight + 10
+        anchors.margins: 0.5 * mm
+        contentHeight: input.paintedHeight + 1 * mm
         flickableDirection: Flickable.VerticalFlick
         TextEdit {
             id: input

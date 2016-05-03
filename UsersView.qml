@@ -46,14 +46,14 @@ Rectangle {
         delegate: Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
-            height: usersAvatar.height + 20
+            height: usersAvatar.height + 2 * mm
             color: usersMouse.pressed ? window.brightColor : window.backgroundColor
             SmallAvatar {
                 id: usersAvatar
                 anchors.top: undefined
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: 10
-                source: user.thumb64
+                anchors.margins: 1 * mm
+                source: dp < 2 ? user.thumb64 : user.thumb128
                 symbol: user.symbol
             }
             Poppable {
@@ -75,22 +75,22 @@ Rectangle {
                 text: user.name
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: usersAvatar.right
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
+                anchors.leftMargin: 1 * mm
+                anchors.rightMargin: 1 * mm
                 elide: Text.ElideRight
             }
         }
         header: Item {
             anchors.left: parent.left
             anchors.right: parent.right
-            height: usersTitle.paintedHeight + 20
+            height: usersTitle.paintedHeight + 2 * mm
             Text {
                 id: usersTitle
                 font.pointSize: window.fontBigger
                 color: window.textColor
                 text: back.title
                 anchors.centerIn: parent
-                y: 10
+                y: 1 * mm
             }
         }
         //    footer: Item {

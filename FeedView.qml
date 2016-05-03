@@ -1,5 +1,4 @@
-import QtQuick 2.5
-//import QtQuick.Controls 1.2
+import QtQuick 2.3
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -70,13 +69,13 @@ Rectangle {
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: 80
+                height: 8 * mm
                 Text {
                     text: 'Обновить'
                     color: window.secondaryTextColor
                     font.pointSize: window.fontBigger
                     anchors.fill: parent
-                    anchors.margins: 10
+                    anchors.margins: 1 * mm
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -87,7 +86,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             property color fontColor: window.textColor
-            height: 80 + content.height + entryTitle.height + entryAvatar.height + comments.height
+            height: 8 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
                     + firstImage.height + quoteSource.height
             Poppable {
                 body: back
@@ -97,8 +96,8 @@ Rectangle {
             }
             SmallAvatar {
                 id: entryAvatar
-                anchors.margins: 10
-                source: entry.author.thumb64
+                anchors.margins: 1 * mm
+                source:  dp < 2 ? entry.author.thumb64 : entry.author.thumb128
                 symbol: entry.author.symbol
                 MouseArea {
                     anchors.fill: parent
@@ -114,7 +113,7 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.left: entryAvatar.right
                 anchors.right: entryVoteButton.left
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 elide: Text.AlignRight
                 horizontalAlignment: Text.AlignLeft
             }
@@ -126,15 +125,14 @@ Rectangle {
 //                anchors.top: nick.bottom
                 anchors.left: entryAvatar.right
                 anchors.bottom: entryAvatar.bottom
-                anchors.leftMargin: 10
+                anchors.leftMargin: 1 * mm
             }
             ThemedButton {
                 id: entryVoteButton
                 anchors.top: parent.top
                 anchors.right: parent.right
-                anchors.margins: 10
-                height: 64
-                width: parent.width / 5
+                width: parent.width / 4
+                height: entryAvatar.height
                 text: '+ ' + entry.rating.votes
                 visible: entry.isVotable
                 enabled: entry.rating.isVotable
@@ -151,15 +149,15 @@ Rectangle {
                 anchors.top: entryAvatar.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.topMargin: 10
-                anchors.bottomMargin: 10
+                anchors.topMargin: 1 * mm
+                anchors.bottomMargin: 1 * mm
                 height: visible ? (image.height / image.width * width) : 0
                 source: visible ? image.url : ''
                 type: visible ? image.type : ''
                 Text {
                     anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.margins: 5
+                    anchors.margins: 0.5 * mm
                     font.pointSize: window.fontSmallest
                     color: window.textColor
                     style: Text.Outline
@@ -175,7 +173,7 @@ Rectangle {
                 anchors.top: firstImage.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 wrapMode: Text.Wrap
                 font.pointSize: entry.truncatedText.length > 0 ? window.fontBigger
                                                                : window.fontNormal
@@ -190,8 +188,8 @@ Rectangle {
                 anchors.top: entryTitle.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
-                anchors.leftMargin: entry.type === 'quote' ? 50 : 10
+                anchors.margins: 1 * mm
+                anchors.leftMargin: entry.type === 'quote' ? 5 * mm : 1 * mm
                 anchors.rightMargin: anchors.leftMargin
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontNormal
@@ -206,7 +204,7 @@ Rectangle {
                 anchors.top: content.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
                 font.italic: true
@@ -222,7 +220,7 @@ Rectangle {
                 font.pointSize: window.fontSmallest
                 anchors.top: quoteSource.bottom
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
             }
         }
     }

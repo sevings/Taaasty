@@ -17,7 +17,7 @@ Rectangle {
     Text {
         id: mailLabel
         text: 'E-mail'
-        anchors.margins: 20
+        anchors.margins: 2 * mm
         anchors.bottom: mail.top
         anchors.horizontalCenter: parent.horizontalCenter
         color: window.textColor
@@ -27,7 +27,7 @@ Rectangle {
         id: mail
         anchors.bottom: passwordLabel.top
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.margins: 20
+        anchors.margins: 2 * mm
         width: parent.width / 3 * 2
     }
     Text {
@@ -35,7 +35,7 @@ Rectangle {
         text: 'Пароль'
         anchors.bottom: password.top
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.margins: 20
+        anchors.margins: 2 * mm
         color: window.textColor
         font.pointSize: window.fontBigger
     }
@@ -44,7 +44,7 @@ Rectangle {
         echoMode: TextInput.Password
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.margins: 20
+        anchors.margins: 2 * mm
         width: parent.width / 3 * 2
     }
     ThemedButton {
@@ -53,7 +53,7 @@ Rectangle {
         anchors.top: password.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: 20
+        anchors.margins: 2 * mm
         onClicked: Tasty.authorize(mail.line, password.line)
         enabled: mail.line && password.line
     }
@@ -63,7 +63,7 @@ Rectangle {
         anchors.top: loginButton.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: 20
+        anchors.margins: 2 * mm
         enabled: mail.line && password.line
         //onClicked: Ctrl.signup()
     }

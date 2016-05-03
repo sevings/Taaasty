@@ -1,5 +1,4 @@
 import QtQuick 2.3
-//import QtQuick.Controls 1.2
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -20,7 +19,7 @@ Rectangle {
         id: flickable
         anchors.fill: parent
         flickableDirection: Flickable.VerticalFlick
-        bottomMargin: 10
+        bottomMargin: 1 * mm
         contentWidth: parent.width
         contentHeight: column.height
         Poppable {
@@ -30,11 +29,11 @@ Rectangle {
             id: column
             anchors.left: parent.left
             anchors.right: parent.right
-            spacing: 10
+            spacing: 1 * mm
             MyImage {
                 id: bigAvatar
-                anchors.topMargin: 20
-                anchors.bottomMargin: 20
+                anchors.topMargin: 2 * mm
+                anchors.bottomMargin: 2 * mm
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: width
@@ -44,7 +43,7 @@ Rectangle {
                 id: name
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 font.pointSize: window.fontBiggest
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
@@ -55,7 +54,7 @@ Rectangle {
             Text {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
@@ -66,7 +65,7 @@ Rectangle {
             Text {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
@@ -78,7 +77,7 @@ Rectangle {
             Text {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
@@ -90,7 +89,7 @@ Rectangle {
             Text {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
@@ -101,7 +100,7 @@ Rectangle {
             Text {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
@@ -113,7 +112,7 @@ Rectangle {
             Text {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 font.pointSize: window.fontNormal
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter

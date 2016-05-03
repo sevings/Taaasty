@@ -9,6 +9,8 @@
 
 CalendarModel::CalendarModel(QObject* parent)
     : QAbstractListModel(parent)
+    , _loadedEntriesCount(0)
+    , _loadingEntriesCount(0)
 {
 
 }
@@ -51,15 +53,24 @@ void CalendarModel::setTlog(const int tlog)
 
 
 
-void CalendarModel::loadAllEntries()
+void CalendarModel::loadAllEntries(const int after)
 {
     _loadedEntriesCount = 0;
+    _loadingEntriesCount = 0;
 
     foreach (auto entry, _calendar)
     {
+        if (entry->_id == after)
+            break;
+
+        _loadingEntriesCount++;
+
         auto full = entry->full();
         Q_ASSERT(connect(full, SIGNAL(updated()), this, SLOT(_emitEntryLoaded())));
     }
+
+    if (_loadingEntriesCount == 0)
+        emit allEntriesLoaded();
 }
 
 
@@ -107,6 +118,6 @@ void CalendarModel::_emitEntryLoaded()
     _loadedEntriesCount++;
     emit loadedEntriesCountChanged();
 
-    if (_loadedEntriesCount >= _calendar.size())
+    if (_loadedEntriesCount >= _loadingEntriesCount)
         emit allEntriesLoaded();
 }

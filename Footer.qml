@@ -23,7 +23,8 @@ Rectangle {
     SmallAvatar {
         id: avatar
         anchors.left: parent.left
-        source:  footer.tlog.author.thumb64 || 'http://taaasty.com/favicons/favicon-64x64.png'
+        source:  (dp < 2 ? footer.tlog.author.thumb64 : footer.tlog.author.thumb128)
+                 || 'http://taaasty.com/favicons/favicon-64x64.png'
         symbol: footer.tlog.author.symbol || 'T'
         MouseArea {
             anchors.fill: parent
@@ -41,7 +42,7 @@ Rectangle {
         anchors.left: avatar.right
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: 10
+        anchors.margins: 1 * mm
         horizontalAlignment: Text.AlignLeft
         elide: Text.ElideRight
     }
@@ -59,7 +60,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.top
             color: window.unreadNotifications ? window.brightColor : '#575757'
-            width: 15
+            width: 1.5 * mm
             height: width
             radius: height / 2
         }

@@ -23,7 +23,7 @@ class CalendarEntry: public QObject
 {
     Q_OBJECT
 
-    friend class Trainer;
+    friend class CalendarModel;
 
     Q_PROPERTY(int     id             MEMBER _id             CONSTANT)
     Q_PROPERTY(QString createdAt      MEMBER _createdAt      CONSTANT)
@@ -206,6 +206,7 @@ class User: public QObject
     Q_OBJECT
 
     friend class Bayes;
+    friend class Trainer;
 
     Q_PROPERTY(int     id           MEMBER _id          CONSTANT)
     Q_PROPERTY(QString tlogUrl      MEMBER _tlogUrl     CONSTANT)
@@ -241,6 +242,7 @@ class Author: public User
     Q_OBJECT
 
     friend class Bayes;
+    friend class Trainer;
 
     Q_PROPERTY(bool    isFemale            MEMBER _isFemale            CONSTANT)
     Q_PROPERTY(bool    isPrivacy           MEMBER _isPrivacy           CONSTANT)
@@ -278,6 +280,8 @@ private:
 class Tlog: public QObject
 {
     Q_OBJECT
+
+    friend class Trainer;
 
     Q_PROPERTY(int     tlogId              READ tlogId   WRITE setId   NOTIFY updated)
     Q_PROPERTY(QString title               MEMBER _title               NOTIFY updated)

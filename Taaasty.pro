@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 QT += qml quick sql
-
+android: QT += androidextras
 CONFIG += c++11
 
 SOURCES += main.cpp \

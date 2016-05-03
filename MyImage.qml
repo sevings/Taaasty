@@ -41,12 +41,12 @@ ImageCache {
             id: downloadButton
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottomMargin: 10
-            width: cache.isDownloading && cache.kbytesTotal > 0 ? cache.kbytesReceived * (parent.width - 100) / cache.kbytesTotal + 100 : 100
-            height: 100
+            anchors.bottomMargin: 1 * mm
+            width: cache.isDownloading && cache.kbytesTotal > 0 ? cache.kbytesReceived * (parent.width - 10 * mm) / cache.kbytesTotal + 10 * mm : 10 * mm
+            height: 10 * mm
             radius: width / 2
             color: window.brightColor
-            visible: parent.width > 100 && parent.height > 100
+            visible: parent.width > 10 * mm && parent.height > 10 * mm
             Behavior on width {
                 NumberAnimation { duration: 100 }
             }
@@ -67,7 +67,7 @@ ImageCache {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 10
+                anchors.margins: 1 * mm
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
                 color: 'black'

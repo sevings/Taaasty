@@ -2,15 +2,15 @@ import QtQuick 2.3
 
 MouseArea {
     id: button
-    anchors.margins: 10
-    height: 80
+    anchors.margins: 1 * mm
+    height: 8 * mm
     property color textColor: window.textColor
     property string text
     property int fontSize: window.fontNormal
     property bool checked: false
     Rectangle {
         anchors.fill: parent
-        radius: 10
+        radius: 1 * mm
         gradient: Gradient {
             GradientStop {
                 position: 0
@@ -38,7 +38,7 @@ MouseArea {
             color: button.textColor
             text: button.text
             anchors.centerIn: parent
-            anchors.margins: 20
+            anchors.margins: 2 * mm
             verticalAlignment: Text.AlignVCenter
             font.pointSize: button.fontSize
             font.family: 'Open Sans'

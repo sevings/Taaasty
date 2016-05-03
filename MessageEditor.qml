@@ -4,7 +4,7 @@ Item {
     id: editor
     anchors.left: parent.left
     anchors.right: parent.right
-    height: input.height + 20
+    height: input.height + 2 * mm
     property string message
     signal sent
     function clear() {

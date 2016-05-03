@@ -6,7 +6,7 @@ MouseArea {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     property int minWidth: parent.width * 0.7
-    width: x > drag.minimumX ? parent.width : minWidth + 20
+    width: x > drag.minimumX ? parent.width : minWidth + 5 * mm
     x: - minWidth
     drag.target: area
     drag.axis: Drag.XAxis
@@ -54,10 +54,10 @@ MouseArea {
         Flickable {
             anchors.fill: parent
             flickableDirection: Flickable.VerticalFlick
-            topMargin: 10
-            bottomMargin: 10
+            topMargin: 1 * mm
+            bottomMargin: 1 * mm
             contentWidth: parent.width
-            contentHeight: 90 * 11 - 10
+            contentHeight: 9 * mm * 11 - mm
             Column {
                 id: column
                 anchors.fill: parent

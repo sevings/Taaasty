@@ -19,9 +19,9 @@ Trainer::Trainer(Bayes* parent)
     , _iCurTlog(0)
     , _curTlog(nullptr)
     , _lastFavorite(0)
-    , _entriesLoaded(0)
-    , _entriesLoadedTotal(0)
-    , _entriesTotal(0)
+//    , _entriesLoaded(0)
+//    , _entriesLoadedTotal(0)
+//    , _entriesTotal(0)
 {
     _loadDb();
 }
@@ -72,13 +72,68 @@ void Trainer::setMode(const Trainer::Mode mode)
 
 
 
+int Trainer::currentTlog() const
+{
+    return _curType == WaterMode ? _iCurTlog + 1 : _tlogs[WaterMode].size() + _iCurTlog + 1;
+}
+
+
+
+int Trainer::tlogsCount() const
+{
+    return _tlogs[WaterMode].size() + _tlogs[FireMode].size();
+}
+
+
+
+int Trainer::trainedEntriesCount() const
+{
+    return _curTlog ? _curTlog->loadedEntriesCount() : 0;
+}
+
+
+
+int Trainer::entriesCount() const
+{
+    return _curTlog ? _curTlog->loadingEntriesCount() : 0;
+}
+
+
+
+QString Trainer::currentName() const
+{
+    return _iCurTlog < _tlogs[_curType].size()
+            ? _tlogs[_curType].at(_iCurTlog).tlog->_author->_name : "";
+}
+
+
+
 void Trainer::train()
 {
+    for (int type = 0; type < 2; type++)
+        for (int tlog = 0; tlog < _tlogs[type].size(); tlog++)
+            if (!_tlogs[type].at(tlog).include
+                    || _tlogs[type].at(tlog).removed)
+            {
+                if (_curType == type)
+                    beginRemoveRows(QModelIndex(), tlog, tlog);
+
+                _tlogs[type].removeAt(tlog);
+
+                if (_curType == type)
+                    endRemoveRows();
+            }
+
+    _curType = WaterMode;
+    _iCurTlog = -1;
+
+    _trainNextTlog();
+
     emit trainStarted(true);
 
-    _entriesLoaded      = 0;
-    _entriesTotal       = 0;
-    _entriesLoadedTotal = 0;
+//    _entriesLoaded      = 0;
+//    _entriesTotal       = 0;
+//    _entriesLoadedTotal = 0;
 }
 
 
@@ -88,6 +143,37 @@ QHash<int, QByteArray> Trainer::roleNames() const
     QHash<int, QByteArray> roles;
     roles[Qt::UserRole] = "user";
     return roles;
+}
+
+
+
+void Trainer::_trainNextTlog()
+{
+    _iCurTlog++;
+    if (_iCurTlog >= _tlogs[_curType].size() && _curType == WaterMode)
+    {
+        if (_tlogs[FireMode].isEmpty())
+            return; // TODO: finish
+
+        _curType = FireMode;
+        _iCurTlog = 0;
+    }
+
+    auto tlog = _tlogs[_curType].at(_iCurTlog);
+    auto calendar = new CalendarModel(this);
+    calendar->setTlog(tlog.id);
+
+    connect(calendar, SIGNAL(allEntriesLoaded()), calendar, SLOT(deleteLater()));
+    connect(calendar, SIGNAL(allEntriesLoaded()), this, SLOT(_trainNextTlog()));
+
+    calendar->loadAllEntries(tlog.latest); // wait for calendar loading
+}
+
+
+
+void Trainer::_trainEntry()
+{
+
 }
 
 

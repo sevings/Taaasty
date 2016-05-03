@@ -3,7 +3,7 @@ import QtQuick 2.3
 Rectangle {
     id: bar
     width: parent.width / 5
-    height: 5
+    height: 0.5 * mm
     color: window.textColor
     x: 0
 //    y: busy ? 0 : -height

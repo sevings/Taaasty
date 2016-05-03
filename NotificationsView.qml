@@ -16,12 +16,12 @@ Rectangle {
         id: notifsView
         anchors.fill: parent
         model:  notifs
-        spacing: 20
+        spacing: 2 * mm
         delegate: MouseArea {
             id: notif
             anchors.left: parent.left
             anchors.right: parent.right
-            height: notifName.paintedHeight + notifText.paintedHeight + 20
+            height: notifName.paintedHeight + notifText.paintedHeight + 2 * mm
 //            body: back
             readonly property bool showProfile: notification.parentType !== 'AnonymousEntry'
             onClicked: {
@@ -54,8 +54,8 @@ Rectangle {
             }
             SmallAvatar {
                 id: notifAvatar
-                anchors.margins: 10
-                source: notification.sender.thumb64
+                anchors.margins: 1 * mm
+                source:  dp < 2 ? notification.sender.thumb64 : notification.sender.thumb128
                 symbol: notification.sender.symbol
                 MouseArea {
                     anchors.fill: parent
@@ -74,8 +74,8 @@ Rectangle {
                 anchors.top: notifAvatar.top
                 anchors.left: notifAvatar.right
                 anchors.right: unreadNotice.left
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
+                anchors.leftMargin: 1 * mm
+                anchors.rightMargin: 1 * mm
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
                 style: Text.Raised
@@ -85,8 +85,8 @@ Rectangle {
                 id: unreadNotice
                 anchors.verticalCenter: notifAvatar.verticalCenter
                 anchors.right: parent.right
-                anchors.margins: 20
-                width: 15
+                anchors.margins: 2 * mm
+                width: 1.5 * mm
                 height: width
                 radius: height / 2
                 color: window.brightColor
@@ -96,7 +96,7 @@ Rectangle {
                 id: notifText
                 text: notification.text
                 color: window.textColor
-                anchors.topMargin: 10
+                anchors.topMargin: 1 * mm
                 anchors.top: notifName.bottom
                 anchors.left: notifName.left
                 anchors.right: notifName.right

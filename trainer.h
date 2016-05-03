@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QAbstractListModel>
 
+#include "calendarmodel.h"
+
 class Bayes;
 class Tlog;
 
@@ -32,8 +34,22 @@ public:
     Q_INVOKABLE void setMode(const Mode mode);
     Q_INVOKABLE Mode mode() const {return _curType; }
 
+    Q_INVOKABLE int     currentTlog()           const;
+    Q_INVOKABLE int     tlogsCount()            const;
+    Q_INVOKABLE int     trainedEntriesCount()   const;
+    Q_INVOKABLE int     entriesCount()          const;
+    Q_INVOKABLE QString currentName()           const;
+
 signals:
     void trainStarted(bool full);
+
+    void currentTlogChanged();
+    void tlogsCountChanged();
+
+    void trainedEntriesCountChanged();
+    void entriesCountChanged();
+
+    void currentNameChanged();
 
 public slots:
     void train();
@@ -42,6 +58,8 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
+    void _trainNextTlog();
+    void _trainEntry();
 
 private:
     struct BayesTlog {
@@ -66,13 +84,13 @@ private:
 
     Mode       _curType;
     int        _iCurTlog;
-    BayesTlog* _curTlog;
+    CalendarModel*  _curTlog;
 
     int _lastFavorite;
 
-    int _entriesLoaded;
-    int _entriesLoadedTotal;
-    int _entriesTotal;
+//    int _entriesLoaded;
+//    int _entriesLoadedTotal;
+//    int _entriesTotal;
 };
 
 #endif // TRAINER_H

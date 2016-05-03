@@ -22,10 +22,11 @@ public:
 
     Q_INVOKABLE void setTlog(const int tlog);
 
-    int loadedEntriesCount() const { return _loadedEntriesCount; }
+    int loadedEntriesCount()  const { return _loadedEntriesCount; }
+    int loadingEntriesCount() const { return _loadingEntriesCount; }
 
 public slots:
-    void loadAllEntries();
+    void loadAllEntries(const int after);
 
 signals:
     void entryLoaded(const Entry* entry);
@@ -42,6 +43,7 @@ private slots:
 private:
     QList<CalendarEntry*> _calendar;
     int _loadedEntriesCount;
+    int _loadingEntriesCount;
 };
 
 #endif // CALENDARMODEL_H
