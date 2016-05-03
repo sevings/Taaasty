@@ -12,18 +12,20 @@
 #endif
 
 #include "datastructures.h"
+#include "trainer.h"
 
 
 
 Bayes::Bayes(QObject *parent)
     : QObject(parent)
     , _loaded(false)
-    , _lastFavorite(0)
 {
     _total[Water] = 0;
     _total[Fire]  = 0;
 
     _loadDb();
+
+    new Trainer(this);
 }
 
 
@@ -74,6 +76,14 @@ int Bayes::classify(const Entry *entry, const int minLength)
 
 
 
+int Bayes::voteForEntry(const Entry *entry, const Bayes::Type type)
+{
+    _total[type] += _addEntry(entry, type);
+    return classify(entry);
+}
+
+
+
 void Bayes::_initDb()
 {
     auto db = QSqlDatabase::addDatabase("QSQLITE");
@@ -82,7 +92,6 @@ void Bayes::_initDb()
 
     QSqlQuery query;
     Q_ASSERT(query.exec("CREATE TABLE IF NOT EXISTS bayes         (type INTEGER, word TEXT, total INTEGER, PRIMARY KEY(type, word))"));
-    Q_ASSERT(query.exec("CREATE TABLE IF NOT EXISTS bayes_tlogs   (type INTEGER, tlog INTEGER, latest INTEGER, n INTEGER, PRIMARY KEY(tlog))"));
     Q_ASSERT(query.exec("CREATE TABLE IF NOT EXISTS bayes_entries (type INTEGER, entry INTEGER, PRIMARY KEY(entry))"));
 }
 
@@ -104,15 +113,6 @@ void Bayes::_loadDb()
     Q_ASSERT(query.exec("SELECT type, sum(total) AS \"total\" FROM bayes GROUP BY type"));
     while (query.next())
         _total[query.value(0).toInt()] = query.value(1).toInt();
-
-    Q_ASSERT(query.exec("SELECT type, tlog, latest, n FROM bayes_tlogs WHERE tlog > 0 ORDER BY n"));
-    while (query.next())
-        _tlogs[query.value(0).toInt()] << BayesTlog(query.value(1).toInt(),
-                                                    query.value(2).toInt());
-
-    Q_ASSERT(query.exec("SELECT latest FROM bayes_tlogs WHERE tlog = -1"));
-    if (query.next())
-        _lastFavorite = query.value(0).toInt();
 
     Q_ASSERT(query.exec("SELECT type, entry FROM bayes_entries"));
     while (query.next())
@@ -145,17 +145,6 @@ void Bayes::_saveDb()
                 Q_ASSERT(query.exec());
             }
 
-        for (int tlog = 0; tlog < _tlogs[type].size(); tlog++)
-            if (_tlogs[type].at(tlog).include && !_tlogs[type].at(tlog).removed)
-            {
-                Q_ASSERT(query.prepare("INSERT OR REPLACE INTO bayes_tlogs VALUES (?, ?, ?, ?)"));
-                query.addBindValue(type);
-                query.addBindValue(_tlogs[tlog].at(tlog).id);
-                query.addBindValue(_tlogs[tlog].at(tlog).latest);
-                query.addBindValue(tlog);
-                Q_ASSERT(query.exec());
-            }
-
         foreach (auto entry, _entriesChanged[type].keys())
             if (_entriesChanged[type][entry])
             {
@@ -180,19 +169,6 @@ bool Bayes::_isEntryAdded(int id)
 {
     return _entriesChanged[Water].contains(id)
             || _entriesChanged[Fire].contains(id);
-}
-
-
-
-Bayes::BayesTlog Bayes::_findTlog(int id, bool included)
-{
-    for (int type = 0; type < 2; type++)
-        foreach (auto tlog, _tlogs[type])
-            if (tlog.id == id && !tlog.removed
-                    && ((included && tlog.include) || !included))
-                return tlog;
-
-    return BayesTlog();
 }
 
 

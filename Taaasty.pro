@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     attachedimagesmodel.cpp \
     usersmodel.cpp \
     notificationsmodel.cpp \
-    bayes.cpp
+    bayes.cpp \
+    trainer.cpp
 
 RESOURCES += qml.qrc
 
@@ -38,7 +39,8 @@ HEADERS += \
     attachedimagesmodel.h \
     usersmodel.h \
     notificationsmodel.h \
-    bayes.h
+    bayes.h \
+    trainer.h
 
 DISTFILES += \
     android/AndroidManifest.xml \
