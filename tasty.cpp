@@ -51,6 +51,13 @@ void Tasty::decBusy()
 
 
 
+bool Tasty::isAuthorized() const
+{
+    return !_settings->accessToken().isEmpty();
+}
+
+
+
 QString Tasty::num2str(const int n, const QString str1, const QString str234, const QString str5)
 {
     QString res = QString("%1 %2").arg(n);

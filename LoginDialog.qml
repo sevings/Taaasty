@@ -3,7 +3,10 @@ import QtQuick 2.3
 Rectangle {
     id: dialog
 //    anchors.fill: parent
+    readonly property bool isLoginDialog: true // how to find this in the StackView?
     color: window.backgroundColor
+    signal popped
+    property bool poppable
     function clear() {
         mail.line = '';
         password.line = '';
@@ -37,13 +40,12 @@ Rectangle {
         font.pointSize: window.fontBigger
     }
     LineInput {
-        id: password
-//        echoMode: TextInput.Password
+        id: password // TODO: Enter key
+        echoMode: TextInput.Password
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 20
         width: parent.width / 3 * 2
-        echoMode: TextInput.Password
     }
     ThemedButton {
         id: loginButton
@@ -53,6 +55,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.margins: 20
         onClicked: Tasty.authorize(mail.line, password.line)
+        enabled: mail.line && password.line
     }
     ThemedButton {
         id: registerButton
@@ -61,6 +64,7 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: 20
+        enabled: mail.line && password.line
         //onClicked: Ctrl.signup()
     }
 }

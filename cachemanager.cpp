@@ -1,5 +1,9 @@
 #include "cachemanager.h"
 
+#include <QStandardPaths>
+
+
+
 CacheManager *CacheManager::Instance()
 {
     static CacheManager* manager = new CacheManager;
@@ -8,10 +12,12 @@ CacheManager *CacheManager::Instance()
 
 CacheManager::CacheManager()
 {
-    path = QDir::current();
-    if (!path.exists("cache"))
-        path.mkdir("cache");
-    path.cd("cache");
+    path = QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
+    path.mkpath("images");
+    path.cd("images");
+
+    qDebug() << path.absolutePath();
+
     web = Tasty::instance()->manager();
 }
 

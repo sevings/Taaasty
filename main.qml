@@ -43,10 +43,10 @@ ApplicationWindow {
             hideNotifs();
     }
     function showFooter() {
-        footer.y = window.height - footer.height;
+        footer.y =  - footer.height;
     }
     function hideFooter() {
-        footer.y = window.height;
+        footer.y = 0;
     }
     function setFooterTlog(tlog) {
         if (!tlog)
@@ -257,15 +257,20 @@ ApplicationWindow {
                 }
             }
         }
-
         Component {
             id: loginDialog
-            LoginDialog { }
+            LoginDialog {
+                onPopped: stack.pop()
+                poppable: Stack.index > 0
+            }
         }
         Connections {
             target: Tasty
             onAuthorizationNeeded: {
-                stack.push(loginDialog);
+                if (!stack.find(function (item) {
+                    return item.isLoginDialog;
+                }))
+                    stack.push(loginDialog);
             }
             onAuthorized: {
                 stack.pop(loginDialog);
@@ -334,15 +339,23 @@ ApplicationWindow {
                        })
         }
     }
-    Footer {
-        id: footer
-        onAvatarClicked: {
-            stack.push({
-                           item: profile,
-                           properties: {
-                               tlog: tlog
-                           }
-                       })
+    Rectangle {
+        id: fakeFooter
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: 0
+        z: 20
+        Footer {
+            id: footer
+            onAvatarClicked: {
+                stack.push({
+                               item: profile,
+                               properties: {
+                                   tlog: tlog
+                               }
+                           })
+            }
         }
     }
 }

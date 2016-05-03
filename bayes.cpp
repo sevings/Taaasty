@@ -5,6 +5,7 @@
 #include <QSqlError>
 #include <QDebug>
 #include <QRegularExpression>
+#include <QtMath>
 
 #ifdef QT_DEBUG
 #   include <QDateTime>
@@ -63,12 +64,12 @@ int Bayes::classify(const Entry *entry, const int minLength)
             if (cnt <= 0)
                 continue;
 
-            values[type] += log2(cnt * k);
+            values[type] += qLn(cnt * k);
         }
     }
 
     auto result = (values[Fire] - values[Water]) / length * 50;
-    return round(result);
+    return qRound(result);
 }
 
 
@@ -81,7 +82,7 @@ void Bayes::_initDb()
 
     QSqlQuery query;
     Q_ASSERT(query.exec("CREATE TABLE IF NOT EXISTS bayes         (type INTEGER, word TEXT, total INTEGER, PRIMARY KEY(type, word))"));
-    Q_ASSERT(query.exec("CREATE TABLE IF NOT EXISTS bayes_tlogs   (type INTEGER, n INTEGER, tlog INTEGER, latest INTEGER, PRIMARY KEY(tlog))"));
+    Q_ASSERT(query.exec("CREATE TABLE IF NOT EXISTS bayes_tlogs   (type INTEGER, tlog INTEGER, latest INTEGER, n INTEGER, PRIMARY KEY(tlog))"));
     Q_ASSERT(query.exec("CREATE TABLE IF NOT EXISTS bayes_entries (type INTEGER, entry INTEGER, PRIMARY KEY(entry))"));
 }
 

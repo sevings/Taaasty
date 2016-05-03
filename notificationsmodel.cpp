@@ -5,6 +5,7 @@
 
 #include "apirequest.h"
 #include "datastructures.h"
+#include "tasty.h"
 
 
 
@@ -68,7 +69,8 @@ void NotificationsModel::fetchMore(const QModelIndex& parent)
 {
 //    qDebug() << "fetch more";
 
-    if (_loading || parent.isValid() || _notifs.size() >= _totalCount)
+    if (_loading || parent.isValid() || _notifs.size() >= _totalCount
+            || !Tasty::instance()->isAuthorized())
         return;
 
     _loading = true;
@@ -110,7 +112,7 @@ void NotificationsModel::markAsRead()
 
 void NotificationsModel::_check()
 {
-    if (_loading)
+    if (_loading || !Tasty::instance()->isAuthorized())
         return;
 
     _loading = true;

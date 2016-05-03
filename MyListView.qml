@@ -14,7 +14,7 @@ ListView {
 
         if (verticalVelocity > 0)
             window.hideFooter();
-        else
+        else if (verticalVelocity < 0)
             window.showFooter();
     }
 //    add: Transition {

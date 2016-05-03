@@ -193,6 +193,7 @@ void Comment::remove()
     auto url = QString("comments/%1.json").arg(_id);
     auto request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
 
+    Q_UNUSED(request); //! TODO: read result of removing comments
     //connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readComment(const QJsonObject)));
 }
 

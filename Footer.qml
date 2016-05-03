@@ -6,9 +6,8 @@ Rectangle {
     anchors.left: parent.left
     anchors.right: parent.right
     height: avatar.height
-    y: parent.height
-    z: 20
-    visible: y >= parent.height - height
+    y: 0
+    visible: y >= - height
     property string title
     property Tlog tlog
     signal avatarClicked

@@ -19,9 +19,9 @@ ApiRequest::ApiRequest(const QString url,
     auto accessToken = settings->accessToken();
     //auto expiresAt = settings->expiresAt();
 
-    if (accessTokenRequired && (accessToken.isEmpty()))// || expiresAt <= QDateTime::currentDateTime()))
+    if (accessTokenRequired && (!tasty->isAuthorized()))// || expiresAt <= QDateTime::currentDateTime()))
     {
-        qDebug() << "authorization needed";
+        qDebug() << "authorization needed for" << url;
         emit tasty->authorizationNeeded();
         deleteLater();
         return;
@@ -85,9 +85,6 @@ void ApiRequest::_finished()
 {
     deleteLater();
 
-    if (_reply->error() != QNetworkReply::NoError)
-        return;
-
     auto data = _reply->readAll();
 
     QJsonParseError error;
@@ -99,5 +96,8 @@ void ApiRequest::_finished()
     }
 
     auto jsonObject = json.object();
-    emit success(jsonObject);
+    if (_reply->error() == QNetworkReply::NoError)
+        emit success(jsonObject);
+    else
+        qDebug() << jsonObject;
 }
