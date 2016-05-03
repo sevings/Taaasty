@@ -259,6 +259,8 @@ class Tlog: public QObject
 public:
     Tlog(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
 
+    Author* author() const { return _author; }
+
 public slots:
     int tlogId() const { return _id; }
     void setId(const int id);

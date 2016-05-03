@@ -42,12 +42,6 @@ private:
         quint16 count;
         bool changed;
     };
-//    struct BayesEntry {
-//        BayesEntry(qint16 entryId)
-//            : id(entryId), changed(false) { }
-//        int id;
-//        bool changed;
-//    };
 
     void _initDb();
     void _loadDb();
