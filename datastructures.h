@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+class CalendarEntry;
 class Entry;
 class Comment;
 class User;
@@ -15,6 +16,41 @@ class AttachedImage;
 
 class CommentsModel;
 class AttachedImagesModel;
+
+
+
+class CalendarEntry: public QObject
+{
+    Q_OBJECT
+
+    friend class Trainer;
+
+    Q_PROPERTY(int     id             MEMBER _id             CONSTANT)
+    Q_PROPERTY(QString createdAt      MEMBER _createdAt      CONSTANT)
+    Q_PROPERTY(QString url            MEMBER _url            CONSTANT)
+    Q_PROPERTY(bool    isPrivate      MEMBER _isPrivate      CONSTANT)
+    Q_PROPERTY(QString type           MEMBER _type           CONSTANT)
+    Q_PROPERTY(int     commentsCount  MEMBER _commentsCount  CONSTANT)
+    Q_PROPERTY(QString truncatedTitle MEMBER _truncatedTitle CONSTANT)
+    Q_PROPERTY(bool    isFlow         MEMBER _isFlow         CONSTANT)
+
+public:
+    CalendarEntry(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+
+    Entry* full();
+
+private:
+    int     _id;
+    QString _createdAt;
+    QString _url;
+    bool    _isPrivate;
+    QString _type;
+    int     _commentsCount;
+    QString _truncatedTitle;
+    bool    _isFlow;
+
+    Entry* _entry;
+};
 
 
 

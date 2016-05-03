@@ -72,6 +72,17 @@ void Trainer::setMode(const Trainer::Mode mode)
 
 
 
+void Trainer::train()
+{
+    emit trainStarted(true);
+
+    _entriesLoaded      = 0;
+    _entriesTotal       = 0;
+    _entriesLoadedTotal = 0;
+}
+
+
+
 QHash<int, QByteArray> Trainer::roleNames() const
 {
     QHash<int, QByteArray> roles;

@@ -21,13 +21,6 @@ FeedModel::FeedModel(QObject* parent)
 
 
 
-FeedModel::~FeedModel()
-{
-//    qDeleteAll(_entries);
-}
-
-
-
 int FeedModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);

@@ -33,8 +33,10 @@ public:
     Q_INVOKABLE Mode mode() const {return _curType; }
 
 signals:
+    void trainStarted(bool full);
 
 public slots:
+    void train();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
@@ -62,8 +64,8 @@ private:
 
     QList<BayesTlog> _tlogs[2];
 
-    Mode _curType;
-    int  _iCurTlog;
+    Mode       _curType;
+    int        _iCurTlog;
     BayesTlog* _curTlog;
 
     int _lastFavorite;

@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     usersmodel.cpp \
     notificationsmodel.cpp \
     bayes.cpp \
-    trainer.cpp
+    trainer.cpp \
+    calendarmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -40,7 +41,8 @@ HEADERS += \
     usersmodel.h \
     notificationsmodel.h \
     bayes.h \
-    trainer.h
+    trainer.h \
+    calendarmodel.h
 
 DISTFILES += \
     android/AndroidManifest.xml \
