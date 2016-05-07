@@ -29,11 +29,15 @@ Rectangle {
             'Well'; break;
         case FeedModel.AnonymousMode:
             'Anonymous'; break;
+        case FeedModel.FavoritesMode:
+            'Favorites'; break;
         default:
             'Tlog'
         }
     }
     readonly property bool customTitle: mode !== FeedModel.TlogMode && mode !== FeedModel.MyTlogMode
+    readonly property bool isFeedView: true
+    signal pushed
     signal entryClicked(TlogEntry entry)
     signal avatarClicked(Tlog tlog, Author author)
     Poppable {
@@ -56,6 +60,15 @@ Rectangle {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
         onAboveBegin: feedModel.reset()
+        Connections {
+            target: back
+            onPushed: {
+//                console.log('pushed', listView.currentIndex)
+                if (listView.currentIndex >= 0)
+                    listView.positionViewAtIndex(listView.currentIndex, ListView.Contain)
+            }
+        }
+
         model: FeedModel {
             id: feedModel
             mode: back.mode
@@ -83,26 +96,35 @@ Rectangle {
         }
         delegate: Item {
             id: entryView
-            anchors.left: parent.left
-            anchors.right: parent.right
+//            anchors.left: parent.left
+//            anchors.right: parent.right
+            width: window.width
             property color fontColor: window.textColor
             height: 8 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
                     + firstImage.height + quoteSource.height
+            function saveCurrentIndex() {
+                listView.currentIndex = listView.indexAt(entryView.x, entryView.y);
+//                console.log(listView.currentIndex);
+            }
             Poppable {
                 body: back
                 onClicked: {
+                    saveCurrentIndex();
                     entryClicked(entry);
                 }
             }
             SmallAvatar {
                 id: entryAvatar
                 anchors.margins: 1 * mm
-                source:  dp < 2 ? entry.author.thumb64 : entry.author.thumb128
-                symbol: entry.author.symbol
+                user: entry.author
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: back.avatarClicked(entry.tlog, entry.author)
                     enabled: mode !== FeedModel.AnonymousMode
+                    onClicked:
+                    {
+                        saveCurrentIndex();
+                        back.avatarClicked(entry.tlog, entry.author);
+                    }
                 }
             }
             Text {
@@ -122,10 +144,10 @@ Rectangle {
                 text: entry.createdAt
                 color: window.secondaryTextColor
                 font.pointSize: window.fontSmallest
-//                anchors.top: nick.bottom
+                anchors.top: nick.bottom
                 anchors.left: entryAvatar.right
-                anchors.bottom: entryAvatar.bottom
-                anchors.leftMargin: 1 * mm
+//                anchors.bottom: entryAvatar.bottom
+                anchors.margins: 1 * mm
             }
             ThemedButton {
                 id: entryVoteButton

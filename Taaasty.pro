@@ -4,6 +4,8 @@ QT += qml quick sql
 android: QT += androidextras
 CONFIG += c++11
 
+CONFIG += qtquickcompiler
+
 SOURCES += main.cpp \
     tasty.cpp \
     settings.cpp \

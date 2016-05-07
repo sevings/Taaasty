@@ -57,10 +57,10 @@ int main(int argc, char *argv[])
 #else
     QScreen *screen = qApp->primaryScreen();
     float density = screen->physicalDotsPerInch();
-    density = 254; // test
+    density = 267; // test
 #endif
 
-    engine.rootContext()->setContextProperty("mm",density / 25.4); // N900: 1 mm = 10.5 px; Q10: 24.7
+    engine.rootContext()->setContextProperty("mm",density / 25.4); // N900: 1 mm = 10.5 px; Q10: 12.9
     engine.rootContext()->setContextProperty("pt", 1);
 
     double scale = density < 180 ? 1 :

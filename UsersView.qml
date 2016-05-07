@@ -44,8 +44,9 @@ Rectangle {
             tlog: back.tlogId
         }
         delegate: Rectangle {
-            anchors.left: parent.left
-            anchors.right: parent.right
+//            anchors.left: parent.left
+//            anchors.right: parent.right
+            width: window.width
             height: usersAvatar.height + 2 * mm
             color: usersMouse.pressed ? window.brightColor : window.backgroundColor
             SmallAvatar {
@@ -53,8 +54,7 @@ Rectangle {
                 anchors.top: undefined
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.margins: 1 * mm
-                source: dp < 2 ? user.thumb64 : user.thumb128
-                symbol: user.symbol
+                user: model.user
             }
             Poppable {
                 id: usersMouse

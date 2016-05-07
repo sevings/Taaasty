@@ -87,9 +87,9 @@ void ImageCache::imageAvailable()
     filename = image->filename;
     delete image;
     image = NULL;
-    emit available();
-    emit downloadingChanged();
     changeExtension(filename);
+    emit downloadingChanged();
+    emit available();
 }
 
 void ImageCache::changeBytes(qint64 bytesReceived, qint64 bytesTotal)

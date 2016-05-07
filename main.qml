@@ -24,10 +24,12 @@ ApplicationWindow {
 //    property bool showSlugInput: false
 //    property bool showConvers: false
 //    property bool showDialog: false
+    readonly property int anonymousId: 4409
     title: qsTr("Taaasty")
     color: backgroundColor
     Component.onCompleted: {
         //tasty.getMe();
+        loadingText.visible = false;
     }
     function showNotifs() {
         notifsView.y = 0;
@@ -66,6 +68,16 @@ ApplicationWindow {
         z: 100
         busy: Tasty.busy > 0
     }
+    Text {
+        id: loadingText
+        z: 100
+        anchors.centerIn: parent
+        color: window.secondaryTextColor
+        horizontalAlignment: Text.AlignHCenter
+        font.pointSize: window.fontBigger
+        wrapMode: Text.Wrap
+        text: 'Загрузка...'
+    }
     StackView {
         id: stack
         anchors.fill: parent
@@ -84,6 +96,9 @@ ApplicationWindow {
             }
 
             window.hideFooter()
+
+            if (stack.currentItem.isFeedView)
+                stack.currentItem.pushed();
         }
         delegate: StackViewDelegate {
             function transitionFinished(properties)

@@ -6,6 +6,7 @@ ListView {
     highlightFollowsCurrentItem: false
 //    cacheBuffer: 1000
     flickableDirection: Flickable.VerticalFlick
+    maximumFlickVelocity: 400 * mm
     property bool poppable: true
     boundsBehavior: Flickable.DragOverBounds
     signal aboveBegin

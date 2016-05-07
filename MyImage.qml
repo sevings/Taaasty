@@ -4,6 +4,7 @@ import ImageCache 1.0
 ImageCache {
     id: cache
     clip: true
+    property color backgroundColor: '#373737'
     property int fillMode: Image.PreserveAspectFit
     property string type
     onSourceChanged: {
@@ -14,7 +15,7 @@ ImageCache {
         animated.source = '';
     }
     onAvailable: {
-        if (source.split('.')[1] === 'gif') {
+        if (cache.extension === 'gif') {
             animated.source = source;
             animated.visible = true;
             image.visible = false;
@@ -35,7 +36,7 @@ ImageCache {
     }
     Rectangle {
         anchors.fill: parent
-        color: '#373737'
+        color: cache.backgroundColor
         visible: image.source == '' && animated.source == ''
         Rectangle {
             id: downloadButton

@@ -259,6 +259,11 @@ User::User(const QJsonObject data, QObject *parent)
     _thumb128       = userpic.value("thumb128_url").toString();
     _thumb64        = userpic.value("thumb64_url").toString();
     _symbol         = userpic.value("symbol").toString();
+
+    auto colors = userpic.value("default_colors").toObject();
+
+    _backgroundColor = colors.value("background").toString();
+    _nameColor       = colors.value("name").toString();
 }
 
 

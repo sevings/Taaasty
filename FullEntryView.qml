@@ -29,9 +29,10 @@ Rectangle {
         height: contentHeight > parent.height ? parent.height : contentHeight
         model: commentsModel
         delegate: Item {
-            anchors.left: parent.left
-            anchors.right: parent.right
+//            anchors.left: parent.left
+//            anchors.right: parent.right
             //color: window.backgroundColor
+            width: window.width
             height: 4 * mm + commentText.paintedHeight + nameText.paintedHeight
             Poppable {
                 body: back
@@ -39,8 +40,7 @@ Rectangle {
             SmallAvatar {
                 id: commentAvatar
                 anchors.margins: 1 * mm
-                source: dp < 2 ? comment.user.thumb64 : comment.user.thumb128
-                symbol: comment.user.symbol
+                user: comment.user
                 MouseArea {
                     anchors.fill: parent
                     onClicked: back.avatarClicked(comment.user.id);
@@ -113,8 +113,9 @@ Rectangle {
                     id: picture
                     anchors.topMargin: 1 * mm
                     anchors.bottomMargin: 1 * mm
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+//                    anchors.left: parent.left
+//                    anchors.right: parent.right
+                    width: window.width
                     height: image.height / image.width * width
                     source: image.url
                     type: image.type

@@ -6,12 +6,13 @@ MouseArea {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     property int minWidth: parent.width * 0.7
-    width: x > drag.minimumX ? parent.width : minWidth + 5 * mm
+    width: x > drag.minimumX ? parent.width : minWidth + 10 * mm
     x: - minWidth
     drag.target: area
     drag.axis: Drag.XAxis
     drag.minimumX: - minWidth
     drag.maximumX: 0
+    drag.filterChildren: true
     propagateComposedEvents: true
     enabled: false
     signal modeChanged(int mode)
@@ -29,6 +30,7 @@ MouseArea {
     onClicked: {
         if (mouse.x > minWidth)
             backAnimation.start();
+        mouse.accepted = x > - minWidth;
     }
     PropertyAnimation {
         id: backAnimation

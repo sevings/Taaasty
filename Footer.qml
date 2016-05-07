@@ -23,16 +23,8 @@ Rectangle {
     SmallAvatar {
         id: avatar
         anchors.left: parent.left
-        source:  (dp < 2 ? footer.tlog.author.thumb64 : footer.tlog.author.thumb128)
-                 || 'http://taaasty.com/favicons/favicon-64x64.png'
-        symbol: footer.tlog.author.symbol || 'T'
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                if (footer.tlog.tlogId > 0 && footer.tlog.tlogId !== 4409) //anonymous
-                    footer.avatarClicked()
-            }
-        }
+        user: footer.tlog.author
+        defaultSource: 'http://taaasty.com/favicons/favicon-64x64.png'
     }
     Text {
         id: title
@@ -45,6 +37,16 @@ Rectangle {
         anchors.margins: 1 * mm
         horizontalAlignment: Text.AlignLeft
         elide: Text.ElideRight
+    }
+    MouseArea {
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: notifButton.left
+        onClicked: {
+            if (footer.tlog.tlogId > 0 && footer.tlog.tlogId !== window.anonymousId)
+                footer.avatarClicked()
+        }
     }
     MouseArea {
         id: notifButton

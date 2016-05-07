@@ -19,9 +19,11 @@ Rectangle {
         spacing: 2 * mm
         delegate: MouseArea {
             id: notif
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: notifName.paintedHeight + notifText.paintedHeight + 2 * mm
+//            anchors.left: parent.left
+//            anchors.right: parent.right
+            width: window.width
+            readonly property int h: notifName.paintedHeight + notifText.paintedHeight
+            height: (h > notifAvatar.height ? h : notifAvatar.height) + 2 * mm
 //            body: back
             readonly property bool showProfile: notification.parentType !== 'AnonymousEntry'
             onClicked: {
@@ -55,8 +57,7 @@ Rectangle {
             SmallAvatar {
                 id: notifAvatar
                 anchors.margins: 1 * mm
-                source:  dp < 2 ? notification.sender.thumb64 : notification.sender.thumb128
-                symbol: notification.sender.symbol
+                user: notification.sender
                 MouseArea {
                     anchors.fill: parent
                     enabled: showProfile

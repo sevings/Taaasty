@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import org.binque.taaasty 1.0
 
 MyImage {
     id: avatar
@@ -7,14 +8,18 @@ MyImage {
     //anchors.margins: 1 * mm
     width: 8 * mm
     height: 8 * mm
-    property string symbol: '?'
+    property User user: User { }
+    property string symbol: user.name ? user.name[0].toUpperCase() : '?'
+    property string defaultSource: ''
+    source: (dp < 2 ? user.thumb64 : user.thumb128) || defaultSource
+    backgroundColor: user.backgroundColor || '#373737'
     onAvailable: {
         letter.visible = false;
     }
     Text {
         id: letter
-        color: window.textColor
-        font.pixelSize: window.fontBiggest
+        color: user.nameColor || window.textColor
+        font.pixelSize: avatar.width / 2
         anchors.centerIn: parent
         text: parent.symbol.toUpperCase()
     }

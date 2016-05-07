@@ -8,6 +8,7 @@ MouseArea {
     drag.axis: Drag.XAxis
     drag.minimumX: 0
     drag.maximumX: body.width * 0.9
+    drag.threshold: 2 * mm
     propagateComposedEvents: true
     enabled: false
     Component.onCompleted: {

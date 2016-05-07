@@ -213,11 +213,13 @@ class User: public QObject
     Q_PROPERTY(QString name         MEMBER _name        CONSTANT)
     Q_PROPERTY(QString slug         MEMBER _slug        CONSTANT)
 
-    Q_PROPERTY(QString originalPic  MEMBER _originalPic CONSTANT)
-    Q_PROPERTY(QString largePic     MEMBER _largePic    CONSTANT)
-    Q_PROPERTY(QString thumb128     MEMBER _thumb128    CONSTANT)
-    Q_PROPERTY(QString thumb64      MEMBER _thumb64     CONSTANT)
-    Q_PROPERTY(QString symbol       MEMBER _symbol      CONSTANT)
+    Q_PROPERTY(QString originalPic     MEMBER _originalPic     CONSTANT)
+    Q_PROPERTY(QString largePic        MEMBER _largePic        CONSTANT)
+    Q_PROPERTY(QString thumb128        MEMBER _thumb128        CONSTANT)
+    Q_PROPERTY(QString thumb64         MEMBER _thumb64         CONSTANT)
+    Q_PROPERTY(QString symbol          MEMBER _symbol          CONSTANT)
+    Q_PROPERTY(QString backgroundColor MEMBER _backgroundColor CONSTANT)
+    Q_PROPERTY(QString nameColor       MEMBER _nameColor       CONSTANT)
 
 public:
     User(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
@@ -233,6 +235,8 @@ private:
     QString _thumb128;
     QString _thumb64;
     QString _symbol;
+    QString _backgroundColor;
+    QString _nameColor;
 };
 
 
