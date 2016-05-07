@@ -1,112 +1,161 @@
 #include "imagecache.h"
 
-ImageCache::ImageCache(QQuickItem *parent) :
-    QQuickItem(parent),  filename(""), image(NULL), kbytesReceived(0), kbytesTotal(0), extension()
+#include <QStringList>
+
+#include "cachemanager.h"
+
+
+
+ImageCache::ImageCache(QQuickItem *parent)
+    : QQuickItem(parent)
+    ,  _filename("")
+    , image(nullptr)
+    , _kbytesReceived(0)
+    , _kbytesTotal(0)
 {
 
 }
 
-QString ImageCache::source() {
-    return QUrl::fromLocalFile(filename).toString();
+
+
+QString ImageCache::source() const
+{
+    return QUrl::fromLocalFile(_filename).toString();
 }
 
-void ImageCache::setSource(QString source) {
-    sourceUrl = source;
+
+
+void ImageCache::setSource(QString source)
+{
+    if (_sourceUrl == source)
+        return;
+
+    _sourceUrl = source;
     if (source.length() == 0) {
-        filename.clear();
-        extension = "";
+        _filename.clear();
+        _extension.clear();
         emit extensionChanged();
         return;
     }
+
     emit sourceChanged();
-    kbytesReceived = 0;
-    kbytesTotal = 0;
+
+    _kbytesReceived = 0;
+    _kbytesTotal = 0;
     emit receivedChanged();
     emit totalChanged();
-    CacheManager* manager = CacheManager::Instance();
+
+    CacheManager* manager = CacheManager::instance();
     image = manager->download(source);
     if (image->isAvailable)
-        imageAvailable();
+        _imageAvailable();
     else {
         emit readyToDownload();
-        changeExtension(source);
+        _changeExtension(source);
     }
 }
 
-bool ImageCache::isReadyToDownload()
+
+
+bool ImageCache::isReadyToDownload() const
 {
-    return image != NULL;
+    return image;
 }
 
-int ImageCache::received()
+
+
+int ImageCache::received() const
 {
-    return kbytesReceived;
+    return _kbytesReceived;
 }
 
-int ImageCache::total()
+
+
+int ImageCache::total() const
 {
-    return kbytesTotal;
+    return _kbytesTotal;
 }
 
-bool ImageCache::isDownloading()
+
+
+bool ImageCache::isDownloading() const
 {
-    return image != NULL && image->isDownloading();
+    return image && image->isDownloading();
 }
 
-QString ImageCache::getExtension()
+
+
+QString ImageCache::getExtension() const
 {
-    return extension;
+    return _extension;
 }
+
+
 
 void ImageCache::download()
 {
-    if (image == NULL) {
-        setSource(sourceUrl);
+    if (!image) {
+        setSource(_sourceUrl);
         return;
     }
     else if (image->isDownloading())
         return;
-    connect(image, SIGNAL(available()), this, SLOT(imageAvailable()));
-    connect(image, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(changeBytes(qint64,qint64)));
+
+    connect(image, SIGNAL(available()),                     this, SLOT(_imageAvailable()));
+    connect(image, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(_changeBytes(qint64,qint64)));
+
     image->get();
     emit downloadingChanged();
 }
 
+
+
 void ImageCache::abortDownload()
 {
-    if(isDownloading()) {
-        image->abort();
-        delete image;
-        image = NULL;
-        emit downloadingChanged();
-    }
+    if (!isDownloading())
+    return;
+
+    image->abort();
+    delete image;
+    image = nullptr;
+
+    emit downloadingChanged();
 }
 
-void ImageCache::imageAvailable()
+
+
+void ImageCache::_imageAvailable()
 {
-    filename = image->filename;
+    _filename = image->filename;
     delete image;
-    image = NULL;
-    changeExtension(filename);
+    image = nullptr;
+
+    _changeExtension(_filename);
+
     emit downloadingChanged();
     emit available();
 }
 
-void ImageCache::changeBytes(qint64 bytesReceived, qint64 bytesTotal)
+
+
+void ImageCache::_changeBytes(qint64 bytesReceived, qint64 bytesTotal)
 {
-    kbytesReceived = bytesReceived / 1024;
-    kbytesTotal = bytesTotal / 1024;
+    _kbytesReceived = bytesReceived / 1024;
+    _kbytesTotal = bytesTotal / 1024;
     emit receivedChanged();
     emit totalChanged();
 }
 
-void ImageCache::changeExtension(QString url)
+
+
+void ImageCache::_changeExtension(QString url)
 {
-    QString ext = url.split(".").last();
+    auto ext = url.split(".").last();
     if (ext.length() > 5)
-        extension = "unknown";
+        _extension = "unknown";
     else
-        extension = ext;
+        _extension = ext;
+
     emit extensionChanged();
 }
 

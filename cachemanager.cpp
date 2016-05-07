@@ -1,38 +1,52 @@
 #include "cachemanager.h"
 
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QFile>
 #include <QStandardPaths>
 
 
 
-CacheManager *CacheManager::Instance()
+CacheManager *CacheManager::instance()
 {
-    static CacheManager* manager = new CacheManager;
+    static auto manager = new CacheManager;
     return manager;
 }
 
+
+
 CacheManager::CacheManager()
 {
-    path = QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
-    path.mkpath("images");
-    path.cd("images");
+    _path = QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
+    _path.mkpath("images");
+    _path.cd("images");
 
-    qDebug() << path.absolutePath();
-
-    web = Tasty::instance()->manager();
+    _web = Tasty::instance()->manager();
 }
+
+
 
 ImagePath *CacheManager::download(QString url)
 {
-    ImagePath* image = new ImagePath(web, path, url);
+    auto image = new ImagePath(_web, _path, url);
     return image;
 }
 
+
+
 ImagePath::ImagePath(QNetworkAccessManager* web, QDir path, QString url)
-    : isAvailable(false), reply(NULL), web(web), url(url)
+    : isAvailable(false)
+    , _reply(nullptr)
+    , _web(web)
+    , _url(url)
 {
     filename = path.absoluteFilePath(QString("%1.jpg").arg(qHash(url)));
-    checkExists();
+
+    _checkExists();
 }
+
+
 
 void ImagePath::get()
 {
@@ -40,36 +54,49 @@ void ImagePath::get()
         emit available();
         return;
     }
-    if (checkExists())
+
+    if (_checkExists())
         return;
-    reply = web->get(QNetworkRequest(url));
-    connect(reply, SIGNAL(finished()), this, SLOT(downloadFinished()));
-    connect(reply, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(ignoreSslErrors()));
-    connect(reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgressChanged(qint64,qint64)));
+
+    _reply = _web->get(QNetworkRequest(_url));
+    connect(_reply, SIGNAL(finished()),                      this, SLOT(_saveFile()));
+    connect(_reply, SIGNAL(sslErrors(QList<QSslError>)),     this, SLOT(_ignoreSslErrors()));
+    connect(_reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(_emitProgressChanged(qint64,qint64)));
 }
+
+
 
 bool ImagePath::isDownloading()
 {
-    return reply != NULL && reply->isRunning();
+    return _reply && _reply->isRunning();
 }
+
+
 
 void ImagePath::abort()
 {
-    if (isDownloading()) {
-        reply->abort();
-        reply->deleteLater();
-        reply = NULL;
-    }
+    if (!isDownloading())
+        return;
+
+    _reply->abort();
+    _reply->deleteLater();
+    _reply = nullptr;
 }
 
-void ImagePath::downloadFinished() {
-    if (reply->error() != QNetworkReply::NoError ) {
-        if (reply->error() == QNetworkReply::OperationCanceledError)
+
+
+void ImagePath::_saveFile() {
+    if (_reply->error() != QNetworkReply::NoError ) {
+        if (_reply->error() == QNetworkReply::OperationCanceledError)
             return;
-        reply->deleteLater();
-        reply = NULL;
+
+        _reply->deleteLater();
+        _reply = nullptr;
+
         get();
+        return; // ?
     }
+
     int period = filename.lastIndexOf('.');
     if (period > 0) {
         filename.truncate(period + 1);
@@ -78,12 +105,12 @@ void ImagePath::downloadFinished() {
         filename.append('.');
 
     QString suffix;
-    QByteArray img = reply->readAll();
+    auto img = _reply->readAll();
     if (img.startsWith(0x89))
         suffix = "png";
-    if (img.startsWith(0xFF))
+    else if (img.startsWith(0xFF))
         suffix = "jpg";
-    if (img.startsWith(0x47))
+    else if (img.startsWith(0x47))
         suffix = "gif";
     filename.append(suffix);
 
@@ -92,42 +119,49 @@ void ImagePath::downloadFinished() {
     file.write(img);
     file.close();
 
-    reply->deleteLater();
-    reply = NULL;
+    _reply->deleteLater();
+    _reply = NULL;
     emit available();
 }
 
-void ImagePath::downloadProgressChanged(qint64 bytesReceived, qint64 bytesTotal)
+
+
+void ImagePath::_emitProgressChanged(qint64 bytesReceived, qint64 bytesTotal)
 {
     emit downloadProgress(bytesReceived, bytesTotal);
 }
 
-void ImagePath::ignoreSslErrors()
+
+
+void ImagePath::_ignoreSslErrors()
 {
-    reply->ignoreSslErrors();
+    _reply->ignoreSslErrors();
 }
 
-bool ImagePath::exists()
+
+
+bool ImagePath::_isExists()
 {
-    if (QFile::exists(filename)) {
-        isAvailable = true;
-        emit available();
-        return true;
-    }
-    else
+    if (!QFile::exists(filename))
         return false;
+
+    isAvailable = true;
+    emit available();
+    return true;
 }
 
-bool ImagePath::checkExists()
+
+
+bool ImagePath::_checkExists()
 {
     filename.replace(filename.length()-3, 3, "jpg");
-    if (exists())
+    if (_isExists())
         return true;
     filename.replace(filename.length()-3, 3, "png");
-    if (exists())
+    if (_isExists())
         return true;
     filename.replace(filename.length()-3, 3, "gif");
-    if (exists())
+    if (_isExists())
         return true;
     return false;
 }

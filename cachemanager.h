@@ -2,13 +2,12 @@
 #define CACHEMANAGER_H
 
 #include <QObject>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QFile>
 #include <QDir>
 
 #include "tasty.h"
+
+class QNetworkAccessManager;
+class QNetworkReply;
 
 
 
@@ -17,9 +16,11 @@ class ImagePath: public QObject
     Q_OBJECT
 public:
     ImagePath(QNetworkAccessManager *web, QDir path, QString url);
-    void get();
+
     QString filename;
     bool isAvailable;
+
+    void get();
     bool isDownloading();
     void abort();
 
@@ -28,23 +29,27 @@ signals:
     void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
 
 private slots:
-    void downloadFinished();
-    void downloadProgressChanged(qint64 bytesReceived, qint64 bytesTotal);
-    void ignoreSslErrors();
+    void _saveFile();
+    void _emitProgressChanged(qint64 bytesReceived, qint64 bytesTotal);
+    void _ignoreSslErrors();
 
 private:
-    bool exists();
-    bool checkExists();
-    QNetworkReply* reply;
-    QNetworkAccessManager* web;
-    QString url;
+    bool _isExists();
+    bool _checkExists();
+
+    QNetworkReply* _reply;
+    QNetworkAccessManager* _web;
+    QString _url;
 };
+
+
 
 class CacheManager : public QObject
 {
     Q_OBJECT
 public:
-    static CacheManager* Instance();
+    static CacheManager* instance();
+
     ImagePath* download(QString url);
 
 private:
@@ -52,8 +57,8 @@ private:
     CacheManager(const CacheManager& root);
     CacheManager& operator=(const CacheManager&);
 
-    QNetworkAccessManager* web;
-    QDir path;
+    QNetworkAccessManager* _web;
+    QDir _path;
 };
 
 #endif // CACHEMANAGER_H
