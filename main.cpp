@@ -10,6 +10,7 @@
 #endif
 
 #include "tasty.h"
+#include "cache/cachemanager.h"
 #include "cache/cachedimage.h"
 #include "feedmodel.h"
 #include "commentsmodel.h"
@@ -48,7 +49,10 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("Tasty", tasty);
 
     auto web = tasty->manager();
+    auto settings = tasty->settings();
     auto cache = CacheManager::instance(web);
+    cache->setMaxWidth(settings->maxImageWidth());
+    cache->setAutoload(settings->autoloadImages());
     engine.rootContext()->setContextProperty("Cache", cache);
 //    engine.rootContext()->setContextProperty("Bayes", Bayes::instance(Tasty::instance()));
 
@@ -60,7 +64,7 @@ int main(int argc, char *argv[])
     QAndroidJniObject displayMetrics = resources.callObjectMethod("getDisplayMetrics", "()Landroid/util/DisplayMetrics;");
     int density = displayMetrics.getField<int>("densityDpi");
 #else
-    QScreen *screen = qApp->primaryScreen();
+    auto *screen = qApp->primaryScreen();
     float density = screen->physicalDotsPerInch();
     density = 267; // test
 #endif
@@ -77,7 +81,7 @@ int main(int argc, char *argv[])
 
     int res = app.exec();
 
-    delete cache;
+//    delete cache;
     delete tasty;
 
     return res;

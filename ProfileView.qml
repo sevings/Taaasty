@@ -37,7 +37,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: width
-                source: author.largePic
+                url: author.largePic
             }
             Text {
                 id: name

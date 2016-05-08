@@ -11,7 +11,7 @@ MyImage {
     property User user: User { }
     property string symbol: user.name ? user.name[0].toUpperCase() : '?'
     property string defaultSource: ''
-    source: (dp < 2 ? user.thumb64 : user.thumb128) || defaultSource
+    url: (dp < 2 ? user.thumb64 : user.thumb128) || defaultSource
     backgroundColor: user.backgroundColor || '#373737'
     onAvailable: {
         letter.visible = false;

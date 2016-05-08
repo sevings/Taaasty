@@ -2,8 +2,10 @@
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QFile>
+#include <QImage>
+#include <QBuffer>
+#include <QtConcurrent>
 
 #include <QDebug>
 
@@ -19,25 +21,31 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
     , _url(url)
     , _kbytesReceived(0)
     , _kbytesTotal(0)
+    , _available(false)
 {
     if (!_man || _url.isEmpty())
         return;
 
-    _hash = qHash(_url);
+    _hash = QString::number(qHash(_url));
     if (_exists())
     {
+        _available = true;
         emit available();
         return;
     }
 
-    getInfo();
+    if (_man->autoload())
+        download();
+    else
+        getInfo();
 }
 
 
 
 QString CachedImage::source() const
 {
-    return QString("%1/%2.%3").arg(_man->_path).arg(_hash).arg(_extension);
+    auto path = QString("%1/%2.%3").arg(_man->path()).arg(_hash).arg(_extension);
+    return QUrl::fromLocalFile(path).toString();
 }
 
 
@@ -61,10 +69,11 @@ void CachedImage::getInfo()
     if (_headReply || _reply)
         return;
 
-    _headReply = _man->_web->head(QNetworkRequest(_url));
+    _headReply = _man->web()->head(QNetworkRequest(_url));
     _headReply->ignoreSslErrors();
 
-    Q_ASSERT(connect(_headReply, SIGNAL(finished()), this, SLOT(_setProperties()))); // errors?
+    Q_ASSERT(connect(_headReply, SIGNAL(finished()),                         this, SLOT(_setProperties())));
+    Q_ASSERT(connect(_headReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(_printError(QNetworkReply::NetworkError))));
 }
 
 
@@ -74,11 +83,18 @@ void CachedImage::download()
     if (_url.isEmpty() || !isReadyToDownload() || isDownloading())
         return;
 
-    _reply = _man->_web->get(QNetworkRequest(_url));
+    if (_available)
+    {
+        emit available();
+        return;
+    }
+
+    _reply = _man->web()->get(QNetworkRequest(_url));
     _reply->ignoreSslErrors();
 
-    Q_ASSERT(connect(_reply, SIGNAL(finished()),                      this, SLOT(_saveFile())));
-    Q_ASSERT(connect(_reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(_changeBytes(qint64,qint64))));
+    Q_ASSERT(connect(_reply, SIGNAL(finished()),                         this, SLOT(_saveData())));
+    Q_ASSERT(connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(_printError(QNetworkReply::NetworkError))));
+    Q_ASSERT(connect(_reply, SIGNAL(downloadProgress(qint64,qint64)),    this, SLOT(_changeBytes(qint64,qint64))));
 
     emit downloadingChanged();
 }
@@ -95,6 +111,9 @@ void CachedImage::abortDownload()
     _reply = nullptr;
 
     emit downloadingChanged();
+
+    _kbytesReceived = 0;
+    emit receivedChanged();
 }
 
 
@@ -102,16 +121,18 @@ void CachedImage::abortDownload()
 void CachedImage::_setProperties()
 {
     auto mime = _headReply->header(QNetworkRequest::ContentTypeHeader).toString().split('/');
-    if (mime.isEmpty() || mime.first().toLower() != "image")
+    if (mime.isEmpty())
+        mime << "";
+    if (!mime.first().isEmpty() && mime.first().toLower() != "image")
     {
         qDebug() << "mime:" << mime.first() << "\nurl:" << _url;
         return;
     }
 
-    _setFormat(mime.first());
+    _setFormat(mime.last());
 
     auto length = _headReply->header(QNetworkRequest::ContentLengthHeader).toInt();
-    _kbytesTotal = length;
+    _kbytesTotal = length / 1024;
 
     emit totalChanged();
 
@@ -123,7 +144,7 @@ void CachedImage::_setProperties()
 
 
 
-void CachedImage::_saveFile()
+void CachedImage::_saveData()
 {
     if (_reply->error() != QNetworkReply::NoError ) {
         if (_reply->error() == QNetworkReply::OperationCanceledError)
@@ -136,28 +157,21 @@ void CachedImage::_saveFile()
         return;
     }
 
-    auto img = _reply->readAll();
+    _data = _reply->readAll();
     if (_format == UnknownFormat)
     {
-        if (img.startsWith(0x89))
+        if (_data.startsWith(0x89))
             _setFormat("png");
-        else if (img.startsWith(0xFF))
+        else if (_data.startsWith(0xFF))
             _setFormat("jpeg");
-        else if (img.startsWith(0x47))
+        else if (_data.startsWith(0x47))
             _setFormat("gif");
     }
-
-    // todo: resize
-
-    QFile file(source());
-    file.open(QIODevice::WriteOnly);
-    file.write(img);
-    file.close();
 
     _reply->deleteLater();
     _reply = nullptr;
 
-    emit available();
+    QtConcurrent::run(this, &CachedImage::_saveFile);
 }
 
 
@@ -173,9 +187,17 @@ void CachedImage::_changeBytes(qint64 bytesReceived, qint64 bytesTotal)
 
 
 
+void CachedImage::_printError(QNetworkReply::NetworkError code)
+{
+    if (code != QNetworkReply::OperationCanceledError)
+        qDebug() << "image web error" << code;
+}
+
+
+
 bool CachedImage::_exists()
 {
-    const auto path = QString("%1/%2.%3").arg(_man->_path).arg(_hash);
+    const auto path = QString("%1/%2.%3").arg(_man->path()).arg(_hash);
 
     if (QFile::exists(path.arg("jpg")))
     {
@@ -199,9 +221,11 @@ bool CachedImage::_exists()
 
 
 
-void CachedImage::_setFormat(const QString format)
+void CachedImage::_setFormat(QString format)
 {
-    if (format == "jpeg")
+    format = format.toLower();
+
+    if (format == "jpeg" || format == "jpg")
     {
         _format = JpegFormat;
         _extension = "jpg";
@@ -216,8 +240,43 @@ void CachedImage::_setFormat(const QString format)
         _format = GifFormat;
         _extension = "gif";
     }
+    else if (format.isEmpty())
+    {
+        auto ext = _url.split(".").last();
+        if (!ext.isEmpty())
+            _setFormat(ext);
+        return;
+    }
     else
         qDebug() << "mime:" << format << "\nurl:" << _url;
 
     emit formatChanged();
+}
+
+
+
+void CachedImage::_saveFile()
+{
+    auto path = QString("%1/%2.%3").arg(_man->path()).arg(_hash).arg(_extension);
+    if (_man->maxWidth() && _format != UnknownFormat && _format != GifFormat)
+    {
+        auto pic = QImage::fromData(_data);
+        if (pic.width() > _man->maxWidth())
+        {
+            pic = pic.scaledToWidth(_man->maxWidth(), Qt::SmoothTransformation);
+            QBuffer buffer(&_data);
+            buffer.open(QIODevice::WriteOnly | QIODevice::Truncate);
+            pic.save(&buffer, _extension.toLatin1().data());
+        }
+    }
+
+    QFile file(path);
+    file.open(QIODevice::WriteOnly);
+    file.write(_data);
+    file.close();
+
+    _data.clear();
+
+    _available = true;
+    emit available();
 }

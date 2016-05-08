@@ -17,6 +17,8 @@ CacheManager *CacheManager::instance(QNetworkAccessManager* web)
 
 
 CacheManager::CacheManager(QNetworkAccessManager* web)
+    : _maxWidth(0)
+    , _autoload(true)
 {
     auto cachePath = QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
     cachePath.mkpath("images");
@@ -24,6 +26,45 @@ CacheManager::CacheManager(QNetworkAccessManager* web)
     _path = cachePath.absolutePath();
 
     _web = web ? web : new QNetworkAccessManager(this);
+}
+
+QString CacheManager::path() const
+{
+    return _path;
+}
+
+QNetworkAccessManager* CacheManager::web() const
+{
+    return _web;
+}
+
+
+
+bool CacheManager::autoload() const
+{
+    return _autoload;
+}
+
+
+
+void CacheManager::setAutoload(bool autoload)
+{
+    _autoload = autoload;
+}
+
+
+
+int CacheManager::maxWidth() const
+{
+    return _maxWidth;
+}
+
+
+
+void CacheManager::setMaxWidth(int maxWidth)
+{
+    if (maxWidth >= 0)
+        _maxWidth = maxWidth;
 }
 
 

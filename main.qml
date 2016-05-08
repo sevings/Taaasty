@@ -16,7 +16,6 @@ ApplicationWindow {
     property int fontNormal: 20
     property int fontSmaller: 17
     property int fontSmallest: 14
-    property bool cashedImages: false
     property bool unreadNotifications: notifsModel.unread
 //    property int unreadMessages: 0
 //    property bool showNotifs: false
@@ -309,7 +308,7 @@ ApplicationWindow {
                            item: feed,
                            properties: {
                                mode: mode,
-                               tlogId: 281926
+                               tlogId: 287835 // 281926
                            }
                        })
         }

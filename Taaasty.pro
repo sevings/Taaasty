@@ -1,7 +1,9 @@
 TEMPLATE = app
 
-QT += qml quick sql
+QT += qml quick sql concurrent
+
 android: QT += androidextras
+
 CONFIG += c++11
 
 CONFIG += qtquickcompiler

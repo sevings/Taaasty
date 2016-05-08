@@ -27,6 +27,12 @@ public:
     QDateTime expiresAt() const;
     void setExpiresAt(const QString date);
 
+    int maxImageWidth() const;
+    void setMaxImageWidth(const int width);
+
+    bool autoloadImages() const;
+    void setAutoloadImages(bool load);
+
 signals:
 
 public slots:

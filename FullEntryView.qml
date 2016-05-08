@@ -117,8 +117,7 @@ Rectangle {
 //                    anchors.right: parent.right
                     width: window.width
                     height: image.height / image.width * width
-                    source: image.url
-                    type: image.type
+                    url: image.url
                 }
             }
             Text {

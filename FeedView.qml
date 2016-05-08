@@ -174,8 +174,7 @@ Rectangle {
                 anchors.topMargin: 1 * mm
                 anchors.bottomMargin: 1 * mm
                 height: visible ? (image.height / image.width * width) : 0
-                source: visible ? image.url : ''
-                type: visible ? image.type : ''
+                url: visible ? image.url : ''
                 Text {
                     anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
