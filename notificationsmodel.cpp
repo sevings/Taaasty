@@ -19,14 +19,15 @@ NotificationsModel::NotificationsModel(QObject* parent)
     _timer.setSingleShot(false);
     _timer.start();
 
-    Q_ASSERT(connect(&_timer, SIGNAL(timeout()), this, SLOT(_check())));
+    Q_ASSERT(connect(&_timer, SIGNAL(timeout()),              this, SLOT(_check())));
+    Q_ASSERT(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(_reloadAll())));
 }
 
 
 
 NotificationsModel::~NotificationsModel()
 {
-    qDeleteAll(_notifs);
+
 }
 
 
@@ -105,7 +106,7 @@ void NotificationsModel::markAsRead()
     
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
     Q_ASSERT(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_readSuccess())));
-    Q_ASSERT(connect(request, SIGNAL(success(QJsonObject)), this, SIGNAL(unreadChanged())));
+//    Q_ASSERT(connect(request, SIGNAL(success(QJsonObject)), this, SIGNAL(unreadChanged())));
 }
 
 
@@ -140,6 +141,8 @@ void NotificationsModel::_readSuccess()
         }
         else
             break;
+
+    emit unreadChanged();
 }
 
 
@@ -217,4 +220,19 @@ void NotificationsModel::_addNewest(QJsonObject data)
     _loading = false;
 
     emit unreadChanged();
+}
+
+
+
+void NotificationsModel::_reloadAll()
+{
+    beginResetModel();
+
+    _loading = false;
+    _totalCount = 1;
+    qDeleteAll(_notifs);
+
+    endResetModel();
+
+    fetchMore(QModelIndex());
 }

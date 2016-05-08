@@ -59,7 +59,8 @@ MouseArea {
             topMargin: 1 * mm
             bottomMargin: 1 * mm
             contentWidth: parent.width
-            contentHeight: 9 * mm * 11 - mm
+            property int buttonsCount: Tasty.isAuthorized ? 11 : 8
+            contentHeight: 9 * mm * buttonsCount - mm
             Column {
                 id: column
                 anchors.fill: parent
@@ -69,12 +70,14 @@ MouseArea {
                     anchors.right: parent.right
                     text: 'My tlog'
                     onClicked: { modeChanged(FeedModel.MyTlogMode) }
+                    visible: Tasty.isAuthorized
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     text: 'Friends'
                     onClicked: { modeChanged(FeedModel.FriendsMode) }
+                    visible: Tasty.isAuthorized
                 }
                 ThemedButton {
                     anchors.left: parent.left
@@ -117,6 +120,7 @@ MouseArea {
                     anchors.right: parent.right
                     text: 'Favorites'
                     onClicked: { modeChanged(FeedModel.FavoritesMode) }
+                    visible: Tasty.isAuthorized
                 }
                 ThemedButton {
                     anchors.left: parent.left

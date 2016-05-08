@@ -45,6 +45,8 @@ private slots:
     void _addItems(QJsonObject data);
     void _addNewest(QJsonObject data);
 
+    void _reloadAll();
+
 private:
     QList<Notification*> _notifs;
     QString _url;
