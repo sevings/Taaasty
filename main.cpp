@@ -10,7 +10,7 @@
 #endif
 
 #include "tasty.h"
-#include "imagecache.h"
+#include "cache/cachedimage.h"
 #include "feedmodel.h"
 #include "commentsmodel.h"
 #include "attachedimagesmodel.h"
@@ -41,10 +41,15 @@ int main(int argc, char *argv[])
     qmlRegisterType<AttachedImage>  ("org.binque.taaasty", 1, 0, "AttachedImage");
     qmlRegisterType<Notification>   ("org.binque.taaasty", 1, 0, "Notification");
 
-    qmlRegisterType<ImageCache>("ImageCache", 1, 0, "ImageCache");
+    qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("Tasty", Tasty::instance());
+    auto tasty = Tasty::instance();
+    engine.rootContext()->setContextProperty("Tasty", tasty);
+
+    auto web = tasty->manager();
+    auto cache = CacheManager::instance(web);
+    engine.rootContext()->setContextProperty("Cache", cache);
 //    engine.rootContext()->setContextProperty("Bayes", Bayes::instance(Tasty::instance()));
 
 #ifdef Q_OS_ANDROID
@@ -72,7 +77,8 @@ int main(int argc, char *argv[])
 
     int res = app.exec();
 
-    delete Tasty::instance();
+    delete cache;
+    delete tasty;
 
     return res;
 }

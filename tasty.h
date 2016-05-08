@@ -15,7 +15,8 @@ class Tasty : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int busy READ busy NOTIFY busyChanged)
+    Q_PROPERTY(int  busy         READ busy         NOTIFY busyChanged)
+    Q_PROPERTY(bool isAuthorized READ isAuthorized NOTIFY authorized)
 
 public:
     explicit Tasty(QObject *parent = 0);
@@ -27,8 +28,9 @@ public:
 
     void incBusy();
     void decBusy();
+    Q_INVOKABLE int busy() const { return _busy; }
 
-    bool isAuthorized() const;
+    Q_INVOKABLE bool isAuthorized() const;
 
     Q_INVOKABLE static QString num2str(const int n, const QString str1,
                     const QString str234, const QString str5);
@@ -43,7 +45,6 @@ signals:
     void ratingChanged(const QJsonObject rating);
 
 public slots:
-    int busy() const { return _busy; }
 
     void authorize(const QString login, const QString password);
     void postEntry(const QString title, const QString content);

@@ -11,8 +11,6 @@ SOURCES += main.cpp \
     settings.cpp \
     apirequest.cpp \
     feedmodel.cpp \
-    imagecache.cpp \
-    cachemanager.cpp \
     commentsmodel.cpp \
     datastructures.cpp \
     attachedimagesmodel.cpp \
@@ -20,7 +18,9 @@ SOURCES += main.cpp \
     notificationsmodel.cpp \
     bayes.cpp \
     trainer.cpp \
-    calendarmodel.cpp
+    calendarmodel.cpp \
+    cache/cachemanager.cpp \
+    cache/cachedimage.cpp
 
 RESOURCES += qml.qrc
 
@@ -35,8 +35,6 @@ HEADERS += \
     settings.h \
     apirequest.h \
     feedmodel.h \
-    imagecache.h \
-    cachemanager.h \
     commentsmodel.h \
     datastructures.h \
     attachedimagesmodel.h \
@@ -44,7 +42,9 @@ HEADERS += \
     notificationsmodel.h \
     bayes.h \
     trainer.h \
-    calendarmodel.h
+    calendarmodel.h \
+    cache/cachemanager.h \
+    cache/cachedimage.h
 
 DISTFILES += \
     android/AndroidManifest.xml \
