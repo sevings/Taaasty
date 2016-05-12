@@ -3,6 +3,8 @@
 #include <QNetworkRequest>
 #include <QJsonParseError>
 
+#include "defines.h"
+
 
 
 ApiRequest::ApiRequest(const QString url,
@@ -56,9 +58,9 @@ ApiRequest::ApiRequest(const QString url,
         return;
     }
 
-    connect(_reply, SIGNAL(finished()), this, SLOT(_finished()));
-    connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(_printNetworkError(QNetworkReply::NetworkError)));
+    Q_TEST(connect(_reply, SIGNAL(finished()), this, SLOT(_finished())));
+    Q_TEST(connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(_printNetworkError(QNetworkReply::NetworkError))));
 }
 
 

@@ -7,6 +7,8 @@
 
 #include <QDebug>
 
+#include "defines.h"
+
 #include "datastructures.h"
 #include "bayes.h"
 
@@ -200,7 +202,7 @@ void Trainer::BayesTlog::loadInfo()
 void Trainer::_initDb()
 {
     QSqlQuery query;
-    Q_ASSERT(query.exec("CREATE TABLE IF NOT EXISTS bayes_tlogs   (type INTEGER, tlog INTEGER, latest INTEGER, n INTEGER, PRIMARY KEY(tlog))"));
+    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes_tlogs   (type INTEGER, tlog INTEGER, latest INTEGER, n INTEGER, PRIMARY KEY(tlog))"));
 }
 
 
@@ -210,12 +212,12 @@ void Trainer::_loadDb()
     _initDb();
 
     QSqlQuery query;
-    Q_ASSERT(query.exec("SELECT type, tlog, latest, n FROM bayes_tlogs WHERE tlog > 0 ORDER BY n"));
+    Q_TEST(query.exec("SELECT type, tlog, latest, n FROM bayes_tlogs WHERE tlog > 0 ORDER BY n"));
     while (query.next())
         _tlogs[query.value(0).toInt()] << BayesTlog(query.value(1).toInt(),
                                                     query.value(2).toInt());
 
-    Q_ASSERT(query.exec("SELECT latest FROM bayes_tlogs WHERE tlog = -1"));
+    Q_TEST(query.exec("SELECT latest FROM bayes_tlogs WHERE tlog = -1"));
     if (query.next())
         _lastFavorite = query.value(0).toInt();
 }
@@ -229,12 +231,12 @@ void Trainer::_saveDb()
         for (int tlog = 0; tlog < _tlogs[type].size(); tlog++)
             if (_tlogs[type].at(tlog).include && !_tlogs[type].at(tlog).removed)
             {
-                Q_ASSERT(query.prepare("INSERT OR REPLACE INTO bayes_tlogs VALUES (?, ?, ?, ?)"));
+                Q_TEST(query.prepare("INSERT OR REPLACE INTO bayes_tlogs VALUES (?, ?, ?, ?)"));
                 query.addBindValue(type);
                 query.addBindValue(_tlogs[tlog].at(tlog).id);
                 query.addBindValue(_tlogs[tlog].at(tlog).latest);
                 query.addBindValue(tlog);
-                Q_ASSERT(query.exec());
+                Q_TEST(query.exec());
             }
 }
 

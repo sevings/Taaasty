@@ -2,6 +2,8 @@
 
 #include <QJsonArray>
 
+#include "defines.h"
+
 #include "datastructures.h"
 #include "apirequest.h"
 
@@ -48,7 +50,7 @@ void CalendarModel::setTlog(const int tlog)
 
     QString url = QString("tlog/%1/calendar.json").arg(tlog);
     auto request = new ApiRequest(url);
-    Q_ASSERT(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
 }
 
 
@@ -66,7 +68,7 @@ void CalendarModel::loadAllEntries(const int after)
         _loadingEntriesCount++;
 
         auto full = entry->full();
-        Q_ASSERT(connect(full, SIGNAL(updated()), this, SLOT(_emitEntryLoaded())));
+        Q_TEST(connect(full, SIGNAL(updated()), this, SLOT(_emitEntryLoaded())));
     }
 
     if (_loadingEntriesCount == 0)

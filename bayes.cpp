@@ -11,6 +11,8 @@
 #   include <QDateTime>
 #endif
 
+#include "defines.h"
+
 #include "datastructures.h"
 #include "trainer.h"
 
@@ -88,11 +90,11 @@ void Bayes::_initDb()
 {
     auto db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("bayes");
-    Q_ASSERT(db.open());
+    Q_TEST(db.open());
 
     QSqlQuery query;
-    Q_ASSERT(query.exec("CREATE TABLE IF NOT EXISTS bayes         (type INTEGER, word TEXT, total INTEGER, PRIMARY KEY(type, word))"));
-    Q_ASSERT(query.exec("CREATE TABLE IF NOT EXISTS bayes_entries (type INTEGER, entry INTEGER, PRIMARY KEY(entry))"));
+    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes         (type INTEGER, word TEXT, total INTEGER, PRIMARY KEY(type, word))"));
+    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes_entries (type INTEGER, entry INTEGER, PRIMARY KEY(entry))"));
 }
 
 
@@ -105,16 +107,16 @@ void Bayes::_loadDb()
     _initDb();
 
     QSqlQuery query;
-    Q_ASSERT(query.exec("SELECT type, word, total FROM bayes"));
+    Q_TEST(query.exec("SELECT type, word, total FROM bayes"));
     while (query.next())
         _wordCounts[query.value(0).toInt()][query.value(1).toString()]
                 = FeatureCount(query.value(2).toInt());
 
-    Q_ASSERT(query.exec("SELECT type, sum(total) AS \"total\" FROM bayes GROUP BY type"));
+    Q_TEST(query.exec("SELECT type, sum(total) AS \"total\" FROM bayes GROUP BY type"));
     while (query.next())
         _total[query.value(0).toInt()] = query.value(1).toInt();
 
-    Q_ASSERT(query.exec("SELECT type, entry FROM bayes_entries"));
+    Q_TEST(query.exec("SELECT type, entry FROM bayes_entries"));
     while (query.next())
         _entriesChanged[query.value(0).toInt()][query.value(1).toInt()] = false;
 
@@ -138,20 +140,20 @@ void Bayes::_saveDb()
         foreach (auto word, _wordCounts[type].keys())
             if (_wordCounts[type][word].changed)
             {
-                Q_ASSERT(query.prepare("INSERT OR REPLACE INTO bayes VALUES (?, ?, ?)"));
+                Q_TEST(query.prepare("INSERT OR REPLACE INTO bayes VALUES (?, ?, ?)"));
                 query.addBindValue(type);
                 query.addBindValue(word);
                 query.addBindValue(_wordCounts[type][word].count);
-                Q_ASSERT(query.exec());
+                Q_TEST(query.exec());
             }
 
         foreach (auto entry, _entriesChanged[type].keys())
             if (_entriesChanged[type][entry])
             {
-                Q_ASSERT(query.prepare("INSERT OR REPLACE INTO bayes_entries VALUES (?, ?)"));
+                Q_TEST(query.prepare("INSERT OR REPLACE INTO bayes_entries VALUES (?, ?)"));
                 query.addBindValue(type);
                 query.addBindValue(entry);
-                Q_ASSERT(query.exec());
+                Q_TEST(query.exec());
 
                 _entriesChanged[type][entry] = false;
             }

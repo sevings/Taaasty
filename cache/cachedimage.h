@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QNetworkReply>
+#include <QSslError>
 
 class CacheManager;
 
@@ -46,6 +47,7 @@ private slots:
     void _saveData();
     void _changeBytes(qint64 bytesReceived, qint64 bytesTotal);
     void _printError(QNetworkReply::NetworkError code);
+    void _printErrors(const QList<QSslError>& errors);
 
 signals:
     void available();

@@ -54,6 +54,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: parent.height * 1.5
+        visible: Tasty.isAuthorized
         onClicked: {
             window.toggleNotifs()
         }

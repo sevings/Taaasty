@@ -16,7 +16,7 @@ class CacheManager : public QObject
 public:
     static CacheManager* instance(QNetworkAccessManager* web = nullptr);
 
-    Q_INVOKABLE CachedImage* image(QString url);
+    Q_INVOKABLE CachedImage* image(QString url = QString());
 
     QNetworkAccessManager* web() const;
     QString path() const;

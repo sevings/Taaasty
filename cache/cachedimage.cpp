@@ -9,6 +9,8 @@
 
 #include <QDebug>
 
+#include "../defines.h"
+
 #include "cachemanager.h"
 
 
@@ -25,6 +27,8 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
 {
     if (!_man || _url.isEmpty())
         return;
+
+//    _url.replace("https", "http");
 
     _hash = QString::number(qHash(_url));
     if (_exists())
@@ -70,10 +74,10 @@ void CachedImage::getInfo()
         return;
 
     _headReply = _man->web()->head(QNetworkRequest(_url));
-    _headReply->ignoreSslErrors();
 
-    Q_ASSERT(connect(_headReply, SIGNAL(finished()),                         this, SLOT(_setProperties())));
-    Q_ASSERT(connect(_headReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(_printError(QNetworkReply::NetworkError))));
+    Q_TEST(connect(_headReply, SIGNAL(finished()),                         this, SLOT(_setProperties())));
+    Q_TEST(connect(_headReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(_printError(QNetworkReply::NetworkError))));
+    Q_TEST(connect(_headReply, SIGNAL(sslErrors(QList<QSslError>)),        this, SLOT(_printErrors(QList<QSslError>))));
 }
 
 
@@ -90,11 +94,11 @@ void CachedImage::download()
     }
 
     _reply = _man->web()->get(QNetworkRequest(_url));
-    _reply->ignoreSslErrors();
 
-    Q_ASSERT(connect(_reply, SIGNAL(finished()),                         this, SLOT(_saveData())));
-    Q_ASSERT(connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(_printError(QNetworkReply::NetworkError))));
-    Q_ASSERT(connect(_reply, SIGNAL(downloadProgress(qint64,qint64)),    this, SLOT(_changeBytes(qint64,qint64))));
+    Q_TEST(connect(_reply, SIGNAL(finished()),                         this, SLOT(_saveData())));
+    Q_TEST(connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(_printError(QNetworkReply::NetworkError))));
+    Q_TEST(connect(_reply, SIGNAL(downloadProgress(qint64,qint64)),    this, SLOT(_changeBytes(qint64,qint64))));
+    Q_TEST(connect(_reply, SIGNAL(sslErrors(QList<QSslError>)),        this, SLOT(_printErrors(QList<QSslError>))));
 
     emit downloadingChanged();
 }
@@ -189,8 +193,21 @@ void CachedImage::_changeBytes(qint64 bytesReceived, qint64 bytesTotal)
 
 void CachedImage::_printError(QNetworkReply::NetworkError code)
 {
+    auto reply = _headReply ? _headReply : _reply;
     if (code != QNetworkReply::OperationCanceledError)
-        qDebug() << "image web error" << code;
+        qDebug() << "image web error" << code << reply->errorString()
+                 << "\nhttp status: " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()
+                 << "\ndata: " << reply->readAll();
+}
+
+
+
+void CachedImage::_printErrors(const QList<QSslError>& errors)
+{
+    foreach(auto e, errors)
+        qDebug() << e.errorString();
+
+    (_headReply ? _headReply : _reply)->ignoreSslErrors();
 }
 
 

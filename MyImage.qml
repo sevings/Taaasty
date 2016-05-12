@@ -10,7 +10,7 @@ AnimatedImage {
     clip: true
     source: ''
     property string url: ''
-    property CachedImage cachedImage: Cache.image(url)
+    property CachedImage cachedImage: Cache.image()
     property color backgroundColor: '#373737'
     readonly property string extension: {
         switch (cachedImage.format)
@@ -34,7 +34,8 @@ AnimatedImage {
     function hideImage() {
         back.visible = true;
     }
-    onCachedImageChanged: {
+    onUrlChanged: {
+        cachedImage = Cache.image(image.url);
         if (cachedImage.available)
             showImage();
         else
@@ -61,13 +62,13 @@ AnimatedImage {
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottomMargin: 1 * mm
-            width: cachedImage.isDownloading && cachedImage.kbytesTotal > 0 ? cachedImage.kbytesReceived * (parent.width - 12 * mm)
+            width: cachedImage.kbytesTotal > 0 ? cachedImage.kbytesReceived * (parent.width - 12 * mm)
                                                                               / cachedImage.kbytesTotal + 12 * mm
                                                                             : 12 * mm
             height: 12 * mm
             radius: width / 2
             color: window.brightColor
-            visible: parent.width > 12 * mm && parent.height > 12 * mm
+            visible: image.url && parent.width > 12 * mm && parent.height > 12 * mm
             Behavior on width {
                 NumberAnimation { duration: 100 }
             }
@@ -83,8 +84,10 @@ AnimatedImage {
             Text {
                 id: bytesText
                 font.pointSize: window.fontSmaller
-                text: (cachedImage.isDownloading ? cachedImage.kbytesReceived + ' / ' : '')
-                      + (cachedImage.kbytesTotal > 0 ? cachedImage.kbytesTotal + ' KB' : '')
+                text: (cachedImage.isDownloading && cachedImage.kbytesTotal > 0
+                       ? cachedImage.kbytesReceived + ' / ' : '')
+                      + (cachedImage.kbytesTotal > 0
+                         ? cachedImage.kbytesTotal + ' KB ' : '')
                       + (image.extension ? '\n' + image.extension : '')
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left

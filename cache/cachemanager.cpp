@@ -4,6 +4,8 @@
 #include <QStandardPaths>
 #include <QDir>
 
+#include <QSslSocket>
+
 #include "cachedimage.h"
 
 
@@ -26,12 +28,18 @@ CacheManager::CacheManager(QNetworkAccessManager* web)
     _path = cachePath.absolutePath();
 
     _web = web ? web : new QNetworkAccessManager(this);
+
+    Q_ASSERT(QSslSocket::supportsSsl());
 }
+
+
 
 QString CacheManager::path() const
 {
     return _path;
 }
+
+
 
 QNetworkAccessManager* CacheManager::web() const
 {

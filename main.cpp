@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setApplicationName("Taaasty");
     app.setOrganizationName("binque");
+    app.setApplicationVersion("0.1.0");
 
     qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
@@ -53,6 +54,7 @@ int main(int argc, char *argv[])
     auto cache = CacheManager::instance(web);
     cache->setMaxWidth(settings->maxImageWidth());
     cache->setAutoload(settings->autoloadImages());
+//    cache->setAutoload(false);
     engine.rootContext()->setContextProperty("Cache", cache);
 //    engine.rootContext()->setContextProperty("Bayes", Bayes::instance(Tasty::instance()));
 

@@ -3,6 +3,8 @@
 #include <QJsonArray>
 #include <QDebug>
 
+#include "defines.h"
+
 #include "apirequest.h"
 #include "datastructures.h"
 #include "tasty.h"
@@ -19,8 +21,8 @@ NotificationsModel::NotificationsModel(QObject* parent)
     _timer.setSingleShot(false);
     _timer.start();
 
-    Q_ASSERT(connect(&_timer, SIGNAL(timeout()),              this, SLOT(_check())));
-    Q_ASSERT(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(_reloadAll())));
+    Q_TEST(connect(&_timer, SIGNAL(timeout()),              this, SLOT(_check())));
+    Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(_reloadAll())));
 }
 
 
@@ -105,8 +107,8 @@ void NotificationsModel::markAsRead()
     QString data = QString("last_id=%1").arg(_notifs.first()->_id);
     
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
-    Q_ASSERT(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_readSuccess())));
-//    Q_ASSERT(connect(request, SIGNAL(success(QJsonObject)), this, SIGNAL(unreadChanged())));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_readSuccess())));
+//    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SIGNAL(unreadChanged())));
 }
 
 

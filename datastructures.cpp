@@ -1,5 +1,7 @@
 #include "datastructures.h"
 
+#include "defines.h"
+
 #include "tasty.h"
 #include "apirequest.h"
 #include "commentsmodel.h"
@@ -60,7 +62,7 @@ void Entry::setId(const int id)
 
 void Entry::addComment(const QString text)
 {
-    auto data = QString("entry_id=%1&text=%2").arg(_id).arg(text);
+    auto data = QString("entry_id=%1&text=%2 ").arg(_id).arg(text.trimmed());
     auto request = new ApiRequest("comments.json", true,
                                   QNetworkAccessManager::PostOperation, data);
 
