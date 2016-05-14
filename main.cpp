@@ -20,7 +20,6 @@
 //#include "bayes.h"
 
 
-
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -32,7 +31,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
     qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
     qmlRegisterType<UsersModel>         ("org.binque.taaasty", 1, 0, "UsersModel");
-    qmlRegisterType<NotificationsModel> ("org.binque.taaasty", 1, 0, "NotificationsModel");
+//    qmlRegisterType<NotificationsModel> ("org.binque.taaasty", 1, 0, "NotificationsModel");
 
     qmlRegisterType<Entry>          ("org.binque.taaasty", 1, 0, "TlogEntry");
     qmlRegisterType<Comment>        ("org.binque.taaasty", 1, 0, "Comment");
@@ -48,6 +47,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     auto tasty = Tasty::instance();
     engine.rootContext()->setContextProperty("Tasty", tasty);
+    engine.rootContext()->setContextProperty("NotifsModel", NotificationsModel::instance(tasty));
 
     auto web = tasty->manager();
     auto settings = tasty->settings();

@@ -40,6 +40,7 @@ protected:
 private slots:
     void _addComments(const QJsonObject data);
     void _addComment(const QJsonObject data);
+    void _addComment(const int entryId, const Notification* notif);
 
 private:
     QList<Comment*> _comments;

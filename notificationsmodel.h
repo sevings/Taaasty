@@ -21,6 +21,8 @@ public:
     NotificationsModel(QObject* parent = nullptr);
     ~NotificationsModel();
 
+    static NotificationsModel* instance(QObject* parent = nullptr);
+
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     bool canFetchMore(const QModelIndex& parent) const override;
@@ -33,6 +35,7 @@ public:
 signals:
     void hasMoreChanged();
     void unreadChanged();
+    void commentAdded(const int entryId, const Notification* notif);
     
 private slots:
     void _check();

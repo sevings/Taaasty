@@ -109,6 +109,11 @@ Rectangle {
             Poppable {
                 body: back
                 onClicked: {
+                    if (back.x > 0) {
+                        mouse.accepted = false;
+                        return;
+                    }
+
                     saveCurrentIndex();
                     entryClicked(entry);
                 }
@@ -122,6 +127,11 @@ Rectangle {
                     enabled: mode !== FeedModel.AnonymousMode
                     onClicked:
                     {
+                        if (back.x > 0) {
+                            mouse.accepted = false;
+                            return;
+                        }
+
                         saveCurrentIndex();
                         back.avatarClicked(entry.tlog, entry.author);
                     }
@@ -161,6 +171,11 @@ Rectangle {
                 checked: entry.rating.isVoted
                 fontSize: 20
                 onClicked: {
+                    if (back.x > 0) {
+                        mouse.accepted = false;
+                        return;
+                    }
+
                     entry.rating.vote();
                 }
             }

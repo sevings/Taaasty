@@ -5,14 +5,16 @@ MouseArea {
     id: area
     anchors.top: parent.top
     anchors.bottom: parent.bottom
+    anchors.left: parent.left
     property int minWidth: parent.width * 0.7
-    width: x > drag.minimumX ? parent.width : minWidth + 10 * mm
-    x: - minWidth
-    drag.target: area
-    drag.axis: Drag.XAxis
-    drag.minimumX: - minWidth
-    drag.maximumX: 0
-    drag.filterChildren: true
+    width: minWidth
+//    width: x > drag.minimumX ? parent.width : minWidth + 10 * mm
+//    x: - minWidth
+//    drag.target: area
+//    drag.axis: Drag.XAxis
+//    drag.minimumX: - minWidth
+//    drag.maximumX: 0
+//    drag.filterChildren: true
     propagateComposedEvents: true
     enabled: false
     signal modeChanged(int mode)
@@ -32,20 +34,20 @@ MouseArea {
             backAnimation.start();
         mouse.accepted = x > - minWidth;
     }
-    PropertyAnimation {
-        id: backAnimation
-        target: area
-        property: "x"
-        to: - minWidth
-        duration: 100
-    }
-    PropertyAnimation {
-        id: forwardAnimation
-        target: area
-        property: "x"
-        to: 0
-        duration: 100
-    }
+//    PropertyAnimation {
+//        id: backAnimation
+//        target: area
+//        property: "x"
+//        to: - minWidth
+//        duration: 100
+//    }
+//    PropertyAnimation {
+//        id: forwardAnimation
+//        target: area
+//        property: "x"
+//        to: 0
+//        duration: 100
+//    }
     Rectangle {
         id: menu
         anchors.top: parent.top

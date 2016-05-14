@@ -8,14 +8,13 @@ Rectangle {
     signal avatarClicked(int tlog)
     signal entryRequested(int entry, bool showProfile)
     signal tlogRequested(int tlogId)
-    property NotificationsModel notifs: NotificationsModel { }
     Poppable {
         body: back
     }
     MyListView {
         id: notifsView
         anchors.fill: parent
-        model:  notifs
+        model: NotifsModel
         spacing: 2 * mm
         delegate: MouseArea {
             id: notif

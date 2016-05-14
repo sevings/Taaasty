@@ -133,6 +133,7 @@ Rectangle {
                 color: window.textColor
                 textFormat: Text.RichText
                 height: entry.title.length > 0 ? paintedHeight : entry.text.length > 0 ? -2 * mm : 0
+                onLinkActivated: Qt.openUrlExternally(link)
             }
             Text {
                 id: fullContent
@@ -148,6 +149,7 @@ Rectangle {
                 color: window.textColor
                 textFormat: Text.RichText
                 height: entry.text.length > 0 ? paintedHeight : entry.title.length > 0 ? -2 * mm : 0
+                onLinkActivated: Qt.openUrlExternally(link)
             }
             Text {
                 id: quoteSource
@@ -237,7 +239,8 @@ Rectangle {
                 height: visible ? 6 * mm : 0
                 width: parent.width / 3
                 fontSize: fullEntryFavButton.fontSize
-                visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
+                visible: commentsModel && commentsModel.hasMore
+                enabled: commentsModel && !commentsModel.loading
                 onClicked: commentsModel.loadMore()
             }
         }

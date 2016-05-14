@@ -1,6 +1,6 @@
 #include "datastructures.h"
 
-#include "defines.h"
+#include <QUrl>
 
 #include "tasty.h"
 #include "apirequest.h"
@@ -62,9 +62,12 @@ void Entry::setId(const int id)
 
 void Entry::addComment(const QString text)
 {
-    auto data = QString("entry_id=%1&text=%2 ").arg(_id).arg(text.trimmed());
+    auto content = QUrl::toPercentEncoding(text.trimmed());
+    auto data    = QString("entry_id=%1&text=%2").arg(_id).arg(QString::fromUtf8(content));
     auto request = new ApiRequest("comments.json", true,
                                   QNetworkAccessManager::PostOperation, data);
+
+    qDebug() << data;
 
     connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(commentAdded(const QJsonObject)));
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_addComment()));
@@ -207,6 +210,20 @@ Comment::Comment(const QJsonObject data, QObject *parent)
 
 
 
+Comment::Comment(const Notification* data, QObject* parent)
+    : QObject(parent)
+{
+    _id             = data->_entityId;
+    _user           = data->_sender;
+    _html           = data->_text;
+    _createdAt      = Tasty::parseDate(data->_createdAt);
+    _isEditable     = false; //! TODO: reload and update flags
+    _isReportable   = false;
+    _isDeletable    = false;
+}
+
+
+
 void Comment::edit(const QString text)
 {
     auto url = QString("comments/%1.json").arg(_id);
@@ -241,7 +258,7 @@ void Comment::_init(const QJsonObject data)
     _isReportable   = data.value("can_report").toBool();
     _isDeletable    = data.value("can_delete").toBool();
 
-    emit htmlChanged();
+    emit updated();
 }
 
 

@@ -13,6 +13,7 @@ class Author;
 class Tlog;
 class Rating;
 class AttachedImage;
+class Notification;
 
 class CommentsModel;
 class AttachedImagesModel;
@@ -168,23 +169,24 @@ class Comment: public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int         id           MEMBER _id             CONSTANT)
-    Q_PROPERTY(User*       user         MEMBER _user           CONSTANT)
-    Q_PROPERTY(QString     html         MEMBER _html           CONSTANT)
-    Q_PROPERTY(QString     createdAt    MEMBER _createdAt      CONSTANT)
-    Q_PROPERTY(bool        isEditable   MEMBER _isEditable     CONSTANT)
-    Q_PROPERTY(bool        isReportable MEMBER _isReportable   CONSTANT)
-    Q_PROPERTY(bool        isDeletable  MEMBER _isDeletable    CONSTANT)
+    Q_PROPERTY(int         id           MEMBER _id             NOTIFY updated)
+    Q_PROPERTY(User*       user         MEMBER _user           NOTIFY updated)
+    Q_PROPERTY(QString     html         MEMBER _html           NOTIFY updated)
+    Q_PROPERTY(QString     createdAt    MEMBER _createdAt      NOTIFY updated)
+    Q_PROPERTY(bool        isEditable   MEMBER _isEditable     NOTIFY updated)
+    Q_PROPERTY(bool        isReportable MEMBER _isReportable   NOTIFY updated)
+    Q_PROPERTY(bool        isDeletable  MEMBER _isDeletable    NOTIFY updated)
 
 public:
     Comment(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    Comment(const Notification* data, QObject* parent = nullptr);
 
 public slots:
     void edit(const QString text);
     void remove();
 
 signals:
-    void htmlChanged();
+    void updated();
 
 private slots:
     void _init(const QJsonObject data);
@@ -369,6 +371,7 @@ class Notification: public QObject
     Q_OBJECT
     
     friend class NotificationsModel;
+    friend class Comment;
     
     Q_PROPERTY(int     id         MEMBER _id         CONSTANT)
     Q_PROPERTY(QString createdAt  MEMBER _createdAt  CONSTANT)

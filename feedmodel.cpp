@@ -116,35 +116,30 @@ void FeedModel::setMode(const FeedModel::Mode mode)
         qDebug() << "feed mode =" << mode;
     }
 
-    _mode = mode;
+    reset(mode);
+    if (mode == TlogMode && _tlog <= 0)
+        _hasMore = false;
 }
 
 
 
 void FeedModel::setTlog(const int tlog)
 {
-    if (tlog <= 0)
-        return;
-
-    beginResetModel();
-
-    _tlog = tlog;
-    _hasMore = true;
-    _lastEntry = 0;
-    _loading = false;
-    qDeleteAll(_entries);
-    _entries.clear();
-
-    endResetModel();
-
-    emit hasMoreChanged();
+    if (tlog > 0)
+        reset(_mode, tlog);
 }
 
 
 
-void FeedModel::reset()
+void FeedModel::reset(Mode mode, int tlog)
 {
     beginResetModel();
+
+    if (mode != InvalidMode)
+        _mode = mode;
+
+    if (tlog >= 0)
+        _tlog = tlog;
 
     _hasMore = true;
     _lastEntry = 0;

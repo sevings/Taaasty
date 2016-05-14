@@ -4,7 +4,10 @@
 #include <QJsonArray>
 #include <QDebug>
 
+#include "defines.h"
+
 #include "apirequest.h"
+#include "notificationsmodel.h"
 
 
 
@@ -20,7 +23,9 @@ CommentsModel::CommentsModel(Entry *entry)
     _entryId = entry->_id;
     _totalCount = entry->_commentsCount;
 
-    connect(entry, SIGNAL(commentAdded(QJsonObject)), this, SLOT(_addComment(QJsonObject)));
+    Q_TEST(connect(entry, SIGNAL(commentAdded(QJsonObject)), this, SLOT(_addComment(QJsonObject))));
+    Q_TEST(connect(NotificationsModel::instance(), SIGNAL(commentAdded(int,const Notification*)),
+                                                this, SLOT(_addComment(int,const Notification*))));
 }
 
 
@@ -100,12 +105,10 @@ void CommentsModel::_addComments(const QJsonObject data)
 
     beginInsertRows(QModelIndex(), 0, feed.size() - 1);
 
-    QList<Comment*> comments;
-    comments.reserve(feed.size());
-    foreach(auto comment, feed)
-        comments << new Comment(comment.toObject(), this);
+    _comments.reserve(_comments.size() + feed.size());
 
-    _comments = comments + _comments;
+    for (int i = 0; i < feed.size(); i++)
+        _comments.insert(i, new Comment(feed.at(i).toObject(), this));
 
     endInsertRows();
 
@@ -123,6 +126,20 @@ void CommentsModel::_addComment(const QJsonObject data)
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
 
     _comments << new Comment(data, this);
+
+    endInsertRows();
+}
+
+
+
+void CommentsModel::_addComment(const int entryId, const Notification* notif)
+{
+    if (entryId != _entryId)
+        return;
+
+    beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
+
+    _comments << new Comment(notif, this);
 
     endInsertRows();
 }

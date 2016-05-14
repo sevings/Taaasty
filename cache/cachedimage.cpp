@@ -28,8 +28,6 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
     if (!_man || _url.isEmpty())
         return;
 
-//    _url.replace("https", "http");
-
     _hash = QString::number(qHash(_url));
     if (_exists())
     {
@@ -151,13 +149,13 @@ void CachedImage::_setProperties()
 void CachedImage::_saveData()
 {
     if (_reply->error() != QNetworkReply::NoError ) {
-        if (_reply->error() == QNetworkReply::OperationCanceledError)
-            return;
+//        if (_reply->error() == QNetworkReply::OperationCanceledError || _reply->error() == QNetworkReply::)
+//            return;
 
         _reply->deleteLater();
         _reply = nullptr;
 
-        download();
+//        download();
         return;
     }
 

@@ -16,7 +16,7 @@ ApplicationWindow {
     property int fontNormal: 20
     property int fontSmaller: 17
     property int fontSmallest: 14
-    property bool unreadNotifications: notifsModel.unread
+    property bool unreadNotifications: NotifsModel.unread
 //    property int unreadMessages: 0
 //    property bool showNotifs: false
 //    property bool showCommentMenu: false
@@ -35,7 +35,7 @@ ApplicationWindow {
     }
     function hideNotifs() {
         notifsView.y = window.height;
-        notifsModel.markAsRead();
+        NotifsModel.markAsRead();
     }
     function toggleNotifs() {
         if (notifsView.y)
@@ -55,12 +55,18 @@ ApplicationWindow {
 
         footer.tlog = tlog;
     }
-
+    function setFooterFromStack() {
+        if (stack.currentItem.customTitle) {
+            footer.title = stack.currentItem.title;
+            setFooterTlog();
+        }
+        else {
+            footer.title = '';
+            setFooterTlog(stack.currentItem.tlog);
+        }
+    }
     Tlog {
         id: emptyTlog
-    }
-    NotificationsModel {
-        id: notifsModel
     }
     BusyBar {
         id: bar
@@ -77,6 +83,47 @@ ApplicationWindow {
         wrapMode: Text.Wrap
         text: 'Загрузка...'
     }
+    MainMenu {
+        id: menu
+        visible: stack.depth === 1 && stack.currentItem && stack.currentItem.x > 0
+        onModeChanged: {
+            stack.currentItem.mode = mode;
+            if (mode === FeedModel.TlogMode)
+                stack.currentItem.tlogId = 287835;
+
+            backAnimation.start();
+            setFooterFromStack();
+        }
+        onVisibleChanged: {
+            window.hideFooter();
+        }
+    }
+//    MouseArea {
+//        z: 30
+//        anchors.top: parent.top
+//        anchors.bottom: parent.bottom
+//        anchors.left: menu.right
+//        anchors.right: parent.right
+//        visible: menu.visible
+//        onClicked: {
+//            backAnimation.start();
+//        }
+//    }
+    ParallelAnimation {
+        id: backAnimation
+        PropertyAnimation {
+            target: stack.currentItem
+            property: "x"
+            to: 0
+            duration: 300
+        }
+        PropertyAnimation {
+            target: stack.currentItem
+            property: "opacity"
+            to: 1
+            duration: 300
+        }
+    }
     StackView {
         id: stack
         anchors.fill: parent
@@ -85,16 +132,9 @@ ApplicationWindow {
             if (!stack.currentItem)
                 return;
 
-            if (stack.currentItem.customTitle) {
-                footer.title = stack.currentItem.title;
-                setFooterTlog();
-            }
-            else {
-                footer.title = '';
-                setFooterTlog(stack.currentItem.tlog);
-            }
+            setFooterFromStack();
 
-            window.hideFooter()
+            window.hideFooter();
 
             if (stack.currentItem.isFeedView)
                 stack.currentItem.pushed();
@@ -292,34 +332,12 @@ ApplicationWindow {
             }
         }
     }
-    MainMenu {
-        z: 30
-        onModeChanged: {
-            var item = stack.find(function (item) {
-                return item.mode === mode //&& (mode !== FeedModel.TlogMode || item.tlog === tlog)
-            });
-            if (item) {
-//                console.log('found');
-                stack.pop(item);
-                return;
-            }
-
-            stack.push({
-                           item: feed,
-                           properties: {
-                               mode: mode,
-                               tlogId: 287835 // 281926
-                           }
-                       })
-        }
-    }
     NotificationsView {
         id: notifsView
         anchors.left: parent.left
         anchors.right: parent.right
         height: parent.height
         y: height
-        notifs: notifsModel
         z: 5
         visible: y < height
         Behavior on y {

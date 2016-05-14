@@ -9,16 +9,16 @@ MyImage {
     width: 8 * mm
     height: 8 * mm
     property User user: User { }
-    property string symbol: user.name ? user.name[0].toUpperCase() : '?'
+    property string symbol: user && user.name ? user.name[0].toUpperCase() : '?'
     property string defaultSource: ''
-    url: (dp < 2 ? user.thumb64 : user.thumb128) || defaultSource
-    backgroundColor: user.backgroundColor || '#373737'
+    url: user && (dp < 2 ? user.thumb64 : user.thumb128) || defaultSource
+    backgroundColor: user && user.backgroundColor || '#373737'
     onAvailable: {
         letter.visible = false;
     }
     Text {
         id: letter
-        color: user.nameColor || window.textColor
+        color: user && user.nameColor || window.textColor
         font.pixelSize: avatar.width / 2
         anchors.centerIn: parent
         text: parent.symbol.toUpperCase()

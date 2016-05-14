@@ -19,6 +19,7 @@ class FeedModel : public QAbstractListModel
 
 public:
     enum Mode {
+        InvalidMode,
         MyTlogMode,
         FriendsMode,
         LiveMode,
@@ -46,7 +47,7 @@ public:
     Q_INVOKABLE void setTlog(const int tlog);
     Q_INVOKABLE int tlog() const {return _tlog; }
 
-    Q_INVOKABLE void reset();
+    Q_INVOKABLE void reset(Mode mode = InvalidMode, int tlog = -1);
 
 signals:
     void hasMoreChanged();

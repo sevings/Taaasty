@@ -34,6 +34,14 @@ NotificationsModel::~NotificationsModel()
 
 
 
+NotificationsModel*NotificationsModel::instance(QObject* parent)
+{
+    static auto model = new NotificationsModel(parent);
+    return model;
+}
+
+
+
 int NotificationsModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
@@ -215,6 +223,9 @@ void NotificationsModel::_addNewest(QJsonObject data)
     {
         auto notification = new Notification(notif.toObject(), this);
         _notifs.prepend(notification);
+
+        if (!notification->_read && notification->_action == "new_comment")
+            emit commentAdded(notification->_parentId, notification);
     }
         
     endInsertRows();
