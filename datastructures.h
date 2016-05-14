@@ -169,6 +169,8 @@ class Comment: public QObject
 {
     Q_OBJECT
 
+    friend class CommentsModel;
+
     Q_PROPERTY(int         id           MEMBER _id             NOTIFY updated)
     Q_PROPERTY(User*       user         MEMBER _user           NOTIFY updated)
     Q_PROPERTY(QString     html         MEMBER _html           NOTIFY updated)

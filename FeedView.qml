@@ -35,7 +35,7 @@ Rectangle {
             'Tlog'
         }
     }
-    readonly property bool customTitle: mode !== FeedModel.TlogMode && mode !== FeedModel.MyTlogMode
+    readonly property bool customTitle: mode !== FeedModel.TlogMode// && mode !== FeedModel.MyTlogMode
     readonly property bool isFeedView: true
     signal pushed
     signal entryClicked(TlogEntry entry)

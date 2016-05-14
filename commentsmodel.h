@@ -27,6 +27,8 @@ public:
     Q_INVOKABLE bool hasMore() const { return _comments.size() < _totalCount; }
     Q_INVOKABLE bool loading() const { return _loading; }
 
+    Q_INVOKABLE void check();
+
 signals:
     void hasMoreChanged();
     void loadingChanged();
@@ -39,6 +41,7 @@ protected:
 
 private slots:
     void _addComments(const QJsonObject data);
+    void _addLastComments(const QJsonObject data);
     void _addComment(const QJsonObject data);
     void _addComment(const int entryId, const Notification* notif);
 
@@ -46,7 +49,6 @@ private:
     QList<Comment*> _comments;
     int _entryId;
     bool _loading;
-    int _toComment;
     int _totalCount;
     const QString _url;
 };

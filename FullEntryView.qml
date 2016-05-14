@@ -16,7 +16,9 @@ Rectangle {
     property bool poppable
     Component.onCompleted: {
         if (commentsModel.rowCount() === 0)
-            commentsModel.loadMore()
+            commentsModel.loadMore();
+        else
+            commentsModel.check();
     }
     Poppable {
         body: back
@@ -101,7 +103,7 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.topMargin: 1 * mm
+//                anchors.topMargin: 1 * mm
                 anchors.bottomMargin: 1 * mm
                 interactive: false
                 //spacing: 10

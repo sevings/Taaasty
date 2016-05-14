@@ -14,7 +14,6 @@
 CommentsModel::CommentsModel(Entry *entry)
     : QAbstractListModel(entry)
     , _loading(false)
-    , _toComment(0)
     , _url("comments.json?entry_id=%1&limit=20&order=desc")
 {
     if (!entry)
@@ -62,6 +61,24 @@ void CommentsModel::setEntryId(const int id)
 
 
 
+void CommentsModel::check()
+{
+    if (_loading || !_entryId)
+        return;
+
+    _loading = true;
+    emit loadingChanged();
+
+    QString url = _url.arg(_entryId);
+    if (!_comments.isEmpty())
+        url += QString("&from_comment_id=%1").arg(_comments.last()->_id);
+
+    auto request = new ApiRequest(url);
+    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addLastComments(QJsonObject)));
+}
+
+
+
 void CommentsModel::loadMore()
 {
     if (_loading || !_entryId)
@@ -71,8 +88,8 @@ void CommentsModel::loadMore()
     emit loadingChanged();
 
     QString url = _url.arg(_entryId);
-    if (_toComment)
-        url += QString("&to_comment_id=%1").arg(_toComment);
+    if (!_comments.isEmpty())
+        url += QString("&to_comment_id=%1").arg(_comments.first()->_id);
 
     auto request = new ApiRequest(url);
     connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addComments(QJsonObject)));
@@ -100,7 +117,6 @@ void CommentsModel::_addComments(const QJsonObject data)
         return;
     }
 
-    _toComment = feed.first().toObject().value("id").toInt();
     _totalCount = data.value("total_count").toInt();
 
     beginInsertRows(QModelIndex(), 0, feed.size() - 1);
@@ -117,6 +133,27 @@ void CommentsModel::_addComments(const QJsonObject data)
 
     _loading = false;
     emit loadingChanged();
+}
+
+
+
+void CommentsModel::_addLastComments(const QJsonObject data)
+{
+    _loading = false;
+    emit loadingChanged();
+
+    auto feed = data.value("comments").toArray();
+    if (feed.isEmpty())
+        return;
+
+    beginInsertRows(QModelIndex(), _comments.size() - 1, _comments.size() + feed.size() - 1);
+
+    _comments.reserve(_comments.size() + feed.size());
+
+    for (int i = 0; i < feed.size(); i++)
+        _comments << new Comment(feed.at(i).toObject(), this);
+
+    endInsertRows();
 }
 
 

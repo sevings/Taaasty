@@ -37,6 +37,7 @@ Rectangle {
         anchors.margins: 0.5 * mm
         contentHeight: input.paintedHeight + 1 * mm
         flickableDirection: Flickable.VerticalFlick
+        interactive: input.focus
         TextEdit {
             id: input
             anchors.top: parent.top

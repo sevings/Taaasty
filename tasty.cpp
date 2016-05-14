@@ -133,6 +133,7 @@ void Tasty::getMe()
 }
 
 
+
 void Tasty::_readAccessToken(const QJsonObject data)
 {
     auto apiKey = data.value("api_key").toObject();

@@ -42,7 +42,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.right: notifButton.left
+        anchors.right: notifButton.visible ? notifButton.left : parent.right
         onClicked: {
             if (footer.tlog.tlogId > 0 && footer.tlog.tlogId !== window.anonymousId)
                 footer.avatarClicked()
