@@ -1,5 +1,6 @@
 #include "datastructures.h"
 
+#include <QRegularExpression>
 #include <QUrl>
 
 #include "tasty.h"
@@ -41,6 +42,7 @@ Entry::Entry(const QJsonObject data, QObject *parent)
     : QObject(parent)
     , _commentsModel(nullptr)
     , _attachedImagesModel(nullptr)
+    , _loading(false)
 {
     _init(data);
 }
@@ -56,6 +58,9 @@ void Entry::setId(const int id)
 
     auto request = new ApiRequest(QString("entries/%1.json").arg(_id));
     connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
+
+    _loading = true;
+    emit loadingChanged();
 }
 
 
@@ -63,7 +68,7 @@ void Entry::setId(const int id)
 void Entry::addComment(const QString text)
 {
     auto content = QUrl::toPercentEncoding(text.trimmed());
-    auto data    = QString("entry_id=%1&text=%2").arg(_id).arg(QString::fromUtf8(content));
+    auto data    = QString("entry_id=%1&text=%2 ").arg(_id).arg(QString::fromUtf8(content));
     auto request = new ApiRequest("comments.json", true,
                                   QNetworkAccessManager::PostOperation, data);
 
@@ -138,6 +143,10 @@ void Entry::_init(const QJsonObject data)
     _source          = data.value("source").toString();
     _imagePreview    = data.value("preview_image").toObject();
 
+    QRegularExpression re("\\s[^\\s]+\\s");
+    _wordCount       = _text.isEmpty() ? _title.count(re)
+                                        : _text.count(re);
+
     delete _commentsModel;
     _commentsModel = new CommentsModel(this);
 
@@ -147,6 +156,9 @@ void Entry::_init(const QJsonObject data)
 
     emit updated();
     emit commentsCountChanged();
+
+    _loading = false;
+    emit loadingChanged();
 }
 
 
@@ -317,6 +329,7 @@ Author::Author(const QJsonObject data, QObject *parent)
 
 Tlog::Tlog(const QJsonObject data, QObject *parent)
     : QObject(parent)
+    , _loading(false)
 {
     _init(data);
 }
@@ -332,6 +345,9 @@ void Tlog::setId(const int id)
 
     auto request = new ApiRequest(QString("tlog/%1.json").arg(_id));
     connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
+
+    _loading = true;
+    emit loadingChanged();
 }
 
 
@@ -363,6 +379,9 @@ void Tlog::_init(const QJsonObject data)
     _author = new Author(data.value("author").toObject(), this);
 
     emit updated();
+
+    _loading = false;
+    emit loadingChanged();
 }
 
 

@@ -39,7 +39,7 @@ ListView {
         anchors.right: parent.right
         anchors.margins: 0.5 * mm
         y: parent.visibleArea.yPosition * (parent.height - height + h)
-        width: 10
+        width: 1 * mm
         property int h: parent.visibleArea.heightRatio * parent.height
         height: h > 5 * mm ? h : 5 * mm
         color: window.textColor

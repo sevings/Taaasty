@@ -27,7 +27,6 @@ ApplicationWindow {
     title: qsTr("Taaasty")
     color: backgroundColor
     Component.onCompleted: {
-        //tasty.getMe();
         loadingText.visible = false;
     }
     function showNotifs() {
@@ -73,15 +72,8 @@ ApplicationWindow {
         z: 100
         busy: Tasty.busy > 0
     }
-    Text {
+    Splash {
         id: loadingText
-        z: 100
-        anchors.centerIn: parent
-        color: window.secondaryTextColor
-        horizontalAlignment: Text.AlignHCenter
-        font.pointSize: window.fontBigger
-        wrapMode: Text.Wrap
-        text: 'Загрузка...'
     }
     MainMenu {
         id: menu
@@ -98,17 +90,6 @@ ApplicationWindow {
             window.hideFooter();
         }
     }
-//    MouseArea {
-//        z: 30
-//        anchors.top: parent.top
-//        anchors.bottom: parent.bottom
-//        anchors.left: menu.right
-//        anchors.right: parent.right
-//        visible: menu.visible
-//        onClicked: {
-//            backAnimation.start();
-//        }
-//    }
     ParallelAnimation {
         id: backAnimation
         PropertyAnimation {
@@ -354,6 +335,9 @@ ApplicationWindow {
                        })
         }
         onEntryRequested: {
+            if (stack.currentItem.isFullEntryView && stack.currentItem.entryId === entry)
+                return;
+
             stack.push({
                            item: fullEntry,
                            properties: {
@@ -363,6 +347,11 @@ ApplicationWindow {
                        })
         }
         onTlogRequested: {
+            if (stack.currentItem.isFeedView
+                    && stack.currentItem.mode === FeedModel.TlogMode
+                    && stack.currentItem.tlogId === tlogId)
+                return;
+
             stack.push({
                            item: feed,
                            properties: {

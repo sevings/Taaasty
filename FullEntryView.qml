@@ -14,6 +14,7 @@ Rectangle {
     signal avatarClicked(int tlogId)
     signal popped
     property bool poppable
+    readonly property bool isFullEntryView: true
     Component.onCompleted: {
         if (commentsModel.rowCount() === 0)
             commentsModel.loadMore();
@@ -23,12 +24,16 @@ Rectangle {
     Poppable {
         body: back
     }
+    Splash {
+        visible: !fullEntry.visible
+    }
     MyListView {
         id: fullEntry
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         height: contentHeight > parent.height ? parent.height : contentHeight
+        visible: !entry.loading
         model: commentsModel
         delegate: Item {
 //            anchors.left: parent.left
@@ -120,6 +125,7 @@ Rectangle {
                     width: window.width
                     height: image.height / image.width * width
                     url: image.url
+                    extension: image.type
                 }
             }
             Text {

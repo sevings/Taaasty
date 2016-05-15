@@ -66,6 +66,40 @@ bool CachedImage::isDownloading() const
 
 
 
+void CachedImage::setExtension(QString format)
+{
+    format = format.toLower();
+
+    if (format == "jpeg" || format == "jpg")
+    {
+        _format = JpegFormat;
+        _extension = "jpg";
+    }
+    else if (format == "png")
+    {
+        _format = PngFormat;
+        _extension = "png";
+    }
+    else if (format == "gif")
+    {
+        _format = GifFormat;
+        _extension = "gif";
+    }
+    else if (format.isEmpty())
+    {
+        auto ext = _url.split(".").last();
+        if (!ext.isEmpty())
+            setExtension(ext);
+        return;
+    }
+    else
+        qDebug() << "mime:" << format << "\nurl:" << _url;
+
+    emit extensionChanged();
+}
+
+
+
 void CachedImage::getInfo()
 {
     if (_headReply || _reply)
@@ -125,13 +159,14 @@ void CachedImage::_setProperties()
     auto mime = _headReply->header(QNetworkRequest::ContentTypeHeader).toString().split('/');
     if (mime.isEmpty())
         mime << "";
+
     if (!mime.first().isEmpty() && mime.first().toLower() != "image")
     {
         qDebug() << "mime:" << mime.first() << "\nurl:" << _url;
         return;
     }
 
-    _setFormat(mime.last());
+    setExtension(mime.last());
 
     auto length = _headReply->header(QNetworkRequest::ContentLengthHeader).toInt();
     _kbytesTotal = length / 1024;
@@ -163,11 +198,11 @@ void CachedImage::_saveData()
     if (_format == UnknownFormat)
     {
         if (_data.startsWith(0x89))
-            _setFormat("png");
+            setExtension("png");
         else if (_data.startsWith(0xFF))
-            _setFormat("jpeg");
+            setExtension("jpeg");
         else if (_data.startsWith(0x47))
-            _setFormat("gif");
+            setExtension("gif");
     }
 
     _reply->deleteLater();
@@ -216,56 +251,22 @@ bool CachedImage::_exists()
 
     if (QFile::exists(path.arg("jpg")))
     {
-        _setFormat("jpeg");
+        setExtension("jpeg");
         return true;
     }
     if (QFile::exists(path.arg("png")))
     {
-        _setFormat("png");
+        setExtension("png");
         return true;
     }
 
     if (QFile::exists(path.arg("gif")))
     {
-        _setFormat("gif");
+        setExtension("gif");
         return true;
     }
 
     return false;
-}
-
-
-
-void CachedImage::_setFormat(QString format)
-{
-    format = format.toLower();
-
-    if (format == "jpeg" || format == "jpg")
-    {
-        _format = JpegFormat;
-        _extension = "jpg";
-    }
-    else if (format == "png")
-    {
-        _format = PngFormat;
-        _extension = "png";
-    }
-    else if (format == "gif")
-    {
-        _format = GifFormat;
-        _extension = "gif";
-    }
-    else if (format.isEmpty())
-    {
-        auto ext = _url.split(".").last();
-        if (!ext.isEmpty())
-            _setFormat(ext);
-        return;
-    }
-    else
-        qDebug() << "mime:" << format << "\nurl:" << _url;
-
-    emit formatChanged();
 }
 
 

@@ -15,6 +15,9 @@ Rectangle {
     signal popped
     property bool poppable
 //    Component.onCompleted: console.log(tlog.tlogId)
+    Splash {
+        visible: !column.visible
+    }
     Flickable {
         id: flickable
         anchors.fill: parent
@@ -30,6 +33,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             spacing: 1 * mm
+            visible: !tlog.loading
             MyImage {
                 id: bigAvatar
                 anchors.topMargin: 2 * mm

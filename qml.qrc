@@ -18,5 +18,6 @@
         <file>UsersView.qml</file>
         <file>NotificationsView.qml</file>
         <file>Footer.qml</file>
+        <file>Splash.qml</file>
     </qresource>
 </RCC>

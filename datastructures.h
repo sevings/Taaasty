@@ -82,9 +82,12 @@ class Entry: public QObject
     Q_PROPERTY(QString     truncatedText  MEMBER _truncatedText     NOTIFY updated)
     Q_PROPERTY(QString     source         MEMBER _source            NOTIFY updated)
     Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      NOTIFY updated)
+    Q_PROPERTY(int         wordCount      MEMBER _wordCount         NOTIFY updated)
 
     Q_PROPERTY(CommentsModel*       commentsModel       READ commentsModel       NOTIFY updated)
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel READ attachedImagesModel NOTIFY updated)
+
+    Q_PROPERTY(bool loading               MEMBER _loading           NOTIFY loadingChanged)
 
 public:
     Entry(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
@@ -107,6 +110,8 @@ signals:
     void watchedChanged();
     void favoritedChanged();
     void commentAdded(const QJsonObject data);
+
+    void loadingChanged();
 
 private slots:
     void _init(const QJsonObject data);
@@ -135,9 +140,12 @@ private:
     QString     _truncatedText;
     QString     _source;
     QJsonObject _imagePreview;
+    int         _wordCount;
 
     CommentsModel*       _commentsModel;
     AttachedImagesModel* _attachedImagesModel;
+
+    bool        _loading;
 };
 
 
@@ -304,6 +312,8 @@ class Tlog: public QObject
     Q_PROPERTY(bool    amIFollowing        MEMBER _amIFollowing        NOTIFY updated)
     Q_PROPERTY(Author* author              MEMBER _author              NOTIFY updated)
 
+    Q_PROPERTY(bool loading                MEMBER _loading             NOTIFY loadingChanged)
+
 public:
     Tlog(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
 
@@ -315,6 +325,7 @@ public slots:
 
 signals:
     void updated();
+    void loadingChanged();
 
 private slots:
     void _init(const QJsonObject data);
@@ -332,6 +343,8 @@ private:
     bool    _isFollowingMe;
     bool    _amIFollowing;
     Author* _author;
+
+    bool    _loading;
 };
 
 

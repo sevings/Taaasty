@@ -10,21 +10,9 @@ AnimatedImage {
     clip: true
     source: ''
     property string url: ''
+    property string extension: ''
     property CachedImage cachedImage: Cache.image()
     property color backgroundColor: '#373737'
-    readonly property string extension: {
-        switch (cachedImage.format)
-        {
-        case CachedImage.GifFormat:
-            'gif'; break;
-        case CachedImage.JpegFormat:
-            'jpeg'; break;
-        case CachedImage.PngFormat:
-            'png'; break;
-        default:
-            ''; break;
-        }
-    }
     signal available
     function showImage() {
         image.source = cachedImage.source;
@@ -36,6 +24,10 @@ AnimatedImage {
     }
     onUrlChanged: {
         cachedImage = Cache.image(image.url);
+
+        if (!cachedImage.extension)
+            cachedImage.extension = image.extension
+
         if (cachedImage.available)
             showImage();
         else
@@ -88,7 +80,7 @@ AnimatedImage {
                        ? cachedImage.kbytesReceived + ' / ' : '')
                       + (cachedImage.kbytesTotal > 0
                          ? cachedImage.kbytesTotal + ' KB ' : '')
-                      + (image.extension ? '\n' + image.extension : '')
+                      + (cachedImage.extension ? '\n' + cachedImage.extension : '')
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.right: parent.right

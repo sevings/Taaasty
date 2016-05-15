@@ -43,7 +43,7 @@ Rectangle {
     Poppable {
         body: back
         Text {
-            visible: listView.count === 0 && !feedModel.hasMore
+            visible: !listView.visible && !feedModel.hasMore
             anchors.centerIn: parent
             color: window.secondaryTextColor
             horizontalAlignment: Text.AlignHCenter
@@ -51,6 +51,9 @@ Rectangle {
             wrapMode: Text.Wrap
             text: 'Нет записей'
         }
+    }
+    Splash {
+        visible: !listView.visible && feedModel.hasMore
     }
     MyListView {
         id: listView
@@ -190,6 +193,7 @@ Rectangle {
                 anchors.bottomMargin: 1 * mm
                 height: visible ? (image.height / image.width * width) : 0
                 url: visible ? image.url : ''
+                extension: visible ? image.type : ''
                 Text {
                     anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -216,7 +220,7 @@ Rectangle {
                 color: parent.fontColor
                 textFormat: Text.RichText
                 height: entry.truncatedTitle.length > 0 ? paintedHeight
-                                                        : entry.truncatedText.length > 0 ? -20 : 0
+                                                        : entry.truncatedText.length > 0 ? -2 * mm : 0
             }
             Text {
                 id: content
@@ -232,7 +236,7 @@ Rectangle {
                 color: parent.fontColor
                 textFormat: Text.RichText
                 height: entry.truncatedText.length > 0 ? paintedHeight
-                                                       : entry.truncatedTitle.length > 0 ? -20 : 0
+                                                       : entry.truncatedTitle.length > 0 ? -2 * mm : 0
             }
             Text {
                 id: quoteSource
@@ -248,6 +252,17 @@ Rectangle {
                 textFormat: Text.RichText
                 height: entry.source.length > 0 ? paintedHeight : 0
                 horizontalAlignment: Text.AlignRight
+            }
+            Rectangle {
+                id: wc
+                anchors.left: parent.left
+                anchors.verticalCenter: comments.verticalCenter
+                anchors.margins: 1 * mm
+                height: 0.5 * mm
+                property int maxWidth: comments.x - 2 * mm
+                property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
+                width: length < maxWidth ? length : maxWidth
+                color: window.secondaryTextColor
             }
             Text {
                 id: comments

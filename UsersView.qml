@@ -26,7 +26,7 @@ Rectangle {
     Poppable {
         body: back
         Text {
-            visible: users.count === 0 && !usersModel.hasMore
+            visible: !users.visible && !usersModel.hasMore
             anchors.centerIn: parent
             color: window.secondaryTextColor
             horizontalAlignment: Text.AlignHCenter
@@ -35,9 +35,13 @@ Rectangle {
             text: 'Список пуст'
         }
     }
+    Splash {
+        visible: !users.visible && usersModel.hasMore
+    }
     MyListView {
         id: users
         anchors.fill: parent
+        visible: count > 0
         model: UsersModel {
             id: usersModel
             mode: back.mode
