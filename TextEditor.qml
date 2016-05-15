@@ -30,7 +30,6 @@ Rectangle {
         flickText.contentY = positionY;
         input.cursorPosition = cursor + opening.length;
     }
-
     Flickable {
         id: flickText
         anchors.fill: parent

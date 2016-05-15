@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setApplicationName("Taaasty");
     app.setOrganizationName("binque");
-    app.setApplicationVersion("0.1.0");
+    app.setApplicationVersion("0.1.1");
 
     qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");

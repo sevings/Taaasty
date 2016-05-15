@@ -21,11 +21,10 @@ Item {
         anchors.top: parent.top
         anchors.right: parent.right
         width: parent.width / 5
-        //anchors.bottom: parent.bottom
         text: '+'
         onClicked: {
-            editor.message = input.text;
-//            input.clear();
+            editor.message = input.text.toString();
+            console.log(editor.message);
             editor.sent();
         }
     }

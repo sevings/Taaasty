@@ -90,6 +90,7 @@ Rectangle {
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
                 textFormat: Text.RichText
+                onLinkActivated: Qt.openUrlExternally(link)
             }
         }
         header: Item {
