@@ -270,6 +270,7 @@ Rectangle {
                     window.setFooterTlog(entry.tlog);
                 }
             }
+            Component.onCompleted: commentEditor.focus = true
         }
     }
 }

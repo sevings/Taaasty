@@ -7,6 +7,7 @@ ListView {
 //    cacheBuffer: 1000
     flickableDirection: Flickable.VerticalFlick
     maximumFlickVelocity: 1000 * mm
+    interactive: parent.x <= 0
     property bool poppable: true
     boundsBehavior: Flickable.DragOverBounds
     signal aboveBegin

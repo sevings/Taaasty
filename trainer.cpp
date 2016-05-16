@@ -17,9 +17,8 @@
 Trainer::Trainer(Bayes* parent)
     : QAbstractListModel(parent)
     , _bayes(parent)
-    , _curType(WaterMode)
+    , _curMode(WaterMode)
     , _iCurTlog(0)
-    , _curTlog(nullptr)
     , _lastFavorite(0)
 //    , _entriesLoaded(0)
 //    , _entriesLoadedTotal(0)
@@ -41,17 +40,17 @@ int Trainer::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
 
-    return _tlogs[_curType].size();
+    return _tlogs[_curMode].size();
 }
 
 
 
 QVariant Trainer::data(const QModelIndex& index, int role) const
 {
-    if (index.row() < 0 || index.row() >= _tlogs[_curType].size() || role != Qt::UserRole)
+    if (index.row() < 0 || index.row() >= _tlogs[_curMode].size() || role != Qt::UserRole)
         return QVariant();
 
-    auto tlog = _tlogs[_curType].at(index.row());
+    auto tlog = _tlogs[_curMode].at(index.row());
     if (tlog.tlog->tlogId() == 0)
         tlog.loadInfo();
 
@@ -62,12 +61,12 @@ QVariant Trainer::data(const QModelIndex& index, int role) const
 
 void Trainer::setMode(const Trainer::Mode mode)
 {
-    if (mode == _curType)
+    if (mode == _curMode)
         return;
 
     beginResetModel();
 
-    _curType = mode;
+    _curMode = mode;
 
     endResetModel();
 }
@@ -76,7 +75,7 @@ void Trainer::setMode(const Trainer::Mode mode)
 
 int Trainer::currentTlog() const
 {
-    return _curType == WaterMode ? _iCurTlog + 1 : _tlogs[WaterMode].size() + _iCurTlog + 1;
+    return _curMode == WaterMode ? _iCurTlog + 1 : _tlogs[WaterMode].size() + _iCurTlog + 1;
 }
 
 
@@ -104,8 +103,8 @@ int Trainer::entriesCount() const
 
 QString Trainer::currentName() const
 {
-    return _iCurTlog < _tlogs[_curType].size()
-            ? _tlogs[_curType].at(_iCurTlog).tlog->_author->_name : "";
+    return _iCurTlog < _tlogs[_curMode].size()
+            ? _tlogs[_curMode].at(_iCurTlog).tlog->_author->_name : "";
 }
 
 
@@ -117,16 +116,16 @@ void Trainer::train()
             if (!_tlogs[type].at(tlog).include
                     || _tlogs[type].at(tlog).removed)
             {
-                if (_curType == type)
+                if (_curMode == type)
                     beginRemoveRows(QModelIndex(), tlog, tlog);
 
                 _tlogs[type].removeAt(tlog);
 
-                if (_curType == type)
+                if (_curMode == type)
                     endRemoveRows();
             }
 
-    _curType = WaterMode;
+    _curMode = WaterMode;
     _iCurTlog = -1;
 
     _trainNextTlog();
@@ -135,7 +134,25 @@ void Trainer::train()
 
 //    _entriesLoaded      = 0;
 //    _entriesTotal       = 0;
-//    _entriesLoadedTotal = 0;
+    //    _entriesLoadedTotal = 0;
+}
+
+
+
+void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
+{
+    if (tlogId <= 0 || mode != Trainer::WaterMode || mode != Trainer::FireMode)
+        return;
+
+    _curMode = mode;
+
+    auto calendar = new CalendarModel(this);
+    calendar->setTlog(tlogId);
+
+    connect(calendar, SIGNAL(allEntriesLoaded()),    calendar, SLOT(deleteLater()));
+    connect(calendar, SIGNAL(entryLoaded(const Entry*)), this, SLOT(_trainEntry(const Entry*)));
+
+    calendar->loadAllEntries();
 }
 
 
@@ -152,30 +169,42 @@ QHash<int, QByteArray> Trainer::roleNames() const
 void Trainer::_trainNextTlog()
 {
     _iCurTlog++;
-    if (_iCurTlog >= _tlogs[_curType].size() && _curType == WaterMode)
+    if (_iCurTlog >= _tlogs[_curMode].size())
     {
-        if (_tlogs[FireMode].isEmpty())
-            return; // TODO: finish
+        if (_curMode == WaterMode)
+        {
+            if (_tlogs[FireMode].isEmpty())
+            {
+                emit trainFinished();
+                return;
+            }
 
-        _curType = FireMode;
-        _iCurTlog = 0;
+            _curMode = FireMode;
+            _iCurTlog = 0;
+        }
+        else
+        {
+            emit trainFinished();
+            return;
+        }
     }
 
-    auto tlog = _tlogs[_curType].at(_iCurTlog);
+    auto tlog = _tlogs[_curMode].at(_iCurTlog);
     auto calendar = new CalendarModel(this);
     calendar->setTlog(tlog.id);
 
-    connect(calendar, SIGNAL(allEntriesLoaded()), calendar, SLOT(deleteLater()));
-    connect(calendar, SIGNAL(allEntriesLoaded()), this, SLOT(_trainNextTlog()));
+    connect(calendar, SIGNAL(allEntriesLoaded()),    calendar, SLOT(deleteLater()));
+    connect(calendar, SIGNAL(allEntriesLoaded()),        this, SLOT(_trainNextTlog()));
+    connect(calendar, SIGNAL(entryLoaded(const Entry*)), this, SLOT(_trainEntry(const Entry*)));
 
-    calendar->loadAllEntries(tlog.latest); // wait for calendar loading
+    calendar->loadAllEntries(tlog.latest);
 }
 
 
 
-void Trainer::_trainEntry()
+void Trainer::_trainEntry(const Entry* entry)
 {
-
+    _bayes->_addEntry(entry, (Bayes::Type)_curMode);
 }
 
 
@@ -246,9 +275,14 @@ Trainer::BayesTlog Trainer::_findTlog(int id, bool included)
 {
     for (int type = 0; type < 2; type++)
         foreach (auto tlog, _tlogs[type])
-            if (tlog.id == id && !tlog.removed
-                    && ((included && tlog.include) || !included))
-                return tlog;
+            if (tlog.id == id)
+            {
+                if (!tlog.removed
+                        && ((included && tlog.include) || !included))
+                    return tlog;
+                else
+                    return BayesTlog();
+            }
 
     return BayesTlog();
 }

@@ -26,7 +26,7 @@ public:
     int loadingEntriesCount() const { return _loadingEntriesCount; }
 
 public slots:
-    void loadAllEntries(const int after);
+    void loadAllEntries(const int after = -1);
 
 signals:
     void entryLoaded(const Entry* entry);
@@ -44,6 +44,7 @@ private:
     QList<CalendarEntry*> _calendar;
     int _loadedEntriesCount;
     int _loadingEntriesCount;
+    int _loadAfter;
 };
 
 #endif // CALENDARMODEL_H

@@ -5,6 +5,7 @@
 #include <QHash>
 
 class Entry;
+class Trainer;
 
 
 
@@ -24,6 +25,8 @@ public:
 
     int classify(const Entry* entry, const int minLength = 0);
     int voteForEntry(const Entry* entry, const Type type);
+
+    Trainer* trainer();
 
 signals:
 
@@ -53,11 +56,13 @@ private:
     int _calcEntry(const Entry* entry, QHash<QString, FeatureCount>& wordCounts, const int minLength = 0);
     int _addEntry(const Entry* entry, const Type type);
 
-    bool _loaded; // todo: remove if not needed
-
     QHash<QString, FeatureCount> _wordCounts[2];
     QHash<int, bool>             _entriesChanged[2];
     int                          _total[2];
+
+    bool _loaded;
+
+    Trainer* _trainer;
 };
 
 #endif // BAYES_H

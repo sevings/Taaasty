@@ -48,8 +48,6 @@ Rectangle {
             tlog: back.tlogId
         }
         delegate: Rectangle {
-//            anchors.left: parent.left
-//            anchors.right: parent.right
             width: window.width
             height: usersAvatar.height + 2 * mm
             color: usersMouse.pressed ? window.brightColor : window.backgroundColor

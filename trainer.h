@@ -28,11 +28,11 @@ public:
     explicit Trainer(Bayes* parent = 0);
     ~Trainer();
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int      rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
     Q_INVOKABLE void setMode(const Mode mode);
-    Q_INVOKABLE Mode mode() const {return _curType; }
+    Q_INVOKABLE Mode mode() const { return _curMode; }
 
     Q_INVOKABLE int     currentTlog()           const;
     Q_INVOKABLE int     tlogsCount()            const;
@@ -42,6 +42,7 @@ public:
 
 signals:
     void trainStarted(bool full);
+    void trainFinished();
 
     void currentTlogChanged();
     void tlogsCountChanged();
@@ -53,13 +54,14 @@ signals:
 
 public slots:
     void train();
+    void trainTlog(const int tlogId, const Mode mode);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
     void _trainNextTlog();
-    void _trainEntry();
+    void _trainEntry(const Entry* entry);
 
 private:
     struct BayesTlog {
@@ -82,8 +84,8 @@ private:
 
     QList<BayesTlog> _tlogs[2];
 
-    Mode       _curType;
-    int        _iCurTlog;
+    Mode            _curMode;
+    int             _iCurTlog;
     CalendarModel*  _curTlog;
 
     int _lastFavorite;

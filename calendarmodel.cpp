@@ -13,6 +13,7 @@ CalendarModel::CalendarModel(QObject* parent)
     : QAbstractListModel(parent)
     , _loadedEntriesCount(0)
     , _loadingEntriesCount(0)
+    , _loadAfter(0)
 {
 
 }
@@ -51,12 +52,28 @@ void CalendarModel::setTlog(const int tlog)
     QString url = QString("tlog/%1/calendar.json").arg(tlog);
     auto request = new ApiRequest(url);
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
+
+    beginResetModel();
+
+    qDeleteAll(_calendar);
+    _calendar.clear();
+
+    _loadedEntriesCount = 0;
+    _loadingEntriesCount = 0;
+
+    endResetModel();
 }
 
 
 
 void CalendarModel::loadAllEntries(const int after)
 {
+    if (_calendar.isEmpty())
+    {
+        _loadAfter = after;
+        return;
+    }
+
     _loadedEntriesCount = 0;
     _loadingEntriesCount = 0;
 
@@ -73,6 +90,8 @@ void CalendarModel::loadAllEntries(const int after)
 
     if (_loadingEntriesCount == 0)
         emit allEntriesLoaded();
+
+    _loadAfter = 0;
 }
 
 
@@ -90,9 +109,6 @@ void CalendarModel::_setCalendar(QJsonObject data)
 {
     beginResetModel();
 
-    qDeleteAll(_calendar);
-    _calendar.clear();
-
     auto periods = data.value("periods").toArray();
     for (int i = 0; i < periods.size(); i++)
     {
@@ -105,6 +121,9 @@ void CalendarModel::_setCalendar(QJsonObject data)
     }
 
     endResetModel();
+
+    if (_loadAfter)
+            loadAllEntries(_loadAfter);
 }
 
 

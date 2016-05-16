@@ -21,13 +21,13 @@
 Bayes::Bayes(QObject *parent)
     : QObject(parent)
     , _loaded(false)
+    , _trainer(nullptr)
+
 {
     _total[Water] = 0;
     _total[Fire]  = 0;
 
     _loadDb();
-
-    new Trainer(this);
 }
 
 
@@ -264,4 +264,14 @@ int Bayes::_addEntry(const Entry *entry, const Bayes::Type type)
 
     _entriesChanged[type].insert(entry->_id, false);
     return _calcEntry(entry, _wordCounts[type]);
+}
+
+
+
+Trainer* Bayes::trainer()
+{
+    if (!_trainer)
+        _trainer = new Trainer(this);
+
+    return _trainer;
 }

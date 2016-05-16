@@ -229,9 +229,15 @@ Comment::Comment(const Notification* data, QObject* parent)
     _user           = data->_sender;
     _html           = data->_text;
     _createdAt      = Tasty::parseDate(data->_createdAt);
-    _isEditable     = false; //! TODO: reload and update flags
+    _isEditable     = false;
     _isReportable   = false;
     _isDeletable    = false;
+
+    auto entryId = data->_parentId;
+    auto url = QString("comments.json?entry_id=%1&from_comment_id=%2&limit=1").arg(entryId).arg(_id - 1);
+    auto request = new ApiRequest(url);
+
+    connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_update(const QJsonObject)));
 }
 
 
@@ -260,8 +266,6 @@ void Comment::remove()
 
 void Comment::_init(const QJsonObject data)
 {
-//    qDebug() << data;
-
     _id             = data.value("id").toInt();
     _user           = new User(data.value("user").toObject(), this);
     _html           = data.value("comment_html").toString();
@@ -271,6 +275,17 @@ void Comment::_init(const QJsonObject data)
     _isDeletable    = data.value("can_delete").toBool();
 
     emit updated();
+}
+
+
+
+void Comment::_update(const QJsonObject data)
+{
+    auto list = data.value("comments").toArray();
+    if (list.isEmpty())
+        return;
+
+    _init(list.first().toObject());
 }
 
 

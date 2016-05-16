@@ -13,6 +13,9 @@ Rectangle {
     border.width: 0.2 * mm
     radius: 0.8 * mm
     clip: true
+    onFocusChanged: if (focus) {
+                        input.forceActiveFocus();
+                    }
     property string text: input.text
     function clear() {
         input.text = '';

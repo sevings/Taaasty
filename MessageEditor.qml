@@ -7,6 +7,7 @@ Item {
     height: input.height + 2 * mm
     property string message
     signal sent
+    onFocusChanged: if (focus) input.focus = true
     function clear() {
         input.clear();
     }

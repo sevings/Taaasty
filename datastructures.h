@@ -200,6 +200,7 @@ signals:
 
 private slots:
     void _init(const QJsonObject data);
+    void _update(const QJsonObject data);
 
 private:
     int         _id;
