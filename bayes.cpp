@@ -230,24 +230,24 @@ int Bayes::_calcEntry(const Entry *entry, QHash<QString, Bayes::FeatureCount> &w
         ++wordCounts[".short"];
 
     ++wordCounts[QString(".type_%1").arg(entry->_type)];
-    ++wordCounts[QString(".author_%1").arg(entry->_author->_slug)];
+    ++wordCounts[QString(".author_%1").arg(entry->_author->slug())];
 
-    if (entry->_author->_isFemale)
+    if (entry->_author->isFemale())
         ++wordCounts[".female"];
     else
         ++wordCounts[".male"];
 
-    if (entry->_author->_isDaylog)
+    if (entry->_author->isDaylog())
         ++wordCounts[".daylog"];
     else
         ++wordCounts[".wholelog"];
 
-    if (entry->_author->_isFlow)
+    if (entry->_author->isFlow())
         ++wordCounts[".flow"];
     else
         ++wordCounts[".tlog"];
 
-    if (entry->_author->_isPremium)
+    if (entry->_author->isPremium())
         ++wordCounts[".premium"];
     else
         ++wordCounts[".free"];

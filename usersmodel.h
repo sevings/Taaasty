@@ -6,6 +6,7 @@
 #include <QJsonObject>
 
 class User;
+class Bayes;
 
 
 
@@ -13,12 +14,16 @@ class UsersModel : public QAbstractListModel
 {
     Q_OBJECT
 
+    friend class Trainer;
+
     Q_PROPERTY(Mode mode READ mode WRITE setMode)
     Q_PROPERTY(int  tlog READ tlog WRITE setTlog)
     Q_PROPERTY(bool hasMore READ hasMore NOTIFY hasMoreChanged)
 
 public:
     enum Mode {
+        WaterMode,
+        FireMode,
         FollowingsMode,
         FollowersMode,
         MyFollowingsMode,
@@ -54,6 +59,30 @@ private slots:
     void _addItems(QJsonObject data);
 
 private:
+    struct BayesTlog {
+        BayesTlog(int userId = 0, int last = 0);
+        BayesTlog(User* user);
+        ~BayesTlog();
+        void loadInfo();
+        User* user;
+        int id;
+        int latest;
+        bool include;
+        bool removed;
+    };
+    BayesTlog _findTlog(int id, bool included = false);
+
+    void _initDb();
+    void _loadDb();
+    void _saveDb();
+
+    void _loadBayesTlogs();
+    void _saveBayesTlogs(QList<User*> users = QList<User*>());
+
+    QList<BayesTlog> _tlogs[2];
+    int _lastFavorite;
+    bool _loadAll;
+
     QList<User*> _users;
     QString _url;
     QString _field;

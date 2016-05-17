@@ -312,10 +312,50 @@ User::User(const QJsonObject data, QObject *parent)
     _nameColor       = colors.value("name").toString();
 }
 
+int User::id() const
+{
+    return _id;
+}
+
+QString User::name() const
+{
+    return _name;
+}
+
+QString User::slug() const
+{
+    return _slug;
+}
+
 
 
 Author::Author(const QJsonObject data, QObject *parent)
     : User(data, parent)
+{
+    _init(data);
+}
+
+bool Author::isFemale() const
+{
+    return _isFemale;
+}
+
+bool Author::isFlow() const
+{
+    return _isFlow;
+}
+
+bool Author::isPremium() const
+{
+    return _isPremium;
+}
+
+bool Author::isDaylog() const
+{
+    return _isDaylog;
+}
+
+void Author::_init(const QJsonObject data)
 {
     _isFemale  = data.value("is_female").toBool();
     _isPrivacy = data.value("is_privacy").toBool();
@@ -338,12 +378,15 @@ Author::Author(const QJsonObject data, QObject *parent)
     _daysCount = Tasty::num2str(days, "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
 
     _followingsCount = Tasty::num2str(data.value("followings_count").toInt(), "подписка", "подписки", "подписок");
+
+    emit updated();
 }
 
 
 
 Tlog::Tlog(const QJsonObject data, QObject *parent)
     : QObject(parent)
+    , _author(nullptr)
     , _loading(false)
 {
     _init(data);
@@ -391,7 +434,11 @@ void Tlog::_init(const QJsonObject data)
     _isFollowingMe = data.value("his_relationship").toString() == "friend";
     _amIFollowing = data.value("my_relationship").toString() == "friend";
 
-    _author = new Author(data.value("author").toObject(), this);
+    auto authorData = data.value("author").toObject();
+    if (_author)
+        _author->_init(authorData);
+    else
+        _author = new Author(authorData, this);
 
     emit updated();
 
@@ -458,4 +505,9 @@ Notification::Notification(const QJsonObject data, QObject *parent)
     _entityType = data.value("entity_type").toString();
     _parentId   = data.value("parent_id").toInt();
     _parentType = data.value("parent_type").toString();
+}
+
+int Notification::entityId() const
+{
+    return _entityId;
 }

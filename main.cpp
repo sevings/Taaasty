@@ -17,7 +17,8 @@
 #include "attachedimagesmodel.h"
 #include "usersmodel.h"
 #include "notificationsmodel.h"
-//#include "bayes.h"
+#include "bayes.h"
+#include "trainer.h"
 
 
 int main(int argc, char *argv[])
@@ -25,13 +26,11 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setApplicationName("Taaasty");
     app.setOrganizationName("binque");
-    app.setApplicationVersion("0.1.1");
 
     qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
     qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
     qmlRegisterType<UsersModel>         ("org.binque.taaasty", 1, 0, "UsersModel");
-//    qmlRegisterType<NotificationsModel> ("org.binque.taaasty", 1, 0, "NotificationsModel");
 
     qmlRegisterType<Entry>          ("org.binque.taaasty", 1, 0, "TlogEntry");
     qmlRegisterType<Comment>        ("org.binque.taaasty", 1, 0, "Comment");
@@ -56,19 +55,24 @@ int main(int argc, char *argv[])
     cache->setAutoload(settings->autoloadImages());
 //    cache->setAutoload(false);
     engine.rootContext()->setContextProperty("Cache", cache);
-//    engine.rootContext()->setContextProperty("Bayes", Bayes::instance(Tasty::instance()));
+
+    auto bayes = Bayes::instance(tasty);
+    engine.rootContext()->setContextProperty("Bayes", bayes);
+
+    auto trainer = bayes->trainer();
+    engine.rootContext()->setContextProperty("Trainer", trainer);
 
 #ifdef Q_OS_ANDROID
     //  BUG with dpi on some androids: https://bugreports.qt-project.org/browse/QTBUG-35701
     //  Workaround:
-    QAndroidJniObject qtActivity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
-    QAndroidJniObject resources = qtActivity.callObjectMethod("getResources", "()Landroid/content/res/Resources;");
-    QAndroidJniObject displayMetrics = resources.callObjectMethod("getDisplayMetrics", "()Landroid/util/DisplayMetrics;");
+    auto qtActivity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
+    auto resources = qtActivity.callObjectMethod("getResources", "()Landroid/content/res/Resources;");
+    auto displayMetrics = resources.callObjectMethod("getDisplayMetrics", "()Landroid/util/DisplayMetrics;");
     int density = displayMetrics.getField<int>("densityDpi");
 #else
-    auto *screen = qApp->primaryScreen();
-    float density = screen->physicalDotsPerInch();
-    density = 267; // test
+//    auto *screen = qApp->primaryScreen();
+//    float density = screen->physicalDotsPerInch();
+    float density = 267; // test
 #endif
 
     engine.rootContext()->setContextProperty("mm",density / 25.4); // N900: 1 mm = 10.5 px; Q10: 12.9
@@ -83,7 +87,6 @@ int main(int argc, char *argv[])
 
     int res = app.exec();
 
-//    delete cache;
     delete tasty;
 
     return res;

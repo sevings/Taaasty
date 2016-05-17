@@ -5,31 +5,25 @@
 #include <QAbstractListModel>
 
 #include "calendarmodel.h"
+#include "usersmodel.h"
 
 class Bayes;
 class Tlog;
 
 
 
-class Trainer : public QAbstractListModel
+class Trainer : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(Mode mode READ mode WRITE setMode)
-
 public:
     enum Mode {
-        WaterMode,
-        FireMode
+        WaterMode = UsersModel::WaterMode,
+        FireMode = UsersModel::FireMode
     };
-
-    Q_ENUMS(Mode)
 
     explicit Trainer(Bayes* parent = 0);
     ~Trainer();
-
-    int      rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
     Q_INVOKABLE void setMode(const Mode mode);
     Q_INVOKABLE Mode mode() const { return _curMode; }
@@ -56,43 +50,17 @@ public slots:
     void train();
     void trainTlog(const int tlogId, const Mode mode);
 
-protected:
-    QHash<int, QByteArray> roleNames() const override;
-
 private slots:
     void _trainNextTlog();
     void _trainEntry(const Entry* entry);
 
 private:
-    struct BayesTlog {
-        BayesTlog(int tlogId = 0, int last = 0);
-        void loadInfo();
-        Tlog* tlog;
-        int id;
-        int latest;
-        bool include;
-        bool removed;
-    };
-
-    void _initDb();
-    void _loadDb();
-    void _saveDb();
-
-    BayesTlog _findTlog(int id, bool included = false);
-
     Bayes* _bayes;
-
-    QList<BayesTlog> _tlogs[2];
 
     Mode            _curMode;
     int             _iCurTlog;
     CalendarModel*  _curTlog;
-
-    int _lastFavorite;
-
-//    int _entriesLoaded;
-//    int _entriesLoadedTotal;
-//    int _entriesTotal;
+    UsersModel*     _users;
 };
 
 #endif // TRAINER_H

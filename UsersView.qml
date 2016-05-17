@@ -6,7 +6,9 @@ Rectangle {
     color: window.backgroundColor
     signal popped
     property bool poppable
-    property string title: 'Мои подписки'
+    property string title: ''
+    readonly property bool customTitle: bayesMode
+    readonly property bool bayesMode: mode === UsersModel.FireMode || mode === UsersModel.WaterMode
     property int mode: UsersModel.MyFollowingsMode
     property int tlogId
     property Tlog tlog: Tlog {
@@ -18,10 +20,10 @@ Rectangle {
             title = 'Подписчики';
         else if (mode === UsersModel.FollowingsMode)
             title = 'Подписки';
-        //        else if (type === 'fire')
-        //            title = 'Интересные тлоги';
-        //        else if (type === 'water')
-        //            title = 'Неинтересные тлоги';
+        else if (mode === UsersModel.FireMode)
+            title = 'Интересные тлоги';
+        else if (mode === UsersModel.WaterMode)
+            title = 'Неинтересные тлоги';
     }
     Poppable {
         body: back

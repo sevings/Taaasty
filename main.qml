@@ -89,6 +89,24 @@ ApplicationWindow {
         onVisibleChanged: {
             window.hideFooter();
         }
+        onWaterTlogsRequested: {
+            backAnimation.start();
+            stack.push({
+                           item: users,
+                           properties: {
+                               mode: UsersModel.WaterMode
+                           }
+                       })
+        }
+        onFireTlogsRequested: {
+            backAnimation.start();
+            stack.push({
+                           item: users,
+                           properties: {
+                               mode: UsersModel.FireMode
+                           }
+                       })
+        }
     }
     ParallelAnimation {
         id: backAnimation

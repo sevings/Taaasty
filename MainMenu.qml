@@ -19,6 +19,8 @@ MouseArea {
     enabled: false
     signal modeChanged(int mode)
     signal settingsRequested
+    signal waterTlogsRequested
+    signal fireTlogsRequested
     onModeChanged: backAnimation.start();
     Component.onCompleted: {
         enabled = true;
@@ -61,7 +63,7 @@ MouseArea {
             topMargin: 1 * mm
             bottomMargin: 1 * mm
             contentWidth: parent.width
-            property int buttonsCount: Tasty.isAuthorized ? 11 : 8
+            property int buttonsCount: Tasty.isAuthorized ? 13 : 10 // 11 : 8
             contentHeight: 9 * mm * buttonsCount - mm
             Column {
                 id: column
@@ -129,6 +131,18 @@ MouseArea {
                     anchors.right: parent.right
                     text: 'Tlog'
                     onClicked: { modeChanged(FeedModel.TlogMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Water tlogs'
+                    onClicked: { area.waterTlogsRequested() }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Fire tlogs'
+                    onClicked: { area.fireTlogsRequested() }
                 }
                 ThemedButton {
                     anchors.left: parent.left

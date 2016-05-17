@@ -218,9 +218,6 @@ class User: public QObject
 {
     Q_OBJECT
 
-    friend class Bayes;
-    friend class Trainer;
-
     Q_PROPERTY(int     id           MEMBER _id          CONSTANT)
     Q_PROPERTY(QString tlogUrl      MEMBER _tlogUrl     CONSTANT)
     Q_PROPERTY(QString name         MEMBER _name        CONSTANT)
@@ -236,6 +233,10 @@ class User: public QObject
 
 public:
     User(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+
+    int     id() const;
+    QString name() const;
+    QString slug() const;
 
 private:
     int     _id;
@@ -258,24 +259,34 @@ class Author: public User
 {
     Q_OBJECT
 
-    friend class Bayes;
-    friend class Trainer;
+    friend class Tlog;
 
-    Q_PROPERTY(bool    isFemale            MEMBER _isFemale            CONSTANT)
-    Q_PROPERTY(bool    isPrivacy           MEMBER _isPrivacy           CONSTANT)
-    Q_PROPERTY(bool    isOnline            MEMBER _isOnline            CONSTANT)
-    Q_PROPERTY(bool    isFlow              MEMBER _isFlow              CONSTANT)
-    Q_PROPERTY(bool    isPremium           MEMBER _isPremium           CONSTANT)
-    Q_PROPERTY(bool    isDaylog            MEMBER _isDaylog            CONSTANT)
-    Q_PROPERTY(QString title               MEMBER _title               CONSTANT)
-    Q_PROPERTY(QString entriesCount        MEMBER _entriesCount        CONSTANT)
-    Q_PROPERTY(QString publicEntriesCount  MEMBER _publicEntriesCount  CONSTANT)
-    Q_PROPERTY(QString privateEntriesCount MEMBER _privateEntriesCount CONSTANT)
-    Q_PROPERTY(QString daysCount           MEMBER _daysCount           CONSTANT)
-    Q_PROPERTY(QString followingsCount     MEMBER _followingsCount     CONSTANT)
+    Q_PROPERTY(bool    isFemale            MEMBER _isFemale            NOTIFY updated)
+    Q_PROPERTY(bool    isPrivacy           MEMBER _isPrivacy           NOTIFY updated)
+    Q_PROPERTY(bool    isOnline            MEMBER _isOnline            NOTIFY updated)
+    Q_PROPERTY(bool    isFlow              MEMBER _isFlow              NOTIFY updated)
+    Q_PROPERTY(bool    isPremium           MEMBER _isPremium           NOTIFY updated)
+    Q_PROPERTY(bool    isDaylog            MEMBER _isDaylog            NOTIFY updated)
+    Q_PROPERTY(QString title               MEMBER _title               NOTIFY updated)
+    Q_PROPERTY(QString entriesCount        MEMBER _entriesCount        NOTIFY updated)
+    Q_PROPERTY(QString publicEntriesCount  MEMBER _publicEntriesCount  NOTIFY updated)
+    Q_PROPERTY(QString privateEntriesCount MEMBER _privateEntriesCount NOTIFY updated)
+    Q_PROPERTY(QString daysCount           MEMBER _daysCount           NOTIFY updated)
+    Q_PROPERTY(QString followingsCount     MEMBER _followingsCount     NOTIFY updated)
 
 public:
     Author(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+
+    bool isFemale() const;
+    bool isFlow() const;
+    bool isPremium() const;
+    bool isDaylog() const;
+
+signals:
+    void updated();
+
+private slots:
+    void _init(const QJsonObject data);
 
 private:
     bool    _isFemale;
@@ -297,8 +308,6 @@ private:
 class Tlog: public QObject
 {
     Q_OBJECT
-
-    friend class Trainer;
 
     Q_PROPERTY(int     tlogId              READ tlogId   WRITE setId   NOTIFY updated)
     Q_PROPERTY(QString title               MEMBER _title               NOTIFY updated)
@@ -404,6 +413,8 @@ class Notification: public QObject
 public:
     Notification(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
     
+    int entityId() const;
+
 signals:
     void read();
     

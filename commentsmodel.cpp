@@ -174,10 +174,14 @@ void CommentsModel::_addComment(const int entryId, const Notification* notif)
     if (entryId != _entryId)
         return;
 
+    // last ten comments must be enough
+    for (int i = _comments.size() - 1; i >= _comments.size() - 10 && i >= 0; i--)
+        if (_comments.at(i)->_id == notif->entityId())
+            return;
+
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
 
     _comments << new Comment(notif, this);
 
     endInsertRows();
 }
-
