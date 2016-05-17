@@ -103,5 +103,8 @@ void ApiRequest::_finished()
     if (_reply->error() == QNetworkReply::NoError)
         emit success(jsonObject);
     else
+    {
+        Tasty::instance()->showError(jsonObject);
         qDebug() << jsonObject;
+    }
 }

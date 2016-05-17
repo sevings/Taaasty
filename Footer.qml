@@ -62,7 +62,7 @@ Rectangle {
             id: notifNotice
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.top
-            color: window.unreadNotifications ? window.brightColor : '#575757'
+            color: window.unreadNotifications ? window.greenColor : '#575757'
             width: 1.5 * mm
             height: width
             radius: height / 2

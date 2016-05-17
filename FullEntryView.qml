@@ -67,7 +67,7 @@ Rectangle {
                 font.pointSize: window.fontNormal
                 font.bold: true
                 style: Text.Raised
-                styleColor: window.brightColor
+                styleColor: window.greenColor
             }
             Text {
                 id: commentDate
@@ -202,7 +202,7 @@ Rectangle {
                 height: 6 * mm
                 width: (parent.width - 4 * mm) / 3
                 fontSize: 20
-                visible: entry.isFavoritable
+                visible: entry.isFavoritable && Tasty.isAuthorized
                 checked: entry.isFavorited
 //            enabled: !fullEntry.favorited
                 onClicked: entry.favorite()
@@ -217,7 +217,7 @@ Rectangle {
                 height: 6 * mm
                 width: fullEntryFavButton.width
                 fontSize: fullEntryFavButton.fontSize
-                visible: entry.isWatchable
+                visible: entry.isWatchable && Tasty.isAuthorized
                 checked: entry.isWatched
 //              enabled: entry.isWatchable
                 onClicked: entry.watch()
@@ -232,7 +232,7 @@ Rectangle {
                 text: '+ ' + entry.rating.votes
                 height: 6 * mm
                 fontSize: fullEntryFavButton.fontSize
-                visible: entry.isVotable
+                visible: entry.isVotable && Tasty.isAuthorized
                 enabled: entry.rating.isVotable
                 checked: entry.rating.isVoted
                 onClicked: entry.rating.vote()
@@ -254,6 +254,7 @@ Rectangle {
         }
         footer: MessageEditor {
             id: commentEditor
+            visible: Tasty.isAuthorized
             onSent: {
                 entry.addComment(commentEditor.message);
             }

@@ -1,6 +1,8 @@
 #include "tasty.h"
 #include "apirequest.h"
 
+#include "defines.h"
+
 #include <QDateTime>
 #include <QDebug>
 
@@ -12,7 +14,8 @@ Tasty::Tasty(QObject *parent)
     , _manager(new QNetworkAccessManager(this))
     , _busy(0)
 {
-
+    Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
+                   this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
 }
 
 
@@ -126,6 +129,16 @@ void Tasty::postEntry(const QString title, const QString content)
 
 
 
+void Tasty::showError(const QJsonObject data)
+{
+    auto errorString = data.value("error").toString();
+    auto code = data.value("response_code").toInt();
+
+    emit error(code, errorString);
+}
+
+
+
 void Tasty::getMe()
 {
     auto request = new ApiRequest("users/me.json", true);
@@ -151,9 +164,10 @@ void Tasty::_readAccessToken(const QJsonObject data)
 
 
 
-void Tasty::_readComment(const QJsonObject data)
+void Tasty::_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility accessible)
 {
-    Q_UNUSED(data);
+    if (accessible == QNetworkAccessManager::NotAccessible)
+        emit error(0, "Сеть недоступна");
 }
 
 

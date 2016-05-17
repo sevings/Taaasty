@@ -56,7 +56,7 @@ Rectangle {
         delegate: Rectangle {
             width: window.width
             height: usersAvatar.height + 2 * mm
-            color: usersMouse.pressed ? window.brightColor : window.backgroundColor
+            color: usersMouse.pressed ? window.greenColor : window.backgroundColor
             Poppable {
                 id: usersMouse
                 anchors.fill: parent

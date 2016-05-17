@@ -10,7 +10,8 @@ ApplicationWindow {
     property color backgroundColor: 'black'
     property color textColor: 'white'
     property color secondaryTextColor: 'darkgrey'
-    property color brightColor: '#00DF84'
+    property color greenColor: '#00DF84'
+    property color redColor: '#f3534b'
     property int fontBiggest: 30
     property int fontBigger: 25
     property int fontNormal: 20
@@ -403,6 +404,16 @@ ApplicationWindow {
                                    tlog: tlog
                                }
                            })
+            }
+        }
+    }
+    Dialog {
+        id: dialog
+        z: 100
+        Connections {
+            target: Tasty
+            onError: {
+                dialog.show((code ? code + '\n' : '') + text);
             }
         }
     }

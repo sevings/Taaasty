@@ -27,7 +27,7 @@ MouseArea {
                     if (!button.enabled || button.pressed)
                         '#000000';
                     else if (button.checked)
-                        window.brightColor;
+                        window.greenColor;
                     else
                         '#373737';
                 }

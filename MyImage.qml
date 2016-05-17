@@ -59,7 +59,7 @@ AnimatedImage {
                                                                             : 12 * mm
             height: 12 * mm
             radius: width / 2
-            color: window.brightColor
+            color: window.greenColor
             visible: image.url && parent.width > 12 * mm && parent.height > 12 * mm
             Behavior on width {
                 NumberAnimation { duration: 100 }

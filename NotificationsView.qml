@@ -95,7 +95,7 @@ Rectangle {
                 width: 1.5 * mm
                 height: width
                 radius: height / 2
-                color: window.brightColor
+                color: window.greenColor
                 visible: !notification.read
             }
             Text {

@@ -164,7 +164,7 @@ Rectangle {
                 width: parent.width / 4
                 height: entryAvatar.height
                 text: '+ ' + entry.rating.votes
-                visible: entry.isVotable
+                visible: entry.isVotable && Tasty.isAuthorized
                 enabled: entry.rating.isVotable
                 checked: entry.rating.isVoted
                 fontSize: 20

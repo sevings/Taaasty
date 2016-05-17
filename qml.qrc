@@ -19,5 +19,6 @@
         <file>NotificationsView.qml</file>
         <file>Footer.qml</file>
         <file>Splash.qml</file>
+        <file>Dialog.qml</file>
     </qresource>
 </RCC>

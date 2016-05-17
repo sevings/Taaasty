@@ -28,6 +28,7 @@ public:
 
     void incBusy();
     void decBusy();
+
     Q_INVOKABLE int busy() const { return _busy; }
 
     Q_INVOKABLE bool isAuthorized() const;
@@ -42,19 +43,22 @@ signals:
     void authorizationNeeded();
     void authorized();
 
-    void ratingChanged(const QJsonObject rating);
+    void ratingChanged(const QJsonObject data);
+
+    void error(const int code, const QString text);
 
 public slots:
-
     void authorize(const QString login, const QString password);
     void postEntry(const QString title, const QString content);
+
+    void showError(const QJsonObject data);
 
     void getMe();
 
 private slots:
     void _readAccessToken(const QJsonObject data);
 
-    void _readComment(const QJsonObject data);
+    void _showNetAccessibility(QNetworkAccessManager::NetworkAccessibility accessible);
 
     void _readMe(const QJsonObject data);
 

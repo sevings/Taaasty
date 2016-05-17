@@ -3,6 +3,8 @@
 #include <QRegularExpression>
 #include <QUrl>
 
+#include "defines.h"
+
 #include "tasty.h"
 #include "apirequest.h"
 #include "commentsmodel.h"
@@ -470,7 +472,7 @@ Rating::Rating(const QJsonObject data, QObject *parent)
 {
     _init(data);
 
-    connect(Tasty::instance(), SIGNAL(ratingChanged(QJsonObject)), this, SLOT(_init(QJsonObject)));
+    Q_TEST(connect(Tasty::instance(), SIGNAL(ratingChanged(QJsonObject)), this, SLOT(_init(QJsonObject))));
 }
 
 
