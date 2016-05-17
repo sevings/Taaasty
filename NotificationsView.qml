@@ -26,6 +26,9 @@ Rectangle {
 //            body: back
             readonly property bool showProfile: notification.parentType !== 'AnonymousEntry'
             onClicked: {
+                if (back.y > 0)
+                    return;
+
                 if (notification.entityType === 'Entry')
                 {
                     if (!notification.entityId)
@@ -61,6 +64,9 @@ Rectangle {
                     anchors.fill: parent
                     enabled: showProfile
                     onClicked: {
+                        if (back.y > 0)
+                            return;
+
                         window.hideNotifs();
                         avatarClicked(notification.sender.id);
                     }

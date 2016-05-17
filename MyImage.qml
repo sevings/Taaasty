@@ -72,6 +72,9 @@ AnimatedImage {
                     else
                         cachedImage.download();
                 }
+                onDoubleClicked: {
+                    // supress second click
+                }
             }
             Text {
                 id: bytesText

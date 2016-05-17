@@ -121,12 +121,11 @@ Rectangle {
                 id: entryAvatar
                 anchors.margins: 1 * mm
                 user: entry.author
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: mode !== FeedModel.AnonymousMode
+                Poppable {
+                    body: back
                     onClicked:
                     {
-                        if (back.x > 0) {
+                        if (back.x > 0 || mode === FeedModel.AnonymousMode) {
                             mouse.accepted = false;
                             return;
                         }

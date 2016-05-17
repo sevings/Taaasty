@@ -44,6 +44,9 @@ MouseArea {
             mouse.accepted = true;
         }
     }
+    onDoubleClicked: {
+        // supress second click
+    }
     ParallelAnimation {
         id: backAnimation
         PropertyAnimation {

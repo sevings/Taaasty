@@ -48,8 +48,8 @@ Rectangle {
                 id: commentAvatar
                 anchors.margins: 1 * mm
                 user: comment.user
-                MouseArea {
-                    anchors.fill: parent
+                Poppable {
+                    body: back
                     onClicked: back.avatarClicked(comment.user.id);
                     enabled: showProfiles
                 }
