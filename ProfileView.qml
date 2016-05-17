@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -111,7 +111,7 @@ Rectangle {
                 color: window.textColor
                 text: tlog.amIFollowing ? 'Вы подписаны' : 'Вы не подписаны'
                 height: text.length > 0 ? paintedHeight : 0
-                visible: tlog.tlogId === author.id
+                visible: tlog.tlogId === author.id && Tasty.isAuthorized
             }
             Text {
                 anchors.left: parent.left
@@ -124,7 +124,7 @@ Rectangle {
                 text: tlog.isFollowingMe ? 'Следит за вашим тлогом'
                                          : 'Не следит за вашим тлогом'
                 height: text.length > 0 ? paintedHeight : 0
-                visible: tlog.tlogId === author.id && !author.isFlow
+                visible: tlog.tlogId === author.id && !author.isFlow && Tasty.isAuthorized
             }
             ThemedButton {
                 anchors.left: parent.left

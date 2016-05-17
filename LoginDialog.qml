@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 
 Rectangle {
     id: dialog
@@ -10,6 +10,9 @@ Rectangle {
     function clear() {
         mail.line = '';
         password.line = '';
+    }
+    Component.onCompleted: {
+        mail.forceActiveFocus();
     }
     Poppable {
         body: dialog

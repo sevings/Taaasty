@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import org.binque.taaasty 1.0
 
 MouseArea {
@@ -21,6 +21,7 @@ MouseArea {
     signal settingsRequested
     signal waterTlogsRequested
     signal fireTlogsRequested
+    signal loginRequested
     onModeChanged: backAnimation.start();
     Component.onCompleted: {
         enabled = true;
@@ -63,8 +64,8 @@ MouseArea {
             topMargin: 1 * mm
             bottomMargin: 1 * mm
             contentWidth: parent.width
-            property int buttonsCount: Tasty.isAuthorized ? 12 : 9
-            contentHeight: 9 * mm * buttonsCount - mm
+            property int buttonsCount: Tasty.isAuthorized ? 12 : 10
+            contentHeight: 9 * mm * buttonsCount + space.height
             Column {
                 id: column
                 anchors.fill: parent
@@ -132,6 +133,13 @@ MouseArea {
                     text: 'Tlog'
                     onClicked: { modeChanged(FeedModel.TlogMode) }
                 }
+                Item {
+                    id: space
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.margins: 1 * mm
+                    height: 2 * mm
+                }
 //                ThemedButton {
 //                    anchors.left: parent.left
 //                    anchors.right: parent.right
@@ -163,6 +171,13 @@ MouseArea {
                     text: 'Hide short'
                     checked: Settings.hideShortPosts
                     onClicked: { Settings.hideShortPosts = !checked }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Login'
+                    visible: !Tasty.isAuthorized
+                    onClicked: { loginRequested() }
                 }
             }
         }

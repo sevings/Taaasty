@@ -1,5 +1,5 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.2
+import QtQuick 2.5
+import QtQuick.Controls 1.4
 import org.binque.taaasty 1.0
 
 ApplicationWindow {
@@ -107,6 +107,10 @@ ApplicationWindow {
                                mode: UsersModel.FireMode
                            }
                        })
+        }
+        onLoginRequested: {
+            backAnimation.start();
+            stack.push(loginDialog);
         }
     }
     ParallelAnimation {
@@ -336,7 +340,6 @@ ApplicationWindow {
             }
             onAuthorized: {
                 stack.pop(loginDialog);
-//                loginDialog.clear();
             }
         }
     }
