@@ -75,7 +75,7 @@ AnimatedImage {
             }
             Text {
                 id: bytesText
-                font.pointSize: window.fontSmaller
+                font.pointSize: window.fontSmallest
                 text: (cachedImage.isDownloading && cachedImage.kbytesTotal > 0
                        ? cachedImage.kbytesReceived + ' / ' : '')
                       + (cachedImage.kbytesTotal > 0

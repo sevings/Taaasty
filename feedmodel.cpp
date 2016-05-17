@@ -4,6 +4,9 @@
 #include <QJsonArray>
 #include <QDebug>
 
+#include "defines.h"
+
+#include "tasty.h"
 #include "apirequest.h"
 #include "datastructures.h"
 
@@ -16,6 +19,8 @@ FeedModel::FeedModel(QObject* parent)
     , _loading(false)
     , _lastEntry(0)
 {
+    Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideShortPostsChanged()), this, SLOT(_changeHideShort())));
+
     setMode(LiveMode);
 }
 
@@ -73,7 +78,7 @@ void FeedModel::fetchMore(const QModelIndex& parent)
         url += QString("&since_entry_id=%1").arg(_lastEntry);
 
     auto request = new ApiRequest(url);
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject)));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
 }
 
 
@@ -147,9 +152,21 @@ void FeedModel::reset(Mode mode, int tlog)
     qDeleteAll(_entries);
     _entries.clear();
 
+    qDeleteAll(_allEntries);
+    _allEntries.clear();
+
     endResetModel();
 
     emit hasMoreChanged();
+}
+
+
+
+bool FeedModel::hideShort() const
+{
+    return (_mode == LiveMode || _mode == BestMode || _mode == ExcellentMode
+            || _mode == GoodMode || _mode == WellMode || _mode == BetterThanMode)
+            && Tasty::instance()->settings()->hideShortPosts();
 }
 
 
@@ -183,16 +200,55 @@ void FeedModel::_addItems(QJsonObject data)
             break;
         }
 
-    beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + feed.size() - 1);
-
-    _entries.reserve(_entries.size() + feed.size());
+    QList<Entry*> all;
+    all.reserve(feed.size());
     foreach(auto item, feed)
     {
         auto entry = new Entry(item.toObject(), this);
-        _entries << entry;
+        all << entry;
+    }
+
+    if (hideShort())
+    {
+        _allEntries << all;
+
+        QList<Entry*> longer;
+        foreach (auto e, all)
+            if (e->wordCount() >= 100)
+                longer << e;
+
+        beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + longer.size() - 1);
+        _entries << longer;
+    }
+    else
+    {
+        beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + all.size() - 1);
+        _entries << all;
     }
 
     endInsertRows();
 
     _loading = false;
+}
+
+
+
+void FeedModel::_changeHideShort()
+{
+    beginResetModel();
+
+    if (hideShort())
+    {
+        _entries.swap(_allEntries);
+        foreach(auto e, _allEntries)
+            if (e->wordCount() >= 100)
+                _entries << e;
+    }
+    else if (!_allEntries.isEmpty()) // prev hide
+    {
+        _entries.clear();
+        _entries.swap(_allEntries);
+    }
+
+    endResetModel();
 }

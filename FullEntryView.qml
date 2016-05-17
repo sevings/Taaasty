@@ -40,7 +40,7 @@ Rectangle {
 //            anchors.right: parent.right
             //color: window.backgroundColor
             width: window.width
-            height: 4 * mm + commentText.paintedHeight + nameText.paintedHeight
+            height: 4 * mm + commentText.contentHeight + nameText.contentHeight
             Poppable {
                 body: back
             }
@@ -141,7 +141,7 @@ Rectangle {
                                                       : window.fontNormal)
                 color: window.textColor
                 textFormat: Text.RichText
-                height: entry.title.length > 0 ? paintedHeight : entry.text.length > 0 ? -2 * mm : 0
+                height: entry.title.length > 0 ? contentHeight : entry.text.length > 0 ? -1 * mm : 0
                 onLinkActivated: Qt.openUrlExternally(link)
             }
             Text {
@@ -152,12 +152,11 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.margins: 1 * mm
                 anchors.leftMargin: entry.type === 'quote' ? 5 * mm : 1 * mm
-                anchors.rightMargin: anchors.leftMargin
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontNormal
                 color: window.textColor
                 textFormat: Text.RichText
-                height: entry.text.length > 0 ? paintedHeight : entry.title.length > 0 ? -2 * mm : 0
+                height: entry.text.length > 0 ? contentHeight : entry.title.length > 0 ? -1 * mm : 0
                 onLinkActivated: Qt.openUrlExternally(link)
             }
             Text {
@@ -172,7 +171,7 @@ Rectangle {
                 font.italic: true
                 color: window.textColor
                 textFormat: Text.RichText
-                height: entry.source.length > 0 ? paintedHeight : -1 * mm
+                height: entry.source.length > 0 ? contentHeight : -1 * mm
                 horizontalAlignment: Text.AlignRight
             }
             Text {
@@ -244,7 +243,7 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.margins: 1 * mm
                 anchors.topMargin: 2 * mm
-                text: 'Еще'
+                text: enabled || fullEntry.count > 0 ? 'Еще' : ''
                 height: visible ? 6 * mm : 0
                 width: parent.width / 3
                 fontSize: fullEntryFavButton.fontSize

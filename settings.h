@@ -11,9 +11,11 @@ class Settings : public QObject
 {
     Q_OBJECT
 
-//    Q_PROPERTY(QString login READ login WRITE setLogin)
-//    Q_PROPERTY(QString password READ password WRITE setPassword)
-//    Q_PROPERTY(QString accessToken READ accessToken WRITE setAccessToken)
+    Q_PROPERTY(QString  login           READ login          WRITE setLogin          NOTIFY loginChanged)
+    Q_PROPERTY(QString  accessToken     READ accessToken    WRITE setAccessToken    NOTIFY accessTokenChanged)
+    Q_PROPERTY(int      maxImageWidth   READ maxImageWidth  WRITE setMaxImageWidth  NOTIFY maxImageWidthChanged)
+    Q_PROPERTY(bool     autoloadImages  READ autoloadImages WRITE setAutoloadImages NOTIFY autoloadImagesChanged)
+    Q_PROPERTY(bool     hideShortPosts  READ hideShortPosts WRITE setHideShortPosts NOTIFY hideShortPostsChanged)
 
 public:
     explicit Settings(QObject *parent = 0);
@@ -33,7 +35,15 @@ public:
     bool autoloadImages() const;
     void setAutoloadImages(bool load);
 
+    bool hideShortPosts() const;
+    void setHideShortPosts(bool hide);
+
 signals:
+    void loginChanged();
+    void accessTokenChanged();
+    void maxImageWidthChanged();
+    void autoloadImagesChanged(bool);
+    void hideShortPostsChanged();
 
 public slots:
 

@@ -71,7 +71,6 @@ Rectangle {
                     listView.positionViewAtIndex(listView.currentIndex, ListView.Contain)
             }
         }
-
         model: FeedModel {
             id: feedModel
             mode: back.mode
@@ -99,15 +98,12 @@ Rectangle {
         }
         delegate: Item {
             id: entryView
-//            anchors.left: parent.left
-//            anchors.right: parent.right
             width: window.width
             property color fontColor: window.textColor
             height: 8 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
                     + firstImage.height + quoteSource.height
             function saveCurrentIndex() {
-                listView.currentIndex = listView.indexAt(entryView.x, entryView.y);
-//                console.log(listView.currentIndex);
+                listView.currentIndex = listView.indexAt(entryView.x + 1, entryView.y + 1);
             }
             Poppable {
                 body: back
@@ -219,7 +215,7 @@ Rectangle {
                                                                : window.fontNormal
                 color: parent.fontColor
                 textFormat: Text.RichText
-                height: entry.truncatedTitle.length > 0 ? paintedHeight
+                height: entry.truncatedTitle.length > 0 ? contentHeight
                                                         : entry.truncatedText.length > 0 ? -2 * mm : 0
             }
             Text {
@@ -235,7 +231,7 @@ Rectangle {
                 font.pointSize: window.fontNormal
                 color: parent.fontColor
                 textFormat: Text.RichText
-                height: entry.truncatedText.length > 0 ? paintedHeight
+                height: entry.truncatedText.length > 0 ? contentHeight
                                                        : entry.truncatedTitle.length > 0 ? -2 * mm : 0
             }
             Text {
@@ -250,7 +246,7 @@ Rectangle {
                 font.italic: true
                 color: parent.fontColor
                 textFormat: Text.RichText
-                height: entry.source.length > 0 ? paintedHeight : 0
+                height: entry.source.length > 0 ? contentHeight : 0
                 horizontalAlignment: Text.AlignRight
             }
             Rectangle {

@@ -9,7 +9,10 @@
 #   include <QScreen>
 #endif
 
+#include "defines.h"
+
 #include "tasty.h"
+#include "settings.h"
 #include "cache/cachemanager.h"
 #include "cache/cachedimage.h"
 #include "feedmodel.h"
@@ -18,7 +21,7 @@
 #include "usersmodel.h"
 #include "notificationsmodel.h"
 #include "bayes.h"
-#include "trainer.h"
+//#include "trainer.h"
 
 
 int main(int argc, char *argv[])
@@ -46,21 +49,26 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     auto tasty = Tasty::instance();
     engine.rootContext()->setContextProperty("Tasty", tasty);
-    engine.rootContext()->setContextProperty("NotifsModel", NotificationsModel::instance(tasty));
+
+    auto settings = tasty->settings();
+    engine.rootContext()->setContextProperty("Settings", settings);
+
+    auto notifs = NotificationsModel::instance(tasty);
+    engine.rootContext()->setContextProperty("NotifsModel", notifs);
 
     auto web = tasty->manager();
-    auto settings = tasty->settings();
     auto cache = CacheManager::instance(web);
     cache->setMaxWidth(settings->maxImageWidth());
     cache->setAutoload(settings->autoloadImages());
-//    cache->setAutoload(false);
     engine.rootContext()->setContextProperty("Cache", cache);
+
+    Q_TEST(QObject::connect(settings, SIGNAL(autoloadImagesChanged(bool)), cache, SLOT(setAutoload(bool))));
 
     auto bayes = Bayes::instance(tasty);
     engine.rootContext()->setContextProperty("Bayes", bayes);
 
-    auto trainer = bayes->trainer();
-    engine.rootContext()->setContextProperty("Trainer", trainer);
+//    auto trainer = bayes->trainer();
+//    engine.rootContext()->setContextProperty("Trainer", trainer);
 
 #ifdef Q_OS_ANDROID
     //  BUG with dpi on some androids: https://bugreports.qt-project.org/browse/QTBUG-35701

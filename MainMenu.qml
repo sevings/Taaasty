@@ -63,7 +63,7 @@ MouseArea {
             topMargin: 1 * mm
             bottomMargin: 1 * mm
             contentWidth: parent.width
-            property int buttonsCount: Tasty.isAuthorized ? 13 : 10 // 11 : 8
+            property int buttonsCount: Tasty.isAuthorized ? 12 : 9
             contentHeight: 9 * mm * buttonsCount - mm
             Column {
                 id: column
@@ -132,23 +132,37 @@ MouseArea {
                     text: 'Tlog'
                     onClicked: { modeChanged(FeedModel.TlogMode) }
                 }
+//                ThemedButton {
+//                    anchors.left: parent.left
+//                    anchors.right: parent.right
+//                    text: 'Water tlogs'
+//                    onClicked: { area.waterTlogsRequested() }
+//                }
+//                ThemedButton {
+//                    anchors.left: parent.left
+//                    anchors.right: parent.right
+//                    text: 'Fire tlogs'
+//                    onClicked: { area.fireTlogsRequested() }
+//                }
+//                ThemedButton {
+//                    anchors.left: parent.left
+//                    anchors.right: parent.right
+//                    text: 'Settings'
+//                    onClicked: { area.settingsRequested() }
+//                }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Water tlogs'
-                    onClicked: { area.waterTlogsRequested() }
+                    text: 'Autoload images'
+                    checked: Settings.autoloadImages
+                    onClicked: { Settings.autoloadImages = !checked }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Fire tlogs'
-                    onClicked: { area.fireTlogsRequested() }
-                }
-                ThemedButton {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    text: 'Settings'
-                    onClicked: { area.settingsRequested() }
+                    text: 'Hide short'
+                    checked: Settings.hideShortPosts
+                    onClicked: { Settings.hideShortPosts = !checked }
                 }
             }
         }

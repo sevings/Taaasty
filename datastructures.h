@@ -95,6 +95,8 @@ public:
     Q_INVOKABLE CommentsModel*       commentsModel()       { return _commentsModel; }
     Q_INVOKABLE AttachedImagesModel* attachedImagesModel() { return _attachedImagesModel; }
 
+    int wordCount() const;
+
 public slots:
     int entryId() const { return _id; }
     void setId(const int id);
@@ -218,18 +220,18 @@ class User: public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int     id           MEMBER _id          CONSTANT)
-    Q_PROPERTY(QString tlogUrl      MEMBER _tlogUrl     CONSTANT)
-    Q_PROPERTY(QString name         MEMBER _name        CONSTANT)
-    Q_PROPERTY(QString slug         MEMBER _slug        CONSTANT)
+    Q_PROPERTY(int     id           MEMBER _id          NOTIFY updated)
+    Q_PROPERTY(QString tlogUrl      MEMBER _tlogUrl     NOTIFY updated)
+    Q_PROPERTY(QString name         MEMBER _name        NOTIFY updated)
+    Q_PROPERTY(QString slug         MEMBER _slug        NOTIFY updated)
 
-    Q_PROPERTY(QString originalPic     MEMBER _originalPic     CONSTANT)
-    Q_PROPERTY(QString largePic        MEMBER _largePic        CONSTANT)
-    Q_PROPERTY(QString thumb128        MEMBER _thumb128        CONSTANT)
-    Q_PROPERTY(QString thumb64         MEMBER _thumb64         CONSTANT)
-    Q_PROPERTY(QString symbol          MEMBER _symbol          CONSTANT)
-    Q_PROPERTY(QString backgroundColor MEMBER _backgroundColor CONSTANT)
-    Q_PROPERTY(QString nameColor       MEMBER _nameColor       CONSTANT)
+    Q_PROPERTY(QString originalPic     MEMBER _originalPic     NOTIFY updated)
+    Q_PROPERTY(QString largePic        MEMBER _largePic        NOTIFY updated)
+    Q_PROPERTY(QString thumb128        MEMBER _thumb128        NOTIFY updated)
+    Q_PROPERTY(QString thumb64         MEMBER _thumb64         NOTIFY updated)
+    Q_PROPERTY(QString symbol          MEMBER _symbol          NOTIFY updated)
+    Q_PROPERTY(QString backgroundColor MEMBER _backgroundColor NOTIFY updated)
+    Q_PROPERTY(QString nameColor       MEMBER _nameColor       NOTIFY updated)
 
 public:
     User(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
@@ -237,6 +239,12 @@ public:
     int     id() const;
     QString name() const;
     QString slug() const;
+
+signals:
+    void updated();
+
+protected slots:
+    void _init(const QJsonObject data);
 
 private:
     int     _id;

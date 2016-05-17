@@ -15,6 +15,7 @@ Rectangle {
         tlogId: back.tlogId
     }
     signal tlogRequested(int tlog)
+    signal profileRequested(int tlog)
     onModeChanged: {
         if (mode === UsersModel.FollowersMode)
             title = 'Подписчики';
@@ -42,8 +43,11 @@ Rectangle {
     }
     MyListView {
         id: users
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         visible: count > 0
+        height: contentHeight > parent.height ? parent.height : contentHeight
         model: UsersModel {
             id: usersModel
             mode: back.mode
@@ -53,13 +57,6 @@ Rectangle {
             width: window.width
             height: usersAvatar.height + 2 * mm
             color: usersMouse.pressed ? window.brightColor : window.backgroundColor
-            SmallAvatar {
-                id: usersAvatar
-                anchors.top: undefined
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: 1 * mm
-                user: model.user
-            }
             Poppable {
                 id: usersMouse
                 anchors.fill: parent
@@ -70,6 +67,20 @@ Rectangle {
 //                    Bayes.toggleInclude(users.type, id);
 //                else
 //                    Ctrl.showTlogById(id);
+                }
+            }
+            SmallAvatar {
+                id: usersAvatar
+                anchors.top: undefined
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.margins: 1 * mm
+                user: model.user
+                Poppable {
+                    anchors.fill: parent
+                    body: back
+                    onClicked: {
+                        profileRequested(user.id);
+                    }
                 }
             }
             Text {

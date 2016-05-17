@@ -308,6 +308,14 @@ ApplicationWindow {
                                    }
                                })
                 }
+                onProfileRequested: {
+                    stack.push({
+                                   item: profile,
+                                   properties: {
+                                       tlogId: tlog
+                                   }
+                               })
+                }
             }
         }
         Component {

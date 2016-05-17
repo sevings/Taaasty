@@ -28,6 +28,7 @@ public:
         ExcellentMode,
         WellMode,
         GoodMode,
+        BetterThanMode,
         TlogMode,
         FavoritesMode
     };
@@ -49,6 +50,8 @@ public:
 
     Q_INVOKABLE void reset(Mode mode = InvalidMode, int tlog = -1);
 
+    bool hideShort() const;
+
 signals:
     void hasMoreChanged();
 
@@ -57,9 +60,11 @@ protected:
 
 private slots:
     void _addItems(QJsonObject data);
+    void _changeHideShort();
 
 private:
     QList<Entry*> _entries;
+    QList<Entry*> _allEntries;
     QString _url;
     int _tlog;
     Mode _mode;

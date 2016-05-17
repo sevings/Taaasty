@@ -25,6 +25,8 @@ public:
     void setMaxWidth(int maxWidth);
 
     bool autoload() const;
+
+public slots:
     void setAutoload(bool autoload);
 
 private:

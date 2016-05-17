@@ -32,6 +32,8 @@ QString Settings::login() const
 void Settings::setLogin(const QString login)
 {
     _settings.setValue("login", login);
+
+    emit loginChanged();
 }
 
 
@@ -46,6 +48,8 @@ QString Settings::accessToken() const
 void Settings::setAccessToken(const QString token)
 {
     _settings.setValue("access_token", token);
+
+    emit accessTokenChanged();
 }
 
 
@@ -74,6 +78,8 @@ int Settings::maxImageWidth() const
 void Settings::setMaxImageWidth(const int width)
 {
     _settings.setValue("max_image_width", width);
+
+    emit maxImageWidthChanged();
 }
 
 
@@ -88,4 +94,22 @@ bool Settings::autoloadImages() const
 void Settings::setAutoloadImages(bool load)
 {
     _settings.setValue("autoload_images", load);
+
+    emit autoloadImagesChanged(load);
+}
+
+
+
+bool Settings::hideShortPosts() const
+{
+    return _settings.value("hide_short_posts").toBool();
+}
+
+
+
+void Settings::setHideShortPosts(bool hide)
+{
+    _settings.setValue("hide_short_posts", hide);
+
+    emit hideShortPostsChanged();
 }

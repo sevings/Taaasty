@@ -136,9 +136,9 @@ void Entry::_init(const QJsonObject data)
     _author          = new Author(data.value("author").toObject(), this);
     _rating          = new Rating(data.value("rating").toObject(), this);
     _commentsCount   = data.value("comments_count").toInt();
-    _title           = data.value("title").toString();
+    _title           = data.value("title").toString().trimmed();
     _truncatedTitle  = data.value("title_truncated").toString();
-    _text            = data.value("text").toString();
+    _text            = data.value("text").toString().trimmed();
     _truncatedText   = data.value("text_truncated").toString();
     _source          = data.value("source").toString();
     _imagePreview    = data.value("preview_image").toObject();
@@ -195,6 +195,11 @@ void Entry::_changeFavorited(const QJsonObject data)
 
     _isFavorited = !_isFavorited;
     emit favoritedChanged();
+}
+
+int Entry::wordCount() const
+{
+    return _wordCount;
 }
 
 
@@ -293,6 +298,28 @@ void Comment::_update(const QJsonObject data)
 User::User(const QJsonObject data, QObject *parent)
     : QObject(parent)
 {
+    _init(data);
+}
+
+int User::id() const
+{
+    return _id;
+}
+
+QString User::name() const
+{
+    return _name;
+}
+
+QString User::slug() const
+{
+    return _slug;
+}
+
+
+
+void User::_init(const QJsonObject data)
+{
     _id         = data.value("id").toInt();
     _tlogUrl    = data.value("tlog_url").toString();
     _name       = data.value("name").toString();
@@ -310,21 +337,8 @@ User::User(const QJsonObject data, QObject *parent)
 
     _backgroundColor = colors.value("background").toString();
     _nameColor       = colors.value("name").toString();
-}
 
-int User::id() const
-{
-    return _id;
-}
-
-QString User::name() const
-{
-    return _name;
-}
-
-QString User::slug() const
-{
-    return _slug;
+    emit updated();
 }
 
 
@@ -357,6 +371,8 @@ bool Author::isDaylog() const
 
 void Author::_init(const QJsonObject data)
 {
+    User::_init(data);
+
     _isFemale  = data.value("is_female").toBool();
     _isPrivacy = data.value("is_privacy").toBool();
     _isOnline  = data.value("is_online").toBool();

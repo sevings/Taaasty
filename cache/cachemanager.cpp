@@ -80,7 +80,12 @@ void CacheManager::setMaxWidth(int maxWidth)
 CachedImage* CacheManager::image(QString url)
 {
     if (_images.contains(url))
-        return _images[url];
+    {
+        auto image = _images[url];
+        if (_autoload && !image->isAvailable())
+            image->download();
+        return image;
+    }
 
     auto image = new CachedImage(this, url);
     _images.insert(url, image);
