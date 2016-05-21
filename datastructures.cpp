@@ -450,7 +450,9 @@ void Tlog::_init(const QJsonObject data)
     _ignoredCount = Tasty::num2str(relations.value("ignored_count").toInt(), "блокирован", "блокировано", "блокировано");
 
     _isFollowingMe = data.value("his_relationship").toString() == "friend";
-    _amIFollowing = data.value("my_relationship").toString() == "friend";
+    auto my = data.value("my_relationship").toString();
+    _amIFollowing  = my == "friend";
+    _isMe         = my.isEmpty();
 
     auto authorData = data.value("author").toObject();
     if (_author)

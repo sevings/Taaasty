@@ -109,7 +109,7 @@ Rectangle {
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 color: window.textColor
-                text: tlog.amIFollowing ? 'Вы подписаны' : 'Вы не подписаны'
+                text: tlog.isMe ? 'Это вы' : (tlog.amIFollowing ? 'Вы подписаны' : 'Вы не подписаны')
                 height: text.length > 0 ? paintedHeight : 0
                 visible: tlog.tlogId === author.id && Tasty.isAuthorized
             }
@@ -124,7 +124,8 @@ Rectangle {
                 text: tlog.isFollowingMe ? 'Следит за вашим тлогом'
                                          : 'Не следит за вашим тлогом'
                 height: text.length > 0 ? paintedHeight : 0
-                visible: tlog.tlogId === author.id && !author.isFlow && Tasty.isAuthorized
+                visible: tlog.tlogId === author.id && !author.isFlow
+                         && Tasty.isAuthorized && !tlog.isMe
             }
             ThemedButton {
                 anchors.left: parent.left

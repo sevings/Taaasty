@@ -328,6 +328,7 @@ class Tlog: public QObject
     Q_PROPERTY(QString ignoredCount        MEMBER _ignoredCount        NOTIFY updated)
     Q_PROPERTY(bool    isFollowingMe       MEMBER _isFollowingMe       NOTIFY updated)
     Q_PROPERTY(bool    amIFollowing        MEMBER _amIFollowing        NOTIFY updated)
+    Q_PROPERTY(bool    isMe                MEMBER _isMe                NOTIFY updated)
     Q_PROPERTY(Author* author              MEMBER _author              NOTIFY updated)
 
     Q_PROPERTY(bool loading                MEMBER _loading             NOTIFY loadingChanged)
@@ -360,6 +361,7 @@ private:
     QString _ignoredCount;
     bool    _isFollowingMe;
     bool    _amIFollowing;
+    bool    _isMe;
     Author* _author;
 
     bool    _loading;
