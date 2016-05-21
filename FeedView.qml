@@ -54,6 +54,7 @@ Rectangle {
     }
     Splash {
         visible: !listView.visible && feedModel.hasMore
+        text: feedModel.isPrivate ? 'Это закрытый тлог' : 'Загрузка…'
     }
     MyListView {
         id: listView

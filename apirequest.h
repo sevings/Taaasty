@@ -21,6 +21,7 @@ public:
 signals:
     void success(const QJsonObject data);
     void error(QNetworkReply::NetworkError code);
+    void error(const int code, const QString text);
 
 private slots:
     void _printNetworkError(QNetworkReply::NetworkError code);
@@ -28,7 +29,7 @@ private slots:
     void _finished();
 
 private:
-    void start();
+    void _start();
 
     QNetworkReply*  _reply;
     QNetworkRequest _request;

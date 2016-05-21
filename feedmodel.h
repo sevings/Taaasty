@@ -16,6 +16,7 @@ class FeedModel : public QAbstractListModel
     Q_PROPERTY(Mode mode READ mode WRITE setMode)
     Q_PROPERTY(int  tlog READ tlog WRITE setTlog)
     Q_PROPERTY(bool hasMore MEMBER _hasMore NOTIFY hasMoreChanged)
+    Q_PROPERTY(bool isPrivate READ isPrivate NOTIFY isPrivateChanged)
 
 public:
     enum Mode {
@@ -50,10 +51,13 @@ public:
 
     Q_INVOKABLE void reset(Mode mode = InvalidMode, int tlog = -1);
 
+    Q_INVOKABLE bool isPrivate() const { return _isPrivate; }
+
     bool hideShort() const;
 
 signals:
     void hasMoreChanged();
+    void isPrivateChanged();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
@@ -61,8 +65,12 @@ protected:
 private slots:
     void _addItems(QJsonObject data);
     void _changeHideShort();
+    void _setPrivate(int errorCode);
 
 private:
+    void _addAll(QList<Entry*>& all);
+    bool _addLonger(QList<Entry*>& all);
+
     QList<Entry*> _entries;
     QList<Entry*> _allEntries;
     QString _url;
@@ -71,6 +79,7 @@ private:
     bool _hasMore;
     bool _loading;
     int _lastEntry;
+    bool _isPrivate;
 };
 
 #endif // FEEDMODEL_H

@@ -38,7 +38,9 @@ ApiRequest::ApiRequest(const QString url,
 
     tasty->incBusy();
 
-    start();
+    Q_TEST(connect(this, SIGNAL(error(int,QString)), tasty, SIGNAL(error(int,QString))));
+
+    _start();
 }
 
 
@@ -73,7 +75,7 @@ void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 void ApiRequest::_restart(QNetworkAccessManager::NetworkAccessibility na)
 {
     if (na == QNetworkAccessManager::Accessible)
-        start();
+        _start();
 }
 
 
@@ -84,11 +86,11 @@ void ApiRequest::_finished()
 
     auto data = _reply->readAll();
 
-    QJsonParseError error;
-    auto json = QJsonDocument::fromJson(data, &error);
-    if (error.error != QJsonParseError::NoError) //! TODO: emit signal
+    QJsonParseError jpe;
+    auto json = QJsonDocument::fromJson(data, &jpe);
+    if (jpe.error != QJsonParseError::NoError) //! TODO: emit signal
     {
-        qDebug() << error.errorString();
+        qDebug() << jpe.errorString();
         return;
     }
 
@@ -97,14 +99,18 @@ void ApiRequest::_finished()
         emit success(jsonObject);
     else
     {
-        Tasty::instance()->showError(jsonObject);
+        auto errorString = jsonObject.value("error").toString();
+        auto code = jsonObject.value("response_code").toInt();
+
+        emit error(code, errorString);
+
         qDebug() << jsonObject;
     }
 }
 
 
 
-void ApiRequest::start()
+void ApiRequest::_start()
 {
     auto manager = Tasty::instance()->manager();
     switch(_method)

@@ -18,6 +18,7 @@ FeedModel::FeedModel(QObject* parent)
     , _hasMore(true)
     , _loading(false)
     , _lastEntry(0)
+    , _isPrivate(false)
 {
     Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideShortPostsChanged()), this, SLOT(_changeHideShort())));
 
@@ -79,6 +80,7 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 
     auto request = new ApiRequest(url);
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
 }
 
 
@@ -149,10 +151,13 @@ void FeedModel::reset(Mode mode, int tlog)
     _hasMore = true;
     _lastEntry = 0;
     _loading = false;
-    qDeleteAll(_entries);
-    _entries.clear();
 
-    qDeleteAll(_allEntries);
+    if (_allEntries.isEmpty())
+        qDeleteAll(_entries);
+    else
+        qDeleteAll(_allEntries);
+
+    _entries.clear();
     _allEntries.clear();
 
     endResetModel();
@@ -208,27 +213,16 @@ void FeedModel::_addItems(QJsonObject data)
         all << entry;
     }
 
+    bool loadMore = false;
     if (hideShort())
-    {
-        _allEntries << all;
-
-        QList<Entry*> longer;
-        foreach (auto e, all)
-            if (e->wordCount() >= 100)
-                longer << e;
-
-        beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + longer.size() - 1);
-        _entries << longer;
-    }
+        loadMore = _addLonger(all);
     else
-    {
-        beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + all.size() - 1);
-        _entries << all;
-    }
-
-    endInsertRows();
+        _addAll(all);
 
     _loading = false;
+
+    if (loadMore)
+        fetchMore(QModelIndex());
 }
 
 
@@ -251,4 +245,45 @@ void FeedModel::_changeHideShort()
     }
 
     endResetModel();
+}
+
+
+
+void FeedModel::_setPrivate(int errorCode)
+{
+    if (errorCode == 403)
+    {
+        _isPrivate = true;
+        emit isPrivateChanged();
+    }
+}
+
+
+
+void FeedModel::_addAll(QList<Entry*>& all)
+{
+    beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + all.size() - 1);
+    _entries << all;
+    endInsertRows();
+}
+
+
+
+bool FeedModel::_addLonger(QList<Entry*>& all)
+{
+    _allEntries << all;
+
+    QList<Entry*> longer;
+    foreach (auto e, all)
+        if (e->wordCount() >= 100)
+            longer << e;
+
+    if (longer.isEmpty())
+        return true;
+
+    beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + longer.size() - 1);
+    _entries << longer;
+    endInsertRows();
+
+    return false;
 }

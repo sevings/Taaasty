@@ -129,16 +129,6 @@ void Tasty::postEntry(const QString title, const QString content)
 
 
 
-void Tasty::showError(const QJsonObject data)
-{
-    auto errorString = data.value("error").toString();
-    auto code = data.value("response_code").toInt();
-
-    emit error(code, errorString);
-}
-
-
-
 void Tasty::getMe()
 {
     auto request = new ApiRequest("users/me.json", true);
