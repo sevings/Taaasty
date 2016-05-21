@@ -96,8 +96,7 @@ Rectangle {
             }
         }
         header: Item {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            width: window.width
             height: usersTitle.paintedHeight + 2 * mm
             Text {
                 id: usersTitle

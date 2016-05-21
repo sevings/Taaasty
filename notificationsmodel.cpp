@@ -108,7 +108,7 @@ bool NotificationsModel::unread() const
 
 void NotificationsModel::markAsRead()
 {
-    if (_notifs.isEmpty())
+    if (_notifs.isEmpty() || !unread())
         return;
     
     QString url = "messenger/notifications/read.json";

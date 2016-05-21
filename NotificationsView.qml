@@ -18,17 +18,11 @@ Rectangle {
         spacing: 2 * mm
         delegate: MouseArea {
             id: notif
-//            anchors.left: parent.left
-//            anchors.right: parent.right
             width: window.width
             readonly property int h: notifName.paintedHeight + notifText.paintedHeight
             height: (h > notifAvatar.height ? h : notifAvatar.height) + 2 * mm
-//            body: back
             readonly property bool showProfile: notification.parentType !== 'AnonymousEntry'
             onClicked: {
-                if (back.y > 0)
-                    return;
-
                 if (notification.entityType === 'Entry')
                 {
                     if (!notification.entityId)

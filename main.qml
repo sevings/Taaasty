@@ -11,7 +11,7 @@ ApplicationWindow {
     property color textColor: 'white'
     property color secondaryTextColor: 'darkgrey'
     property color greenColor: '#00DF84'
-    property color redColor: '#f3534b'
+    property color redColor: '#c00f19' // '#f3534b'
     property int fontBiggest: 30
     property int fontBigger: 25
     property int fontNormal: 20
@@ -44,7 +44,7 @@ ApplicationWindow {
             hideNotifs();
     }
     function showFooter() {
-        footer.y =  - footer.height;
+        footer.y =  -footer.height;
     }
     function hideFooter() {
         footer.y = 0;

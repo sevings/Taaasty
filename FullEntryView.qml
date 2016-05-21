@@ -36,9 +36,6 @@ Rectangle {
         visible: !entry.loading
         model: commentsModel
         delegate: Item {
-//            anchors.left: parent.left
-//            anchors.right: parent.right
-            //color: window.backgroundColor
             width: window.width
             height: 4 * mm + commentText.contentHeight + nameText.contentHeight
             Poppable {
@@ -50,8 +47,7 @@ Rectangle {
                 user: comment.user
                 Poppable {
                     body: back
-                    onClicked: back.avatarClicked(comment.user.id);
-                    enabled: showProfiles
+                    onClicked: if (back.showProfiles) back.avatarClicked(comment.user.id);
                 }
             }
             Text {
@@ -95,8 +91,7 @@ Rectangle {
         }
         header: Item {
             id: fullEntryContent
-            anchors.left: parent.left
-            anchors.right: parent.right
+            width: window.width
             height: 9 * mm + fullTitle.height + fullContent.height + quoteSource.height
                     + fullEntryFavButton.height + fullEntryDate.height
                     + loadMoreButton.height
