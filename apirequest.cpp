@@ -12,9 +12,10 @@ ApiRequest::ApiRequest(const QString url,
                        const QNetworkAccessManager::Operation method,
                        const QString data)
     : _reply(nullptr)
+    , _readyData(data.toUtf8())
+    , _method(method)
 {
     QUrl fullUrl(QString("http://api.taaasty.com:80/v1/%1").arg(url));
-    auto readyData = data.toUtf8();
 
     auto tasty = Tasty::instance();
     auto settings = tasty->settings();
@@ -29,38 +30,15 @@ ApiRequest::ApiRequest(const QString url,
         return;
     }
 
-    QNetworkRequest request(fullUrl);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    request.setHeader(QNetworkRequest::ContentLengthHeader, readyData.length());
-    request.setRawHeader(QByteArray("X-User-Token"), accessToken.toUtf8());
-    request.setRawHeader(QByteArray("Connection"), QByteArray("close"));
+    _request.setUrl(fullUrl);
+    _request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    _request.setHeader(QNetworkRequest::ContentLengthHeader, _readyData.length());
+    _request.setRawHeader(QByteArray("X-User-Token"), accessToken.toUtf8());
+    _request.setRawHeader(QByteArray("Connection"), QByteArray("close"));
 
     tasty->incBusy();
 
-    auto manager = tasty->manager();
-    switch(method)
-    {
-    case QNetworkAccessManager::GetOperation:
-        _reply = manager->get(request);
-        break;
-    case QNetworkAccessManager::PutOperation:
-        _reply = manager->put(request, readyData);
-        break;
-    case QNetworkAccessManager::PostOperation:
-        _reply = manager->post(request, readyData);
-        break;
-    case QNetworkAccessManager::DeleteOperation:
-        _reply = manager->deleteResource(request);
-        break;
-    default:
-        qDebug() << "Unsopperted operation in ApiRequest";
-        deleteLater();
-        return;
-    }
-
-    Q_TEST(connect(_reply, SIGNAL(finished()), this, SLOT(_finished())));
-    Q_TEST(connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(_printNetworkError(QNetworkReply::NetworkError))));
+    start();
 }
 
 
@@ -80,7 +58,22 @@ void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 
     emit error(code);
 
-    deleteLater();
+    auto manager = Tasty::instance()->manager();
+    if (manager->networkAccessible() == QNetworkAccessManager::NotAccessible)
+    {
+        Q_TEST(connect(manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
+                                            this, SLOT(_restart(QNetworkAccessManager::NetworkAccessibility))));
+    }
+    else
+        deleteLater();
+}
+
+
+
+void ApiRequest::_restart(QNetworkAccessManager::NetworkAccessibility na)
+{
+    if (na == QNetworkAccessManager::Accessible)
+        start();
 }
 
 
@@ -107,4 +100,34 @@ void ApiRequest::_finished()
         Tasty::instance()->showError(jsonObject);
         qDebug() << jsonObject;
     }
+}
+
+
+
+void ApiRequest::start()
+{
+    auto manager = Tasty::instance()->manager();
+    switch(_method)
+    {
+    case QNetworkAccessManager::GetOperation:
+        _reply = manager->get(_request);
+        break;
+    case QNetworkAccessManager::PutOperation:
+        _reply = manager->put(_request, _readyData);
+        break;
+    case QNetworkAccessManager::PostOperation:
+        _reply = manager->post(_request, _readyData);
+        break;
+    case QNetworkAccessManager::DeleteOperation:
+        _reply = manager->deleteResource(_request);
+        break;
+    default:
+        qDebug() << "Unsopperted operation in ApiRequest";
+        deleteLater();
+        return;
+    }
+
+    Q_TEST(connect(_reply, SIGNAL(finished()), this, SLOT(_finished())));
+    Q_TEST(connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(_printNetworkError(QNetworkReply::NetworkError))));
 }

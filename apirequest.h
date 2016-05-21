@@ -24,10 +24,17 @@ signals:
 
 private slots:
     void _printNetworkError(QNetworkReply::NetworkError code);
+    void _restart(QNetworkAccessManager::NetworkAccessibility na);
     void _finished();
 
 private:
-    QNetworkReply* _reply;
+    void start();
+
+    QNetworkReply*  _reply;
+    QNetworkRequest _request;
+    QByteArray      _readyData;
+
+    const QNetworkAccessManager::Operation _method;
 };
 
 #endif // APIREQUEST_H

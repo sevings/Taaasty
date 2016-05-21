@@ -36,15 +36,14 @@ signals:
     void hasMoreChanged();
     void unreadChanged();
     void commentAdded(const int entryId, const Notification* notif);
-    
-private slots:
-    void _check();
-    void _readSuccess();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
+    void _check();
+    void _readSuccess();
+
     void _addItems(QJsonObject data);
     void _addNewest(QJsonObject data);
 

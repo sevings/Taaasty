@@ -121,6 +121,15 @@ void NotificationsModel::markAsRead()
 
 
 
+QHash<int, QByteArray> NotificationsModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[Qt::UserRole] = "notification";
+    return roles;
+}
+
+
+
 void NotificationsModel::_check()
 {
     if (_loading || !Tasty::instance()->isAuthorized())
@@ -153,15 +162,6 @@ void NotificationsModel::_readSuccess()
             break;
 
     emit unreadChanged();
-}
-
-
-
-QHash<int, QByteArray> NotificationsModel::roleNames() const
-{
-    QHash<int, QByteArray> roles;
-    roles[Qt::UserRole] = "notification";
-    return roles;
 }
 
 
