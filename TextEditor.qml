@@ -4,7 +4,6 @@ Rectangle {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.margins: 1 * mm
-    //color: window.backgroundColor
     gradient: Gradient {
         GradientStop { position: 0; color: 'black' }
         GradientStop { position: 1; color: '#181818' }
@@ -16,7 +15,7 @@ Rectangle {
     onFocusChanged: if (focus) {
                         input.forceActiveFocus();
                     }
-    property string text: input.text
+    property alias text: input.text
     function clear() {
         input.text = '';
     }
