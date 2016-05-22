@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Tlog>           ("org.binque.taaasty", 1, 0, "Tlog");
     qmlRegisterType<Rating>         ("org.binque.taaasty", 1, 0, "Rating");
     qmlRegisterType<AttachedImage>  ("org.binque.taaasty", 1, 0, "AttachedImage");
+    qmlRegisterType<Media>          ("org.binque.taaasty", 1, 0, "Media");
     qmlRegisterType<Notification>   ("org.binque.taaasty", 1, 0, "Notification");
 
     qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");

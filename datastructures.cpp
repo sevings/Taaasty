@@ -145,7 +145,9 @@ void Entry::_init(const QJsonObject data)
     Tasty::insertLinks(_text);
     _truncatedText   = data.value("text_truncated").toString();
     _source          = data.value("source").toString();
-    _imagePreview    = data.value("preview_image").toObject();
+    _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
+                                         : nullptr; // music?
+//    _imagePreview    = data.value("preview_image").toObject();
 
     QRegularExpression re("\\s[^\\s]+\\s");
     _wordCount       = _text.isEmpty() ? _title.count(re)
@@ -211,14 +213,49 @@ int Entry::wordCount() const
 AttachedImage::AttachedImage(const QJsonObject data, QObject *parent)
     : QObject(parent)
 {
-    _type = data.value("content_type").toString().split("/").last();
-
     auto image = data.value("image").toObject();
     _url = image.value("url").toString();
+
+    auto type = data.value("content_type").toString();
+    _type = type.split("/").last();
 
     auto geometry = image.value("geometry").toObject();
     _width = geometry.value("width").toInt();
     _height = geometry.value("height").toInt();
+}
+
+
+
+AttachedImage::AttachedImage(const QJsonObject data, Media* parent)
+    : QObject(parent)
+{
+    _url = data.value("href").toString();
+
+    auto type = data.value("type").toString();
+    _type = type.split("/").last();
+
+    auto geometry = data.value("media").toObject();
+    _width = geometry.value("width").toInt();
+    _height = geometry.value("height").toInt();
+}
+
+
+
+Media::Media(const QJsonObject data, QObject* parent)
+    : QObject(parent)
+{
+    auto meta = data.value("meta").toObject();
+    _title    = meta.value("title").toString();
+    _duration = meta.value("duration").toInt();
+
+    auto links = data.value("links").toObject();
+    _url = links.value("player").toArray().first().toObject().value("href").toString();
+
+    auto thumb = links.value("thumbnail").toArray().first().toObject();
+    _thumbnail = new AttachedImage(thumb, this);
+
+    auto icon = links.value("icon").toArray().first().toObject();
+    _icon     = new AttachedImage(icon, this);
 }
 
 

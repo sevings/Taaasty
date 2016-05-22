@@ -13,6 +13,7 @@ class Author;
 class Tlog;
 class Rating;
 class AttachedImage;
+class Media;
 class Notification;
 
 class CommentsModel;
@@ -81,7 +82,8 @@ class Entry: public QObject
     Q_PROPERTY(QString     text           MEMBER _text              NOTIFY updated)
     Q_PROPERTY(QString     truncatedText  MEMBER _truncatedText     NOTIFY updated)
     Q_PROPERTY(QString     source         MEMBER _source            NOTIFY updated)
-    Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      NOTIFY updated)
+    Q_PROPERTY(Media*      media          MEMBER _media             NOTIFY updated)
+//    Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      NOTIFY updated)
     Q_PROPERTY(int         wordCount      MEMBER _wordCount         NOTIFY updated)
 
     Q_PROPERTY(CommentsModel*       commentsModel       READ commentsModel       NOTIFY updated)
@@ -141,7 +143,8 @@ private:
     QString     _text;
     QString     _truncatedText;
     QString     _source;
-    QJsonObject _imagePreview;
+    Media*      _media;
+//    QJsonObject _imagePreview;
     int         _wordCount;
 
     CommentsModel*       _commentsModel;
@@ -165,6 +168,7 @@ class AttachedImage: public QObject
 
 public:
     AttachedImage(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    AttachedImage(const QJsonObject data, Media* parent);
 
 private:
     QString _url;
@@ -173,6 +177,30 @@ private:
     int     _height;
 };
 
+
+
+class Media: public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QString        url       MEMBER _url       CONSTANT)
+    Q_PROPERTY(QString        title     MEMBER _title     CONSTANT)
+    Q_PROPERTY(int            duration  MEMBER _duration  CONSTANT)
+    Q_PROPERTY(AttachedImage* thumbnail MEMBER _thumbnail CONSTANT)
+    Q_PROPERTY(AttachedImage* icon      MEMBER _icon      CONSTANT)
+
+public:
+    Media(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+
+private:
+    QString _url;
+    QString _title;
+    int     _duration;
+
+    AttachedImage* _thumbnail;
+    AttachedImage* _icon;
+
+};
 
 
 class Comment: public QObject

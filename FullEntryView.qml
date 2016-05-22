@@ -92,10 +92,10 @@ Rectangle {
         header: Item {
             id: fullEntryContent
             width: window.width
-            height: 9 * mm + fullTitle.height + fullContent.height + quoteSource.height
+            height: 10 * mm + fullTitle.height + fullContent.height + quoteSource.height
                     + fullEntryFavButton.height + fullEntryDate.height
                     + loadMoreButton.height
-                    + fullEntryImages.height
+                    + fullEntryImages.height + mediaLink.height
             Poppable {
                 body: back
             }
@@ -104,7 +104,6 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-//                anchors.topMargin: 1 * mm
                 anchors.bottomMargin: 1 * mm
                 interactive: false
                 //spacing: 10
@@ -116,18 +115,29 @@ Rectangle {
                     id: picture
                     anchors.topMargin: 1 * mm
                     anchors.bottomMargin: 1 * mm
-//                    anchors.left: parent.left
-//                    anchors.right: parent.right
                     width: window.width
                     height: image.height / image.width * width
                     url: image.url
                     extension: image.type
                 }
             }
+            MediaLink {
+                id: mediaLink
+                visible: entry.media
+                anchors.top: fullEntryImages.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottomMargin: 1 * mm
+                media: entry.media
+                Poppable {
+                    body: back
+                    onClicked: mediaLink.play()
+                }
+            }
             Text {
                 id: fullTitle
                 text: entry.title
-                anchors.top: fullEntryImages.bottom
+                anchors.top: mediaLink.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 1 * mm

@@ -20,5 +20,6 @@
         <file>Footer.qml</file>
         <file>Splash.qml</file>
         <file>Dialog.qml</file>
+        <file>MediaLink.qml</file>
     </qresource>
 </RCC>

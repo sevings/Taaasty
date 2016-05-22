@@ -28,6 +28,9 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
     if (!_man || _url.isEmpty())
         return;
 
+    if (_url.startsWith("//"))
+        _url = "http:" + _url;
+
     _hash = QString::number(qHash(_url));
     if (_exists())
     {

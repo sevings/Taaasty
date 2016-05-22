@@ -8,8 +8,10 @@ Rectangle {
     property bool poppable
     property int mode: FeedModel.LiveMode
     property int tlogId: 0
+    property string slug: ''
     property Tlog tlog: Tlog {
         tlogId: back.tlogId
+        slug: back.slug
     }
     readonly property string title: { // for footer
         switch (back.mode) {
@@ -40,6 +42,7 @@ Rectangle {
     signal pushed
     signal entryClicked(TlogEntry entry)
     signal avatarClicked(Tlog tlog, Author author)
+    signal flowClicked(int flowId)
     Poppable {
         body: back
         Text {
@@ -101,8 +104,8 @@ Rectangle {
             id: entryView
             width: window.width
             property color fontColor: window.textColor
-            height: 12 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
-                    + firstImage.height + quoteSource.height + repostText.height
+            height: 13 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
+                    + firstImage.height + quoteSource.height + repostText.height + mediaLink.height
             function saveCurrentIndex() {
                 listView.currentIndex = listView.indexAt(entryView.x + 1, entryView.y + 1);
             }
@@ -135,6 +138,12 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 text: entry.tlog.author.name
                       + (entry.tlog.author.title ? '\n' + entry.tlog.author.title : '')
+                Poppable {
+                    body: back
+                    onClicked: {
+                        back.flowClicked(entry.tlog.author.id)
+                    }
+                }
             }
             SmallAvatar {
                 id: entryAvatar
@@ -211,9 +220,11 @@ Rectangle {
                 extension: visible ? image.type : ''
                 Text {
                     anchors.bottom: parent.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     anchors.margins: 0.5 * mm
-                    font.pointSize: window.fontSmallest
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pointSize: window.fontSmaller
                     color: window.textColor
                     style: Text.Outline
                     styleColor: window.backgroundColor
@@ -222,10 +233,20 @@ Rectangle {
                     visible: total > 1
                 }
             }
+            MediaLink {
+                id: mediaLink
+                visible: entry.media
+                anchors.top: firstImage.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+//                anchors.topMargin: 1 * mm
+                anchors.bottomMargin: 1 * mm
+                media: entry.media
+            }
             Text {
                 id: entryTitle
                 text: entry.truncatedTitle
-                anchors.top: firstImage.bottom
+                anchors.top: mediaLink.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 1 * mm

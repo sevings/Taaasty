@@ -109,7 +109,7 @@ ApplicationWindow {
         onModeChanged: {
             stack.currentItem.mode = mode;
             if (mode === FeedModel.TlogMode)
-                stack.currentItem.tlogId = 287835;
+                stack.currentItem.tlogId = 286801;
 
             backAnimation.start();
             setFooterFromStack();
@@ -268,6 +268,15 @@ ApplicationWindow {
                                    properties: {
                                        tlog: tlog,
                                        author: author
+                                   }
+                               })
+                }
+                onFlowClicked: {
+                    stack.push({
+                                   item: feed,
+                                   properties: {
+                                       mode: FeedModel.TlogMode,
+                                       tlogId: flowId
                                    }
                                })
                 }
