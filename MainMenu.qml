@@ -73,64 +73,64 @@ MouseArea {
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'My tlog'
+                    text: 'Мой тлог'
                     onClicked: { modeChanged(FeedModel.MyTlogMode) }
                     visible: Tasty.isAuthorized
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Friends'
+                    text: 'Подписки'
                     onClicked: { modeChanged(FeedModel.FriendsMode) }
                     visible: Tasty.isAuthorized
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Live'
+                    text: 'Прямой эфир'
                     onClicked: { modeChanged(FeedModel.LiveMode) }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Anonymous'
+                    text: 'Анонимки'
                     onClicked: { modeChanged(FeedModel.AnonymousMode) }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Best'
+                    text: 'Лучшее'
                     onClicked: { modeChanged(FeedModel.BestMode) }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Excellent'
+                    text: 'Отличное'
                     onClicked: { modeChanged(FeedModel.ExcellentMode) }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Well'
+                    text: 'Хорошее'
                     onClicked: { modeChanged(FeedModel.WellMode) }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Good'
+                    text: 'Неплохое'
                     onClicked: { modeChanged(FeedModel.GoodMode) }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Favorites'
+                    text: 'Избранное'
                     onClicked: { modeChanged(FeedModel.FavoritesMode) }
                     visible: Tasty.isAuthorized
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Tlog'
+                    text: 'Тлог'
                     onClicked: { modeChanged(FeedModel.TlogMode) }
                 }
                 Item {
@@ -161,21 +161,21 @@ MouseArea {
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Autoload images'
+                    text: 'Загружать изображения'
                     checked: Settings.autoloadImages
                     onClicked: { Settings.autoloadImages = !checked }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Hide short'
+                    text: 'Скрывать короткие посты'
                     checked: Settings.hideShortPosts
                     onClicked: { Settings.hideShortPosts = !checked }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Login'
+                    text: 'Войти'
                     visible: !Tasty.isAuthorized
                     onClicked: { loginRequested() }
                 }

@@ -37,9 +37,11 @@ MouseArea {
             id: label
             color: button.textColor
             text: button.text
-            anchors.centerIn: parent
+            anchors.fill: parent
             anchors.margins: 2 * mm
             verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
             font.pointSize: button.fontSize
             font.family: 'Open Sans'
         }

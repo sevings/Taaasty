@@ -16,25 +16,25 @@ Rectangle {
     readonly property string title: { // for footer
         switch (back.mode) {
         case FeedModel.MyTlogMode:
-            'My tlog'; break;
+            'Мой тлог'; break;
         case FeedModel.LiveMode:
-            'Live'; break;
+            'Прямой эфир'; break;
         case FeedModel.FriendsMode:
-            'Friends'; break;
-        case FeedModel.ExcellentMode:
-            'Excellent'; break;
+            'Подписки'; break;
         case FeedModel.BestMode:
-            'Best'; break;
+            'Лучшее'; break;
+        case FeedModel.ExcellentMode:
+            'Отличное'; break;
         case FeedModel.GoodMode:
-            'Good'; break;
+            'Хорошее'; break;
         case FeedModel.WellMode:
-            'Well'; break;
+            'Неплохое'; break;
         case FeedModel.AnonymousMode:
-            'Anonymous'; break;
+            'Анонимки'; break;
         case FeedModel.FavoritesMode:
-            'Favorites'; break;
+            'Избранное'; break;
         default:
-            'Tlog'
+            'Тейсти'
         }
     }
     readonly property bool customTitle: mode !== FeedModel.TlogMode// && mode !== FeedModel.MyTlogMode

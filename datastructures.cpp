@@ -452,7 +452,7 @@ void Author::_init(const QJsonObject data)
     _entriesCount = Tasty::num2str(data.value("total_entries_count").toInt(),
                                    "запись", "записи", "записей");
     _publicEntriesCount = Tasty::num2str(data.value("public_entries_count").toInt(),
-                                         "открытая запись", "открытые записи", "открытых записей");
+                                         "запись", "записи", "записей");
     _privateEntriesCount = Tasty::num2str(data.value("private_entries_count").toInt(),
                                           "скрытая запись", "скрытые записи", "скрытых записей");
 
