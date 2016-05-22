@@ -65,6 +65,33 @@ ApplicationWindow {
             setFooterTlog(stack.currentItem.tlog);
         }
     }
+    function openLink(url) {
+        var matches = /taaasty.com\/(?:~|%7E)([^\/]+)(?:\/([\d]+))?/.exec(url);
+        if (matches) {
+            var slug = matches[1];
+            var entryId = matches[2];
+            if (entryId) {
+                stack.push({
+                               item: fullEntry,
+                               properties: {
+                                   entry: entryId
+                               }
+                           })
+            }
+            else if (slug) {
+                stack.push({
+                               item: profile,
+                               properties: {
+                                   slug: slug
+                               }
+                           })
+            }
+            else
+                Qt.openUrlExternally(url)
+        }
+        else
+            Qt.openUrlExternally(url)
+    }
     Tlog {
         id: emptyTlog
     }

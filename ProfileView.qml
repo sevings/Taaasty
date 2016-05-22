@@ -5,8 +5,10 @@ Rectangle {
     id: profileView
     color: window.backgroundColor
     property int tlogId
+    property string slug: ''
     property Tlog tlog: Tlog {
         tlogId: profileView.tlogId
+        slug: profileView.slug
     }
     property Author author: tlog.author
     signal tlogRequested

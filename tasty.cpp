@@ -4,6 +4,7 @@
 #include "defines.h"
 
 #include <QDateTime>
+#include <QRegularExpression>
 #include <QDebug>
 
 
@@ -89,6 +90,14 @@ QString Tasty::parseDate(const QString d)
     bool showYear = date.year() != today.year();
     QString format = showYear ? "d MMM yyyy" : "d MMM в HH:mm";
     return datetime.toString(format);
+}
+
+
+
+void Tasty::insertLinks(QString& text)
+{
+    QRegularExpression re("[^/>]?(~|@)([\\w\\-\\.]+)");
+    text.replace(re, "<a href='http://taaasty.com/~\\2'>\\1\\2</a>");
 }
 
 

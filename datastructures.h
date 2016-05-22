@@ -318,6 +318,7 @@ class Tlog: public QObject
     Q_OBJECT
 
     Q_PROPERTY(int     tlogId              READ tlogId   WRITE setId   NOTIFY updated)
+    Q_PROPERTY(QString slug                READ slug   WRITE setSlug   NOTIFY updated)
     Q_PROPERTY(QString title               MEMBER _title               NOTIFY updated)
     Q_PROPERTY(QString entriesCount        MEMBER _entriesCount        NOTIFY updated)
     Q_PROPERTY(QString publicEntriesCount  MEMBER _publicEntriesCount  NOTIFY updated)
@@ -339,8 +340,11 @@ public:
     Author* author() const { return _author; }
 
 public slots:
-    int tlogId() const { return _id; }
+    int  tlogId() const                 { return _id; }
     void setId(const int id);
+
+    QString slug() const                { return _slug; }
+    void    setSlug(const QString slug);
 
 signals:
     void updated();
@@ -351,6 +355,7 @@ private slots:
 
 private:
     int     _id;
+    QString _slug;
     QString _title;
     QString _entriesCount;
     QString _publicEntriesCount;

@@ -139,8 +139,10 @@ void Entry::_init(const QJsonObject data)
     _rating          = new Rating(data.value("rating").toObject(), this);
     _commentsCount   = data.value("comments_count").toInt();
     _title           = data.value("title").toString().trimmed();
+    Tasty::insertLinks(_title);
     _truncatedTitle  = data.value("title_truncated").toString();
     _text            = data.value("text").toString().trimmed();
+    Tasty::insertLinks(_text);
     _truncatedText   = data.value("text_truncated").toString();
     _source          = data.value("source").toString();
     _imagePreview    = data.value("preview_image").toObject();
@@ -276,6 +278,7 @@ void Comment::_init(const QJsonObject data)
     _id             = data.value("id").toInt();
     _user           = new User(data.value("user").toObject(), this);
     _html           = data.value("comment_html").toString();
+    Tasty::insertLinks(_html);
     _createdAt      = Tasty::parseDate(data.value("created_at").toString());
     _isEditable     = data.value("can_edit").toBool();
     _isReportable   = data.value("can_report").toBool();
@@ -428,9 +431,26 @@ void Tlog::setId(const int id)
 
 
 
+void Tlog::setSlug(const QString slug)
+{
+    if (slug.isEmpty() || slug == _slug)
+        return;
+
+   _slug = slug;
+
+    auto request = new ApiRequest(QString("tlog/%1.json").arg(_slug));
+    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
+
+    _loading = true;
+    emit loadingChanged();
+}
+
+
+
 void Tlog::_init(const QJsonObject data)
 {
     _id = data.value("id").toInt();
+    _slug = data.value("slug").toString();
     _title = data.value("title").toString();
     _entriesCount = Tasty::num2str(data.value("total_entries_count").toInt(),
                                    "запись", "записи", "записей");

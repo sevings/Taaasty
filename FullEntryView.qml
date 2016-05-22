@@ -86,7 +86,7 @@ Rectangle {
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
                 textFormat: Text.RichText
-                onLinkActivated: Qt.openUrlExternally(link)
+                onLinkActivated: window.openLink(link)
             }
         }
         header: Item {
@@ -137,7 +137,7 @@ Rectangle {
                 color: window.textColor
                 textFormat: Text.RichText
                 height: entry.title.length > 0 ? contentHeight : entry.text.length > 0 ? -1 * mm : 0
-                onLinkActivated: Qt.openUrlExternally(link)
+                onLinkActivated: window.openLink(link)
             }
             Text {
                 id: fullContent
@@ -152,7 +152,7 @@ Rectangle {
                 color: window.textColor
                 textFormat: Text.RichText
                 height: entry.text.length > 0 ? contentHeight : entry.title.length > 0 ? -1 * mm : 0
-                onLinkActivated: Qt.openUrlExternally(link)
+                onLinkActivated: window.openLink(link)
             }
             Text {
                 id: quoteSource
