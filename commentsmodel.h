@@ -32,6 +32,7 @@ public:
 signals:
     void hasMoreChanged();
     void loadingChanged();
+    void totalCountChanged(int tc);
 
 public slots:
     void loadMore();
@@ -46,6 +47,8 @@ private slots:
     void _addComment(const int entryId, const Notification* notif);
 
 private:
+    void _setTotalCount(int tc);
+
     QList<Comment*> _comments;
     int _entryId;
     bool _loading;

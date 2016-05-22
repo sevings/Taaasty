@@ -77,7 +77,6 @@ void Entry::addComment(const QString text)
     qDebug() << data;
 
     connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(commentAdded(const QJsonObject)));
-    connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_addComment()));
 }
 
 
@@ -150,11 +149,12 @@ void Entry::_init(const QJsonObject data)
 //    _imagePreview    = data.value("preview_image").toObject();
 
     QRegularExpression re("\\s[^\\s]+\\s");
-    _wordCount       = _text.isEmpty() ? _title.count(re)
-                                        : _text.count(re);
+    _wordCount       = _title.count(re) + _text.count(re);
 
     delete _commentsModel;
     _commentsModel = new CommentsModel(this);
+
+    Q_TEST(connect(_commentsModel, SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
 
     auto imageAttach = data.value("image_attachments").toArray();
     delete _attachedImagesModel;
@@ -165,14 +165,6 @@ void Entry::_init(const QJsonObject data)
 
     _loading = false;
     emit loadingChanged();
-}
-
-
-
-void Entry::_addComment()
-{
-    _commentsCount++;
-    emit commentsCountChanged();
 }
 
 
@@ -202,6 +194,16 @@ void Entry::_changeFavorited(const QJsonObject data)
     _isFavorited = !_isFavorited;
     emit favoritedChanged();
 }
+
+
+
+void Entry::_setCommentsCount(int tc)
+{
+    _commentsCount = tc;
+    emit commentsCountChanged();
+}
+
+
 
 int Entry::wordCount() const
 {

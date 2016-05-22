@@ -111,13 +111,13 @@ void CommentsModel::_addComments(const QJsonObject data)
     auto feed = data.value("comments").toArray();
     if (feed.isEmpty())
     {
-        _totalCount = _comments.size();
+        _setTotalCount(_comments.size());
         emit hasMoreChanged();
         _loading = false;
         return;
     }
 
-    _totalCount = data.value("total_count").toInt();
+    _setTotalCount(data.value("total_count").toInt());
 
     beginInsertRows(QModelIndex(), 0, feed.size() - 1);
 
@@ -146,6 +146,8 @@ void CommentsModel::_addLastComments(const QJsonObject data)
     if (feed.isEmpty())
         return;
 
+    _setTotalCount(data.value("total_count").toInt());
+
     beginInsertRows(QModelIndex(), _comments.size() - 1, _comments.size() + feed.size() - 1);
 
     _comments.reserve(_comments.size() + feed.size());
@@ -160,6 +162,8 @@ void CommentsModel::_addLastComments(const QJsonObject data)
 
 void CommentsModel::_addComment(const QJsonObject data)
 {
+    _setTotalCount(_totalCount + 1);
+
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
 
     _comments << new Comment(data, this);
@@ -179,9 +183,22 @@ void CommentsModel::_addComment(const int entryId, const Notification* notif)
         if (_comments.at(i)->_id == notif->entityId())
             return;
 
+    _setTotalCount(_totalCount + 1);
+
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
 
     _comments << new Comment(notif, this);
 
     endInsertRows();
+}
+
+
+
+void CommentsModel::_setTotalCount(int tc)
+{
+    if (tc == _totalCount)
+        return;
+
+    _totalCount = tc;
+    emit totalCountChanged(_totalCount);
 }

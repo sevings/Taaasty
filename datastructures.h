@@ -119,9 +119,9 @@ signals:
 
 private slots:
     void _init(const QJsonObject data);
-    void _addComment();
     void _changeWatched(const QJsonObject data);
     void _changeFavorited(const QJsonObject data);
+    void _setCommentsCount(int tc);
 
 private:
     int         _id;
