@@ -101,8 +101,8 @@ Rectangle {
             id: entryView
             width: window.width
             property color fontColor: window.textColor
-            height: 8 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
-                    + firstImage.height + quoteSource.height
+            height: 12 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
+                    + firstImage.height + quoteSource.height + repostText.height
             function saveCurrentIndex() {
                 listView.currentIndex = listView.indexAt(entryView.x + 1, entryView.y + 1);
             }
@@ -118,8 +118,27 @@ Rectangle {
                     entryClicked(entry);
                 }
             }
+            Text {
+                id: repostText
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 1 * mm
+                anchors.leftMargin: 5 * mm
+                anchors.rightMargin: anchors.leftMargin
+                wrapMode: Text.Wrap
+                color: window.secondaryTextColor
+                font.pointSize: window.fontSmaller
+                visible: entry.author.id !== entry.tlog.tlogId
+                         && entry.tlog.tlogId !== tlog.tlogId
+                height: visible ? contentHeight : -mm
+                horizontalAlignment: Text.AlignHCenter
+                text: entry.tlog.author.name
+                      + (entry.tlog.author.title ? '\n' + entry.tlog.author.title : '')
+            }
             SmallAvatar {
                 id: entryAvatar
+                anchors.top: repostText.bottom
                 anchors.margins: 1 * mm
                 user: entry.author
                 Poppable {
@@ -141,7 +160,7 @@ Rectangle {
                 text: entry.author.name
                 color: entryView.fontColor
                 font.pointSize: window.fontSmaller
-                anchors.top: parent.top
+                anchors.top: repostText.bottom
                 anchors.left: entryAvatar.right
                 anchors.right: entryVoteButton.left
                 anchors.margins: 1 * mm
@@ -160,7 +179,7 @@ Rectangle {
             }
             ThemedButton {
                 id: entryVoteButton
-                anchors.top: parent.top
+                anchors.top: repostText.bottom
                 anchors.right: parent.right
                 width: parent.width / 4
                 height: entryAvatar.height
@@ -268,6 +287,7 @@ Rectangle {
                 anchors.top: quoteSource.bottom
                 anchors.right: parent.right
                 anchors.margins: 1 * mm
+//                anchors.bottomMargin: 4 * mm // spacing
             }
         }
     }
