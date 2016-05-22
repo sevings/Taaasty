@@ -130,7 +130,7 @@ Rectangle {
             ThemedButton {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                text: author.isFlow ? 'Читать' : author.entriesCount
+                text: author.isFlow ? 'Читать' : author.publicEntriesCount
                 onClicked: profileView.tlogRequested()
             }
             ThemedButton {
