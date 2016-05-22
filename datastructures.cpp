@@ -47,6 +47,8 @@ Entry::Entry(const QJsonObject data, QObject *parent)
     , _loading(false)
 {
     _init(data);
+
+    Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
 }
 
 
@@ -70,13 +72,13 @@ void Entry::setId(const int id)
 void Entry::addComment(const QString text)
 {
     auto content = QUrl::toPercentEncoding(text.trimmed());
-    auto data    = QString("entry_id=%1&text=%2 ").arg(_id).arg(QString::fromUtf8(content));
+    auto data    = QString("entry_id=%1&text=%2").arg(_id).arg(QString::fromUtf8(content));
     auto request = new ApiRequest("comments.json", true,
                                   QNetworkAccessManager::PostOperation, data);
 
     qDebug() << data;
 
-    connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(commentAdded(const QJsonObject)));
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(commentAdded(const QJsonObject))));
 }
 
 
@@ -96,7 +98,7 @@ void Entry::watch()
         request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
     }
 
-    connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeWatched(QJsonObject)));
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeWatched(QJsonObject))));
 }
 
 
@@ -116,7 +118,7 @@ void Entry::favorite()
         request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
     }
 
-    connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeFavorited(QJsonObject)));
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeFavorited(QJsonObject))));
 }
 
 
@@ -138,15 +140,15 @@ void Entry::_init(const QJsonObject data)
     _rating          = new Rating(data.value("rating").toObject(), this);
     _commentsCount   = data.value("comments_count").toInt();
     _title           = data.value("title").toString().trimmed();
-    Tasty::insertLinks(_title);
     _truncatedTitle  = data.value("title_truncated").toString();
     _text            = data.value("text").toString().trimmed();
-    Tasty::insertLinks(_text);
     _truncatedText   = data.value("text_truncated").toString();
     _source          = data.value("source").toString();
     _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
                                          : nullptr; // music?
 //    _imagePreview    = data.value("preview_image").toObject();
+
+    _correctHtml();
 
     QRegularExpression re("\\s[^\\s]+\\s");
     _wordCount       = _title.count(re) + _text.count(re);
@@ -201,6 +203,16 @@ void Entry::_setCommentsCount(int tc)
 {
     _commentsCount = tc;
     emit commentsCountChanged();
+}
+
+
+
+void Entry::_correctHtml()
+{
+    Tasty::correctHtml(_title);
+    Tasty::correctHtml(_text);
+
+    emit htmlUpdated();
 }
 
 
@@ -266,6 +278,8 @@ Comment::Comment(const QJsonObject data, QObject *parent)
     : QObject(parent)
 {
     _init(data);
+
+    Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
 }
 
 
@@ -285,7 +299,7 @@ Comment::Comment(const Notification* data, QObject* parent)
     auto url = QString("comments.json?entry_id=%1&from_comment_id=%2&limit=1").arg(entryId).arg(_id - 1);
     auto request = new ApiRequest(url);
 
-    connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_update(const QJsonObject)));
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_update(const QJsonObject))));
 }
 
 
@@ -317,11 +331,12 @@ void Comment::_init(const QJsonObject data)
     _id             = data.value("id").toInt();
     _user           = new User(data.value("user").toObject(), this);
     _html           = data.value("comment_html").toString();
-    Tasty::insertLinks(_html);
     _createdAt      = Tasty::parseDate(data.value("created_at").toString());
     _isEditable     = data.value("can_edit").toBool();
     _isReportable   = data.value("can_report").toBool();
     _isDeletable    = data.value("can_delete").toBool();
+
+    _correctHtml();
 
     emit updated();
 }
@@ -335,6 +350,15 @@ void Comment::_update(const QJsonObject data)
         return;
 
     _init(list.first().toObject());
+}
+
+
+
+void Comment::_correctHtml()
+{
+    Tasty::correctHtml(_html, false);
+
+    emit htmlUpdated();
 }
 
 
@@ -494,7 +518,7 @@ void Tlog::_init(const QJsonObject data)
     _entriesCount = Tasty::num2str(data.value("total_entries_count").toInt(),
                                    "запись", "записи", "записей");
     _publicEntriesCount = Tasty::num2str(data.value("public_entries_count").toInt(),
-                                         "открытая запись", "открытые записи", "открытых записей");
+                                         "запись", "записи", "записей");
     _privateEntriesCount = Tasty::num2str(data.value("private_entries_count").toInt(),
                                           "скрытая запись", "скрытые записи", "скрытых записей");
 

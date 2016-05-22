@@ -77,9 +77,9 @@ class Entry: public QObject
     Q_PROPERTY(Author*     author         MEMBER _author            NOTIFY updated)
     Q_PROPERTY(Rating*     rating         MEMBER _rating            NOTIFY updated)
     Q_PROPERTY(int         commentsCount  MEMBER _commentsCount     NOTIFY commentsCountChanged)
-    Q_PROPERTY(QString     title          MEMBER _title             NOTIFY updated)
+    Q_PROPERTY(QString     title          MEMBER _title             NOTIFY htmlUpdated)
     Q_PROPERTY(QString     truncatedTitle MEMBER _truncatedTitle    NOTIFY updated)
-    Q_PROPERTY(QString     text           MEMBER _text              NOTIFY updated)
+    Q_PROPERTY(QString     text           MEMBER _text              NOTIFY htmlUpdated)
     Q_PROPERTY(QString     truncatedText  MEMBER _truncatedText     NOTIFY updated)
     Q_PROPERTY(QString     source         MEMBER _source            NOTIFY updated)
     Q_PROPERTY(Media*      media          MEMBER _media             NOTIFY updated)
@@ -109,6 +109,7 @@ public slots:
 
 signals:
     void updated();
+    void htmlUpdated();
 
     void commentsCountChanged();
     void watchedChanged();
@@ -122,6 +123,7 @@ private slots:
     void _changeWatched(const QJsonObject data);
     void _changeFavorited(const QJsonObject data);
     void _setCommentsCount(int tc);
+    void _correctHtml();
 
 private:
     int         _id;
@@ -211,7 +213,7 @@ class Comment: public QObject
 
     Q_PROPERTY(int         id           MEMBER _id             NOTIFY updated)
     Q_PROPERTY(User*       user         MEMBER _user           NOTIFY updated)
-    Q_PROPERTY(QString     html         MEMBER _html           NOTIFY updated)
+    Q_PROPERTY(QString     html         MEMBER _html           NOTIFY htmlUpdated)
     Q_PROPERTY(QString     createdAt    MEMBER _createdAt      NOTIFY updated)
     Q_PROPERTY(bool        isEditable   MEMBER _isEditable     NOTIFY updated)
     Q_PROPERTY(bool        isReportable MEMBER _isReportable   NOTIFY updated)
@@ -227,10 +229,12 @@ public slots:
 
 signals:
     void updated();
+    void htmlUpdated();
 
 private slots:
     void _init(const QJsonObject data);
     void _update(const QJsonObject data);
+    void _correctHtml();
 
 private:
     int         _id;

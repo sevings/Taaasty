@@ -27,7 +27,11 @@ ApplicationWindow {
     readonly property int anonymousId: 4409
     title: qsTr("Taaasty")
     color: backgroundColor
+    onWidthChanged: {
+        Tasty.setImageWidth(window.width - 2 * mm, window.width - 11 * mm);
+    }
     Component.onCompleted: {
+        Tasty.setImageWidth(window.width - 2 * mm, window.width - 11 * mm);
         loadingText.visible = false;
     }
     function showNotifs() {

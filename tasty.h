@@ -36,7 +36,9 @@ public:
     Q_INVOKABLE static QString num2str(const int n, const QString str1,
                     const QString str234, const QString str5);
     static QString parseDate(const QString d);
-    static void insertLinks(QString& text);
+    static void correctHtml(QString& html, bool isEntry = true);
+
+    Q_INVOKABLE void setImageWidth(int entry, int comment);
 
 signals:
     void busyChanged();
@@ -47,6 +49,8 @@ signals:
     void ratingChanged(const QJsonObject data);
 
     void error(const int code, const QString text);
+
+    void htmlRecorrectionNeeded();
 
 public slots:
     void authorize(const QString login, const QString password);
@@ -65,6 +69,8 @@ private:
     Settings* _settings;
     QNetworkAccessManager* _manager;
     int _busy;
+    int _entryImageWidth;
+    int _commentImageWidth;
 };
 
 #endif // TASTY_H

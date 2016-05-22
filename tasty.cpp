@@ -14,6 +14,8 @@ Tasty::Tasty(QObject *parent)
     , _settings(new Settings(this))
     , _manager(new QNetworkAccessManager(this))
     , _busy(0)
+    , _entryImageWidth(_settings->maxImageWidth())
+    , _commentImageWidth(_entryImageWidth)
 {
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
@@ -94,10 +96,29 @@ QString Tasty::parseDate(const QString d)
 
 
 
-void Tasty::insertLinks(QString& text)
+void Tasty::correctHtml(QString& html, bool isEntry)
 {
-    QRegularExpression re("[^/>]?(~|@)([\\w\\-\\.]+)");
-    text.replace(re, "<a href='http://taaasty.com/~\\2'>\\1\\2</a>");
+    QRegularExpression slugRe("(~|@)([\\w\\-\\.]+)([^'<\\w\\-\\.])");
+    html.replace(slugRe, "<a href='http://taaasty.com/~\\2'>\\1\\2</a>\\3");
+
+    auto width = isEntry ? Tasty::instance()->_entryImageWidth
+                         : Tasty::instance()->_commentImageWidth;
+    QRegularExpression imgRe("<img (?:width=\\d+ )?");
+    html.replace(imgRe, QString("<img width=%1 ").arg(width));
+}
+
+
+
+void Tasty::setImageWidth(int entry, int comment)
+{
+    if (entry <= 0 || entry == _entryImageWidth
+            || comment <= 0 || comment == _commentImageWidth)
+        return;
+
+    _entryImageWidth = entry;
+    _commentImageWidth = comment;
+
+    emit htmlRecorrectionNeeded();
 }
 
 
