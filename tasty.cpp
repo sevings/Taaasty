@@ -98,8 +98,8 @@ QString Tasty::parseDate(const QString d)
 
 void Tasty::correctHtml(QString& html, bool isEntry)
 {
-    QRegularExpression slugRe("(~|@)([\\w\\-\\.]+)([^'<\\w\\-\\.])");
-    html.replace(slugRe, "<a href='http://taaasty.com/~\\2'>\\1\\2</a>\\3");
+    QRegularExpression slugRe("([^'/>\\w\\-\\.])(~|@)([\\w\\-\\.]+)");
+    html.replace(slugRe, "\\1<a href='http://taaasty.com/~\\3'>\\2\\3</a>");
 
     auto width = isEntry ? Tasty::instance()->_entryImageWidth
                          : Tasty::instance()->_commentImageWidth;

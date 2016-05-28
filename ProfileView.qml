@@ -134,6 +134,7 @@ Rectangle {
                 anchors.right: parent.right
                 text: author.isFlow ? 'Читать' : author.publicEntriesCount
                 onClicked: profileView.tlogRequested()
+                enabled: !author.isPrivacy || tlog.amIFollowing || tlog.isMe
             }
             ThemedButton {
                 anchors.left: parent.left

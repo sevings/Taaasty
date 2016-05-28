@@ -5,11 +5,14 @@ Item {
     anchors.left: parent.left
     anchors.right: parent.right
     height: input.height + 2 * mm
-    property string message
+    property alias message: input.text
     signal sent
     onFocusChanged: if (focus) input.focus = true
     function clear() {
         input.clear();
+    }
+    function addGreeting(slug) {
+        input.addGreeting(slug);
     }
     TextEditor {
         id: input
@@ -24,8 +27,8 @@ Item {
         width: parent.width / 5
         text: '+'
         onClicked: {
-            editor.message = input.text.toString();
-            console.log(editor.message);
+//            editor.message = input.text.toString();
+//            console.log(editor.message);
             editor.sent();
         }
     }

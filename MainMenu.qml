@@ -6,15 +6,7 @@ MouseArea {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.left: parent.left
-    property int minWidth: parent.width * 0.7
-    width: minWidth
-//    width: x > drag.minimumX ? parent.width : minWidth + 10 * mm
-//    x: - minWidth
-//    drag.target: area
-//    drag.axis: Drag.XAxis
-//    drag.minimumX: - minWidth
-//    drag.maximumX: 0
-//    drag.filterChildren: true
+    width: parent.width * 0.7
     propagateComposedEvents: true
     enabled: false
     signal modeChanged(int mode)
@@ -27,36 +19,19 @@ MouseArea {
         enabled = true;
     }
     onReleased: {
-        if (area.x > -area.minWidth / 3 * 2)
+        if (area.x > -area.width / 3 * 2)
             forwardAnimation.start();
         else
             backAnimation.start();
     }
     onClicked: {
-        if (mouse.x > minWidth)
+        if (mouse.x > width)
             backAnimation.start();
-        mouse.accepted = x > - minWidth;
+        mouse.accepted = x > - width;
     }
-//    PropertyAnimation {
-//        id: backAnimation
-//        target: area
-//        property: "x"
-//        to: - minWidth
-//        duration: 100
-//    }
-//    PropertyAnimation {
-//        id: forwardAnimation
-//        target: area
-//        property: "x"
-//        to: 0
-//        duration: 100
-//    }
     Rectangle {
         id: menu
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        width: parent.minWidth
+        anchors.fill: parent
         color: window.backgroundColor
         Flickable {
             anchors.fill: parent
@@ -69,7 +44,7 @@ MouseArea {
             Column {
                 id: column
                 anchors.fill: parent
-                spacing: 10
+                spacing: 1 * mm
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right

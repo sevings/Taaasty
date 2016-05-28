@@ -19,16 +19,32 @@ Rectangle {
     function clear() {
         input.text = '';
     }
-    function insertTags(opening, closing) {
-        if (!input.focus)
-            return;
+    function addGreeting(slug) {
         var oldText = input.text.toString();
         var cursor = input.cursorPosition;
         var positionY = flickText.contentY;
+
+        var newText = '@' + slug + ', ' + oldText;
+        input.text = newText;
+        flickText.contentY = positionY;
+        input.cursorPosition = cursor + slug.length + 3;
+
+        input.forceActiveFocus();
+    }
+
+    function insertTags(opening, closing) {
+        if (!input.focus)
+            return;
+
+        var oldText = input.text.toString();
+        var cursor = input.cursorPosition;
+        var positionY = flickText.contentY;
+
         var before = oldText.substring(0, cursor);
         var after = oldText.substring(cursor);
         var newText = before + opening + (closing !== undefined ? closing : '') + after;
         input.text = newText;
+
         flickText.contentY = positionY;
         input.cursorPosition = cursor + opening.length;
     }

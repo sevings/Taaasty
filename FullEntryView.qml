@@ -27,6 +27,7 @@ Rectangle {
     Splash {
         visible: !fullEntry.visible
     }
+    signal addGreeting(string slug)
     MyListView {
         id: fullEntry
         anchors.top: parent.top
@@ -40,6 +41,10 @@ Rectangle {
             height: 4 * mm + commentText.contentHeight + nameText.contentHeight
             Poppable {
                 body: back
+                onClicked: {
+//                    fullEntry.currentIndex = fullEntry.indexAt(mouse.x + 1, mouse.y + 1);
+                    menu.show(comment);
+                }
             }
             SmallAvatar {
                 id: commentAvatar
@@ -106,7 +111,7 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.bottomMargin: 1 * mm
                 interactive: false
-                //spacing: 10
+                spacing: 1 * mm
                 property AttachedImagesModel imagesModel: entry.attachedImagesModel
                 height: imagesModel ? (imagesModel.listRatio() * window.width
                         + (imagesModel.rowCount() - 1) * 10) : 0
@@ -275,7 +280,120 @@ Rectangle {
                     window.setFooterTlog(entry.tlog);
                 }
             }
+            Connections {
+                target: back
+                onAddGreeting: {
+                    commentEditor.addGreeting(slug);
+                }
+            }
             Component.onCompleted: commentEditor.focus = true
+        }
+    }
+    MouseArea {
+        anchors.top: parent.top
+        anchors.bottom: menu.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        visible: menu.visible
+        onClicked: menu.state = "closed"
+    }
+    Rectangle {
+        id: menu
+        anchors.left: parent.left
+        anchors.right: parent.right
+        visible: y < parent.height
+        height: menuColumn.height + 2 * mm
+        color: window.backgroundColor
+        state: "closed"
+        property Comment comment: Comment { }
+        signal opened
+        signal closed
+        function close() {
+            if(y >= parent.height)
+                return; //already closed
+
+            closed();
+            state = "closed";
+        }
+        function show(cmt) {
+            window.hideFooter();
+            opened()
+            state = "opened";
+            menu.comment = cmt;
+        }
+        states: [
+            State {
+                name: "opened"
+                PropertyChanges {
+                    target: menu
+                    y: parent.height - height
+                }
+            },
+            State {
+                name: "closed"
+                PropertyChanges {
+                    target: menu
+                    y: parent.height
+                }
+            }
+        ]
+        transitions: [
+            Transition {
+                from: "opened"
+                to: "closed"
+                NumberAnimation {
+                    property: 'y'
+                    duration: 300
+                }
+            },
+
+            Transition {
+                from: "closed"
+                to: "opened"
+                NumberAnimation {
+                    property: 'y'
+                    duration: 300
+                }
+            }
+        ]
+        Column {
+            id: menuColumn
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.topMargin: 1 * mm
+            anchors.bottomMargin: 1 * mm
+            spacing: 1 * mm
+            ThemedButton {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                text: 'Ответить'
+                onClicked: {
+                    addGreeting(menu.comment.user.slug);
+                    menu.close();
+                    fullEntry.positionViewAtEnd();
+                }
+            }
+            ThemedButton {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                text: 'Править'
+                onClicked: {
+    //                    addGreeting(menu.comment.user.slug);
+                    menu.close();
+                }
+                visible: menu.comment && menu.comment.isEditable === true
+            }
+            ThemedButton {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                text: 'Удалить'
+                onClicked: {
+    //                    addGreeting(menu.comment.user.slug);
+                    menu.close();
+                }
+                visible: menu.comment && menu.comment.isDeletable === true
+            }
         }
     }
 }
