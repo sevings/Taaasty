@@ -20,6 +20,10 @@ Rectangle {
     Splash {
         visible: !column.visible
     }
+    Component.onCompleted: {
+        if (tlog.tlogId && tlog.slug)
+            tlog.author.checkStatus();
+    }
     Flickable {
         id: flickable
         anchors.fill: parent
@@ -77,6 +81,18 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 color: window.textColor
                 text: author.isFemale ? 'Девушка' : 'Парень'
+                height: text.length > 0 ? paintedHeight : 0
+                visible: !author.isFlow
+            }
+            Text {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 1 * mm
+                font.pointSize: window.fontNormal
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                color: window.textColor
+                text: author.isOnline ? 'Онлайн' : author.lastSeenAt
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
             }

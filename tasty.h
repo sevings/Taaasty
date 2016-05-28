@@ -35,7 +35,7 @@ public:
 
     Q_INVOKABLE static QString num2str(const int n, const QString str1,
                     const QString str234, const QString str5);
-    static QString parseDate(const QString d);
+    static QString parseDate(const QString d, const bool bigLetter = true);
     static void correctHtml(QString& html, bool isEntry = true);
 
     Q_INVOKABLE void setImageWidth(int entry, int comment);

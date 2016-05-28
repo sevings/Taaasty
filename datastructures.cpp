@@ -437,13 +437,24 @@ bool Author::isDaylog() const
     return _isDaylog;
 }
 
+
+
+void Author::checkStatus()
+{
+    auto url = QString("online_statuses.json?user_ids=%1").arg(id());
+    auto request = new ApiRequest(url);
+
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initStatus(QJsonObject))));
+}
+
+
+
 void Author::_init(const QJsonObject data)
 {
     User::_init(data);
 
     _isFemale  = data.value("is_female").toBool();
     _isPrivacy = data.value("is_privacy").toBool();
-    _isOnline  = data.value("is_online").toBool();
     _isFlow    = data.value("is_flow").toBool();
     _isPremium = data.value("is_premium").toBool();
     _isDaylog  = data.value("is_daylog").toBool();
@@ -464,6 +475,20 @@ void Author::_init(const QJsonObject data)
     _followingsCount = Tasty::num2str(data.value("followings_count").toInt(), "подписка", "подписки", "подписок");
 
     emit updated();
+
+    _initStatus(data);
+}
+
+
+
+void Author::_initStatus(const QJsonObject data)
+{
+
+    _isOnline  = data.value("is_online").toBool();
+    _lastSeenAt = QString("Был%1 в сети %2").arg(_isFemale ? "а" : "")
+            .arg(Tasty::parseDate(data.value("last_seen_at").toString(), false));
+
+    emit statusUpdated();
 }
 
 

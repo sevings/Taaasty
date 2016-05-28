@@ -78,19 +78,19 @@ QString Tasty::num2str(const int n, const QString str1, const QString str234, co
 
 
 
-QString Tasty::parseDate(const QString d)
+QString Tasty::parseDate(const QString d, const bool bigLetter)
 {
     auto datetime = QDateTime::fromString(d.left(19), "yyyy-MM-ddTHH:mm:ss");
     auto date = datetime.date();
     auto today = QDate::currentDate();
 
     if (today == date)
-        return datetime.toString("Сегодня в HH:mm");
+        return datetime.toString(QString("%1егодня в H:mm").arg(bigLetter ? "С" : "с"));
     if (today == date.addDays(1))
-        return datetime.toString("Вчера в HH:mm");
+        return datetime.toString(QString("%1чера в H:mm").arg(bigLetter ? "В" : "в"));
 
     bool showYear = date.year() != today.year();
-    QString format = showYear ? "d MMM yyyy" : "d MMM в HH:mm";
+    QString format = showYear ? "d MMM yyyy" : "d MMM в H:mm";
     return datetime.toString(format);
 }
 

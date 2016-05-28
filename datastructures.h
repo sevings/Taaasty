@@ -303,7 +303,7 @@ class Author: public User
 
     Q_PROPERTY(bool    isFemale            MEMBER _isFemale            NOTIFY updated)
     Q_PROPERTY(bool    isPrivacy           MEMBER _isPrivacy           NOTIFY updated)
-    Q_PROPERTY(bool    isOnline            MEMBER _isOnline            NOTIFY updated)
+    Q_PROPERTY(bool    isOnline            MEMBER _isOnline            NOTIFY statusUpdated)
     Q_PROPERTY(bool    isFlow              MEMBER _isFlow              NOTIFY updated)
     Q_PROPERTY(bool    isPremium           MEMBER _isPremium           NOTIFY updated)
     Q_PROPERTY(bool    isDaylog            MEMBER _isDaylog            NOTIFY updated)
@@ -313,6 +313,7 @@ class Author: public User
     Q_PROPERTY(QString privateEntriesCount MEMBER _privateEntriesCount NOTIFY updated)
     Q_PROPERTY(QString daysCount           MEMBER _daysCount           NOTIFY updated)
     Q_PROPERTY(QString followingsCount     MEMBER _followingsCount     NOTIFY updated)
+    Q_PROPERTY(QString lastSeenAt          MEMBER _lastSeenAt          NOTIFY statusUpdated)
 
 public:
     Author(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
@@ -322,11 +323,16 @@ public:
     bool isPremium() const;
     bool isDaylog() const;
 
+public slots:
+    void checkStatus();
+
 signals:
     void updated();
+    void statusUpdated();
 
 private slots:
     void _init(const QJsonObject data);
+    void _initStatus(const QJsonObject data);
 
 private:
     bool    _isFemale;
@@ -341,6 +347,7 @@ private:
     QString _privateEntriesCount;
     QString _daysCount;
     QString _followingsCount;
+    QString _lastSeenAt;
 };
 
 
