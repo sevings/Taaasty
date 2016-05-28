@@ -306,34 +306,29 @@ Rectangle {
         color: window.backgroundColor
         state: "closed"
         property Comment comment: Comment { }
-        signal opened
-        signal closed
         function close() {
-            if(y >= parent.height)
-                return; //already closed
-
-            closed();
             state = "closed";
         }
         function show(cmt) {
             window.hideFooter();
-            opened()
             state = "opened";
             menu.comment = cmt;
         }
         states: [
             State {
                 name: "opened"
-                PropertyChanges {
+                AnchorChanges {
                     target: menu
-                    y: parent.height - height
+                    anchors.top: undefined
+                    anchors.bottom: parent.bottom
                 }
             },
             State {
                 name: "closed"
-                PropertyChanges {
+                AnchorChanges {
                     target: menu
-                    y: parent.height
+                    anchors.top: parent.bottom
+                    anchors.bottom: undefined
                 }
             }
         ]
@@ -341,18 +336,15 @@ Rectangle {
             Transition {
                 from: "opened"
                 to: "closed"
-                NumberAnimation {
-                    property: 'y'
-                    duration: 300
+                AnchorAnimation {
+                    duration: 200
                 }
             },
-
             Transition {
                 from: "closed"
                 to: "opened"
-                NumberAnimation {
-                    property: 'y'
-                    duration: 300
+                AnchorAnimation {
+                    duration: 200
                 }
             }
         ]
@@ -382,7 +374,7 @@ Rectangle {
     //                    addGreeting(menu.comment.user.slug);
                     menu.close();
                 }
-                visible: menu.comment && menu.comment.isEditable === true
+                visible: menu.comment.isEditable === true
             }
             ThemedButton {
                 anchors.left: parent.left
@@ -392,7 +384,7 @@ Rectangle {
     //                    addGreeting(menu.comment.user.slug);
                     menu.close();
                 }
-                visible: menu.comment && menu.comment.isDeletable === true
+                visible: menu.comment.isDeletable === true
             }
         }
     }

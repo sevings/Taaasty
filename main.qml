@@ -35,10 +35,10 @@ ApplicationWindow {
         loadingText.visible = false;
     }
     function showNotifs() {
-        notifsView.y = 0;
+        notifsView.state = "opened";
     }
     function hideNotifs() {
-        notifsView.y = window.height;
+        notifsView.state = "closed";
         NotifsModel.markAsRead();
     }
     function toggleNotifs() {
@@ -48,10 +48,10 @@ ApplicationWindow {
             hideNotifs();
     }
     function showFooter() {
-        footer.y =  -footer.height;
+        footer.state = "opened";
     }
     function hideFooter() {
-        footer.y = 0;
+        footer.state = "closed";
     }
     function setFooterTlog(tlog) {
         if (!tlog)
@@ -387,15 +387,6 @@ ApplicationWindow {
         id: notifsView
         anchors.left: parent.left
         anchors.right: parent.right
-        height: parent.height
-        y: height
-        z: 5
-        visible: y < height
-        Behavior on y {
-            NumberAnimation {
-                duration: 300
-            }
-        }
         onAvatarClicked: {
             stack.push({
                            item: profile,
@@ -431,23 +422,15 @@ ApplicationWindow {
                        })
         }
     }
-    Rectangle {
-        id: fakeFooter
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        height: 0
-        z: 20
-        Footer {
-            id: footer
-            onAvatarClicked: {
-                stack.push({
-                               item: profile,
-                               properties: {
-                                   tlog: tlog
-                               }
-                           })
-            }
+    Footer {
+        id: footer
+        onAvatarClicked: {
+            stack.push({
+                           item: profile,
+                           properties: {
+                               tlog: tlog
+                           }
+                       })
         }
     }
     Dialog {

@@ -7,7 +7,8 @@ Rectangle {
     anchors.right: parent.right
     height: avatar.height
     y: 0
-    visible: y >= - height
+    z: 20
+    visible: y >= -height
     property string title
     property Tlog tlog
     signal avatarClicked
@@ -15,11 +16,41 @@ Rectangle {
         GradientStop { position: 0; color: '#373737' }
         GradientStop { position: 1; color: '#000000' }
     }
-    Behavior on y {
-        NumberAnimation {
-            duration: 200
+    state: "closed"
+    states: [
+        State {
+            name: "opened"
+            AnchorChanges {
+                target: footer
+                anchors.top: undefined
+                anchors.bottom: parent.bottom
+            }
+        },
+        State {
+            name: "closed"
+            AnchorChanges {
+                target: footer
+                anchors.top: parent.bottom
+                anchors.bottom: undefined
+            }
         }
-    }
+    ]
+    transitions: [
+        Transition {
+            from: "opened"
+            to: "closed"
+            AnchorAnimation {
+                duration: 200
+            }
+        },
+        Transition {
+            from: "closed"
+            to: "opened"
+            AnchorAnimation {
+                duration: 200
+            }
+        }
+    ]
     SmallAvatar {
         id: avatar
         anchors.left: parent.left

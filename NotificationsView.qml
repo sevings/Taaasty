@@ -5,9 +5,46 @@ Rectangle {
     id: back
     color: window.backgroundColor
     clip: true
+    height: parent.height
+    y: height
+    z: 5
+    visible: y < height
     signal avatarClicked(int tlog)
     signal entryRequested(int entry, bool showProfile)
     signal tlogRequested(int tlogId)
+    state: "closed"
+    states: [
+        State {
+            name: "opened"
+            AnchorChanges {
+                target: back
+                anchors.top: parent.top
+            }
+        },
+        State {
+            name: "closed"
+            AnchorChanges {
+                target: back
+                anchors.top: parent.bottom
+            }
+        }
+    ]
+    transitions: [
+        Transition {
+            from: "opened"
+            to: "closed"
+            AnchorAnimation {
+                duration: 300
+            }
+        },
+        Transition {
+            from: "closed"
+            to: "opened"
+            AnchorAnimation {
+                duration: 300
+            }
+        }
+    ]
     Poppable {
         body: back
     }
