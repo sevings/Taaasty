@@ -43,6 +43,15 @@ Rectangle {
     signal entryClicked(TlogEntry entry)
     signal avatarClicked(Tlog tlog, Author author)
     signal flowClicked(int flowId)
+    function setMode(m, t) {
+        if (mode === m)
+            feedModel.reset(m, t);
+        else {
+            mode = m;
+            if (m === FeedModel.TlogMode)
+                tlogId = t;
+        }
+    }
     Poppable {
         body: back
         Text {
