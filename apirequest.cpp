@@ -82,7 +82,9 @@ void ApiRequest::_restart(QNetworkAccessManager::NetworkAccessibility na)
 
 void ApiRequest::_finished()
 {
-    deleteLater();
+    auto manager = Tasty::instance()->manager();
+    if (manager->networkAccessible() == QNetworkAccessManager::Accessible)
+        deleteLater();
 
     auto data = _reply->readAll();
 
