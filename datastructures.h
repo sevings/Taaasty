@@ -332,6 +332,7 @@ signals:
 
 private slots:
     void _init(const QJsonObject data);
+    void _initStatus(const QJsonArray data);
     void _initStatus(const QJsonObject data);
 
 private:

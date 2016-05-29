@@ -444,7 +444,7 @@ void Author::checkStatus()
     auto url = QString("online_statuses.json?user_ids=%1").arg(id());
     auto request = new ApiRequest(url);
 
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initStatus(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_initStatus(QJsonArray))));
 }
 
 
@@ -477,6 +477,14 @@ void Author::_init(const QJsonObject data)
     emit updated();
 
     _initStatus(data);
+}
+
+
+
+void Author::_initStatus(const QJsonArray data)
+{
+    if (data.size())
+        _initStatus(data.first().toObject());
 }
 
 

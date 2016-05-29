@@ -94,11 +94,16 @@ void ApiRequest::_finished()
         return;
     }
 
-    auto jsonObject = json.object();
     if (_reply->error() == QNetworkReply::NoError)
-        emit success(jsonObject);
+    {
+        if (json.isObject())
+            emit success(json.object());
+        else
+            emit success(json.array());
+    }
     else
     {
+        auto jsonObject = json.object();
         auto errorString = jsonObject.value("error").toString();
         auto code = jsonObject.value("response_code").toInt();
 

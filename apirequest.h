@@ -3,6 +3,7 @@
 
 #include <QNetworkReply>
 #include <QJsonObject>
+#include <QJsonArray>
 
 #include "tasty.h"
 
@@ -20,6 +21,7 @@ public:
 
 signals:
     void success(const QJsonObject data);
+    void success(const QJsonArray data);
     void error(QNetworkReply::NetworkError code);
     void error(const int code, const QString text);
 
