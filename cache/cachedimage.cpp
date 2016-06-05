@@ -198,15 +198,13 @@ void CachedImage::_saveData()
     }
 
     _data = _reply->readAll();
-    if (_format == UnknownFormat)
-    {
-        if (_data.startsWith(0x89))
-            setExtension("png");
-        else if (_data.startsWith(0xFF))
-            setExtension("jpeg");
-        else if (_data.startsWith(0x47))
-            setExtension("gif");
-    }
+
+    if (_data.startsWith(0x89))
+        setExtension("png");
+    else if (_data.startsWith(0xFF))
+        setExtension("jpeg");
+    else if (_data.startsWith(0x47))
+        setExtension("gif");
 
     _reply->deleteLater();
     _reply = nullptr;
