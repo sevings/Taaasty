@@ -91,7 +91,7 @@ Rectangle {
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 color: window.textColor
-                text: author.isOnline ? 'Онлайн' : author.lastSeenAt
+                text: author.lastSeenAt
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
             }
