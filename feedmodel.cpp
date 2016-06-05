@@ -152,6 +152,9 @@ void FeedModel::reset(Mode mode, int tlog)
     _hasMore = true;
     _lastEntry = 0;
     _loading = false;
+
+    if (_request)
+        delete _request;
     _request = nullptr;
 
     if (_allEntries.isEmpty())
