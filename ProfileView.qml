@@ -16,7 +16,6 @@ Rectangle {
     signal followingsRequested
     signal popped
     property bool poppable
-//    Component.onCompleted: console.log(tlog.tlogId)
     Splash {
         visible: !column.visible
     }

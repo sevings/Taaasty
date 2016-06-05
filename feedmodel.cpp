@@ -19,6 +19,7 @@ FeedModel::FeedModel(QObject* parent)
     , _loading(false)
     , _lastEntry(0)
     , _isPrivate(false)
+    , _request(nullptr)
 {
     Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideShortPostsChanged()), this, SLOT(_changeHideShort())));
 
@@ -78,9 +79,9 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     if (_lastEntry)
         url += QString("&since_entry_id=%1").arg(_lastEntry);
 
-    auto request = new ApiRequest(url);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
+    _request = new ApiRequest(url);
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
 }
 
 
@@ -151,6 +152,7 @@ void FeedModel::reset(Mode mode, int tlog)
     _hasMore = true;
     _lastEntry = 0;
     _loading = false;
+    _request = nullptr;
 
     if (_allEntries.isEmpty())
         qDeleteAll(_entries);
@@ -195,6 +197,7 @@ void FeedModel::_addItems(QJsonObject data)
         _hasMore = false;
         emit hasMoreChanged();
         _loading = false;
+        _request = nullptr;
         return;
     }
 
@@ -220,6 +223,7 @@ void FeedModel::_addItems(QJsonObject data)
         _addAll(all);
 
     _loading = false;
+    _request = nullptr;
 
     if (loadMore)
         fetchMore(QModelIndex());
@@ -255,6 +259,17 @@ void FeedModel::_setPrivate(int errorCode)
     {
         _isPrivate = true;
         emit isPrivateChanged();
+    }
+}
+
+
+
+void FeedModel::_setNotLoading(QObject* request)
+{
+    if (request == _request)
+    {
+        _loading = false;
+        _request = nullptr;
     }
 }
 

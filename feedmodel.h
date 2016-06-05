@@ -6,6 +6,7 @@
 #include <QJsonObject>
 
 class Entry;
+class ApiRequest;
 
 
 
@@ -66,6 +67,7 @@ private slots:
     void _addItems(QJsonObject data);
     void _changeHideShort();
     void _setPrivate(int errorCode);
+    void _setNotLoading(QObject* request);
 
 private:
     void _addAll(QList<Entry*>& all);
@@ -80,6 +82,8 @@ private:
     bool _loading;
     int _lastEntry;
     bool _isPrivate;
+
+    ApiRequest* _request;
 };
 
 #endif // FEEDMODEL_H

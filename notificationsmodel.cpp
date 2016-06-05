@@ -115,7 +115,7 @@ void NotificationsModel::markAsRead()
     QString data = QString("last_id=%1").arg(_notifs.first()->_id);
     
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_readSuccess())));
+    Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_readSuccess())));
 //    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SIGNAL(unreadChanged())));
 }
 
@@ -145,7 +145,8 @@ void NotificationsModel::_check()
     }
     
     auto request = new ApiRequest(url, true);
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject)));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
 }
 
 
@@ -248,4 +249,11 @@ void NotificationsModel::_reloadAll()
     endResetModel();
 
     fetchMore(QModelIndex());
+}
+
+
+
+void NotificationsModel::_setNotLoading()
+{
+    _loading = false;
 }

@@ -49,6 +49,8 @@ private slots:
 
     void _reloadAll();
 
+    void _setNotLoading();
+
 private:
     QList<Notification*> _notifs;
     QString _url;

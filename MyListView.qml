@@ -10,11 +10,11 @@ ListView {
     interactive: parent.x <= 0
     property bool poppable: true
     boundsBehavior: Flickable.DragOverBounds
-    signal aboveBegin
-    onDraggingVerticallyChanged: {
-        if (!draggingVertically && contentY < -8 * mm)
-            list.aboveBegin();
-    }
+//    signal aboveBegin
+//    onDraggingVerticallyChanged: {
+//        if (!draggingVertically && contentY < -8 * mm)
+//            list.aboveBegin();
+//    }
     onVerticalVelocityChanged: {
         if (!dragging)
             return;
