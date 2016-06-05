@@ -19,7 +19,7 @@ ApplicationWindow {
     property int fontSmallest: 14
     property bool unreadNotifications: NotifsModel.unread
 //    property int unreadMessages: 0
-//    property bool showNotifs: false
+    readonly property bool notifsShows: notifsView.state === "opened"
 //    property bool showCommentMenu: false
 //    property bool showSlugInput: false
 //    property bool showConvers: false

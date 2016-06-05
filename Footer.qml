@@ -75,7 +75,9 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: notifButton.visible ? notifButton.left : parent.right
         onClicked: {
-            if (footer.tlog.tlogId > 0 && footer.tlog.tlogId !== window.anonymousId)
+            if (window.notifsShows)
+                window.hideNotifs();
+            else if (footer.tlog.tlogId > 0 && footer.tlog.tlogId !== window.anonymousId)
                 footer.avatarClicked()
         }
     }
