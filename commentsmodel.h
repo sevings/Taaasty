@@ -45,6 +45,7 @@ private slots:
     void _addLastComments(const QJsonObject data);
     void _addComment(const QJsonObject data);
     void _addComment(const int entryId, const Notification* notif);
+    void _removeComment(QObject* cmt);
 
 private:
     void _setTotalCount(int tc);

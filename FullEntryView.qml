@@ -374,17 +374,17 @@ Rectangle {
     //                    addGreeting(menu.comment.user.slug);
                     menu.close();
                 }
-                visible: menu.comment.isEditable === true
+                visible: menu.comment && menu.comment.isEditable === true
             }
             ThemedButton {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: 'Удалить'
                 onClicked: {
-    //                    addGreeting(menu.comment.user.slug);
+                    menu.comment.remove();
                     menu.close();
                 }
-                visible: menu.comment.isDeletable === true
+                visible: menu.comment && menu.comment.isDeletable === true
             }
         }
     }

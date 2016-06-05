@@ -22,6 +22,7 @@ public:
 signals:
     void success(const QJsonObject data);
     void success(const QJsonArray data);
+    void success(const QString data);
     void error(QNetworkReply::NetworkError code);
     void error(const int code, const QString text);
 

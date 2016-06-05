@@ -124,7 +124,12 @@ void CommentsModel::_addComments(const QJsonObject data)
     _comments.reserve(_comments.size() + feed.size());
 
     for (int i = 0; i < feed.size(); i++)
-        _comments.insert(i, new Comment(feed.at(i).toObject(), this));
+    {
+        auto cmt = new Comment(feed.at(i).toObject(), this);
+        _comments.insert(i, cmt);
+
+        Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
+    }
 
     endInsertRows();
 
@@ -153,7 +158,12 @@ void CommentsModel::_addLastComments(const QJsonObject data)
     _comments.reserve(_comments.size() + feed.size());
 
     for (int i = 0; i < feed.size(); i++)
-        _comments << new Comment(feed.at(i).toObject(), this);
+    {
+        auto cmt = new Comment(feed.at(i).toObject(), this);
+        _comments << cmt;
+
+        Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
+    }
 
     endInsertRows();
 }
@@ -166,7 +176,10 @@ void CommentsModel::_addComment(const QJsonObject data)
 
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
 
-    _comments << new Comment(data, this);
+    auto cmt = new Comment(data, this);
+    _comments << cmt;
+
+    Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
 
     endInsertRows();
 }
@@ -187,9 +200,29 @@ void CommentsModel::_addComment(const int entryId, const Notification* notif)
 
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
 
-    _comments << new Comment(notif, this);
+    auto cmt = new Comment(notif, this);
+    _comments << cmt;
+
+    Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
 
     endInsertRows();
+}
+
+
+
+void CommentsModel::_removeComment(QObject* cmt)
+{
+    auto i = _comments.indexOf(static_cast<Comment*>(cmt));
+    if (i < 0)
+        return;
+
+    beginRemoveRows(QModelIndex(), i, i);
+
+    _comments.removeAt(i);
+
+    endRemoveRows();
+
+    _setTotalCount(_totalCount - 1);
 }
 
 

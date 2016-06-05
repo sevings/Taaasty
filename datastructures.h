@@ -235,6 +235,7 @@ private slots:
     void _init(const QJsonObject data);
     void _update(const QJsonObject data);
     void _correctHtml();
+    void _remove(const QString data);
 
 private:
     int         _id;
