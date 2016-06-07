@@ -54,7 +54,9 @@ public:
 
     Q_INVOKABLE bool isPrivate() const { return _isPrivate; }
 
+    bool hideMode() const;
     bool hideShort() const;
+    bool hideNegative() const;
 
 signals:
     void hasMoreChanged();
@@ -66,12 +68,14 @@ protected:
 private slots:
     void _addItems(QJsonObject data);
     void _changeHideShort();
+    void _changeHideNegative();
     void _setPrivate(int errorCode);
     void _setNotLoading(QObject* request);
 
 private:
     void _addAll(QList<Entry*>& all);
     bool _addLonger(QList<Entry*>& all);
+    bool _addNonNegative(QList<Entry*>& all);
 
     QList<Entry*> _entries;
     QList<Entry*> _allEntries;

@@ -99,6 +99,8 @@ public:
 
     int wordCount() const;
 
+    Rating* rating() const;
+
 public slots:
     int entryId() const { return _id; }
     void setId(const int id);
@@ -433,6 +435,8 @@ public:
     Rating(const QJsonObject data = QJsonObject(), Entry* parent = nullptr);
 
     void reCalcBayes();
+
+    int bayesRating() const;
 
 public slots:
     void vote();

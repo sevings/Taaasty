@@ -39,7 +39,7 @@ MouseArea {
             topMargin: 1 * mm
             bottomMargin: 1 * mm
             contentWidth: parent.width
-            property int buttonsCount: Tasty.isAuthorized ? 12 : 10
+            property int buttonsCount: Tasty.isAuthorized ? 13 : 11
             contentHeight: 9 * mm * buttonsCount + space.height
             Column {
                 id: column
@@ -146,6 +146,13 @@ MouseArea {
                     text: 'Скрывать короткие посты'
                     checked: Settings.hideShortPosts
                     onClicked: { Settings.hideShortPosts = !checked }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Скрывать посты с отрицательным рейтингом'
+                    checked: Settings.hideNegativeRated
+                    onClicked: { Settings.hideNegativeRated = !checked }
                 }
                 ThemedButton {
                     anchors.left: parent.left

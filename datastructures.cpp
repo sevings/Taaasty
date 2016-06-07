@@ -218,6 +218,11 @@ void Entry::_correctHtml()
     emit htmlUpdated();
 }
 
+Rating* Entry::rating() const
+{
+    return _rating;
+}
+
 
 
 int Entry::wordCount() const
@@ -693,6 +698,11 @@ void Rating::_init(const QJsonObject data)
     _isVotable  = data.value("is_voteable").toBool();
 
     emit dataChanged();
+}
+
+int Rating::bayesRating() const
+{
+    return _bayesRating;
 }
 
 

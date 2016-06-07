@@ -113,3 +113,19 @@ void Settings::setHideShortPosts(bool hide)
 
     emit hideShortPostsChanged();
 }
+
+
+
+bool Settings::hideNegativeRated() const
+{
+    return _settings.value("hide_negative_rated").toBool();
+}
+
+
+
+void Settings::setHideNegativeRated(bool hide)
+{
+    _settings.setValue("hide_negative_rated", hide);
+
+    emit hideNegativeRatedChanged();
+}

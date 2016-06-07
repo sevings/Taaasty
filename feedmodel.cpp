@@ -21,7 +21,8 @@ FeedModel::FeedModel(QObject* parent)
     , _isPrivate(false)
     , _request(nullptr)
 {
-    Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideShortPostsChanged()), this, SLOT(_changeHideShort())));
+    Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideShortPostsChanged()),    this, SLOT(_changeHideShort())));
+    Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideNegativeRatedChanged()), this, SLOT(_changeHideNegative())));
 
     setMode(LiveMode);
 }
@@ -170,13 +171,26 @@ void FeedModel::reset(Mode mode, int tlog)
     emit hasMoreChanged();
 }
 
+bool FeedModel::hideMode() const
+{
+    return (_mode == LiveMode || _mode == BestMode || _mode == ExcellentMode
+            || _mode == GoodMode || _mode == WellMode || _mode == BetterThanMode);
+}
+
 
 
 bool FeedModel::hideShort() const
 {
-    return (_mode == LiveMode || _mode == BestMode || _mode == ExcellentMode
-            || _mode == GoodMode || _mode == WellMode || _mode == BetterThanMode)
+    return hideMode()
             && Tasty::instance()->settings()->hideShortPosts();
+}
+
+
+
+bool FeedModel::hideNegative() const
+{
+    return hideMode()
+            && Tasty::instance()->settings()->hideNegativeRated();
 }
 
 
@@ -222,6 +236,8 @@ void FeedModel::_addItems(QJsonObject data)
     bool loadMore = false;
     if (hideShort())
         loadMore = _addLonger(all);
+    else if (hideNegative())
+        loadMore = _addNonNegative(all);
     else
         _addAll(all);
 
@@ -243,6 +259,28 @@ void FeedModel::_changeHideShort()
         _entries.swap(_allEntries);
         foreach(auto e, _allEntries)
             if (e->wordCount() >= 100)
+                _entries << e;
+    }
+    else if (!_allEntries.isEmpty()) // prev hide
+    {
+        _entries.clear();
+        _entries.swap(_allEntries);
+    }
+
+    endResetModel();
+}
+
+
+
+void FeedModel::_changeHideNegative()
+{
+    beginResetModel();
+
+    if (hideNegative())
+    {
+        _entries.swap(_allEntries);
+        foreach(auto e, _allEntries)
+            if (e->rating()->bayesRating() >= 0)
                 _entries << e;
     }
     else if (!_allEntries.isEmpty()) // prev hide
@@ -301,6 +339,27 @@ bool FeedModel::_addLonger(QList<Entry*>& all)
 
     beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + longer.size() - 1);
     _entries << longer;
+    endInsertRows();
+
+    return false;
+}
+
+
+
+bool FeedModel::_addNonNegative(QList<Entry*>& all)
+{
+    _allEntries << all;
+
+    QList<Entry*> nonNeg;
+    foreach (auto e, all)
+        if (e->rating()->bayesRating() >= 0)
+            nonNeg << e;
+
+    if (nonNeg.isEmpty())
+        return true;
+
+    beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + nonNeg.size() - 1);
+    _entries << nonNeg;
     endInsertRows();
 
     return false;
