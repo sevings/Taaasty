@@ -9,6 +9,7 @@
 #include "apirequest.h"
 #include "commentsmodel.h"
 #include "attachedimagesmodel.h"
+#include "bayes.h"
 
 
 
@@ -161,6 +162,8 @@ void Entry::_init(const QJsonObject data)
     auto imageAttach = data.value("image_attachments").toArray();
     delete _attachedImagesModel;
     _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
+
+    _rating->reCalcBayes();
 
     emit updated();
     emit commentsCountChanged();
@@ -598,9 +601,13 @@ void Tlog::_init(const QJsonObject data)
 
 
 
-Rating::Rating(const QJsonObject data, QObject *parent)
+Rating::Rating(const QJsonObject data, Entry* parent)
     : QObject(parent)
     , _entryId(0)
+    , _bayesRating(0)
+    , _isBayesVoted(false)
+    , _isVotedAgainst(false)
+    , _parent(parent)
 {
     _init(data);
 
@@ -609,9 +616,45 @@ Rating::Rating(const QJsonObject data, QObject *parent)
 
 
 
+void Rating::reCalcBayes()
+{
+    _bayesRating = Bayes::instance()->classify(_parent);
+    auto type = Bayes::instance()->entryVoteType(_parent);
+    if (type == Bayes::Water)
+    {
+        _isBayesVoted = false;
+        _isVotedAgainst = true;
+    }
+    else if (type == Bayes::Fire)
+    {
+        _isBayesVoted = true;
+        _isVotedAgainst = false;
+    }
+    else
+    {
+        _isBayesVoted = false;
+        _isVotedAgainst = false;
+    }
+
+    emit bayesChanged();
+}
+
+
+
 void Rating::vote()
 {
-    if (!_isVotable)
+    if (!_isBayesVoted && !_isVotedAgainst)
+    {
+        _bayesRating = Bayes::instance()->voteForEntry(_parent, Bayes::Fire);
+        _isBayesVoted = true;
+
+        emit bayesChanged();
+
+        if (_isVoted)
+            return;
+    }
+
+    if (!_isVotable || !Tasty::instance()->isAuthorized())
         return;
 
     auto url = QString("entries/%1/votes.json").arg(_entryId);
@@ -621,6 +664,19 @@ void Rating::vote()
 
     connect(request, SIGNAL(success(const QJsonObject)),
             this, SLOT(_init(const QJsonObject)));
+}
+
+
+
+void Rating::voteAgainst()
+{
+    if (_isBayesVoted || _isVotedAgainst)
+        return;
+
+    _bayesRating = Bayes::instance()->voteForEntry(_parent, Bayes::Water);
+    _isVotedAgainst = true;
+
+    emit bayesChanged();
 }
 
 

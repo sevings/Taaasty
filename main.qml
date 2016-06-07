@@ -1,5 +1,5 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick 2.3
+import QtQuick.Controls 1.2
 import org.binque.taaasty 1.0
 
 ApplicationWindow {
@@ -12,6 +12,8 @@ ApplicationWindow {
     property color secondaryTextColor: 'darkgrey'
     property color greenColor: '#00DF84'
     property color redColor: '#c00f19' // '#f3534b'
+    property color darkGreen: Qt.darker(greenColor)
+    property color darkRed: Qt.darker(redColor)
     property int fontBiggest: 30
     property int fontBigger: 25
     property int fontNormal: 20

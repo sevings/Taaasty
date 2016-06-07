@@ -2,10 +2,12 @@
 #define BAYES_H
 
 #include <QObject>
-#include <QHash>
+#include <QMap>
+#include <QSqlDatabase>
 
 class Entry;
 class Trainer;
+class StemmerV;
 
 
 
@@ -23,8 +25,9 @@ public:
 
     static Bayes* instance(QObject* parent = nullptr);
 
-    int classify(const Entry* entry, const int minLength = 0);
+    int classify(const Entry* entry, const int minLength = 0) const;
     int voteForEntry(const Entry* entry, const Type type);
+    int entryVoteType(const Entry* entry) const;
 
     Trainer* trainer();
 
@@ -50,19 +53,21 @@ private:
     void _loadDb();
     void _saveDb();
 
-    bool _isEntryAdded(int id);
+    bool _isEntryAdded(int id) const;
 
-    int _calcText(QString text, QHash<QString, FeatureCount>& wordCounts);
-    int _calcEntry(const Entry* entry, QHash<QString, FeatureCount>& wordCounts, const int minLength = 0);
+    int _calcText(QString text, QMap<QString, FeatureCount>& wordCounts) const;
+    int _calcEntry(const Entry* entry, QMap<QString, FeatureCount>& wordCounts, const int minLength = 0) const;
     int _addEntry(const Entry* entry, const Type type);
 
-    QHash<QString, FeatureCount> _wordCounts[2];
-    QHash<int, bool>             _entriesChanged[2];
+    QMap<QString, FeatureCount> _wordCounts[2];
+    QMap<int, bool>             _entriesChanged[2];
     int                          _total[2];
 
     bool _loaded;
 
     Trainer* _trainer;
+    StemmerV* _stemmer;
+    QSqlDatabase _db;
 };
 
 #endif // BAYES_H

@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     trainer.cpp \
     calendarmodel.cpp \
     cache/cachemanager.cpp \
-    cache/cachedimage.cpp
+    cache/cachedimage.cpp \
+    stemmerv.cpp
 
 RESOURCES += qml.qrc
 
@@ -45,7 +46,8 @@ HEADERS += \
     calendarmodel.h \
     cache/cachemanager.h \
     cache/cachedimage.h \
-    defines.h
+    defines.h \
+    stemmerv.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

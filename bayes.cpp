@@ -1,11 +1,11 @@
 #include "bayes.h"
 
-#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
 #include <QRegularExpression>
 #include <QtMath>
+#include <QStandardPaths>
 
 #ifdef QT_DEBUG
 #   include <QDateTime>
@@ -15,6 +15,7 @@
 
 #include "datastructures.h"
 #include "trainer.h"
+#include "stemmerv.h"
 
 
 
@@ -22,6 +23,7 @@ Bayes::Bayes(QObject *parent)
     : QObject(parent)
     , _loaded(false)
     , _trainer(nullptr)
+    , _stemmer(StemmerV::instance())
 
 {
     _total[Water] = 0;
@@ -47,13 +49,13 @@ Bayes *Bayes::instance(QObject *parent)
 
 
 
-int Bayes::classify(const Entry *entry, const int minLength)
+int Bayes::classify(const Entry *entry, const int minLength) const
 {
     if (!_total[Water] || !_total[Fire])
         return 0;
 
     float values[2];
-    QHash<QString, Bayes::FeatureCount> features;
+    QMap<QString, Bayes::FeatureCount> features;
     int length = _calcEntry(entry, features, minLength);
     if (length < 0)
         return length;
@@ -86,11 +88,24 @@ int Bayes::voteForEntry(const Entry *entry, const Bayes::Type type)
 
 
 
+int Bayes::entryVoteType(const Entry* entry) const
+{
+    if (_entriesChanged[Water].contains(entry->_id))
+        return Bayes::Water;
+
+    if (_entriesChanged[Fire].contains(entry->_id))
+        return Bayes::Fire;
+
+    return -1;
+}
+
+
+
 void Bayes::_initDb()
 {
-    auto db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("bayes");
-    Q_TEST(db.open());
+    _db = QSqlDatabase::addDatabase("QSQLITE");
+    _db.setDatabaseName(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/bayes");
+    Q_TEST(_db.open());
 
     QSqlQuery query;
     Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes         (type INTEGER, word TEXT, total INTEGER, PRIMARY KEY(type, word))"));
@@ -106,6 +121,8 @@ void Bayes::_loadDb()
 
     _initDb();
 
+    Q_TEST(_db.transaction());
+
     QSqlQuery query;
     Q_TEST(query.exec("SELECT type, word, total FROM bayes"));
     while (query.next())
@@ -120,6 +137,10 @@ void Bayes::_loadDb()
     while (query.next())
         _entriesChanged[query.value(0).toInt()][query.value(1).toInt()] = false;
 
+    query.finish();
+
+    Q_TEST(_db.commit());
+
     _loaded = true;
 }
 
@@ -133,6 +154,8 @@ void Bayes::_saveDb()
 #ifdef QT_DEBUG
     auto now = QDateTime::currentDateTime().toMSecsSinceEpoch();
 #endif
+
+    Q_TEST(_db.transaction());
 
     QSqlQuery query;
     for (int type = 0; type < 2; type++)
@@ -159,6 +182,10 @@ void Bayes::_saveDb()
             }
     }
 
+    query.finish();
+
+    Q_TEST(_db.commit());
+
 #ifdef QT_DEBUG
     auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
     qDebug() << "Saved in" << ms << "ms";
@@ -167,7 +194,7 @@ void Bayes::_saveDb()
 
 
 
-bool Bayes::_isEntryAdded(int id)
+bool Bayes::_isEntryAdded(int id) const
 {
     return _entriesChanged[Water].contains(id)
             || _entriesChanged[Fire].contains(id);
@@ -175,7 +202,7 @@ bool Bayes::_isEntryAdded(int id)
 
 
 
-int Bayes::_calcText(QString text, QHash<QString, Bayes::FeatureCount>& wordCounts)
+int Bayes::_calcText(QString text, QMap<QString, Bayes::FeatureCount>& wordCounts) const
 {
     if (text.isEmpty())
         return 0;
@@ -203,12 +230,9 @@ int Bayes::_calcText(QString text, QHash<QString, Bayes::FeatureCount>& wordCoun
             ++wordCounts[".wrong_spaces"];
     }
 
-    auto words = text.split(QRegularExpression("[^a-zA-Zа-яА-ЯёЁ]+"), QString::SkipEmptyParts);
+    auto words = _stemmer->stem(text);
     foreach (auto word, words)
-    {
-//        word = Stemmer.stem(word);
         ++wordCounts[word];
-    }
 
     length += words.size();
     return length;
@@ -216,7 +240,7 @@ int Bayes::_calcText(QString text, QHash<QString, Bayes::FeatureCount>& wordCoun
 
 
 
-int Bayes::_calcEntry(const Entry *entry, QHash<QString, Bayes::FeatureCount> &wordCounts, const int minLength)
+int Bayes::_calcEntry(const Entry *entry, QMap<QString, Bayes::FeatureCount> &wordCounts, const int minLength) const
 {
     int content = _calcText(entry->_text, wordCounts);
     int title   = _calcText(entry->_title, wordCounts);
@@ -262,7 +286,7 @@ int Bayes::_addEntry(const Entry *entry, const Bayes::Type type)
     if (_isEntryAdded(entry->_id))
         return 0;
 
-    _entriesChanged[type].insert(entry->_id, false);
+    _entriesChanged[type][entry->_id] =  true;
     return _calcEntry(entry, _wordCounts[type]);
 }
 

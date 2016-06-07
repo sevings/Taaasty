@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.3
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -201,9 +201,9 @@ Rectangle {
                 anchors.right: parent.right
                 width: parent.width / 4
                 height: entryAvatar.height
-                text: '+ ' + entry.rating.votes
-                visible: entry.isVotable && Tasty.isAuthorized
-                enabled: entry.rating.isVotable
+                text: '+' + (entry.isVotable ? ' ' + entry.rating.votes : '')
+//                visible: entry.isVotable && Tasty.isAuthorized
+                enabled: entry.rating.isVotable || !entry.rating.isBayesVoted
                 checked: entry.rating.isVoted
                 fontSize: 20
                 onClicked: {
@@ -215,11 +215,52 @@ Rectangle {
                     entry.rating.vote();
                 }
             }
+            ThemedButton {
+                id: entryVoteAgainstButton
+                anchors.top: nick.bottom
+                anchors.right: entryVoteButton.left
+                anchors.bottom: br.top
+                width: parent.width / 5
+                text: '-'
+//                visible: entry.isVotable && Tasty.isAuthorized
+                enabled: !entry.rating.isBayesVoted && !entry.rating.isVotedAgainst
+//                checked: entry.rating.isVotedAgainst
+                fontSize: 20
+                onClicked: {
+                    if (back.x > 0) {
+                        mouse.accepted = false;
+                        return;
+                    }
+
+                    entry.rating.voteAgainst();
+                }
+            }
+            Rectangle {
+                id: br
+                anchors.left: parent.left
+                anchors.top: entryAvatar.bottom
+                anchors.margins: 1 * mm
+                height: 0.5 * mm
+                property int maxWidth: window.width - 2 * mm
+                property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
+                width: length < maxWidth ? length : maxWidth
+                color: entry.rating.bayesRating > 0 ? window.darkGreen : window.darkRed
+                Behavior on width {
+                    NumberAnimation {
+                        duration: 300
+                    }
+                }
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 300
+                    }
+                }
+            }
             MyImage {
                 id: firstImage
                 property AttachedImage image: entry.attachedImagesModel.first()
                 visible: image
-                anchors.top: entryAvatar.bottom
+                anchors.top: br.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.topMargin: 1 * mm
