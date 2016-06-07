@@ -113,8 +113,8 @@ Rectangle {
             id: entryView
             width: window.width
             property color fontColor: window.textColor
-            height: 13 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
-                    + firstImage.height + quoteSource.height + repostText.height + mediaLink.height
+            height: 15 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
+                    + firstImage.height + quoteSource.height + repostText.height + mediaLink.height + br.height + wc.height
             function saveCurrentIndex() {
                 listView.currentIndex = listView.indexAt(entryView.x + 1, entryView.y + 1);
             }
@@ -130,9 +130,41 @@ Rectangle {
                     entryClicked(entry);
                 }
             }
+            Rectangle {
+                id: br
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.margins: 1 * mm
+                height: 0.5 * mm
+                property int maxWidth: window.width - 2 * mm
+                property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
+                width: length < maxWidth ? length : maxWidth
+                color: entry.rating.bayesRating > 0 ? window.darkGreen : window.darkRed
+                Behavior on width {
+                    NumberAnimation {
+                        duration: 300
+                    }
+                }
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 300
+                    }
+                }
+            }
+            Rectangle {
+                id: wc
+                anchors.left: parent.left
+                anchors.top: br.bottom
+                anchors.margins: 1 * mm
+                height: 0.5 * mm
+                property int maxWidth: window.width - 2 * mm
+                property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
+                width: length < maxWidth ? length : maxWidth
+                color: window.secondaryTextColor
+            }
             Text {
                 id: repostText
-                anchors.top: parent.top
+                anchors.top: wc.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 1 * mm
@@ -219,8 +251,8 @@ Rectangle {
                 id: entryVoteAgainstButton
                 anchors.top: nick.bottom
                 anchors.right: entryVoteButton.left
-                anchors.bottom: br.top
-                width: parent.width / 5
+                anchors.bottom: firstImage.top
+                width: parent.width / 6
                 text: '-'
 //                visible: entry.isVotable && Tasty.isAuthorized
                 enabled: !entry.rating.isBayesVoted && !entry.rating.isVotedAgainst
@@ -235,32 +267,11 @@ Rectangle {
                     entry.rating.voteAgainst();
                 }
             }
-            Rectangle {
-                id: br
-                anchors.left: parent.left
-                anchors.top: entryAvatar.bottom
-                anchors.margins: 1 * mm
-                height: 0.5 * mm
-                property int maxWidth: window.width - 2 * mm
-                property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
-                width: length < maxWidth ? length : maxWidth
-                color: entry.rating.bayesRating > 0 ? window.darkGreen : window.darkRed
-                Behavior on width {
-                    NumberAnimation {
-                        duration: 300
-                    }
-                }
-                Behavior on color {
-                    ColorAnimation {
-                        duration: 300
-                    }
-                }
-            }
             MyImage {
                 id: firstImage
                 property AttachedImage image: entry.attachedImagesModel.first()
                 visible: image
-                anchors.top: br.bottom
+                anchors.top: entryAvatar.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.topMargin: 1 * mm
@@ -338,17 +349,6 @@ Rectangle {
                 textFormat: Text.RichText
                 height: entry.source.length > 0 ? contentHeight : 0
                 horizontalAlignment: Text.AlignRight
-            }
-            Rectangle {
-                id: wc
-                anchors.left: parent.left
-                anchors.verticalCenter: comments.verticalCenter
-                anchors.margins: 1 * mm
-                height: 0.5 * mm
-                property int maxWidth: comments.x - 2 * mm
-                property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
-                width: length < maxWidth ? length : maxWidth
-                color: window.secondaryTextColor
             }
             Text {
                 id: comments

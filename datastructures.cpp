@@ -685,7 +685,7 @@ void Rating::_init(const QJsonObject data)
 {
     int id = data.value("entry_id").toInt();
     if (id)
-        _entryId    = id;
+        _entryId = id;
 
     _votes      = data.value("votes").toInt();
     _rating     = data.value("rating").toInt();
