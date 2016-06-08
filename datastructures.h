@@ -440,6 +440,7 @@ public:
 
 public slots:
     void vote();
+    void voteBayes();
     void voteAgainst();
 
 signals:

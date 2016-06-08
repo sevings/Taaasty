@@ -623,7 +623,6 @@ Rating::Rating(const QJsonObject data, Entry* parent)
 
 void Rating::reCalcBayes()
 {
-    _bayesRating = Bayes::instance()->classify(_parent);
     auto type = Bayes::instance()->entryVoteType(_parent);
     if (type == Bayes::Water)
     {
@@ -639,8 +638,15 @@ void Rating::reCalcBayes()
     {
         _isBayesVoted = false;
         _isVotedAgainst = false;
+
+        if (_isVoted)
+        {
+            voteBayes();
+            return;
+        }
     }
 
+    _bayesRating = Bayes::instance()->classify(_parent);
     emit bayesChanged();
 }
 
@@ -648,16 +654,7 @@ void Rating::reCalcBayes()
 
 void Rating::vote()
 {
-    if (!_isBayesVoted && !_isVotedAgainst)
-    {
-        _bayesRating = Bayes::instance()->voteForEntry(_parent, Bayes::Fire);
-        _isBayesVoted = true;
-
-        emit bayesChanged();
-
-        if (_isVoted)
-            return;
-    }
+    voteBayes();
 
     if (!_isVotable || !Tasty::instance()->isAuthorized())
         return;
@@ -669,6 +666,21 @@ void Rating::vote()
 
     connect(request, SIGNAL(success(const QJsonObject)),
             this, SLOT(_init(const QJsonObject)));
+}
+
+
+
+void Rating::voteBayes()
+{
+    if (_isBayesVoted || _isVotedAgainst)
+        return;
+
+    _bayesRating = Bayes::instance()->voteForEntry(_parent, Bayes::Fire);
+    _isBayesVoted = true;
+
+    emit bayesChanged();
+
+    qDebug() << "voted";
 }
 
 

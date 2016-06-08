@@ -6,6 +6,7 @@
 #include <QRegularExpression>
 #include <QtMath>
 #include <QStandardPaths>
+#include <QTimer>
 
 #ifdef QT_DEBUG
 #   include <QDateTime>
@@ -24,10 +25,17 @@ Bayes::Bayes(QObject *parent)
     , _loaded(false)
     , _trainer(nullptr)
     , _stemmer(StemmerV::instance())
+    , _saveTimer(new QTimer(this))
 
 {
     _total[Water] = 0;
     _total[Fire]  = 0;
+
+    _saveTimer->setInterval(240000);
+    _saveTimer->setSingleShot(false);
+    _saveTimer->start();
+
+    Q_TEST(connect(_saveTimer, SIGNAL(timeout()), this, SLOT(_saveDb())));
 
     _loadDb();
 }
@@ -101,51 +109,6 @@ int Bayes::entryVoteType(const Entry* entry) const
 
 
 
-void Bayes::_initDb()
-{
-    _db = QSqlDatabase::addDatabase("QSQLITE");
-    _db.setDatabaseName(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/bayes");
-    Q_TEST(_db.open());
-
-    QSqlQuery query;
-    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes         (type INTEGER, word TEXT, total INTEGER, PRIMARY KEY(type, word))"));
-    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes_entries (type INTEGER, entry INTEGER, PRIMARY KEY(entry))"));
-}
-
-
-
-void Bayes::_loadDb()
-{
-    if (_loaded)
-        return;
-
-    _initDb();
-
-    Q_TEST(_db.transaction());
-
-    QSqlQuery query;
-    Q_TEST(query.exec("SELECT type, word, total FROM bayes"));
-    while (query.next())
-        _wordCounts[query.value(0).toInt()][query.value(1).toString()]
-                = FeatureCount(query.value(2).toInt());
-
-    Q_TEST(query.exec("SELECT type, sum(total) AS \"total\" FROM bayes GROUP BY type"));
-    while (query.next())
-        _total[query.value(0).toInt()] = query.value(1).toInt();
-
-    Q_TEST(query.exec("SELECT type, entry FROM bayes_entries"));
-    while (query.next())
-        _entriesChanged[query.value(0).toInt()][query.value(1).toInt()] = false;
-
-    query.finish();
-
-    Q_TEST(_db.commit());
-
-    _loaded = true;
-}
-
-
-
 void Bayes::_saveDb()
 {
     if (!_loaded)
@@ -190,6 +153,51 @@ void Bayes::_saveDb()
     auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
     qDebug() << "Saved in" << ms << "ms";
 #endif
+}
+
+
+
+void Bayes::_initDb()
+{
+    _db = QSqlDatabase::addDatabase("QSQLITE");
+    _db.setDatabaseName(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/bayes");
+    Q_TEST(_db.open());
+
+    QSqlQuery query;
+    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes         (type INTEGER, word TEXT, total INTEGER, PRIMARY KEY(type, word))"));
+    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes_entries (type INTEGER, entry INTEGER, PRIMARY KEY(entry))"));
+}
+
+
+
+void Bayes::_loadDb()
+{
+    if (_loaded)
+        return;
+
+    _initDb();
+
+    Q_TEST(_db.transaction());
+
+    QSqlQuery query;
+    Q_TEST(query.exec("SELECT type, word, total FROM bayes"));
+    while (query.next())
+        _wordCounts[query.value(0).toInt()][query.value(1).toString()]
+                = FeatureCount(query.value(2).toInt());
+
+    Q_TEST(query.exec("SELECT type, sum(total) AS \"total\" FROM bayes GROUP BY type"));
+    while (query.next())
+        _total[query.value(0).toInt()] = query.value(1).toInt();
+
+    Q_TEST(query.exec("SELECT type, entry FROM bayes_entries"));
+    while (query.next())
+        _entriesChanged[query.value(0).toInt()][query.value(1).toInt()] = false;
+
+    query.finish();
+
+    Q_TEST(_db.commit());
+
+    _loaded = true;
 }
 
 

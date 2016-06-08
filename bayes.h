@@ -9,6 +9,8 @@ class Entry;
 class Trainer;
 class StemmerV;
 
+class QTimer;
+
 
 
 class Bayes : public QObject
@@ -35,6 +37,9 @@ signals:
 
 public slots:
 
+private slots:
+    void _saveDb();
+
 private:
     struct FeatureCount {
         FeatureCount(quint16 c = 0)
@@ -51,7 +56,6 @@ private:
 
     void _initDb();
     void _loadDb();
-    void _saveDb();
 
     bool _isEntryAdded(int id) const;
 
@@ -68,6 +72,7 @@ private:
     Trainer* _trainer;
     StemmerV* _stemmer;
     QSqlDatabase _db;
+    QTimer* _saveTimer;
 };
 
 #endif // BAYES_H

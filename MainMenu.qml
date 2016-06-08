@@ -150,7 +150,7 @@ MouseArea {
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    text: 'Скрывать посты с отрицательным рейтингом'
+                    text: 'Включить НБК'
                     checked: Settings.hideNegativeRated
                     onClicked: { Settings.hideNegativeRated = !checked }
                 }
