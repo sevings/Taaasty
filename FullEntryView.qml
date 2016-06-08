@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.3
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -202,16 +202,35 @@ Rectangle {
                 anchors.margins: 1 * mm
                 font.pointSize: window.fontSmallest
             }
-            ThemedButton {
-                id: fullEntryFavButton
+            Rectangle {
+                id: br
                 anchors.top: fullEntryDate.bottom
                 anchors.left: parent.left
                 anchors.margins: 1 * mm
-                anchors.topMargin: 2 * mm
+                height: 0.5 * mm
+                property int maxWidth: window.width - 2 * mm
+                property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
+                width: length < maxWidth ? length : maxWidth
+                color: entry.rating.bayesRating > 0 ? window.darkGreen : window.darkRed
+                Behavior on width {
+                    NumberAnimation {
+                        duration: 300
+                    }
+                }
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 300
+                    }
+                }
+            }
+            ThemedButton {
+                id: fullEntryFavButton
+                anchors.top: br.bottom
+                anchors.left: parent.left
+                anchors.margins: 1 * mm
                 text: '*'
                 height: 6 * mm
-                width: (parent.width - 4 * mm) / 3
-                fontSize: 20
+                width: (parent.width - 5 * mm) / 4
                 visible: entry.isFavoritable && Tasty.isAuthorized
                 checked: entry.isFavorited
 //            enabled: !fullEntry.favorited
@@ -219,31 +238,38 @@ Rectangle {
             }
             ThemedButton {
                 id: fullEntryWatchButton
-                anchors.top: fullEntryDate.bottom
+                anchors.top: br.bottom
                 anchors.left: fullEntryFavButton.right
                 anchors.margins: 1 * mm
-                anchors.topMargin: 2 * mm
                 text: 'V'
                 height: 6 * mm
                 width: fullEntryFavButton.width
-                fontSize: fullEntryFavButton.fontSize
                 visible: entry.isWatchable && Tasty.isAuthorized
                 checked: entry.isWatched
 //              enabled: entry.isWatchable
                 onClicked: entry.watch()
             }
             ThemedButton {
-                id: fullEntryVoteButton
-                anchors.top: fullEntryDate.bottom
+                id: fullEntryVoteAgainstButton
+                anchors.top: br.bottom
                 anchors.left: fullEntryWatchButton.right
+                anchors.margins: 1 * mm
+                text: '-'
+                height: 6 * mm
+                width: fullEntryFavButton.width
+                enabled: !entry.rating.isBayesVoted && !entry.rating.isVotedAgainst
+                onClicked: entry.rating.voteAgainst()
+            }
+            ThemedButton {
+                id: fullEntryVoteButton
+                anchors.top: br.bottom
+                anchors.left: fullEntryVoteAgainstButton.right
                 anchors.right: parent.right
                 anchors.margins: 1 * mm
-                anchors.topMargin: 2 * mm
-                text: '+ ' + entry.rating.votes
+                text: '+' + (entry.isVotable ? ' ' + entry.rating.votes : '')
                 height: 6 * mm
                 fontSize: fullEntryFavButton.fontSize
-                visible: entry.isVotable && Tasty.isAuthorized
-                enabled: entry.rating.isVotable
+                enabled: entry.rating.isVotable || (!entry.rating.isBayesVoted && !entry.isVotedAgainst)
                 checked: entry.rating.isVoted
                 onClicked: entry.rating.vote()
             }

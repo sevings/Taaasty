@@ -113,7 +113,7 @@ ApplicationWindow {
         id: menu
         visible: stack.depth === 1 && stack.currentItem && stack.currentItem.x > 0
         onModeChanged: {
-            stack.currentItem.setMode(mode, 192479);
+            stack.currentItem.setMode(mode, 166096);
 
             backAnimation.start();
             setFooterFromStack();

@@ -114,7 +114,8 @@ Rectangle {
             width: window.width
             property color fontColor: window.textColor
             height: 15 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
-                    + firstImage.height + quoteSource.height + repostText.height + mediaLink.height + br.height + wc.height
+                    + firstImage.height + quoteSource.height + repostText.height
+                    + mediaLink.height + entryVoteButton.height
             function saveCurrentIndex() {
                 listView.currentIndex = listView.indexAt(entryView.x + 1, entryView.y + 1);
             }
@@ -130,41 +131,9 @@ Rectangle {
                     entryClicked(entry);
                 }
             }
-            Rectangle {
-                id: br
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.margins: 1 * mm
-                height: 0.5 * mm
-                property int maxWidth: window.width - 2 * mm
-                property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
-                width: length < maxWidth ? length : maxWidth
-                color: entry.rating.bayesRating > 0 ? window.darkGreen : window.darkRed
-                Behavior on width {
-                    NumberAnimation {
-                        duration: 300
-                    }
-                }
-                Behavior on color {
-                    ColorAnimation {
-                        duration: 300
-                    }
-                }
-            }
-            Rectangle {
-                id: wc
-                anchors.left: parent.left
-                anchors.top: br.bottom
-                anchors.margins: 1 * mm
-                height: 0.5 * mm
-                property int maxWidth: window.width - 2 * mm
-                property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
-                width: length < maxWidth ? length : maxWidth
-                color: window.secondaryTextColor
-            }
             Text {
                 id: repostText
-                anchors.top: wc.bottom
+                anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 1 * mm
@@ -212,7 +181,7 @@ Rectangle {
                 font.pointSize: window.fontSmaller
                 anchors.top: repostText.bottom
                 anchors.left: entryAvatar.right
-                anchors.right: entryVoteButton.left
+                anchors.right: parent.right
                 anchors.margins: 1 * mm
                 elide: Text.AlignRight
                 horizontalAlignment: Text.AlignLeft
@@ -224,48 +193,9 @@ Rectangle {
                 font.pointSize: window.fontSmallest
                 anchors.top: nick.bottom
                 anchors.left: entryAvatar.right
-//                anchors.bottom: entryAvatar.bottom
-                anchors.margins: 1 * mm
-            }
-            ThemedButton {
-                id: entryVoteButton
-                anchors.top: repostText.bottom
                 anchors.right: parent.right
-                width: parent.width / 4
-                height: entryAvatar.height
-                text: '+' + (entry.isVotable ? ' ' + entry.rating.votes : '')
-//                visible: entry.isVotable && Tasty.isAuthorized
-                enabled: entry.rating.isVotable || !entry.rating.isBayesVoted
-                checked: entry.rating.isVoted
-                fontSize: 20
-                onClicked: {
-                    if (back.x > 0) {
-                        mouse.accepted = false;
-                        return;
-                    }
-
-                    entry.rating.vote();
-                }
-            }
-            ThemedButton {
-                id: entryVoteAgainstButton
-                anchors.top: nick.bottom
-                anchors.right: entryVoteButton.left
-                anchors.bottom: firstImage.top
-                width: parent.width / 6
-                text: '-'
-//                visible: entry.isVotable && Tasty.isAuthorized
-                enabled: !entry.rating.isBayesVoted && !entry.rating.isVotedAgainst
-//                checked: entry.rating.isVotedAgainst
-                fontSize: 20
-                onClicked: {
-                    if (back.x > 0) {
-                        mouse.accepted = false;
-                        return;
-                    }
-
-                    entry.rating.voteAgainst();
-                }
+                anchors.margins: 1 * mm
+                elide: Text.AlignRight
             }
             MyImage {
                 id: firstImage
@@ -359,6 +289,93 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.margins: 1 * mm
 //                anchors.bottomMargin: 4 * mm // spacing
+            }
+            Rectangle {
+                id: br
+                anchors.left: parent.left
+                anchors.bottom: comments.verticalCenter
+                anchors.leftMargin: 1 * mm
+                anchors.bottomMargin: 0.2 * mm
+                height: 0.5 * mm
+                property int maxWidth: comments.x - 2 * mm
+                property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
+                width: length < maxWidth ? length : maxWidth
+                color: entry.rating.bayesRating > 0 ? window.darkGreen : window.darkRed
+                Behavior on width {
+                    NumberAnimation {
+                        duration: 300
+                    }
+                }
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 300
+                    }
+                }
+            }
+            Rectangle {
+                id: wc
+                anchors.left: parent.left
+                anchors.top: comments.verticalCenter
+                anchors.leftMargin: 1 * mm
+                anchors.topMargin: 0.2 * mm
+                height: 0.5 * mm
+                property int maxWidth: comments.x - 2 * mm
+                property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
+                width: length < maxWidth ? length : maxWidth
+                color: window.secondaryTextColor
+            }
+            ThemedButton {
+                id: entryVoteButton
+                anchors.top: comments.bottom
+                anchors.right: parent.right
+                width: parent.width / 3
+                height: 6 * mm
+                text: 'Да!'
+//                visible: entry.isVotable && Tasty.isAuthorized
+                enabled: entry.rating.isVotable || (!entry.rating.isBayesVoted && !entry.isVotedAgainst)
+                checked: entry.rating.isVoted
+                onClicked: {
+                    if (back.x > 0) {
+                        mouse.accepted = false;
+                        return;
+                    }
+
+                    entry.rating.vote();
+                }
+            }
+            ThemedButton {
+                id: entryVoteAgainstButton
+                anchors.top: comments.bottom
+                anchors.left: parent.left
+                height: entryVoteButton.height
+                width: parent.width / 3
+                text: 'Фу…'
+//                visible: entry.isVotable && Tasty.isAuthorized
+                enabled: !entry.rating.isBayesVoted && !entry.rating.isVotedAgainst
+//                checked: entry.rating.isVotedAgainst
+                fontSize: 20
+                onClicked: {
+                    if (back.x > 0) {
+                        mouse.accepted = false;
+                        return;
+                    }
+
+                    entry.rating.voteAgainst();
+                }
+            }
+            Text {
+                id: entryRating
+                text: entry.isVotable ? '+ ' + entry.rating.votes : ''
+                anchors.top: comments.bottom
+                anchors.left: entryVoteAgainstButton.right
+                anchors.right: entryVoteButton.left
+                anchors.margins: 1 * mm
+                wrapMode: Text.Wrap
+                font.pointSize: window.fontNormal
+                color: parent.fontColor
+                height: entryVoteButton.height
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
             }
         }
     }
