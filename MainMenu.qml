@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.3
 import org.binque.taaasty 1.0
 
 MouseArea {
@@ -10,6 +10,7 @@ MouseArea {
     propagateComposedEvents: true
     enabled: false
     signal modeChanged(int mode)
+    signal tlogRequested
     signal settingsRequested
     signal waterTlogsRequested
     signal fireTlogsRequested
@@ -98,6 +99,12 @@ MouseArea {
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    text: 'По рейтингу'
+                    onClicked: { modeChanged(FeedModel.BetterThanMode) }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     text: 'Избранное'
                     onClicked: { modeChanged(FeedModel.FavoritesMode) }
                     visible: Tasty.isAuthorized
@@ -106,7 +113,7 @@ MouseArea {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     text: 'Тлог'
-                    onClicked: { modeChanged(FeedModel.TlogMode) }
+                    onClicked: { tlogRequested() }
                 }
                 Item {
                     id: space

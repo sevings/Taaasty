@@ -55,6 +55,14 @@ ApplicationWindow {
     function hideFooter() {
         footer.state = "closed";
     }
+    function showLineInput() {
+        lineInput.state = "opened";
+        lineInput.forceActiveFocus();
+    }
+    function hideLineInput() {
+        lineInput.state = "closed";
+        lineInput.clear();
+    }
     function setFooterTlog(tlog) {
         if (!tlog)
             tlog = emptyTlog;
@@ -113,10 +121,14 @@ ApplicationWindow {
         id: menu
         visible: stack.depth === 1 && stack.currentItem && stack.currentItem.x > 0
         onModeChanged: {
-            stack.currentItem.setMode(mode, 166096);
+            stack.currentItem.setMode(mode);
 
             backAnimation.start();
             setFooterFromStack();
+        }
+        onTlogRequested: {
+            backAnimation.start();
+            showLineInput();
         }
         onVisibleChanged: {
             window.hideFooter();
@@ -431,6 +443,14 @@ ApplicationWindow {
                                tlog: tlog
                            }
                        })
+        }
+    }
+    LineInput {
+        id: lineInput
+        onAccepted: {
+            stack.currentItem.setMode(FeedModel.TlogMode, undefined, lineInput.text);
+            hideLineInput();
+            setFooterFromStack();
         }
     }
     Dialog {

@@ -330,15 +330,18 @@ Rectangle {
         visible: y < parent.height
         height: menuColumn.height + 2 * mm
         color: window.backgroundColor
+        border.color: window.secondaryTextColor
+        border.width: 0.2 * mm
+        radius: 0.8 * mm
         state: "closed"
         property Comment comment: Comment { }
         function close() {
             state = "closed";
         }
         function show(cmt) {
+            menu.comment = cmt;
             window.hideFooter();
             state = "opened";
-            menu.comment = cmt;
         }
         states: [
             State {

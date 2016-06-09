@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.3
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -43,13 +43,19 @@ Rectangle {
     signal entryClicked(TlogEntry entry)
     signal avatarClicked(Tlog tlog, Author author)
     signal flowClicked(int flowId)
-    function setMode(m, t) {
+    function setMode(m, t, s) {
         if (mode === m)
-            feedModel.reset(m, t);
+            feedModel.reset(m, t, s);
         else {
             mode = m;
             if (m === FeedModel.TlogMode)
-                tlogId = t;
+            {
+                console.log(t, s);
+                if (t && t > 0)
+                    tlogId = t;
+                if (s)
+                    slug = s;
+            }
         }
     }
     Poppable {
@@ -88,6 +94,7 @@ Rectangle {
             id: feedModel
             mode: back.mode
             tlog: back.tlogId
+            slug: back.slug
         }
 //        header: Item {
 //            anchors.left: parent.left
@@ -261,7 +268,7 @@ Rectangle {
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontNormal
                 color: parent.fontColor
-                textFormat: Text.PlainText
+                textFormat: Text.RichText
                 height: entry.truncatedText.length > 0 ? contentHeight
                                                        : entry.truncatedTitle.length > 0 ? -2 * mm : 0
             }
@@ -332,8 +339,8 @@ Rectangle {
                 height: 6 * mm
                 text: 'Да!'
 //                visible: entry.isVotable && Tasty.isAuthorized
-                enabled: entry.rating.isVotable || (!entry.rating.isBayesVoted && !entry.isVotedAgainst)
-                checked: entry.rating.isVoted
+//                enabled: entry.rating.isVotable || (!entry.rating.isBayesVoted && !entry.isVotedAgainst)
+                checked: entry.rating.isVoted || entry.rating.isBayesVoted
                 onClicked: {
                     if (back.x > 0) {
                         mouse.accepted = false;
@@ -352,7 +359,7 @@ Rectangle {
                 text: 'Фу…'
 //                visible: entry.isVotable && Tasty.isAuthorized
                 enabled: !entry.rating.isBayesVoted && !entry.rating.isVotedAgainst
-//                checked: entry.rating.isVotedAgainst
+                checked: entry.rating.isVotedAgainst
                 fontSize: 20
                 onClicked: {
                     if (back.x > 0) {

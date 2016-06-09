@@ -62,27 +62,36 @@ int Bayes::classify(const Entry *entry, const int minLength) const
     if (!_total[Water] || !_total[Fire])
         return 0;
 
-    float values[2];
     QMap<QString, Bayes::FeatureCount> features;
     int length = _calcEntry(entry, features, minLength);
     if (length < 0)
         return length;
 
-    for (int type = 0; type < 2; type++)
+    float wordValues[Unclassified];
+    float featureValues[Unclassified];
+    for (int type = 0; type < Unclassified; type++)
     {
         auto k = (_total[Water] + _total[Fire]) / (float) _total[type];
-        values[type] = 0;
+
+        wordValues[type] = 0;
+        featureValues[type] = 0;
         foreach (auto word, features.keys())
         {
             int cnt = _wordCounts[type][word].count;
             if (cnt <= 0)
                 continue;
 
-            values[type] += qLn(cnt * k);
+            auto value = qLn(cnt * k);
+            if (word.startsWith('.'))
+                featureValues[type] += value;
+            else
+                wordValues[type] += value;
+
         }
     }
 
-    auto result = (values[Fire] - values[Water]) / length * 50;
+    auto result = (wordValues[Fire] - wordValues[Water]) / length * 50;
+    result += (featureValues[Fire] - featureValues[Water]) / 5;
     return qRound(result);
 }
 
@@ -121,7 +130,7 @@ void Bayes::_saveDb()
     Q_TEST(_db.transaction());
 
     QSqlQuery query;
-    for (int type = 0; type < 2; type++)
+    for (int type = 0; type < Unclassified; type++)
     {
         foreach (auto word, _wordCounts[type].keys())
             if (_wordCounts[type][word].changed)

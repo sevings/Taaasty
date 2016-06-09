@@ -125,6 +125,7 @@ private slots:
     void _changeWatched(const QJsonObject data);
     void _changeFavorited(const QJsonObject data);
     void _setCommentsCount(int tc);
+    void _setWatched();
     void _correctHtml();
 
 private:
@@ -443,12 +444,11 @@ public slots:
     void voteBayes();
     void voteAgainst();
 
+    void init(const QJsonObject data);
+
 signals:
     void dataChanged();
     void bayesChanged();
-
-private slots:
-    void _init(const QJsonObject data);
 
 private:
     int  _entryId;

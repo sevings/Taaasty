@@ -80,6 +80,7 @@ void Entry::addComment(const QString text)
     qDebug() << data;
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(commentAdded(const QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_setWatched())));
 }
 
 
@@ -206,6 +207,17 @@ void Entry::_setCommentsCount(int tc)
 {
     _commentsCount = tc;
     emit commentsCountChanged();
+}
+
+
+
+void Entry::_setWatched()
+{
+    if (_isWatched || !_isWatchable)
+        return;
+
+    _isWatched = true;
+    emit watchedChanged();
 }
 
 
@@ -614,9 +626,9 @@ Rating::Rating(const QJsonObject data, Entry* parent)
     , _isVotedAgainst(false)
     , _parent(parent)
 {
-    _init(data);
+    init(data);
 
-    Q_TEST(connect(Tasty::instance(), SIGNAL(ratingChanged(QJsonObject)), this, SLOT(_init(QJsonObject))));
+    Q_TEST(connect(Tasty::instance(), SIGNAL(ratingChanged(QJsonObject)), this, SLOT(init(QJsonObject))));
 }
 
 
@@ -624,18 +636,17 @@ Rating::Rating(const QJsonObject data, Entry* parent)
 void Rating::reCalcBayes()
 {
     auto type = Bayes::instance()->entryVoteType(_parent);
-    if (type == Bayes::Water)
+    switch (type)
     {
+    case Bayes::Water:
         _isBayesVoted = false;
         _isVotedAgainst = true;
-    }
-    else if (type == Bayes::Fire)
-    {
+        break;
+    case Bayes::Fire:
         _isBayesVoted = true;
         _isVotedAgainst = false;
-    }
-    else
-    {
+        break;
+    default:
         _isBayesVoted = false;
         _isVotedAgainst = false;
 
@@ -665,7 +676,7 @@ void Rating::vote()
     auto request = new ApiRequest(url, true, operation);
 
     connect(request, SIGNAL(success(const QJsonObject)),
-            this, SLOT(_init(const QJsonObject)));
+            this, SLOT(init(const QJsonObject)));
 }
 
 
@@ -696,7 +707,7 @@ void Rating::voteAgainst()
 
 
 
-void Rating::_init(const QJsonObject data)
+void Rating::init(const QJsonObject data)
 {
     int id = data.value("entry_id").toInt();
     if (id)

@@ -20,7 +20,7 @@ class Bayes : public QObject
     friend class Trainer;
 
 public:
-    enum Type { Water, Fire };
+    enum Type { Water, Fire, Unclassified };
 
     explicit Bayes(QObject *parent = 0);
     ~Bayes();
