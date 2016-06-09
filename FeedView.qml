@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -261,7 +261,7 @@ Rectangle {
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontNormal
                 color: parent.fontColor
-                textFormat: Text.RichText
+                textFormat: Text.PlainText
                 height: entry.truncatedText.length > 0 ? contentHeight
                                                        : entry.truncatedTitle.length > 0 ? -2 * mm : 0
             }

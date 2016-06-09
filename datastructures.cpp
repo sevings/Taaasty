@@ -679,8 +679,6 @@ void Rating::voteBayes()
     _isBayesVoted = true;
 
     emit bayesChanged();
-
-    qDebug() << "voted";
 }
 
 

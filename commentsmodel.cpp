@@ -119,19 +119,19 @@ void CommentsModel::_addComments(const QJsonObject data)
 
     _setTotalCount(data.value("total_count").toInt());
 
-    beginInsertRows(QModelIndex(), 0, feed.size() - 1);
-
     _comments.reserve(_comments.size() + feed.size());
 
     for (int i = 0; i < feed.size(); i++)
     {
+        beginInsertRows(QModelIndex(), i, i);
+
         auto cmt = new Comment(feed.at(i).toObject(), this);
         _comments.insert(i, cmt);
 
         Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
-    }
 
-    endInsertRows();
+        endInsertRows();
+    }
 
     if (_comments.size() >= _totalCount)
         emit hasMoreChanged();

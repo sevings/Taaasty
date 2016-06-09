@@ -4,7 +4,7 @@ QT += qml quick sql concurrent network
 
 android: QT += androidextras
 
-CONFIG += c++11
+CONFIG += c++11 qtquickcompiler
 
 SOURCES += main.cpp \
     tasty.cpp \
