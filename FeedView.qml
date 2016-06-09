@@ -9,6 +9,7 @@ Rectangle {
     property int mode: FeedModel.LiveMode
     property int tlogId: 0
     property string slug: ''
+    property int minRating: 0
     property Tlog tlog: Tlog {
         tlogId: back.tlogId
         slug: back.slug
@@ -50,7 +51,6 @@ Rectangle {
             mode = m;
             if (m === FeedModel.TlogMode)
             {
-                console.log(t, s);
                 if (t && t > 0)
                     tlogId = t;
                 if (s)
@@ -95,6 +95,7 @@ Rectangle {
             mode: back.mode
             tlog: back.tlogId
             slug: back.slug
+            minRating: back.minRating
         }
 //        header: Item {
 //            anchors.left: parent.left

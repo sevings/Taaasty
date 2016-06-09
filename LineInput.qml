@@ -9,6 +9,7 @@ Rectangle {
     border.color: window.secondaryTextColor
     border.width: 0.2 * mm
     radius: 0.8 * mm
+    property string mode: 'tlog'
     property alias text: input.text
     property alias echoMode: input.echoMode
     property alias what: label.text
@@ -67,7 +68,12 @@ Rectangle {
     }
     Text {
         id: label
-        text: 'Тлог или поток'
+        text: {
+            if (mode === 'tlog')
+                'Тлог или поток';
+            else if (mode === 'rating')
+                'Минимальный рейтинг';
+        }
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -98,6 +104,12 @@ Rectangle {
             color: window.textColor
             font.pointSize: window.fontNormal
             onAccepted: back.accepted()
+            inputMethodHints: {
+                if (mode === 'tlog')
+                    Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase;
+                else if (mode === 'rating')
+                    Qt.ImhDigitsOnly;
+            }
         }
     }
     ThemedButton {
@@ -106,7 +118,12 @@ Rectangle {
         anchors.right: parent.right
         anchors.left: parent.left
         width: window.width / 5
-        text: 'Перейти'
+        text: {
+            if (mode === 'tlog')
+                'Перейти';
+            else if (mode === 'rating')
+                'Показать';
+        }
         enabled: input.text
         onClicked: parent.accepted()
     }

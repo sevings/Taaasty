@@ -55,8 +55,9 @@ ApplicationWindow {
     function hideFooter() {
         footer.state = "closed";
     }
-    function showLineInput() {
+    function showLineInput(mode) {
         lineInput.state = "opened";
+        lineInput.mode = mode;
         lineInput.forceActiveFocus();
     }
     function hideLineInput() {
@@ -121,14 +122,17 @@ ApplicationWindow {
         id: menu
         visible: stack.depth === 1 && stack.currentItem && stack.currentItem.x > 0
         onModeChanged: {
-            stack.currentItem.setMode(mode);
-
             backAnimation.start();
             setFooterFromStack();
+
+            if (mode !== FeedModel.BetterThanMode)
+                stack.currentItem.setMode(mode);
+            else
+                showLineInput('rating');
         }
         onTlogRequested: {
             backAnimation.start();
-            showLineInput();
+            showLineInput('tlog');
         }
         onVisibleChanged: {
             window.hideFooter();
@@ -448,7 +452,18 @@ ApplicationWindow {
     LineInput {
         id: lineInput
         onAccepted: {
-            stack.currentItem.setMode(FeedModel.TlogMode, undefined, lineInput.text);
+            if (mode === 'tlog')
+                stack.currentItem.setMode(FeedModel.TlogMode, undefined, lineInput.text);
+            else if (mode === 'rating')
+            {
+                var r = Number(lineInput.text);
+                if (r > 0)
+                {
+                    stack.currentItem.setMode(FeedModel.BetterThanMode);
+                    stack.currentItem.minRating = r;
+                }
+            }
+
             hideLineInput();
             setFooterFromStack();
         }

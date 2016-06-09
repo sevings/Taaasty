@@ -40,7 +40,7 @@ MouseArea {
             topMargin: 1 * mm
             bottomMargin: 1 * mm
             contentWidth: parent.width
-            property int buttonsCount: Tasty.isAuthorized ? 13 : 11
+            property int buttonsCount: Tasty.isAuthorized ? 14 : 12
             contentHeight: 9 * mm * buttonsCount + space.height
             Column {
                 id: column
