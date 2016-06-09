@@ -30,6 +30,8 @@ Rectangle {
             'Хорошее'; break;
         case FeedModel.WellMode:
             'Неплохое'; break;
+        case FeedModel.BetterThanMode:
+            'Лучше, чем ' + minRating; break;
         case FeedModel.AnonymousMode:
             'Анонимки'; break;
         case FeedModel.FavoritesMode:
