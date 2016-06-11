@@ -1,6 +1,5 @@
 import QtQuick 2.3
 import ImageCache 2.0
-import QtQuick.Dialogs 1.2
 
 
 AnimatedImage {
@@ -51,19 +50,10 @@ AnimatedImage {
     Poppable {
         body: popBody
         visible: image.savable && !back.visible
+        propagateComposedEvents: true
         onPressAndHold: {
             console.log(image.source);
-            dialog.open();
-        }
-        FileDialog {
-            id: dialog
-            title: 'Сохранить изображение как...'
-            nameFilters: [ 'Файлы изображений (*.' + cachedImage.extension + ')']
-            folder: shortcuts.pictures
-            selectExisting: false
-            onAccepted: {
-                cachedImage.saveToFile(fileUrl)
-            }
+            cachedImage.saveToFile();
         }
     }
     Rectangle {

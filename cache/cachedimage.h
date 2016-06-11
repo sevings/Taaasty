@@ -42,6 +42,7 @@ public slots:
     void getInfo();
     void download();
     void abortDownload();
+    void saveToFile();
 
 private slots:
     void _setProperties();
@@ -57,6 +58,9 @@ signals:
     void totalChanged();
     void downloadingChanged();
     void extensionChanged();
+
+    void savingError();
+    void fileSaved();
 
 private:
     CacheManager*  _man;
@@ -75,6 +79,7 @@ private:
     bool    _available;
 
     bool _exists();
+    QString _path() const;
     void _saveFile();
 };
 

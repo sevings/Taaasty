@@ -3,9 +3,11 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QFile>
+#include <QFileDialog>
 #include <QImage>
 #include <QBuffer>
 #include <QtConcurrent>
+#include <QStandardPaths>
 
 #include <QDebug>
 
@@ -49,8 +51,7 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
 
 QString CachedImage::source() const
 {
-    auto path = QString("%1/%2.%3").arg(_man->path()).arg(_hash).arg(_extension);
-    return QUrl::fromLocalFile(path).toString();
+    return QUrl::fromLocalFile(_path()).toString();
 }
 
 
@@ -153,6 +154,37 @@ void CachedImage::abortDownload()
 
     _kbytesReceived = 0;
     emit receivedChanged();
+}
+
+
+
+void CachedImage::saveToFile()
+{
+    if (!_available)
+        return;
+
+    auto to = QFileDialog::getSaveFileName(nullptr, "Сохранить изображение как…",
+                                           QStandardPaths::writableLocation(QStandardPaths::PicturesLocation),
+                                           QString("Файлы изображений (*%1%2)").arg(_extension.isEmpty() ? "" : ".").arg(_extension));
+
+    if (to.isEmpty())
+        return;
+
+    if (QFile::exists(to) && !QFile::remove(to))
+    {
+        qDebug() << "Error removing" << to;
+        emit savingError();
+        return;
+    }
+
+    if (!QFile::copy(_path(), to))
+    {
+        qDebug() << "Error copying" << to;
+        emit savingError();
+        return;
+    }
+
+    emit fileSaved();
 }
 
 
@@ -268,6 +300,13 @@ bool CachedImage::_exists()
     }
 
     return false;
+}
+
+
+
+QString CachedImage::_path() const
+{
+    return QString("%1/%2.%3").arg(_man->path()).arg(_hash).arg(_extension);
 }
 
 
