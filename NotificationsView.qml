@@ -78,9 +78,6 @@ Rectangle {
                 }
                 else if (notification.entityType === 'Relationship')
                 {
-                    if (!notification.parentId)
-                        return;
-
                     window.hideNotifs();
                     tlogRequested(notification.sender.id);
                 }

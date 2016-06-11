@@ -86,10 +86,11 @@ ApplicationWindow {
             var slug = matches[1];
             var entryId = matches[2];
             if (entryId) {
+                console.log(entryId)
                 stack.push({
                                item: fullEntry,
                                properties: {
-                                   entry: entryId
+                                   entryId: entryId
                                }
                            })
             }
