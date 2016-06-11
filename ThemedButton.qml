@@ -43,7 +43,6 @@ MouseArea {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
             font.pointSize: button.fontSize
-            font.family: 'Open Sans'
         }
     }
 }

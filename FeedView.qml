@@ -78,7 +78,7 @@ Rectangle {
     }
     Splash {
         visible: !listView.visible && feedModel.hasMore
-        text: feedModel.isPrivate ? 'Это закрытый тлог' : 'Загрузка…'
+        text: feedModel.isPrivate ? 'Это закрытый ' + (tlog.author.isFlow ? 'поток' : 'тлог') : 'Загрузка…'
     }
     MyListView {
         id: listView
@@ -127,7 +127,6 @@ Rectangle {
         delegate: Item {
             id: entryView
             width: window.width
-            property color fontColor: window.textColor
             height: 15 * mm + content.height + entryTitle.height + entryAvatar.height + comments.height
                     + firstImage.height + quoteSource.height + repostText.height
                     + mediaLink.height + entryVoteButton.height
@@ -146,15 +145,13 @@ Rectangle {
                     entryClicked(entry);
                 }
             }
-            Text {
+            ThemedText {
                 id: repostText
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
                 anchors.leftMargin: 5 * mm
                 anchors.rightMargin: anchors.leftMargin
-                wrapMode: Text.Wrap
                 color: window.secondaryTextColor
                 font.pointSize: window.fontSmaller
                 visible: entry.author.id !== entry.tlog.tlogId
@@ -189,19 +186,18 @@ Rectangle {
                     }
                 }
             }
-            Text {
+            ThemedText {
                 id: nick
                 text: entry.author.name
-                color: entryView.fontColor
                 font.pointSize: window.fontSmaller
                 anchors.top: repostText.bottom
                 anchors.left: entryAvatar.right
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
                 elide: Text.AlignRight
+                wrapMode: Text.NoWrap
                 horizontalAlignment: Text.AlignLeft
             }
-            Text {
+            ThemedText {
                 id: date
                 text: entry.createdAt
                 color: window.secondaryTextColor
@@ -209,8 +205,8 @@ Rectangle {
                 anchors.top: nick.bottom
                 anchors.left: entryAvatar.right
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
                 elide: Text.AlignRight
+                wrapMode: Text.NoWrap
             }
             MyImage {
                 id: firstImage
@@ -226,14 +222,13 @@ Rectangle {
                 extension: visible ? image.type : ''
                 savable: true
                 popBody: back
-                Text {
+                ThemedText {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.margins: 0.5 * mm
                     horizontalAlignment: Text.AlignHCenter
                     font.pointSize: window.fontSmaller
-                    color: window.textColor
                     style: Text.Outline
                     styleColor: window.backgroundColor
                     property int total: entry.attachedImagesModel.rowCount()
@@ -251,61 +246,48 @@ Rectangle {
                 anchors.bottomMargin: 1 * mm
                 media: entry.media
             }
-            Text {
+            ThemedText {
                 id: entryTitle
                 text: entry.truncatedTitle
                 anchors.top: mediaLink.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                wrapMode: Text.Wrap
                 font.pointSize: entry.truncatedText.length > 0 ? window.fontBigger
                                                                : window.fontNormal
-                color: parent.fontColor
                 textFormat: Text.RichText
                 height: entry.truncatedTitle.length > 0 ? contentHeight
                                                         : entry.truncatedText.length > 0 ? -2 * mm : 0
             }
-            Text {
+            ThemedText {
                 id: content
                 text: entry.truncatedText
                 anchors.top: entryTitle.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
                 anchors.leftMargin: entry.type === 'quote' ? 5 * mm : 1 * mm
                 anchors.rightMargin: anchors.leftMargin
-                wrapMode: Text.Wrap
-                font.pointSize: window.fontNormal
-                color: parent.fontColor
                 textFormat: Text.RichText
                 height: entry.truncatedText.length > 0 ? contentHeight
                                                        : entry.truncatedTitle.length > 0 ? -2 * mm : 0
             }
-            Text {
+            ThemedText {
                 id: quoteSource
                 text: entry.source
                 anchors.top: content.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
                 font.italic: true
-                color: parent.fontColor
                 textFormat: Text.RichText
                 height: entry.source.length > 0 ? contentHeight : 0
                 horizontalAlignment: Text.AlignRight
             }
-            Text {
+            ThemedText {
                 id: comments
                 text: entry.commentsCount + ' коммент.'
-                color: entryView.fontColor
                 font.pointSize: window.fontSmallest
                 anchors.top: quoteSource.bottom
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-//                anchors.bottomMargin: 4 * mm // spacing
             }
             Rectangle {
                 id: br
@@ -380,16 +362,12 @@ Rectangle {
                     entry.rating.voteAgainst();
                 }
             }
-            Text {
+            ThemedText {
                 id: entryRating
                 text: entry.isVotable ? '+ ' + entry.rating.votes : ''
                 anchors.top: comments.bottom
                 anchors.left: entryVoteAgainstButton.right
                 anchors.right: entryVoteButton.left
-                anchors.margins: 1 * mm
-                wrapMode: Text.Wrap
-                font.pointSize: window.fontNormal
-                color: parent.fontColor
                 height: entryVoteButton.height
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter

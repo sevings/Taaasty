@@ -21,7 +21,7 @@ Popup {
     }
     onOutsideClicked: window.hideLineInput()
     signal accepted
-    Text {
+    ThemedText {
         id: label
         text: {
             if (mode === 'tlog')
@@ -34,10 +34,6 @@ Popup {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: 1 * mm
-        wrapMode: Text.Wrap
-        font.pointSize: window.fontNormal
-        color: window.textColor
         height: contentHeight
     }
     Rectangle {

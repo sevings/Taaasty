@@ -50,96 +50,65 @@ Rectangle {
                 savable: true
                 popBody: profileView
             }
-            Text {
+            ThemedText {
                 id: name
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
                 font.pointSize: window.fontBiggest
-                wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
-                color: window.textColor
                 text: author.name
                 height: text.length > 0 ? paintedHeight : 0
             }
-            Text {
+            ThemedText {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                font.pointSize: window.fontNormal
-                wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
-                color: window.textColor
                 text: author.title
                 height: text.length > 0 ? paintedHeight : 0
             }
-            Text {
+            ThemedText {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                font.pointSize: window.fontNormal
-                wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
-                color: window.textColor
                 text: author.isFemale ? 'Девушка' : 'Парень'
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
             }
-            Text {
+            ThemedText {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                font.pointSize: window.fontNormal
-                wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
-                color: window.textColor
                 text: author.lastSeenAt
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
             }
-            Text {
+            ThemedText {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                font.pointSize: window.fontNormal
-                wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
-                color: window.textColor
                 text: author.isPrivacy ? 'Закрытый тлог' : 'Открытый тлог'
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
             }
-            Text {
+            ThemedText {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                font.pointSize: window.fontNormal
-                wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
-                color: window.textColor
                 text: author.daysCount
                 height: text.length > 0 ? paintedHeight : 0
             }
-            Text {
+            ThemedText {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                font.pointSize: window.fontNormal
-                wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
-                color: window.textColor
                 text: tlog.isMe ? 'Это вы' : (tlog.amIFollowing ? 'Вы подписаны' : 'Вы не подписаны')
                 height: text.length > 0 ? paintedHeight : 0
                 visible: tlog.tlogId === author.id && Tasty.isAuthorized
             }
-            Text {
+            ThemedText {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                font.pointSize: window.fontNormal
-                wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
-                color: window.textColor
                 text: tlog.isFollowingMe ? 'Следит за вашим тлогом'
                                          : 'Не следит за вашим тлогом'
                 height: text.length > 0 ? paintedHeight : 0

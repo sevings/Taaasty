@@ -126,15 +126,12 @@ Rectangle {
                 color: window.greenColor
                 visible: !notification.read
             }
-            Text {
+            ThemedText {
                 id: notifText
                 text: notification.text
-                color: window.textColor
-                anchors.topMargin: 1 * mm
                 anchors.top: notifName.bottom
                 anchors.left: notifName.left
                 anchors.right: notifName.right
-                wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
             }
         }

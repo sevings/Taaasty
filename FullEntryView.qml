@@ -141,47 +141,37 @@ Rectangle {
                     onClicked: mediaLink.play()
                 }
             }
-            Text {
+            ThemedText {
                 id: fullTitle
                 text: entry.title
                 anchors.top: mediaLink.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                wrapMode: Text.Wrap
                 font.pointSize: (entry.text.length > 0 ? window.fontBigger
                                                       : window.fontNormal)
-                color: window.textColor
                 textFormat: Text.RichText
                 height: entry.title.length > 0 ? contentHeight : entry.text.length > 0 ? -1 * mm : 0
                 onLinkActivated: window.openLink(link)
             }
-            Text {
+            ThemedText {
                 id: fullContent
                 text: entry.text
                 anchors.top: fullTitle.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
                 anchors.leftMargin: entry.type === 'quote' ? 5 * mm : 1 * mm
-                wrapMode: Text.Wrap
-                font.pointSize: window.fontNormal
-                color: window.textColor
                 textFormat: Text.RichText
                 height: entry.text.length > 0 ? contentHeight : entry.title.length > 0 ? -1 * mm : 0
                 onLinkActivated: window.openLink(link)
             }
-            Text {
+            ThemedText {
                 id: quoteSource
                 text: entry.source
                 anchors.top: fullContent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 1 * mm
-                wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
                 font.italic: true
-                color: window.textColor
                 textFormat: Text.RichText
                 height: entry.source.length > 0 ? contentHeight : -1 * mm
                 horizontalAlignment: Text.AlignRight

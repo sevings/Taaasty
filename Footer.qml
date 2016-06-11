@@ -18,17 +18,16 @@ Popup {
         user: footer.tlog.author
         defaultSource: 'http://taaasty.com/favicons/favicon-64x64.png'
     }
-    Text {
+    ThemedText {
         id: title
         text: footer.title || footer.tlog.author.name
-        color: window.textColor
         font.pointSize: window.fontBigger
         anchors.left: avatar.right
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: 1 * mm
         horizontalAlignment: Text.AlignLeft
         elide: Text.ElideRight
+        wrapMode: Text.NoWrap
     }
     MouseArea {
         anchors.top: parent.top

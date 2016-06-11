@@ -59,7 +59,7 @@ AnimatedImage {
             id: dialog
             title: 'Сохранить изображение как...'
             nameFilters: [ 'Файлы изображений (*.' + cachedImage.extension + ')']
-//                folder: shortcuts.pictures
+            folder: shortcuts.pictures
             selectExisting: false
             onAccepted: {
                 cachedImage.saveToFile(fileUrl)

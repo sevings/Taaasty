@@ -13,17 +13,15 @@ MyImage {
     function play() {
         Qt.openUrlExternally(media.url)
     }
-    Text {
+    ThemedText {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: 0.5 * mm
         horizontalAlignment: Text.AlignHCenter
         font.pointSize: window.fontSmaller
-        color: window.textColor
         style: Text.Outline
         styleColor: window.backgroundColor
         text: media ? media.title : ''
-        wrapMode: Text.Wrap
     }
 }

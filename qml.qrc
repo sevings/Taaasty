@@ -22,5 +22,6 @@
         <file>Dialog.qml</file>
         <file>MediaLink.qml</file>
         <file>Popup.qml</file>
+        <file>ThemedText.qml</file>
     </qresource>
 </RCC>
