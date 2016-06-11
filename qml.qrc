@@ -21,5 +21,6 @@
         <file>Splash.qml</file>
         <file>Dialog.qml</file>
         <file>MediaLink.qml</file>
+        <file>Popup.qml</file>
     </qresource>
 </RCC>

@@ -1,5 +1,6 @@
-import QtQuick 2.5
+import QtQuick 2.3
 import ImageCache 2.0
+import QtQuick.Dialogs 1.2
 
 
 AnimatedImage {
@@ -13,6 +14,8 @@ AnimatedImage {
     property string extension: ''
     property CachedImage cachedImage: Cache.image()
     property color backgroundColor: '#373737'
+    property Item popBody: Item { }
+    property bool savable: false
     signal available
     function showImage() {
         image.source = cachedImage.source;
@@ -42,6 +45,24 @@ AnimatedImage {
             if ((width > 0 && width < 12 * mm)
                     || (height > 0 && height < 12 * mm)) {
                 cachedImage.download();
+            }
+        }
+    }
+    Poppable {
+        body: popBody
+        visible: image.savable && !back.visible
+        onPressAndHold: {
+            console.log(image.source);
+            dialog.open();
+        }
+        FileDialog {
+            id: dialog
+            title: 'Сохранить изображение как...'
+            nameFilters: [ 'Файлы изображений (*.' + cachedImage.extension + ')']
+//                folder: shortcuts.pictures
+            selectExisting: false
+            onAccepted: {
+                cachedImage.saveToFile(fileUrl)
             }
         }
     }

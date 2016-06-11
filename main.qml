@@ -134,6 +134,10 @@ ApplicationWindow {
             backAnimation.start();
             showLineInput('tlog');
         }
+        onSearchRequested: {
+            backAnimation.start();
+            showLineInput('query');
+        }
         onVisibleChanged: {
             window.hideFooter();
         }
@@ -462,6 +466,10 @@ ApplicationWindow {
                     stack.currentItem.setMode(FeedModel.BetterThanMode);
                     stack.currentItem.minRating = r;
                 }
+            }
+            else if (mode === 'query')
+            {
+                stack.currentItem.query = lineInput.text;
             }
 
             hideLineInput();

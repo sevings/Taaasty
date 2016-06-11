@@ -11,6 +11,7 @@ MouseArea {
     enabled: false
     signal modeChanged(int mode)
     signal tlogRequested
+    signal searchRequested
     signal settingsRequested
     signal waterTlogsRequested
     signal fireTlogsRequested
@@ -40,7 +41,7 @@ MouseArea {
             topMargin: 1 * mm
             bottomMargin: 1 * mm
             contentWidth: parent.width
-            property int buttonsCount: Tasty.isAuthorized ? 14 : 12
+            property int buttonsCount: Tasty.isAuthorized ? 15 : 13
             contentHeight: 9 * mm * buttonsCount + space.height
             Column {
                 id: column
@@ -114,6 +115,12 @@ MouseArea {
                     anchors.right: parent.right
                     text: 'Тлог'
                     onClicked: { tlogRequested() }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Поиск'
+                    onClicked: { searchRequested() }
                 }
                 Item {
                     id: space

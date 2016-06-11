@@ -1,11 +1,8 @@
 import QtQuick 2.3
 
-Rectangle {
+Popup {
     id: back
-    anchors.left: parent.left
-    anchors.right: parent.right
     height: 4 * mm + label.height + inputRect.height + acceptButton.height
-    color: window.backgroundColor
     border.color: window.secondaryTextColor
     border.width: 0.2 * mm
     radius: 0.8 * mm
@@ -22,50 +19,8 @@ Rectangle {
         if (focus)
             input.focus = true;
     }
+    onOutsideClicked: window.hideLineInput()
     signal accepted
-    state: "closed"
-    states: [
-        State {
-            name: "opened"
-            AnchorChanges {
-                target: back
-                anchors.top: undefined
-                anchors.bottom: parent.bottom
-            }
-        },
-        State {
-            name: "closed"
-            AnchorChanges {
-                target: back
-                anchors.top: parent.bottom
-                anchors.bottom: undefined
-            }
-        }
-    ]
-    transitions: [
-        Transition {
-            from: "opened"
-            to: "closed"
-            AnchorAnimation {
-                duration: 200
-            }
-        },
-        Transition {
-            from: "closed"
-            to: "opened"
-            AnchorAnimation {
-                duration: 200
-            }
-        }
-    ]
-    MouseArea {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.top
-        height: parent.y
-        visible: parent.state === "opened"
-        onClicked: window.hideLineInput()
-    }
     Text {
         id: label
         text: {
@@ -73,6 +28,8 @@ Rectangle {
                 'Тлог или поток';
             else if (mode === 'rating')
                 'Минимальный рейтинг';
+            else if (mode === 'query')
+                'Поиск здесь';
         }
         anchors.top: parent.top
         anchors.left: parent.left
@@ -109,6 +66,8 @@ Rectangle {
                     Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase;
                 else if (mode === 'rating')
                     Qt.ImhDigitsOnly;
+                else if (mode === 'query')
+                    Qt.ImhNone;
             }
         }
     }
@@ -123,6 +82,8 @@ Rectangle {
                 'Перейти';
             else if (mode === 'rating')
                 'Показать';
+            else if (mode === 'query')
+                'Искать';
         }
         enabled: input.text
         onClicked: parent.accepted()

@@ -1,56 +1,17 @@
-import QtQuick 2.5
+import QtQuick 2.3
 import org.binque.taaasty 1.0
 
-Rectangle {
+Popup {
     id: footer
-    anchors.left: parent.left
-    anchors.right: parent.right
     height: avatar.height
-    y: 0
-    z: 20
-    visible: y >= -height
+    outsideArea: false
     property string title
     property Tlog tlog
     signal avatarClicked
-    gradient: Gradient {
-        GradientStop { position: 0; color: '#373737' }
-        GradientStop { position: 1; color: '#000000' }
-    }
-    state: "closed"
-    states: [
-        State {
-            name: "opened"
-            AnchorChanges {
-                target: footer
-                anchors.top: undefined
-                anchors.bottom: parent.bottom
-            }
-        },
-        State {
-            name: "closed"
-            AnchorChanges {
-                target: footer
-                anchors.top: parent.bottom
-                anchors.bottom: undefined
-            }
-        }
-    ]
-    transitions: [
-        Transition {
-            from: "opened"
-            to: "closed"
-            AnchorAnimation {
-                duration: 200
-            }
-        },
-        Transition {
-            from: "closed"
-            to: "opened"
-            AnchorAnimation {
-                duration: 200
-            }
-        }
-    ]
+//    gradient: Gradient {
+//        GradientStop { position: 0; color: '#373737' }
+//        GradientStop { position: 1; color: '#000000' }
+//    }
     SmallAvatar {
         id: avatar
         anchors.left: parent.left

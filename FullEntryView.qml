@@ -124,6 +124,8 @@ Rectangle {
                     height: image.height / image.width * width
                     url: image.url
                     extension: image.type
+                    savable: true
+                    popBody: back
                 }
             }
             MediaLink {
@@ -315,25 +317,12 @@ Rectangle {
             Component.onCompleted: commentEditor.focus = true
         }
     }
-    MouseArea {
-        anchors.top: parent.top
-        anchors.bottom: menu.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        visible: menu.visible
-        onClicked: menu.state = "closed"
-    }
-    Rectangle {
+    Popup {
         id: menu
-        anchors.left: parent.left
-        anchors.right: parent.right
-        visible: y < parent.height
         height: menuColumn.height + 2 * mm
-        color: window.backgroundColor
         border.color: window.secondaryTextColor
         border.width: 0.2 * mm
         radius: 0.8 * mm
-        state: "closed"
         property Comment comment: Comment { }
         function close() {
             state = "closed";
@@ -343,40 +332,7 @@ Rectangle {
             window.hideFooter();
             state = "opened";
         }
-        states: [
-            State {
-                name: "opened"
-                AnchorChanges {
-                    target: menu
-                    anchors.top: undefined
-                    anchors.bottom: parent.bottom
-                }
-            },
-            State {
-                name: "closed"
-                AnchorChanges {
-                    target: menu
-                    anchors.top: parent.bottom
-                    anchors.bottom: undefined
-                }
-            }
-        ]
-        transitions: [
-            Transition {
-                from: "opened"
-                to: "closed"
-                AnchorAnimation {
-                    duration: 200
-                }
-            },
-            Transition {
-                from: "closed"
-                to: "opened"
-                AnchorAnimation {
-                    duration: 200
-                }
-            }
-        ]
+        onOutsideClicked: menu.close()
         Column {
             id: menuColumn
             anchors.left: parent.left

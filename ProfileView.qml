@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.3
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -47,6 +47,8 @@ Rectangle {
                 anchors.right: parent.right
                 height: width
                 url: author.largePic
+                savable: true
+                popBody: profileView
             }
             Text {
                 id: name

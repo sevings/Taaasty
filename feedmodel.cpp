@@ -92,6 +92,9 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     else if (_mode == BetterThanMode)
         url = url.arg(_minRating);
 
+    if (!_query.isEmpty())
+        url += QString("q=%1&").arg(_query);
+
     url += QString("limit=%1").arg(limit);
     if (_lastEntry)
         url += QString("&since_entry_id=%1").arg(_lastEntry);
@@ -140,7 +143,14 @@ void FeedModel::setMinRating(const int rating)
 
 
 
-void FeedModel::reset(Mode mode, int tlog, QString slug)
+void FeedModel::setQuery(const QString query)
+{
+    reset(InvalidMode, 0, QString(), query);
+}
+
+
+
+void FeedModel::reset(Mode mode, int tlog, QString slug, QString query)
 {
     beginResetModel();
 
@@ -155,6 +165,9 @@ void FeedModel::reset(Mode mode, int tlog, QString slug)
 
     if (!slug.isEmpty())
         _slug = slug;
+
+    _query = QUrl::toPercentEncoding(query);
+    emit queryChanged();
 
     _hasMore = true;
     _lastEntry = 0;
@@ -176,6 +189,8 @@ void FeedModel::reset(Mode mode, int tlog, QString slug)
 
     emit hasMoreChanged();
 }
+
+
 
 bool FeedModel::hideMode() const
 {

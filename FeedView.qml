@@ -10,6 +10,7 @@ Rectangle {
     property int tlogId: 0
     property string slug: ''
     property int minRating: 0
+    property string query: ''
     property Tlog tlog: Tlog {
         tlogId: back.tlogId
         slug: back.slug
@@ -47,8 +48,10 @@ Rectangle {
     signal avatarClicked(Tlog tlog, Author author)
     signal flowClicked(int flowId)
     function setMode(m, t, s) {
-        if (mode === m)
+        if (mode === m) {
+            query = '';
             feedModel.reset(m, t, s);
+        }
         else {
             mode = m;
             if (m === FeedModel.TlogMode)
@@ -57,6 +60,7 @@ Rectangle {
                     tlogId = t;
                 if (s)
                     slug = s;
+//                if (q)
             }
         }
     }
@@ -98,6 +102,7 @@ Rectangle {
             tlog: back.tlogId
             slug: back.slug
             minRating: back.minRating
+            query: back.query
         }
 //        header: Item {
 //            anchors.left: parent.left
@@ -219,6 +224,8 @@ Rectangle {
                 height: visible ? (image.height / image.width * width) : 0
                 url: visible ? image.url : ''
                 extension: visible ? image.type : ''
+                savable: true
+                popBody: back
                 Text {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left

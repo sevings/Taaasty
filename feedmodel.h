@@ -21,6 +21,7 @@ class FeedModel : public QAbstractListModel
     Q_PROPERTY(bool hasMore MEMBER _hasMore NOTIFY hasMoreChanged)
     Q_PROPERTY(bool isPrivate READ isPrivate NOTIFY isPrivateChanged)
     Q_PROPERTY(int minRating READ minRating WRITE setMinRating)
+    Q_PROPERTY(QString query READ query WRITE setQuery NOTIFY queryChanged)
 
 public:
     enum Mode {
@@ -59,7 +60,11 @@ public:
     Q_INVOKABLE void setMinRating(const int rating);
     Q_INVOKABLE int minRating() const { return _minRating; }
 
-    Q_INVOKABLE void reset(Mode mode = InvalidMode, int tlog = -1, QString slug = QString());
+    Q_INVOKABLE void setQuery(const QString query);
+    Q_INVOKABLE QString query() const { return _query; }
+
+    Q_INVOKABLE void reset(Mode mode = InvalidMode, int tlog = -1,
+                           QString slug = QString(), QString query = QString());
 
     Q_INVOKABLE bool isPrivate() const { return _isPrivate; }
 
@@ -70,6 +75,7 @@ public:
 signals:
     void hasMoreChanged();
     void isPrivateChanged();
+    void queryChanged();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
@@ -102,6 +108,7 @@ private:
     int _lastEntry;
     bool _isPrivate;
     int _minRating;
+    QString _query;
 
     ApiRequest* _request;
 };
