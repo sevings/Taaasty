@@ -73,8 +73,9 @@ void CommentsModel::check()
     if (!_comments.isEmpty())
         url += QString("&from_comment_id=%1").arg(_comments.last()->_id);
 
-    auto request = new ApiRequest(url);
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addLastComments(QJsonObject)));
+    _request = new ApiRequest(url);
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addLastComments(QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),   this, SLOT(_setNotLoading(QObject*))));
 }
 
 
@@ -91,8 +92,9 @@ void CommentsModel::loadMore()
     if (!_comments.isEmpty())
         url += QString("&to_comment_id=%1").arg(_comments.first()->_id);
 
-    auto request = new ApiRequest(url);
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addComments(QJsonObject)));
+    _request = new ApiRequest(url);
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addComments(QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),   this, SLOT(_setNotLoading(QObject*))));
 }
 
 
@@ -223,6 +225,17 @@ void CommentsModel::_removeComment(QObject* cmt)
     endRemoveRows();
 
     _setTotalCount(_totalCount - 1);
+}
+
+
+
+void CommentsModel::_setNotLoading(QObject* request)
+{
+    if (request == _request)
+    {
+        _loading = false;
+        _request = nullptr;
+    }
 }
 
 

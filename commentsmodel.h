@@ -5,6 +5,8 @@
 
 #include "datastructures.h"
 
+class ApiRequest;
+
 
 
 class CommentsModel : public QAbstractListModel
@@ -46,6 +48,7 @@ private slots:
     void _addComment(const QJsonObject data);
     void _addComment(const int entryId, const Notification* notif);
     void _removeComment(QObject* cmt);
+    void _setNotLoading(QObject* request);
 
 private:
     void _setTotalCount(int tc);
@@ -55,6 +58,8 @@ private:
     bool _loading;
     int _totalCount;
     const QString _url;
+
+    ApiRequest* _request;
 };
 
 #endif // COMMENTSMODEL_H

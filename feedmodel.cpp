@@ -102,7 +102,7 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     _request = new ApiRequest(url);
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
     Q_TEST(connect(_request, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_clearRequestCache(QObject*))));
+    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading(QObject*))));
 }
 
 
@@ -371,14 +371,6 @@ void FeedModel::_setRatings(const QJsonArray data)
                 break;
             }
     }
-}
-
-
-
-void FeedModel::_clearRequestCache(QObject* req)
-{
-    if (_request == req)
-        _request = nullptr;
 }
 
 

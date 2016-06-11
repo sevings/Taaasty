@@ -88,7 +88,6 @@ private slots:
     void _setNotLoading(QObject* request);
     void _reloadRatings();
     void _setRatings(const QJsonArray data);
-    void _clearRequestCache(QObject* req);
 
 private:
     void _addAll(QList<Entry*>& all);
