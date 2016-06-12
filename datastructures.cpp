@@ -77,8 +77,6 @@ void Entry::addComment(const QString text)
     auto request = new ApiRequest("comments.json", true,
                                   QNetworkAccessManager::PostOperation, data);
 
-    qDebug() << data;
-
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(commentAdded(const QJsonObject))));
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_setWatched())));
 }

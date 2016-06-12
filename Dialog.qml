@@ -42,9 +42,11 @@
 import QtQuick 2.3
 
 MouseArea {
+    id: area
     anchors.fill: parent
     visible: page.opacity > 0
     onClicked: close()
+    property bool info: false
     signal opened
     signal closed
     function close() {
@@ -53,10 +55,11 @@ MouseArea {
         closed();
         page.opacity = 0;
     }
-    function show(txt) {
-        opened()
-        dialogText.text = txt
-        page.opacity = 0.9
+    function show(txt, info) {
+        opened();
+        dialogText.text = txt;
+        page.opacity = 0.9;
+        area.info = info === true;
     }
     Rectangle {
         id: page
@@ -67,7 +70,7 @@ MouseArea {
         anchors.centerIn: parent
         color: window.backgroundColor
         border.width: 0.2 * mm
-        border.color: window.redColor
+        border.color: area.info ? window.greenColor : window.redColor
         opacity: 0
         Behavior on opacity {
             NumberAnimation { duration: 300 }

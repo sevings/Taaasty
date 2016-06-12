@@ -12,6 +12,7 @@ Rectangle {
     border.width: 0.1 * mm
     radius: 0.8 * mm
     height: input.contentHeight + 2 * mm
+    clip: true
     property alias text: input.text
     property alias inputMethodHints: input.inputMethodHints
     property alias echoMode: input.echoMode

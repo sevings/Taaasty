@@ -49,6 +49,7 @@ signals:
     void ratingChanged(const QJsonObject data);
 
     void error(const int code, const QString text);
+    void info(const QString text);
 
     void htmlRecorrectionNeeded();
 

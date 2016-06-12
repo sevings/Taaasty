@@ -13,6 +13,8 @@
 #include "../defines.h"
 
 #include "cachemanager.h"
+#include "../tasty.h"
+
 
 
 CachedImage::CachedImage(CacheManager* parent, QString url)
@@ -103,6 +105,23 @@ void CachedImage::setExtension(QString format)
 
 
 
+QString CachedImage::fileName() const
+{
+    if (_url.isEmpty())
+        return _url;
+
+    auto full = _url.split("/").last().split(".");
+    if (full.isEmpty())
+        return QString();
+
+    if (full.size() == 1)
+        return full.first();
+
+    return full.at(full.size() - 2);
+}
+
+
+
 void CachedImage::getInfo()
 {
     if (_headReply || _reply)
@@ -175,9 +194,10 @@ void CachedImage::saveToFile(const QString filename)
             .arg(_extension.isEmpty() ? QString() : ".")
             .arg(_extension);
 
-    if (QFile::exists(to) && !QFile::remove(to))
+    if (QFile::exists(to))// && !QFile::remove(to))
     {
-        qDebug() << "Error removing" << to;
+        qDebug() << "File exists" << to;
+        emit Tasty::instance()->error(0, QString("Файл уже существует:\n%1").arg(to));
         emit savingError();
         return;
     }
@@ -185,10 +205,12 @@ void CachedImage::saveToFile(const QString filename)
     if (!QFile::copy(_path(), to))
     {
         qDebug() << "Error copying" << to;
+        emit Tasty::instance()->error(0, QString("Не удалось сохранить изображение в %1").arg(to));
         emit savingError();
         return;
     }
 
+    emit Tasty::instance()->info(QString("Изображение сохранено в %1").arg(to));
     emit fileSaved();
 }
 

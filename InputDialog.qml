@@ -30,6 +30,8 @@ Popup {
                 'Минимальный рейтинг';
             else if (mode === 'query')
                 'Поиск здесь';
+            else if (mode === 'save')
+                'Название изображения';
         }
         anchors.top: parent.top
         anchors.left: parent.left
@@ -47,7 +49,7 @@ Popup {
                 Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase;
             else if (mode === 'rating')
                 Qt.ImhDigitsOnly;
-            else if (mode === 'query')
+            else if (mode === 'query' || mode === 'save')
                 Qt.ImhNone;
         }
     }
@@ -64,6 +66,8 @@ Popup {
                 'Показать';
             else if (mode === 'query')
                 'Искать';
+            else if (mode === 'save')
+                'Сохранить';
         }
         enabled: input.text
         onClicked: parent.accepted()

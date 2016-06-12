@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import org.binque.taaasty 1.0
+import ImageCache 2.0
 
 ApplicationWindow {
     id: window
@@ -27,6 +28,7 @@ ApplicationWindow {
 //    property bool showConvers: false
 //    property bool showDialog: false
     readonly property int anonymousId: 4409
+    property CachedImage savingImage
     title: qsTr("Taaasty")
     color: backgroundColor
     onWidthChanged: {
@@ -107,6 +109,11 @@ ApplicationWindow {
         }
         else
             Qt.openUrlExternally(url)
+    }
+    function saveImage(image) {
+        savingImage = image;
+        lineInput.text = image.fileName;
+        showLineInput('save');
     }
     Tlog {
         id: emptyTlog
@@ -459,8 +466,7 @@ ApplicationWindow {
         onAccepted: {
             if (mode === 'tlog')
                 stack.currentItem.setMode(FeedModel.TlogMode, undefined, lineInput.text);
-            else if (mode === 'rating')
-            {
+            else if (mode === 'rating') {
                 var r = Number(lineInput.text);
                 if (r > 0)
                 {
@@ -468,11 +474,13 @@ ApplicationWindow {
                     stack.currentItem.minRating = r;
                 }
             }
-            else if (mode === 'query')
-            {
+            else if (mode === 'query') {
                 stack.currentItem.query = lineInput.text;
             }
-
+            else if (mode === 'save') {
+                savingImage.saveToFile(lineInput.text);
+                savingImage = Cache.image();
+            }
             hideLineInput();
             setFooterFromStack();
         }
@@ -484,6 +492,9 @@ ApplicationWindow {
             target: Tasty
             onError: {
                 dialog.show((code ? code + '\n' : '') + text);
+            }
+            onInfo: {
+                dialog.show(text, true);
             }
         }
     }

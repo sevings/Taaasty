@@ -52,8 +52,7 @@ AnimatedImage {
         visible: image.savable && !back.visible
         propagateComposedEvents: true
         onPressAndHold: {
-            console.log(image.source);
-            cachedImage.saveToFile();
+            window.saveImage(cachedImage);
         }
     }
     Rectangle {

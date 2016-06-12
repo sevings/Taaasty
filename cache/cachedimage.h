@@ -19,6 +19,7 @@ class CachedImage : public QObject
     Q_PROPERTY(bool         isDownloading       READ isDownloading                  NOTIFY downloadingChanged)
     Q_PROPERTY(bool         available           READ isAvailable                    NOTIFY available)
     Q_PROPERTY(QString      extension           READ extension   WRITE setExtension NOTIFY extensionChanged)
+    Q_PROPERTY(QString      fileName            READ fileName)
 
 public:
     enum ImageFormat { UnknownFormat, GifFormat, JpegFormat, PngFormat };
@@ -37,6 +38,8 @@ public:
 
     Q_INVOKABLE QString extension() const   { return _extension; }
     Q_INVOKABLE void    setExtension(QString format);
+
+    Q_INVOKABLE QString fileName() const;
 
 public slots:
     void getInfo();
