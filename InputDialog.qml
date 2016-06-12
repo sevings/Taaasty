@@ -15,9 +15,11 @@ Popup {
     function clear() {
         input.text = '';
     }
-    onFocusChanged: {
-        if (focus)
-            input.focus = true;
+    onVisibleChanged: {
+        if (visible)
+            input.forceActiveFocus();
+        else
+            focus = false;
     }
     onOutsideClicked: window.hideLineInput()
     signal accepted

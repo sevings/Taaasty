@@ -57,14 +57,13 @@ ApplicationWindow {
     function hideFooter() {
         footer.state = "closed";
     }
-    function showLineInput(mode) {
-        lineInput.state = "opened";
-        lineInput.mode = mode;
-        lineInput.forceActiveFocus();
+    function showinputDialog(mode) {
+        inputDialog.state = "opened";
+        inputDialog.mode = mode;
     }
-    function hideLineInput() {
-        lineInput.state = "closed";
-        lineInput.clear();
+    function hideinputDialog() {
+        inputDialog.state = "closed";
+        inputDialog.clear();
     }
     function setFooterTlog(tlog) {
         if (!tlog)
@@ -112,8 +111,8 @@ ApplicationWindow {
     }
     function saveImage(image) {
         savingImage = image;
-        lineInput.text = image.fileName;
-        showLineInput('save');
+        inputDialog.text = image.fileName;
+        showinputDialog('save');
     }
     Tlog {
         id: emptyTlog
@@ -136,15 +135,15 @@ ApplicationWindow {
             if (mode !== FeedModel.BetterThanMode)
                 stack.currentItem.setMode(mode);
             else
-                showLineInput('rating');
+                showinputDialog('rating');
         }
         onTlogRequested: {
             backAnimation.start();
-            showLineInput('tlog');
+            showinputDialog('tlog');
         }
         onSearchRequested: {
             backAnimation.start();
-            showLineInput('query');
+            showinputDialog('query');
         }
         onVisibleChanged: {
             window.hideFooter();
@@ -462,12 +461,12 @@ ApplicationWindow {
         }
     }
     InputDialog {
-        id: lineInput
+        id: inputDialog
         onAccepted: {
             if (mode === 'tlog')
-                stack.currentItem.setMode(FeedModel.TlogMode, undefined, lineInput.text);
+                stack.currentItem.setMode(FeedModel.TlogMode, undefined, inputDialog.text);
             else if (mode === 'rating') {
-                var r = Number(lineInput.text);
+                var r = Number(inputDialog.text);
                 if (r > 0)
                 {
                     stack.currentItem.setMode(FeedModel.BetterThanMode);
@@ -475,13 +474,13 @@ ApplicationWindow {
                 }
             }
             else if (mode === 'query') {
-                stack.currentItem.query = lineInput.text;
+                stack.currentItem.query = inputDialog.text;
             }
             else if (mode === 'save') {
-                savingImage.saveToFile(lineInput.text);
+                savingImage.saveToFile(inputDialog.text);
                 savingImage = Cache.image();
             }
-            hideLineInput();
+            hideinputDialog();
             setFooterFromStack();
         }
     }
