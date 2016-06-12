@@ -57,11 +57,11 @@ ApplicationWindow {
     function hideFooter() {
         footer.state = "closed";
     }
-    function showinputDialog(mode) {
+    function showLineInput(mode) {
         inputDialog.state = "opened";
         inputDialog.mode = mode;
     }
-    function hideinputDialog() {
+    function hideLineInput() {
         inputDialog.state = "closed";
         inputDialog.clear();
     }
@@ -112,7 +112,7 @@ ApplicationWindow {
     function saveImage(image) {
         savingImage = image;
         inputDialog.text = image.fileName;
-        showinputDialog('save');
+        showLineInput('save');
     }
     Tlog {
         id: emptyTlog
@@ -135,15 +135,15 @@ ApplicationWindow {
             if (mode !== FeedModel.BetterThanMode)
                 stack.currentItem.setMode(mode);
             else
-                showinputDialog('rating');
+                showLineInput('rating');
         }
         onTlogRequested: {
             backAnimation.start();
-            showinputDialog('tlog');
+            showLineInput('tlog');
         }
         onSearchRequested: {
             backAnimation.start();
-            showinputDialog('query');
+            showLineInput('query');
         }
         onVisibleChanged: {
             window.hideFooter();
@@ -480,7 +480,7 @@ ApplicationWindow {
                 savingImage.saveToFile(inputDialog.text);
                 savingImage = Cache.image();
             }
-            hideinputDialog();
+            hideLineInput();
             setFooterFromStack();
         }
     }
