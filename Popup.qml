@@ -6,7 +6,7 @@ Rectangle {
     anchors.right: parent.right
     y: 0
     z: 20
-    visible: y < window.height
+    visible: y < window.height || !outsideArea
     property bool outsideArea: true
     signal outsideClicked
     gradient: Gradient {

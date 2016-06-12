@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick sql concurrent network widgets
+QT += qml quick sql concurrent network
 
 android: QT += androidextras
 

@@ -454,7 +454,7 @@ ApplicationWindow {
                        })
         }
     }
-    LineInput {
+    InputDialog {
         id: lineInput
         onAccepted: {
             if (mode === 'tlog')

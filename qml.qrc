@@ -23,5 +23,6 @@
         <file>MediaLink.qml</file>
         <file>Popup.qml</file>
         <file>ThemedText.qml</file>
+        <file>InputDialog.qml</file>
     </qresource>
 </RCC>

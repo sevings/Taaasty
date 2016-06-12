@@ -57,17 +57,17 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: 2 * mm
-        onClicked: Tasty.authorize(mail.line, password.line)
-        enabled: mail.line && password.line
+        onClicked: Tasty.authorize(mail.text, password.text)
+        enabled: mail.text && password.text
     }
-    ThemedButton {
-        id: registerButton
-        text: 'Зарегистрироваться'
-        anchors.top: loginButton.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 2 * mm
-        enabled: mail.line && password.line
+//    ThemedButton {
+//        id: registerButton
+//        text: 'Зарегистрироваться'
+//        anchors.top: loginButton.bottom
+//        anchors.left: parent.left
+//        anchors.right: parent.right
+//        anchors.margins: 2 * mm
+//        enabled: mail.text && password.text
         //onClicked: Ctrl.signup()
-    }
+//    }
 }
