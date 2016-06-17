@@ -1,5 +1,5 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.2
+import QtQuick 2.7
+import QtQuick.Controls 2.0
 import org.binque.taaasty 1.0
 import ImageCache 2.0
 
@@ -21,12 +21,12 @@ ApplicationWindow {
     property int fontSmaller: 17
     property int fontSmallest: 14
     property bool unreadNotifications: NotifsModel.unread
-//    property int unreadMessages: 0
+    //    property int unreadMessages: 0
     readonly property bool notifsShows: notifsView.state === "opened"
-//    property bool showCommentMenu: false
-//    property bool showSlugInput: false
-//    property bool showConvers: false
-//    property bool showDialog: false
+    //    property bool showCommentMenu: false
+    //    property bool showSlugInput: false
+    //    property bool showConvers: false
+    //    property bool showDialog: false
     readonly property int anonymousId: 4409
     property CachedImage savingImage
     title: qsTr("Taaasty")
@@ -201,132 +201,116 @@ ApplicationWindow {
             if (stack.currentItem.isFeedView)
                 stack.currentItem.pushed();
         }
-        delegate: StackViewDelegate {
-            function transitionFinished(properties)
-            {
-                properties.exitItem.opacity = 1;
-                properties.enterItem.opacity = 1;
+        popEnter: Transition {
+            PropertyAnimation {
+                property: "opacity"
+                duration: 300
+                from: 0
+                to: 1
             }
-            pushTransition: StackViewTransition {
-                PropertyAnimation {
-                    target: enterItem
-                    property: "opacity"
-                    duration: 300
-                    from: 0
-                    to: 1
-                }
-                NumberAnimation {
-                    target: enterItem
-                    property: "x"
-                    duration: 300
-                    easing.type: Easing.InOutQuad
-                    from: enterItem.width
-                    to: 0
-                }
-                PropertyAnimation {
-                    target: enterItem
-                    property: "scale"
-                    duration: 300
-                    from: 1.2
-                    to: 1
-                }
-                PropertyAnimation {
-                    target: exitItem
-                    property: "opacity"
-                    duration: 300
-                    from: 1
-                    to: 0
-                }
-                PropertyAnimation {
-                    target: exitItem
-                    property: "scale"
-                    duration: 300
-                    from: 1
-                    to: 0.8
-                }
+            PropertyAnimation {
+                property: "scale"
+                duration: 300
+                from: 0.8
+                to: 1
             }
-            popTransition: StackViewTransition {
-                PropertyAnimation {
-                    target: exitItem
-                    property: "opacity"
-                    to: 0
-                }
-                NumberAnimation {
-                    target: exitItem
-                    property: "x"
-                    duration: 300
-                    easing.type: Easing.InOutQuad
-                    to: exitItem.width
-                }
-                PropertyAnimation {
-                    target: exitItem
-                    property: "scale"
-                    duration: 300
-                    from: 1
-                    to: 1.2
-                }
-                PropertyAnimation {
-                    target: enterItem
-                    property: "opacity"
-                    duration: 300
-                    from: 0
-                    to: 1
-                }
-                PropertyAnimation {
-                    target: enterItem
-                    property: "scale"
-                    duration: 300
-                    from: 0.8
-                    to: 1
-                }
+        }
+        popExit: Transition {
+            PropertyAnimation {
+                property: "opacity"
+                duration: 300
+                to: 0
+            }
+            NumberAnimation {
+                property: "x"
+                duration: 300
+                easing.type: Easing.InOutQuad
+                to: window.width
+            }
+            PropertyAnimation {
+                property: "scale"
+                duration: 300
+                from: 1
+                to: 1.2
+            }
+        }
+        pushEnter: Transition {
+            PropertyAnimation {
+                property: "opacity"
+                duration: 300
+                from: 0
+                to: 1
+            }
+            NumberAnimation {
+                property: "x"
+                duration: 300
+                easing.type: Easing.InOutQuad
+                from: window.width
+                to: 0
+            }
+            PropertyAnimation {
+                property: "scale"
+                duration: 300
+                from: 1.2
+                to: 1
+            }
+        }
+        pushExit: Transition {
+            PropertyAnimation {
+                property: "opacity"
+                duration: 300
+                from: 1
+                to: 0
+            }
+            PropertyAnimation {
+                property: "scale"
+                duration: 300
+                from: 1
+                to: 0.8
             }
         }
         Component {
             id: feed
             FeedView {
                 onEntryClicked: {
-                    stack.push({
-                                   item: fullEntry,
-                                   properties: {
-                                       entry: entry,
-                                       showProfiles: mode !== FeedModel.AnonymousMode
-                                   }
-                               })
+                    stack.push(fullEntry,
+                               {
+                                   entry: entry,
+                                   showProfiles: mode !== FeedModel.AnonymousMode
+                               }
+                               )
                 }
                 onAvatarClicked: {
-                    stack.push({
-                                   item: profile,
-                                   properties: {
-                                       tlog: tlog,
-                                       author: author
-                                   }
-                               })
+                    stack.push(profile,
+                               {
+                                   tlog: tlog,
+                                   author: author
+                               }
+                               )
                 }
                 onFlowClicked: {
-                    stack.push({
-                                   item: feed,
-                                   properties: {
-                                       mode: FeedModel.TlogMode,
-                                       tlogId: flowId
-                                   }
-                               })
+                    stack.push(feed,
+                               {
+                                   mode: FeedModel.TlogMode,
+                                   tlogId: flowId
+                               }
+                               )
                 }
                 onPopped: stack.pop()
-                poppable: Stack.index > 0
+                poppable: StackView.index > 0
             }
         }
         Component {
             id: fullEntry
             FullEntryView {
                 onPopped: stack.pop()
-                poppable: Stack.index > 0
+                poppable: StackView.index > 0
                 onAvatarClicked: {
-                    stack.push({
-                                   item: profile,
-                                   properties: {
-                                       tlogId: tlogId
-                                   }
-                               })
+                    stack.push(profile,
+                               {
+                                   tlogId: tlogId
+                               }
+                               )
                 }
             }
         }
@@ -334,35 +318,32 @@ ApplicationWindow {
             id: profile
             ProfileView {
                 onPopped: stack.pop()
-                poppable: Stack.index > 0
+                poppable: StackView.index > 0
                 onTlogRequested: {
-                    stack.push({
-                                   item: feed,
-                                   properties: {
-                                       mode: FeedModel.TlogMode,
-                                       tlogId: author.id
-                                   }
-                               })
+                    stack.push(feed,
+                               {
+                                   mode: FeedModel.TlogMode,
+                                   tlogId: author.id
+                               }
+                               )
                 }
                 onFollowersRequested: {
-                    stack.push({
-                                   item: users,
-                                   properties: {
-                                       mode: UsersModel.FollowersMode,
-                                       tlogId: author.id,
-                                       tlog: tlog
-                                   }
-                               })
+                    stack.push(users,
+                               {
+                                   mode: UsersModel.FollowersMode,
+                                   tlogId: author.id,
+                                   tlog: tlog
+                               }
+                               )
                 }
                 onFollowingsRequested: {
-                    stack.push({
-                                   item: users,
-                                   properties: {
-                                       mode: UsersModel.FollowingsMode,
-                                       tlogId: author.id,
-                                       tlog: tlog
-                                   }
-                               })
+                    stack.push(users,
+                               {
+                                   mode: UsersModel.FollowingsMode,
+                                   tlogId: author.id,
+                                   tlog: tlog
+                               }
+                               )
                 }
             }
         }
@@ -370,23 +351,21 @@ ApplicationWindow {
             id: users
             UsersView {
                 onPopped: stack.pop()
-                poppable: Stack.index > 0
+                poppable: StackView.index > 0
                 onTlogRequested: {
-                    stack.push({
-                                   item: feed,
-                                   properties: {
-                                       mode: FeedModel.TlogMode,
-                                       tlogId: tlog
-                                   }
-                               })
+                    stack.push(feed,
+                               {
+                                   mode: FeedModel.TlogMode,
+                                   tlogId: tlog
+                               }
+                               )
                 }
                 onProfileRequested: {
-                    stack.push({
-                                   item: profile,
-                                   properties: {
-                                       tlogId: tlog
-                                   }
-                               })
+                    stack.push(profile,
+                               {
+                                   tlogId: tlog
+                               }
+                               )
                 }
             }
         }
@@ -394,7 +373,7 @@ ApplicationWindow {
             id: loginDialog
             LoginDialog {
                 onPopped: stack.pop()
-                poppable: Stack.index > 0
+                poppable: StackView.index > 0
             }
         }
         Connections {
@@ -426,13 +405,12 @@ ApplicationWindow {
             if (stack.currentItem.isFullEntryView && stack.currentItem.entryId === entry)
                 return;
 
-            stack.push({
-                           item: fullEntry,
-                           properties: {
-                               entryId: entry,
-                               showProfiles: showProfile
-                           }
-                       })
+            stack.push(fullEntry,
+                       {
+                           entryId: entry,
+                           showProfiles: showProfile
+                       }
+                       )
         }
         onTlogRequested: {
             if (stack.currentItem.isFeedView
@@ -440,24 +418,22 @@ ApplicationWindow {
                     && stack.currentItem.tlogId === tlogId)
                 return;
 
-            stack.push({
-                           item: feed,
-                           properties: {
-                               mode: FeedModel.TlogMode,
-                               tlogId: tlogId
-                           }
-                       })
+            stack.push(feed,
+                       {
+                           mode: FeedModel.TlogMode,
+                           tlogId: tlogId
+                       }
+                       )
         }
     }
     Footer {
         id: footer
         onAvatarClicked: {
-            stack.push({
-                           item: profile,
-                           properties: {
-                               tlog: tlog
-                           }
-                       })
+            stack.push(profile,
+                       {
+                           tlog: tlog
+                       }
+                       )
         }
     }
     InputDialog {

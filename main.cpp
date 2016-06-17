@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QtQml>
+#include <QQmlEngine>
 
 #if defined(Q_OS_ANDROID)
 #   include <QtAndroidExtras/QAndroidJniObject>

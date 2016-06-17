@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.7
 import org.binque.taaasty 1.0
 
 MouseArea {
