@@ -14,8 +14,8 @@ Rectangle {
     property Tlog tlog: Tlog {
         tlogId: back.tlogId
     }
-    signal tlogRequested(int tlog)
-    signal profileRequested(int tlog)
+    signal tlogRequested(int tlogId)
+    signal profileRequested(int tlogId)
     onModeChanged: {
         if (mode === UsersModel.FollowersMode)
             title = 'Подписчики';
@@ -90,6 +90,7 @@ Rectangle {
                 text: user.name
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: usersAvatar.right
+                anchors.right: parent.right
                 anchors.leftMargin: 1 * mm
                 anchors.rightMargin: 1 * mm
                 elide: Text.ElideRight

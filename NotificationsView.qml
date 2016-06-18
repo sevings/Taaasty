@@ -9,8 +9,8 @@ Rectangle {
     y: height
     z: 5
     visible: y < height
-    signal avatarClicked(int tlog)
-    signal entryRequested(int entry, bool showProfile)
+    signal avatarClicked(int tlogId)
+    signal entryRequested(int entryId, bool showProfiles)
     signal tlogRequested(int tlogId)
     state: "closed"
     states: [

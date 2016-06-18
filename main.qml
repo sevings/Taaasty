@@ -87,19 +87,10 @@ ApplicationWindow {
             var slug = matches[1];
             var entryId = matches[2];
             if (entryId) {
-                console.log(entryId)
-                stack.push(fullEntry,
-                           {
-                               entryId: entryId
-                           }
-                           )
+                pushFullEntryById(entryId); // TODO: showProfiles
             }
             else if (slug) {
-                stack.push(profile,
-                           {
-                               slug: slug
-                           }
-                           )
+                pushProfileBySlug(slug);
             }
             else
                 Qt.openUrlExternally(url)
@@ -111,6 +102,61 @@ ApplicationWindow {
         savingImage = image;
         inputDialog.text = image.fileName;
         showLineInput('save');
+    }
+    function pushFullEntry(entry, showProfiles) {
+        stack.push(fullEntry,
+                   {
+                       entry: entry,
+                       showProfiles: showProfiles
+                   }
+                   )
+    }
+    function pushFullEntryById(entryId, showProfiles) {
+        stack.push(fullEntry,
+                   {
+                       entryId: entryId,
+                       showProfiles: showProfiles
+                   }
+                   )
+    }
+    function pushProfile(tlog, author) {
+        stack.push(profile,
+                   {
+                       tlog: tlog,
+                       author: author
+                   }
+                   )
+    }
+    function pushProfileById(tlogId) {
+        stack.push(profile,
+                   {
+                       tlogId: tlogId
+                   }
+                   )
+    }
+    function pushProfileBySlug(slug) {
+        stack.push(profile,
+                   {
+                       slug: slug
+                   }
+                   )
+    }
+    function pushTlog(tlogId) {
+        stack.push(feed,
+                   {
+                       mode: FeedModel.TlogMode,
+                       tlogId: tlogId
+                   }
+                   )
+    }
+    function pushUsers(mode, authorId, tlog) {
+        stack.push(users,
+                   {
+                       mode: mode,
+                       tlogId: authorId,
+                       tlog: tlog
+                   }
+                   )
     }
     Tlog {
         id: emptyTlog
@@ -148,19 +194,11 @@ ApplicationWindow {
         }
         onWaterTlogsRequested: {
             backAnimation.start();
-            stack.push(users,
-                       {
-                           mode: UsersModel.WaterMode
-                       }
-                       )
+            window.pushUsers(UsersModel.WaterMode);
         }
         onFireTlogsRequested: {
             backAnimation.start();
-            stack.push(users,
-                       {
-                           mode: UsersModel.FireMode
-                       }
-                       )
+            window.pushUsers(UsersModel.FireMode);
         }
         onLoginRequested: {
             backAnimation.start();
@@ -269,28 +307,13 @@ ApplicationWindow {
             id: feed
             FeedView {
                 onEntryClicked: {
-                    stack.push(fullEntry,
-                               {
-                                   entry: entry,
-                                   showProfiles: mode !== FeedModel.AnonymousMode
-                               }
-                               )
+                    window.pushFullEntry(entry, mode !== FeedModel.AnonymousMode)
                 }
                 onAvatarClicked: {
-                    stack.push(profile,
-                               {
-                                   tlog: tlog,
-                                   author: author
-                               }
-                               )
+                    window.pushProfile(tlog, author)
                 }
                 onFlowClicked: {
-                    stack.push(feed,
-                               {
-                                   mode: FeedModel.TlogMode,
-                                   tlogId: flowId
-                               }
-                               )
+                    window.pushTlog(tlogId)
                 }
                 onPopped: stack.pop()
                 poppable: StackView.index > 0
@@ -302,11 +325,7 @@ ApplicationWindow {
                 onPopped: stack.pop()
                 poppable: StackView.index > 0
                 onAvatarClicked: {
-                    stack.push(profile,
-                               {
-                                   tlogId: tlogId
-                               }
-                               )
+                    window.pushProfileById(tlogId)
                 }
             }
         }
@@ -316,30 +335,13 @@ ApplicationWindow {
                 onPopped: stack.pop()
                 poppable: StackView.index > 0
                 onTlogRequested: {
-                    stack.push(feed,
-                               {
-                                   mode: FeedModel.TlogMode,
-                                   tlogId: author.id
-                               }
-                               )
+                    window.pushTlog(tlogId)
                 }
                 onFollowersRequested: {
-                    stack.push(users,
-                               {
-                                   mode: UsersModel.FollowersMode,
-                                   tlogId: author.id,
-                                   tlog: tlog
-                               }
-                               )
+                    window.pushUsers(UsersModel.FollowersMode, author.id, tlog)
                 }
                 onFollowingsRequested: {
-                    stack.push(users,
-                               {
-                                   mode: UsersModel.FollowingsMode,
-                                   tlogId: author.id,
-                                   tlog: tlog
-                               }
-                               )
+                    window.pushUsers(UsersModel.FollowingsMode, author.id, tlog)
                 }
             }
         }
@@ -349,19 +351,10 @@ ApplicationWindow {
                 onPopped: stack.pop()
                 poppable: StackView.index > 0
                 onTlogRequested: {
-                    stack.push(feed,
-                               {
-                                   mode: FeedModel.TlogMode,
-                                   tlogId: tlog
-                               }
-                               )
+                    window.pushTlog(tlogId)
                 }
                 onProfileRequested: {
-                    stack.push(profile,
-                               {
-                                   tlogId: tlog
-                               }
-                               )
+                    window.pushProfileById(tlogId)
                 }
             }
         }
@@ -390,23 +383,13 @@ ApplicationWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         onAvatarClicked: {
-            stack.push({
-                           item: profile,
-                           properties: {
-                               tlogId: tlog
-                           }
-                       })
+            window.pushProfileById(tlogId)
         }
         onEntryRequested: {
             if (stack.currentItem.isFullEntryView && stack.currentItem.entryId === entry)
                 return;
 
-            stack.push(fullEntry,
-                       {
-                           entryId: entry,
-                           showProfiles: showProfile
-                       }
-                       )
+            window.pushFullEntryById(entryId, showProfiles)
         }
         onTlogRequested: {
             if (stack.currentItem.isFeedView
@@ -414,22 +397,13 @@ ApplicationWindow {
                     && stack.currentItem.tlogId === tlogId)
                 return;
 
-            stack.push(feed,
-                       {
-                           mode: FeedModel.TlogMode,
-                           tlogId: tlogId
-                       }
-                       )
+            window.pushTlog(tlogId)
         }
     }
     Footer {
         id: footer
         onAvatarClicked: {
-            stack.push(profile,
-                       {
-                           tlog: tlog
-                       }
-                       )
+            window.pushProfile(tlog, tlog.author)
         }
     }
     InputDialog {
