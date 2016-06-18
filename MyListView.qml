@@ -45,7 +45,7 @@ ListView {
         height: h > 5 * mm ? h : 5 * mm
         color: window.textColor
         opacity: parent.movingVertically ? 0.7 : 0
-        visible: height < parent.height * 0.9
+        visible: opacity > 0 && height < parent.height * 0.9
         Behavior on opacity {
             NumberAnimation { duration: 500 }
         }
