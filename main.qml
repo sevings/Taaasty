@@ -113,7 +113,7 @@ ApplicationWindow {
                    )
     }
     function pushFullEntryById(entryId, showProfiles) {
-        if (stack.currentItem.isFullEntryView && stack.currentItem.entryId === entry)
+        if (stack.currentItem.isFullEntryView && stack.currentItem.entryId === entryId)
             return;
 
         stack.push(stack.fullEntry,

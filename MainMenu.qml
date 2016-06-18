@@ -151,22 +151,22 @@ MouseArea {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     text: 'Загружать изображения'
-                    checked: Settings.autoloadImages
-                    onClicked: { Settings.autoloadImages = !checked }
+                    glowing: Settings.autoloadImages
+                    onClicked: { Settings.autoloadImages = !glowing }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     text: 'Скрывать короткие посты'
-                    checked: Settings.hideShortPosts
-                    onClicked: { Settings.hideShortPosts = !checked }
+                    glowing: Settings.hideShortPosts
+                    onClicked: { Settings.hideShortPosts = !glowing }
                 }
                 ThemedButton {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     text: 'Включить НБК'
-                    checked: Settings.hideNegativeRated
-                    onClicked: { Settings.hideNegativeRated = !checked }
+                    glowing: Settings.hideNegativeRated
+                    onClicked: { Settings.hideNegativeRated = !glowing }
                 }
                 ThemedButton {
                     anchors.left: parent.left

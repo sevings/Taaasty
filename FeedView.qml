@@ -330,7 +330,7 @@ Rectangle {
                 text: 'Да!'
 //                visible: entry.isVotable && Tasty.isAuthorized
 //                enabled: entry.rating.isVotable || (!entry.rating.isBayesVoted && !entry.isVotedAgainst)
-                checked: entry.rating.isVoted || entry.rating.isBayesVoted
+                glowing: entry.rating.isVoted || entry.rating.isBayesVoted
                 onClicked: {
                     if (back.x > 0) {
                         mouse.accepted = false;
@@ -349,8 +349,7 @@ Rectangle {
                 text: 'Фу…'
 //                visible: entry.isVotable && Tasty.isAuthorized
                 enabled: !entry.rating.isBayesVoted && !entry.rating.isVotedAgainst
-                checked: entry.rating.isVotedAgainst
-                fontSize: 20
+                glowing: entry.rating.isVotedAgainst
                 onClicked: {
                     if (back.x > 0) {
                         mouse.accepted = false;

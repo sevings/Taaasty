@@ -224,7 +224,7 @@ Rectangle {
                 height: 6 * mm
                 width: (parent.width - 5 * mm) / 4
                 visible: entry.isFavoritable && Tasty.isAuthorized
-                checked: entry.isFavorited
+                glowing: entry.isFavorited
 //            enabled: !fullEntry.favorited
                 onClicked: entry.favorite()
             }
@@ -237,7 +237,7 @@ Rectangle {
                 height: 6 * mm
                 width: fullEntryFavButton.width
                 visible: entry.isWatchable && Tasty.isAuthorized
-                checked: entry.isWatched
+                glowing: entry.isWatched
 //              enabled: entry.isWatchable
                 onClicked: entry.watch()
             }
@@ -260,9 +260,8 @@ Rectangle {
                 anchors.margins: 1 * mm
                 text: '+' + (entry.isVotable ? ' ' + entry.rating.votes : '')
                 height: 6 * mm
-                fontSize: fullEntryFavButton.fontSize
                 enabled: entry.rating.isVotable || (!entry.rating.isBayesVoted && !entry.isVotedAgainst)
-                checked: entry.rating.isVoted
+                glowing: entry.rating.isVoted
                 onClicked: entry.rating.vote()
             }
             ThemedButton {
@@ -274,7 +273,6 @@ Rectangle {
                 text: enabled || fullEntry.count > 0 ? 'Еще' : ''
                 height: visible ? 6 * mm : 0
                 width: parent.width / 3
-                fontSize: fullEntryFavButton.fontSize
                 visible: commentsModel && commentsModel.hasMore
                 enabled: commentsModel && !commentsModel.loading
                 onClicked: commentsModel.loadMore()
