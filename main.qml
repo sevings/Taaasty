@@ -112,6 +112,9 @@ ApplicationWindow {
                    )
     }
     function pushFullEntryById(entryId, showProfiles) {
+        if (stack.currentItem.isFullEntryView && stack.currentItem.entryId === entry)
+            return;
+
         stack.push(fullEntry,
                    {
                        entryId: entryId,
@@ -142,6 +145,11 @@ ApplicationWindow {
                    )
     }
     function pushTlog(tlogId) {
+        if (stack.currentItem.isFeedView
+                && stack.currentItem.mode === FeedModel.TlogMode
+                && stack.currentItem.tlogId === tlogId)
+            return;
+
         stack.push(feed,
                    {
                        mode: FeedModel.TlogMode,
@@ -157,6 +165,9 @@ ApplicationWindow {
                        tlog: tlog
                    }
                    )
+    }
+    function popFromStack() {
+        stack.pop();
     }
     Tlog {
         id: emptyTlog
@@ -306,62 +317,30 @@ ApplicationWindow {
         Component {
             id: feed
             FeedView {
-                onEntryClicked: {
-                    window.pushFullEntry(entry, mode !== FeedModel.AnonymousMode)
-                }
-                onAvatarClicked: {
-                    window.pushProfile(tlog, author)
-                }
-                onFlowClicked: {
-                    window.pushTlog(tlogId)
-                }
-                onPopped: stack.pop()
                 poppable: StackView.index > 0
             }
         }
         Component {
             id: fullEntry
             FullEntryView {
-                onPopped: stack.pop()
                 poppable: StackView.index > 0
-                onAvatarClicked: {
-                    window.pushProfileById(tlogId)
-                }
             }
         }
         Component {
             id: profile
             ProfileView {
-                onPopped: stack.pop()
                 poppable: StackView.index > 0
-                onTlogRequested: {
-                    window.pushTlog(tlogId)
-                }
-                onFollowersRequested: {
-                    window.pushUsers(UsersModel.FollowersMode, author.id, tlog)
-                }
-                onFollowingsRequested: {
-                    window.pushUsers(UsersModel.FollowingsMode, author.id, tlog)
-                }
             }
         }
         Component {
             id: users
             UsersView {
-                onPopped: stack.pop()
                 poppable: StackView.index > 0
-                onTlogRequested: {
-                    window.pushTlog(tlogId)
-                }
-                onProfileRequested: {
-                    window.pushProfileById(tlogId)
-                }
             }
         }
         Component {
             id: loginDialog
             LoginDialog {
-                onPopped: stack.pop()
                 poppable: StackView.index > 0
             }
         }
@@ -382,29 +361,9 @@ ApplicationWindow {
         id: notifsView
         anchors.left: parent.left
         anchors.right: parent.right
-        onAvatarClicked: {
-            window.pushProfileById(tlogId)
-        }
-        onEntryRequested: {
-            if (stack.currentItem.isFullEntryView && stack.currentItem.entryId === entry)
-                return;
-
-            window.pushFullEntryById(entryId, showProfiles)
-        }
-        onTlogRequested: {
-            if (stack.currentItem.isFeedView
-                    && stack.currentItem.mode === FeedModel.TlogMode
-                    && stack.currentItem.tlogId === tlogId)
-                return;
-
-            window.pushTlog(tlogId)
-        }
     }
     Footer {
         id: footer
-        onAvatarClicked: {
-            window.pushProfile(tlog, tlog.author)
-        }
     }
     InputDialog {
         id: inputDialog

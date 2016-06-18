@@ -7,7 +7,6 @@ Popup {
     outsideArea: false
     property string title
     property Tlog tlog
-    signal avatarClicked
 //    gradient: Gradient {
 //        GradientStop { position: 0; color: '#373737' }
 //        GradientStop { position: 1; color: '#000000' }
@@ -38,7 +37,7 @@ Popup {
             if (window.notifsShows)
                 window.hideNotifs();
             else if (footer.tlog.tlogId > 0 && footer.tlog.tlogId !== window.anonymousId)
-                footer.avatarClicked()
+                window.pushProfile(tlog, tlog.author)
         }
     }
     MouseArea {

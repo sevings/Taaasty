@@ -4,6 +4,7 @@ import org.binque.taaasty 1.0
 Rectangle {
     id: profileView
     color: window.backgroundColor
+    onPopped: window.popFromStack()
     property int tlogId
     property string slug: ''
     property Tlog tlog: Tlog {
@@ -11,9 +12,6 @@ Rectangle {
         slug: profileView.slug
     }
     property Author author: tlog.author
-    signal tlogRequested
-    signal followersRequested
-    signal followingsRequested
     signal popped
     property bool poppable
     Splash {
@@ -119,21 +117,21 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: author.isFlow ? 'Читать' : author.publicEntriesCount
-                onClicked: profileView.tlogRequested()
+                onClicked: window.pushTlog(tlog.tlogId)
                 enabled: !author.isPrivacy || tlog.amIFollowing || tlog.isMe
             }
             ThemedButton {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: tlog.followersCount
-                onClicked: profileView.followersRequested()
+                onClicked: window.pushUsers(UsersModel.FollowersMode, author.id, tlog)
                 visible: tlog.tlogId === author.id && !author.isFlow
             }
             ThemedButton {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: tlog.followingsCount
-                onClicked: profileView.followingsRequested()
+                onClicked: window.pushUsers(UsersModel.FollowingsMode, author.id, tlog)
                 visible: tlog.tlogId === author.id && !author.isFlow
             }
         }

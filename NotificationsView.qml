@@ -9,9 +9,6 @@ Rectangle {
     y: height
     z: 5
     visible: y < height
-    signal avatarClicked(int tlogId)
-    signal entryRequested(int entryId, bool showProfiles)
-    signal tlogRequested(int tlogId)
     state: "closed"
     states: [
         State {
@@ -66,7 +63,7 @@ Rectangle {
                         return;
 
                     window.hideNotifs();
-                    entryRequested(notification.entityId, showProfile);
+                    window.pushFullEntryById(notification.entityId, showProfile);
                 }
                 else if (notification.entityType === 'Comment')
                 {
@@ -74,12 +71,12 @@ Rectangle {
                         return;
 
                     window.hideNotifs();
-                    entryRequested(notification.parentId, showProfile);
+                    window.pushFullEntryById(notification.parentId, showProfile);
                 }
                 else if (notification.entityType === 'Relationship')
                 {
                     window.hideNotifs();
-                    tlogRequested(notification.sender.id);
+                    window.pushTlog(notification.sender.id);
                 }
                 else
                     console.log(notification.entityType);
@@ -96,7 +93,7 @@ Rectangle {
                             return;
 
                         window.hideNotifs();
-                        avatarClicked(notification.sender.id);
+                        window.pushProfileById(notification.sender.id);
                     }
                 }
             }

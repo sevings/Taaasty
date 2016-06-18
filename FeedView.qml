@@ -5,6 +5,7 @@ Rectangle {
     id: back
     color: window.backgroundColor
     signal popped
+    onPopped: window.popFromStack()
     property bool poppable
     property int mode: FeedModel.LiveMode
     property int tlogId: 0
@@ -44,9 +45,6 @@ Rectangle {
     readonly property bool customTitle: mode !== FeedModel.TlogMode// && mode !== FeedModel.MyTlogMode
     readonly property bool isFeedView: true
     signal pushed
-    signal entryClicked(TlogEntry entry)
-    signal avatarClicked(Tlog tlog, Author author)
-    signal flowClicked(int flowId)
     function setMode(m, t, s) {
         if (mode === m) {
             query = '';
@@ -142,7 +140,7 @@ Rectangle {
                     }
 
                     saveCurrentIndex();
-                    entryClicked(entry);
+                    window.pushFullEntry(entry);
                 }
             }
             ThemedText {
@@ -163,7 +161,7 @@ Rectangle {
                 Poppable {
                     body: back
                     onClicked: {
-                        back.flowClicked(entry.tlog.author.id)
+                        window.pushTlog(entry.tlog.author.id)
                     }
                 }
             }
@@ -182,7 +180,7 @@ Rectangle {
                         }
 
                         saveCurrentIndex();
-                        back.avatarClicked(entry.tlog, entry.author);
+                        window.pushProfile(entry.tlog, entry.author);
                     }
                 }
             }

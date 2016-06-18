@@ -4,6 +4,7 @@ import org.binque.taaasty 1.0
 Rectangle {
     id: back
     color: window.backgroundColor
+    onPopped: window.popFromStack()
     property int entryId
     property TlogEntry entry: TlogEntry {
         entryId: back.entryId
@@ -11,7 +12,6 @@ Rectangle {
     readonly property Tlog tlog: entry.tlog
     property CommentsModel commentsModel: entry.commentsModel
     property bool showProfiles: true
-    signal avatarClicked(int tlogId)
     signal popped
     property bool poppable
     readonly property bool isFullEntryView: true
@@ -52,7 +52,7 @@ Rectangle {
                 user: comment.user
                 Poppable {
                     body: back
-                    onClicked: if (back.showProfiles) back.avatarClicked(comment.user.id);
+                    onClicked: if (back.showProfiles) window.pushProfileById(comment.user.id);
                 }
             }
             Text {

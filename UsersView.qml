@@ -5,6 +5,7 @@ Rectangle {
     id: back
     color: window.backgroundColor
     signal popped
+    onPopped: window.popFromStack()
     property bool poppable
     property string title: ''
     readonly property bool customTitle: bayesMode
@@ -14,8 +15,6 @@ Rectangle {
     property Tlog tlog: Tlog {
         tlogId: back.tlogId
     }
-    signal tlogRequested(int tlogId)
-    signal profileRequested(int tlogId)
     onModeChanged: {
         if (mode === UsersModel.FollowersMode)
             title = 'Подписчики';
@@ -62,7 +61,7 @@ Rectangle {
                 anchors.fill: parent
                 body: back
                 onClicked: {
-                    tlogRequested(user.id);
+                    window.pushTlog(user.id);
 //                if (window.secondMode === 'bayes')
 //                    Bayes.toggleInclude(users.type, id);
 //                else
@@ -79,7 +78,7 @@ Rectangle {
                     anchors.fill: parent
                     body: back
                     onClicked: {
-                        profileRequested(user.id);
+                        window.pushProfileById(user.id);
                     }
                 }
             }
