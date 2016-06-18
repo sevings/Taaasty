@@ -16,20 +16,19 @@ Item {
     }
     TextEditor {
         id: input
-        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
         anchors.right: button.left
-        height: button.height
+        height: 12 * mm
     }
     ThemedButton {
         id: button
-        anchors.top: parent.top
+        anchors.bottom: parent.bottom
         anchors.right: parent.right
         width: parent.width / 5
         text: '+'
         enabled: input.text
         onClicked: {
-//            editor.message = input.text.toString();
-//            console.log(editor.message);
             editor.sent();
         }
     }
