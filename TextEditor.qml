@@ -46,7 +46,7 @@ Flickable {
         padding: 1 * mm
         implicitHeight: contentHeight + 2 * mm
         implicitWidth: 30 * mm
-//        selectByMouse: true
+        selectByMouse: true
         background: Rectangle {
             gradient: Gradient {
                 GradientStop { position: 0; color: 'black' }
