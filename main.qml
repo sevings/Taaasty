@@ -88,20 +88,18 @@ ApplicationWindow {
             var entryId = matches[2];
             if (entryId) {
                 console.log(entryId)
-                stack.push({
-                               item: fullEntry,
-                               properties: {
-                                   entryId: entryId
-                               }
-                           })
+                stack.push(fullEntry,
+                           {
+                               entryId: entryId
+                           }
+                           )
             }
             else if (slug) {
-                stack.push({
-                               item: profile,
-                               properties: {
-                                   slug: slug
-                               }
-                           })
+                stack.push(profile,
+                           {
+                               slug: slug
+                           }
+                           )
             }
             else
                 Qt.openUrlExternally(url)
@@ -150,21 +148,19 @@ ApplicationWindow {
         }
         onWaterTlogsRequested: {
             backAnimation.start();
-            stack.push({
-                           item: users,
-                           properties: {
-                               mode: UsersModel.WaterMode
-                           }
-                       })
+            stack.push(users,
+                       {
+                           mode: UsersModel.WaterMode
+                       }
+                       )
         }
         onFireTlogsRequested: {
             backAnimation.start();
-            stack.push({
-                           item: users,
-                           properties: {
-                               mode: UsersModel.FireMode
-                           }
-                       })
+            stack.push(users,
+                       {
+                           mode: UsersModel.FireMode
+                       }
+                       )
         }
         onLoginRequested: {
             backAnimation.start();
