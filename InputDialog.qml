@@ -22,7 +22,6 @@ Popup {
             focus = false;
     }
     onOutsideClicked: window.hideLineInput()
-    signal accepted
     ThemedText {
         id: label
         text: {
@@ -45,7 +44,7 @@ Popup {
         anchors.top: label.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        onAccepted: back.accepted()
+        onAccepted: window.handleInputLine(mode, input.text)
         inputMethodHints: {
             if (mode === 'tlog')
                 Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase;
@@ -72,6 +71,6 @@ Popup {
                 'Сохранить';
         }
         enabled: input.text
-        onClicked: parent.accepted()
+        onClicked: window.handleInputLine(mode, input.text)
     }
 }

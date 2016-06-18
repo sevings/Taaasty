@@ -104,10 +104,11 @@ ApplicationWindow {
         showLineInput('save');
     }
     function pushFullEntry(entry, showProfiles) {
-        stack.push(fullEntry,
+        stack.push(stack.fullEntry,
                    {
                        entry: entry,
-                       showProfiles: showProfiles
+                       showProfiles: showProfiles,
+                       poppable: true
                    }
                    )
     }
@@ -115,32 +116,36 @@ ApplicationWindow {
         if (stack.currentItem.isFullEntryView && stack.currentItem.entryId === entry)
             return;
 
-        stack.push(fullEntry,
+        stack.push(stack.fullEntry,
                    {
                        entryId: entryId,
-                       showProfiles: showProfiles
+                       showProfiles: showProfiles,
+                       poppable: true
                    }
                    )
     }
     function pushProfile(tlog, author) {
-        stack.push(profile,
+        stack.push(stack.profile,
                    {
                        tlog: tlog,
-                       author: author
+                       author: author,
+                       poppable: true
                    }
                    )
     }
     function pushProfileById(tlogId) {
-        stack.push(profile,
+        stack.push(stack.profile,
                    {
-                       tlogId: tlogId
+                       tlogId: tlogId,
+                       poppable: true
                    }
                    )
     }
     function pushProfileBySlug(slug) {
-        stack.push(profile,
+        stack.push(stack.profile,
                    {
-                       slug: slug
+                       slug: slug,
+                       poppable: true
                    }
                    )
     }
@@ -153,21 +158,44 @@ ApplicationWindow {
         stack.push(feed,
                    {
                        mode: FeedModel.TlogMode,
-                       tlogId: tlogId
+                       tlogId: tlogId,
+                       poppable: true
                    }
                    )
     }
     function pushUsers(mode, authorId, tlog) {
-        stack.push(users,
+        stack.push(stack.users,
                    {
                        mode: mode,
                        tlogId: authorId,
-                       tlog: tlog
+                       tlog: tlog,
+                       poppable: true
                    }
                    )
     }
     function popFromStack() {
         stack.pop();
+    }
+    function handleInputLine(mode, text) {
+        if (mode === 'tlog')
+            stack.currentItem.setMode(FeedModel.TlogMode, undefined, text);
+        else if (mode === 'rating') {
+            var r = Number(text);
+            if (r > 0)
+            {
+                stack.currentItem.setMode(FeedModel.BetterThanMode);
+                stack.currentItem.minRating = r;
+            }
+        }
+        else if (mode === 'query') {
+            stack.currentItem.query = text;
+        }
+        else if (mode === 'save') {
+            savingImage.saveToFile(text);
+            savingImage = Cache.image();
+        }
+        hideLineInput();
+        setFooterFromStack();
     }
     Tlog {
         id: emptyTlog
@@ -320,30 +348,10 @@ ApplicationWindow {
                 poppable: StackView.index > 0
             }
         }
-        Component {
-            id: fullEntry
-            FullEntryView {
-                poppable: StackView.index > 0
-            }
-        }
-        Component {
-            id: profile
-            ProfileView {
-                poppable: StackView.index > 0
-            }
-        }
-        Component {
-            id: users
-            UsersView {
-                poppable: StackView.index > 0
-            }
-        }
-        Component {
-            id: loginDialog
-            LoginDialog {
-                poppable: StackView.index > 0
-            }
-        }
+        property Component fullEntry:   Qt.createComponent("FullEntryView.qml",   Component.Asynchronous, stack);
+        property Component profile:     Qt.createComponent("ProfileView.qml",     Component.Asynchronous, stack);
+        property Component users:       Qt.createComponent("UsersView.qml",       Component.Asynchronous, stack);
+        property Component loginDialog: Qt.createComponent("LoginDialog.qml",     Component.Asynchronous, stack);
         Connections {
             target: Tasty
             onAuthorizationNeeded: {
@@ -367,27 +375,6 @@ ApplicationWindow {
     }
     InputDialog {
         id: inputDialog
-        onAccepted: {
-            if (mode === 'tlog')
-                stack.currentItem.setMode(FeedModel.TlogMode, undefined, inputDialog.text);
-            else if (mode === 'rating') {
-                var r = Number(inputDialog.text);
-                if (r > 0)
-                {
-                    stack.currentItem.setMode(FeedModel.BetterThanMode);
-                    stack.currentItem.minRating = r;
-                }
-            }
-            else if (mode === 'query') {
-                stack.currentItem.query = inputDialog.text;
-            }
-            else if (mode === 'save') {
-                savingImage.saveToFile(inputDialog.text);
-                savingImage = Cache.image();
-            }
-            hideLineInput();
-            setFooterFromStack();
-        }
     }
     Dialog {
         id: dialog
