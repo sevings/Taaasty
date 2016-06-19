@@ -246,6 +246,9 @@ void FeedModel::_addItems(QJsonObject data)
             break;
         }
 
+    if (_lastEntry <= 0)
+        _lastEntry = feed.last().toObject().value("id").toInt();
+
     QList<Entry*> all;
     all.reserve(feed.size());
     foreach(auto item, feed)
