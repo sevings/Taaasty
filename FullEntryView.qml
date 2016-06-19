@@ -281,6 +281,7 @@ Rectangle {
         footer: MessageEditor {
             id: commentEditor
             visible: Tasty.isAuthorized
+            height: visible ? implicitHeight : - 1 * mm
             onSent: {
                 entry.addComment(commentEditor.message);
             }

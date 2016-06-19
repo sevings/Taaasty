@@ -173,10 +173,20 @@ ApplicationWindow {
                    }
                    )
     }
+    function pushLoginDialog() {
+        stack.push(stack.loginDialog,
+                   {
+                       poppable: true
+                   }
+                   )
+    }
     function popFromStack() {
         stack.pop();
     }
     function handleInputLine(mode, text) {
+        if (!text)
+            return;
+
         if (mode === 'tlog')
             stack.currentItem.setMode(FeedModel.TlogMode, undefined, text);
         else if (mode === 'rating') {
@@ -241,7 +251,7 @@ ApplicationWindow {
         }
         onLoginRequested: {
             backAnimation.start();
-            stack.push(loginDialog);
+            window.pushLoginDialog();
         }
     }
     ParallelAnimation {
@@ -358,10 +368,11 @@ ApplicationWindow {
                 if (!stack.find(function (item) {
                     return item.isLoginDialog;
                 }))
-                    stack.push(loginDialog);
+                    window.pushLoginDialog();
             }
             onAuthorized: {
-                stack.pop(loginDialog);
+                if (stack.currentItem.isLoginDialog)
+                    window.popFromStack();
             }
         }
     }

@@ -50,6 +50,10 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 2 * mm
         width: parent.width / 3 * 2
+        onAccepted: {
+            if (loginButton.enabled)
+                Tasty.authorize(mail.text, password.text);
+        }
     }
     ThemedButton {
         id: loginButton

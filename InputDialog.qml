@@ -44,7 +44,10 @@ Popup {
         anchors.top: label.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        onAccepted: window.handleInputLine(mode, input.text)
+        onAccepted: {
+            if (acceptButton.enabled)
+                window.handleInputLine(mode, input.text);
+        }
         inputMethodHints: {
             if (mode === 'tlog')
                 Qt.ImhNoPredictiveText | Qt.ImhPreferLowercase;

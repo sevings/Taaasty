@@ -4,7 +4,7 @@ Item {
     id: editor
     anchors.left: parent.left
     anchors.right: parent.right
-    height: input.height + 2 * mm
+    implicitHeight: input.height + 2 * mm
     property alias message: input.text
     signal sent
     onFocusChanged: if (focus) input.focus = true
