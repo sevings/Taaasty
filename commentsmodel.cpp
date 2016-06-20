@@ -155,7 +155,7 @@ void CommentsModel::_addLastComments(const QJsonObject data)
 
     _setTotalCount(data.value("total_count").toInt());
 
-    beginInsertRows(QModelIndex(), _comments.size() - 1, _comments.size() + feed.size() - 1);
+    beginInsertRows(QModelIndex(), _comments.size(), _comments.size() + feed.size() - 1);
 
     _comments.reserve(_comments.size() + feed.size());
 
