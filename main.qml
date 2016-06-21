@@ -223,12 +223,13 @@ ApplicationWindow {
         visible: stack.depth === 1 && stack.currentItem && stack.currentItem.x > 0
         onModeChanged: {
             backAnimation.start();
-            setFooterFromStack();
 
             if (mode !== FeedModel.BetterThanMode)
                 stack.currentItem.setMode(mode);
             else
                 showLineInput('rating');
+
+            setFooterFromStack();
         }
         onTlogRequested: {
             backAnimation.start();
