@@ -82,6 +82,7 @@ private:
     QList<BayesTlog> _tlogs[2];
     int _lastFavorite;
     bool _loadAll;
+    UsersModel* _bayesModel;
 
     QList<User*> _users;
     QString _url;

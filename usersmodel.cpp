@@ -19,6 +19,7 @@ UsersModel::UsersModel(QObject* parent)
     : QAbstractListModel(parent)
     , _lastFavorite(0)
     , _loadAll(false)
+    , _bayesModel(nullptr)
     , _tlog(0)
     , _total(1)
     , _loading(false)
@@ -109,6 +110,8 @@ void UsersModel::fetchMore(const QModelIndex& parent)
 
 void UsersModel::setMode(const UsersModel::Mode mode)
 {
+    _mode = mode;
+
     switch(mode)
     {
     case WaterMode:
@@ -119,30 +122,28 @@ void UsersModel::setMode(const UsersModel::Mode mode)
             _loadBayesTlogs(); //! TODO: but what if there are no users?
         break;
     case FollowersMode:
-        _url = QString("tlog/%1/followers.json?limit=50").arg(_tlog);
+        _url = QString("tlog/%1/followers.json?limit=10").arg(_tlog);
         _field = "reader";
         break;
     case FollowingsMode:
-        _url = QString("tlog/%1/followings.json?limit=50").arg(_tlog);
+        _url = QString("tlog/%1/followings.json?limit=10").arg(_tlog);
         _field = "user";
         break;
     case MyFollowingsMode:
-        _url = QString("relationships/to/friend.json?limit=50");
+        _url = QString("relationships/to/friend.json?limit=10");
         _field = "user";
         break;
     case MyFollowersMode:
-        _url = QString("relationships/by/friend.json?limit=50"); //! TODO: test me
+        _url = QString("relationships/by/friend.json?limit=10"); //! TODO: test me
         _field = "reader";
         break;
     case MyIgnoredMode:
-        _url = QString("relationships/to/ignored.json?limit=50");
+        _url = QString("relationships/to/ignored.json?limit=10");
         _field = "user";
         break;
     default:
         qDebug() << "users mode =" << mode;
     }
-
-    _mode = mode;
 }
 
 
@@ -197,11 +198,6 @@ void UsersModel::_addItems(QJsonObject data)
     }
 
     _lastPosition = list.last().toObject().value("position").toInt();
-    
-    if (_loadAll)
-        beginInsertRows(QModelIndex(), _tlogs[_mode].size(), _tlogs[_mode].size() + list.size() - 1);
-    else
-        beginInsertRows(QModelIndex(), _users.size(), _users.size() + list.size() - 1);
 
     QList<User*> users;
     users.reserve(list.size());
@@ -215,9 +211,11 @@ void UsersModel::_addItems(QJsonObject data)
     if (_loadAll)
         _saveBayesTlogs(users);
     else
+    {
+        beginInsertRows(QModelIndex(), _users.size(), _users.size() + list.size() - 1);
         _users << users;
-
-    endInsertRows();
+        endInsertRows();
+    }
 
     _loading = false;
 }
@@ -258,8 +256,8 @@ void UsersModel::_saveDb()
             {
                 Q_TEST(query.prepare("INSERT OR REPLACE INTO bayes_tlogs VALUES (?, ?, ?, ?)"));
                 query.addBindValue(type);
-                query.addBindValue(_tlogs[tlog].at(tlog).id);
-                query.addBindValue(_tlogs[tlog].at(tlog).latest);
+                query.addBindValue(_tlogs[type].at(tlog).id);
+                query.addBindValue(_tlogs[type].at(tlog).latest);
                 query.addBindValue(tlog);
                 Q_TEST(query.exec());
             }
@@ -271,18 +269,24 @@ void UsersModel::_loadBayesTlogs()
 {
     _loadAll = true;
 
-    if (_tlogs[WaterMode].isEmpty())
+    switch (_mode)
     {
+    case WaterMode:
         setMode(MyIgnoredMode);
         fetchMore(QModelIndex());
-    }
-    else if (_tlogs[FireMode].isEmpty())
-    {
+        break;
+    case FireMode:
         setMode(MyFollowingsMode);
         fetchMore(QModelIndex());
-    }
-    else
+        break;
+//    case MyIgnoredMode:
+//    case MyFollowingsMode:
+//        fetchMore(QModelIndex());
+//        break;
+    default:
         _loadAll = false;
+        return;
+    }
 }
 
 
@@ -296,32 +300,31 @@ void UsersModel::_saveBayesTlogs(QList<User*> users)
     switch (_mode)
     {
     case MyIgnoredMode:
+    case WaterMode:
         mode = WaterMode;
         break;
     case MyFollowingsMode:
+    case FireMode:
         mode = FireMode;
         break;
     default:
         return;
     }
 
+    if (_tlogs[mode].size() < _total)
+        fetchMore(QModelIndex());
+
+    beginInsertRows(QModelIndex(), _tlogs[mode].size(), _tlogs[mode].size() + users.size() - 1);
+
     _tlogs[mode].reserve(_tlogs[mode].size() + users.size());
     foreach(auto user, users)
         _tlogs[mode] << BayesTlog(user);
 
-    if (canFetchMore(QModelIndex()))
-    {
-        fetchMore(QModelIndex());
-        return;
-    }
+    endInsertRows();
 
-    if (mode == WaterMode)
+    if (!_loading)
     {
-        setMode(MyFollowingsMode);
-        fetchMore(QModelIndex());
-    }
-    else
-    {
+        setMode(mode);
         _saveDb();
         _loadAll = false;
     }
@@ -380,5 +383,5 @@ UsersModel::BayesTlog::~BayesTlog()
 
 void UsersModel::BayesTlog::loadInfo()
 {
-//    tlog->setId(id);
+    user->setId(id);
 }

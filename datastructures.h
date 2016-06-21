@@ -273,6 +273,8 @@ public:
     User(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
 
     int     id() const;
+    void    setId(int id);
+
     QString name() const;
     QString slug() const;
 
@@ -281,6 +283,7 @@ signals:
 
 protected slots:
     void _init(const QJsonObject data);
+    void _initFromTlog(const QJsonObject data);
 
 private:
     int     _id;
@@ -295,6 +298,8 @@ private:
     QString _symbol;
     QString _backgroundColor;
     QString _nameColor;
+
+    bool _loading;
 };
 
 

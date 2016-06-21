@@ -41,7 +41,7 @@ MouseArea {
             topMargin: 1 * mm
             bottomMargin: 1 * mm
             contentWidth: parent.width
-            property int buttonsCount: Tasty.isAuthorized ? 15 : 13
+            property int buttonsCount: Tasty.isAuthorized ? 17 : 15
             contentHeight: 9 * mm * buttonsCount + space.height
             Column {
                 id: column
@@ -129,18 +129,18 @@ MouseArea {
                     anchors.margins: 1 * mm
                     height: 2 * mm
                 }
-//                ThemedButton {
-//                    anchors.left: parent.left
-//                    anchors.right: parent.right
-//                    text: 'Water tlogs'
-//                    onClicked: { area.waterTlogsRequested() }
-//                }
-//                ThemedButton {
-//                    anchors.left: parent.left
-//                    anchors.right: parent.right
-//                    text: 'Fire tlogs'
-//                    onClicked: { area.fireTlogsRequested() }
-//                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Неинтересные'
+                    onClicked: { area.waterTlogsRequested() }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Интересные'
+                    onClicked: { area.fireTlogsRequested() }
+                }
 //                ThemedButton {
 //                    anchors.left: parent.left
 //                    anchors.right: parent.right

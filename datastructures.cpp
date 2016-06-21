@@ -392,6 +392,7 @@ void Comment::_remove(const QString data)
 
 User::User(const QJsonObject data, QObject *parent)
     : QObject(parent)
+    , _loading(false)
 {
     _init(data);
 }
@@ -399,6 +400,19 @@ User::User(const QJsonObject data, QObject *parent)
 int User::id() const
 {
     return _id;
+}
+
+void User::setId(int id)
+{
+    if (id <= 0 || id == _id)
+        return;
+
+    _id = id;
+
+    auto request = new ApiRequest(QString("tlog/%1.json").arg(_id));
+    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject)));
+
+    _loading = true;
 }
 
 QString User::name() const
@@ -434,6 +448,14 @@ void User::_init(const QJsonObject data)
     _nameColor       = colors.value("name").toString();
 
     emit updated();
+}
+
+
+
+void User::_initFromTlog(const QJsonObject data)
+{
+    auto author = data.value("author").toObject();
+    _init(author);
 }
 
 
