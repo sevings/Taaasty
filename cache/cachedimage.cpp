@@ -265,9 +265,6 @@ void CachedImage::_saveData()
     else if (_data.startsWith(0x47))
         setExtension("gif");
 
-    _reply->deleteLater();
-    _reply = nullptr;
-
     QtConcurrent::run(this, &CachedImage::_saveFile);
 }
 
@@ -359,6 +356,9 @@ void CachedImage::_saveFile()
     file.close();
 
     _data.clear();
+
+    _reply->deleteLater();
+    _reply = nullptr;
 
     _available = true;
     emit available();
