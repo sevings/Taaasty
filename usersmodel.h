@@ -49,14 +49,18 @@ public:
     Q_INVOKABLE void setTlog(const int tlog);
     Q_INVOKABLE int tlog() const {return _tlog; }
 
+    void downloadAll();
+
 signals:
     void hasMoreChanged();
+    void downloadCompleted();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
     void _addItems(QJsonObject data);
+    void _setBayesItems();
 
 private:
     struct BayesTlog {
@@ -77,10 +81,8 @@ private:
     void _saveDb();
 
     void _loadBayesTlogs();
-    void _saveBayesTlogs(QList<User*> users = QList<User*>());
 
     QList<BayesTlog> _tlogs[2];
-    int _lastFavorite;
     bool _loadAll;
     UsersModel* _bayesModel;
 
