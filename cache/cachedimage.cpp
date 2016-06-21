@@ -246,13 +246,10 @@ void CachedImage::_setProperties()
 void CachedImage::_saveData()
 {
     if (_reply->error() != QNetworkReply::NoError ) {
-//        if (_reply->error() == QNetworkReply::OperationCanceledError || _reply->error() == QNetworkReply::)
-//            return;
 
         _reply->deleteLater();
         _reply = nullptr;
 
-//        download();
         return;
     }
 
