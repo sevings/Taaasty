@@ -18,7 +18,6 @@
 UsersModelBayes::UsersModelBayes(QObject* parent)
     : UsersModel(parent)
     , _tlogModel(nullptr)
-//    , _loading(false)
 {
     _mode = FireMode;
 
@@ -221,7 +220,8 @@ UsersModelBayes::BayesTlog::BayesTlog(User* user)
 
 UsersModelBayes::BayesTlog::~BayesTlog()
 {
-//    delete user;
+//    if (!user->parent()) //TODO: delete user
+//        delete user;
 }
 
 

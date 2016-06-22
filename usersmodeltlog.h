@@ -44,7 +44,6 @@ private:
     int  _tlog;
     Mode _mode;
     int  _total;
-//    bool _loading;
     int  _lastPosition;
 };
 

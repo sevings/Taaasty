@@ -16,7 +16,6 @@ UsersModelTlog::UsersModelTlog(QObject* parent)
     , _loadAll(false)
     , _tlog(0)
     , _total(1)
-//    , _loading(false)
     , _lastPosition(0)
 {
     setMode(FollowingsMode);

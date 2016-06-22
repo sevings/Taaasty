@@ -47,8 +47,6 @@ private:
 
     QList<BayesTlog> _tlogs[2];
     UsersModelTlog* _tlogModel;
-
-//    bool _loading;
 };
 
 #endif // USERSMODELBAYES_H
