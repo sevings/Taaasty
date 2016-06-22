@@ -27,18 +27,10 @@ Rectangle {
     }
     Poppable {
         body: back
-        Text {
-            visible: !users.visible && !usersModel.hasMore
-            anchors.centerIn: parent
-            color: window.secondaryTextColor
-            horizontalAlignment: Text.AlignHCenter
-            font.pointSize: window.fontBiggest
-            wrapMode: Text.Wrap
-            text: 'Список пуст'
-        }
     }
     Splash {
-        visible: !users.visible && usersModel.hasMore
+        visible: !users.visible
+        text: users.model.hasMore ? 'Загрузка…' : 'Список пуст'
     }
     MyListView {
         id: users
@@ -47,11 +39,28 @@ Rectangle {
         anchors.right: parent.right
         visible: count > 0
         height: contentHeight > parent.height ? parent.height : contentHeight
-        model: UsersModel {
-            id: usersModel
-            mode: back.mode
-            tlog: back.tlogId
+//        property UsersModelTlog usersModelTlog: UsersModelTlog {
+//            mode: back.mode
+//            tlog: back.tlogId
+//        }
+//        property UsersModelBayes usersModelBayes: UsersModelBayes {
+//            mode: back.mode
+//        }
+//        model: bayesMode ? usersModelBayes : usersModelTlog
+        Component.onCompleted: {
+            var qml = 'import org.binque.taaasty 1.0\n' + (bayesMode ? 'UsersModelBayes { } ' : 'UsersModelTlog { } ');
+            var mdl = Qt.createQmlObject(qml, users);
+            back.modeChanged.connect(function() { mdl.mode = back.mode; } )
+            mdl.mode = back.mode;
+            if (!bayesMode)
+            {
+                mdl.tlog = back.tlogId
+                back.tlogIdChanged.connect(function() { mdl.tlog = back.tlogId; })
+            }
+
+            users.model = mdl;
         }
+
         delegate: Rectangle {
             width: window.width
             height: usersAvatar.height + 2 * mm

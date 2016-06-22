@@ -12,7 +12,7 @@ Trainer::Trainer(Bayes* parent)
     , _bayes(parent)
     , _curMode(WaterMode)
     , _iCurTlog(0)
-    , _users(new UsersModel(this))
+    , _users(new UsersModelBayes(this))
 {
     Q_ASSERT(_bayes);
 }

@@ -21,7 +21,9 @@ SOURCES += main.cpp \
     calendarmodel.cpp \
     cache/cachemanager.cpp \
     cache/cachedimage.cpp \
-    stemmerv.cpp
+    stemmerv.cpp \
+    usersmodeltlog.cpp \
+    usersmodelbayes.cpp
 
 RESOURCES += qml.qrc
 
@@ -47,7 +49,9 @@ HEADERS += \
     cache/cachemanager.h \
     cache/cachedimage.h \
     defines.h \
-    stemmerv.h
+    stemmerv.h \
+    usersmodeltlog.h \
+    usersmodelbayes.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

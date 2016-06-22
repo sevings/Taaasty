@@ -5,7 +5,7 @@
 #include <QAbstractListModel>
 
 #include "calendarmodel.h"
-#include "usersmodel.h"
+#include "usersmodelbayes.h"
 
 class Bayes;
 class Tlog;
@@ -57,10 +57,10 @@ private slots:
 private:
     Bayes* _bayes;
 
-    Mode            _curMode;
-    int             _iCurTlog;
-    CalendarModel*  _curTlog;
-    UsersModel*     _users;
+    Mode                _curMode;
+    int                 _iCurTlog;
+    CalendarModel*      _curTlog;
+    UsersModelBayes*    _users;
 };
 
 #endif // TRAINER_H
