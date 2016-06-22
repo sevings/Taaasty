@@ -73,11 +73,11 @@ QString Trainer::currentName() const
 
 void Trainer::train()
 {
-    for (int type = 0; type < 2; type++)
-        for (int tlog = 0; tlog < _users->_tlogs[type].size(); tlog++)
-            if (!_users->_tlogs[type].at(tlog).include
-                    || _users->_tlogs[type].at(tlog).removed)
-                _users->_tlogs[type].removeAt(tlog);
+//    for (int type = 0; type < 2; type++)
+//        for (int tlog = 0; tlog < _users->_tlogs[type].size(); tlog++)
+//            if (!_users->_tlogs[type].at(tlog).include
+//                    || _users->_tlogs[type].at(tlog).removed)
+//                _users->_tlogs[type].removeAt(tlog);
 
     _curMode = WaterMode;
     _iCurTlog = -1;

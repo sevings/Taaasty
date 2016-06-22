@@ -151,9 +151,12 @@ void UsersModelBayes::_loadDb()
 
 void UsersModelBayes::_saveDb()
 {
-    QSqlQuery query; //TODO: drop table
+    QSqlQuery query;
     for (int type = 0; type < 2; type++)
     {
+        if (_tlogs[type].isEmpty())
+            continue;
+
         Q_TEST(query.prepare("DELETE FROM bayes_tlogs WHERE type = ?"));
         query.addBindValue(type);
         Q_TEST(query.exec());

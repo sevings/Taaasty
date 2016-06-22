@@ -81,7 +81,6 @@ Rectangle {
                 anchors.margins: 1 * mm
                 user: model.user
                 Poppable {
-                    anchors.fill: parent
                     body: back
                     onClicked: {
                         if (bayesMode)

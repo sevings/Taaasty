@@ -619,10 +619,33 @@ void Tlog::_init(const QJsonObject data)
     _followingsCount = Tasty::num2str(relations.value("followings_count").toInt(), "подписка", "подписки", "подписок");
     _ignoredCount = Tasty::num2str(relations.value("ignored_count").toInt(), "блокирован", "блокировано", "блокировано");
 
-    _isFollowingMe = data.value("his_relationship").toString() == "friend";
-    auto my = data.value("my_relationship").toString();
-    _amIFollowing  = my == "friend";
-    _isMe         = my.isEmpty();
+    if (!data.contains("his_relationship"))
+        _hisRelation = Undefined;
+    else
+    {
+        auto his = data.value("his_relationship").toString();
+        if (his == "friend")
+            _hisRelation = Friend;
+        else if (his == "none")
+            _hisRelation = None;
+        else if (his.isEmpty())
+            _hisRelation = Me;
+
+    }
+
+    if (!data.contains("my_relationship"))
+        _myRelation = Undefined;
+    else
+    {
+        auto my = data.value("my_relationship").toString();
+        if (my == "friend")
+            _myRelation = Friend;
+        else if (my == "none")
+            _myRelation = None;
+        else if (my.isEmpty())
+            _myRelation = Me;
+
+    }
 
     auto authorData = data.value("author").toObject();
     if (_author)

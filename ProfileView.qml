@@ -99,19 +99,31 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
-                text: tlog.isMe ? 'Это вы' : (tlog.amIFollowing ? 'Вы подписаны' : 'Вы не подписаны')
+                text: {
+                    switch (tlog.myRelationship) {
+                    case Tlog.Friend:
+                        'Вы подписаны';     break;
+                    case Tlog.None:
+                        'Вы не подписаны';  break;
+                    case Tlog.Me:
+                        'Это вы';           break;
+                    default:
+                        '';
+                    }
+                }
+
                 height: text.length > 0 ? paintedHeight : 0
-                visible: tlog.tlogId === author.id && Tasty.isAuthorized
+                visible: tlog.tlogId === author.id && tlog.myRelationship !== Tlog.Undefined
             }
             ThemedText {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
-                text: tlog.isFollowingMe ? 'Следит за вашим тлогом'
-                                         : 'Не следит за вашим тлогом'
+                text: tlog.hisRelationship === Tlog.Friend ? 'Следит за вашим тлогом'
+                                                           : 'Не следит за вашим тлогом'
                 height: text.length > 0 ? paintedHeight : 0
                 visible: tlog.tlogId === author.id && !author.isFlow
-                         && Tasty.isAuthorized && !tlog.isMe
+                         && tlog.hisRelationship !== Tlog.Undefined && tlog.hisRelationship !== Tlog.Me
             }
             ThemedButton {
                 anchors.left: parent.left
