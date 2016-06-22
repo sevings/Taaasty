@@ -84,6 +84,24 @@ void UsersModelBayes::setMode(const UsersModel::Mode mode)
 
 
 
+void UsersModelBayes::removeUser(int id)
+{
+    int type = -1;
+    auto i = _findTlog(type, id);
+    if (i < 0 || type < 0)
+        return;
+
+    if (type == _mode)
+        beginRemoveRows(QModelIndex(), i, i);
+
+    _tlogs[type].removeAt(i);
+
+    if (type == _mode)
+        endRemoveRows();
+}
+
+
+
 void UsersModelBayes::_setBayesItems()
 {
     if (!_tlogModel)
@@ -133,10 +151,14 @@ void UsersModelBayes::_loadDb()
 
 void UsersModelBayes::_saveDb()
 {
-    QSqlQuery query;
+    QSqlQuery query; //TODO: drop table
     for (int type = 0; type < 2; type++)
+    {
+        Q_TEST(query.prepare("DELETE FROM bayes_tlogs WHERE type = ?"));
+        query.addBindValue(type);
+        Q_TEST(query.exec());
+
         for (int tlog = 0; tlog < _tlogs[type].size(); tlog++)
-            if (_tlogs[type].at(tlog).include && !_tlogs[type].at(tlog).removed)
             {
                 Q_TEST(query.prepare("INSERT OR REPLACE INTO bayes_tlogs VALUES (?, ?, ?, ?)"));
                 query.addBindValue(type);
@@ -145,6 +167,7 @@ void UsersModelBayes::_saveDb()
                 query.addBindValue(tlog);
                 Q_TEST(query.exec());
             }
+    }
 }
 
 
@@ -159,7 +182,7 @@ void UsersModelBayes::_loadBayesTlogs()
 
     Q_TEST(connect(_tlogModel, SIGNAL(downloadCompleted()), this, SLOT(_setBayesItems())));
 
-    switch (_mode)
+    switch (_mode) // TODO: load both types
     {
     case WaterMode:
         _tlogModel->setMode(MyIgnoredMode);
@@ -176,20 +199,14 @@ void UsersModelBayes::_loadBayesTlogs()
 
 
 
-UsersModelBayes::BayesTlog UsersModelBayes::_findTlog(int id, bool included)
+int UsersModelBayes::_findTlog(int& type, int id)
 {
-    for (int type = 0; type < 2; type++)
-        foreach (auto tlog, _tlogs[type])
-            if (tlog.id == id)
-            {
-                if (!tlog.removed
-                        && ((included && tlog.include) || !included))
-                    return tlog;
-                else
-                    return BayesTlog();
-            }
+    for (type = 0; type < 2; type++)
+        for (int i = 0; i < _tlogs[type].size(); i++)
+            if (_tlogs[type].at(i).id == id)
+                    return i;
 
-    return BayesTlog();
+    return -1;
 }
 
 
@@ -198,8 +215,6 @@ UsersModelBayes::BayesTlog::BayesTlog(int userId, int last)
     : user(new User)
     , id(userId)
     , latest(last)
-    , include(true)
-    , removed(false)
 {
 
 }
@@ -210,8 +225,6 @@ UsersModelBayes::BayesTlog::BayesTlog(User* user)
     : user(user)
     , id(user->id())
     , latest(0)
-    , include(true)
-    , removed(false)
 {
 
 }
@@ -221,7 +234,22 @@ UsersModelBayes::BayesTlog::BayesTlog(User* user)
 UsersModelBayes::BayesTlog::~BayesTlog()
 {
 //    if (!user->parent()) //TODO: delete user
-//        delete user;
+    //        delete user;
+}
+
+
+
+bool UsersModelBayes::BayesTlog::operator==(const UsersModelBayes::BayesTlog& other)
+{
+    return user == other.user
+            || (user && other.user && user->id() == other.user->id());
+}
+
+
+
+bool UsersModelBayes::BayesTlog::operator==(const int& userId)
+{
+    return user && user->id() == userId;
 }
 
 

@@ -39,14 +39,6 @@ Rectangle {
         anchors.right: parent.right
         visible: count > 0
         height: contentHeight > parent.height ? parent.height : contentHeight
-//        property UsersModelTlog usersModelTlog: UsersModelTlog {
-//            mode: back.mode
-//            tlog: back.tlogId
-//        }
-//        property UsersModelBayes usersModelBayes: UsersModelBayes {
-//            mode: back.mode
-//        }
-//        model: bayesMode ? usersModelBayes : usersModelTlog
         Component.onCompleted: {
             var qml = 'import org.binque.taaasty 1.0\n' + (bayesMode ? 'UsersModelBayes { } ' : 'UsersModelTlog { } ');
             var mdl = Qt.createQmlObject(qml, users);
@@ -61,20 +53,25 @@ Rectangle {
             users.model = mdl;
         }
 
-        delegate: Rectangle {
+        delegate: Item {
             width: window.width
             height: usersAvatar.height + 2 * mm
-            color: usersMouse.pressed ? window.greenColor : window.backgroundColor
+            Rectangle {
+                id: fillRect
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                width: parent.width
+                color: window.greenColor
+                visible: usersMouse.pressed || removing.running
+            }
             Poppable {
                 id: usersMouse
                 anchors.fill: parent
                 body: back
                 onClicked: {
                     window.pushTlog(user.id);
-//                if (window.secondMode === 'bayes')
-//                    Bayes.toggleInclude(users.type, id);
-//                else
-//                    Ctrl.showTlogById(id);
+                    removing.stop();
                 }
             }
             SmallAvatar {
@@ -87,7 +84,15 @@ Rectangle {
                     anchors.fill: parent
                     body: back
                     onClicked: {
-                        window.pushProfileById(user.id);
+                        if (bayesMode)
+                        {
+                            if (removing.running)
+                                removing.stop();
+                            else
+                                removing.start();
+                        }
+                        else
+                            window.pushProfileById(user.id);
                     }
                 }
             }
@@ -102,6 +107,21 @@ Rectangle {
                 anchors.leftMargin: 1 * mm
                 anchors.rightMargin: 1 * mm
                 elide: Text.ElideRight
+            }
+            NumberAnimation {
+                id: removing
+                target: fillRect
+                property: "width"
+                easing.type: Easing.OutQuad
+                from: window.width
+                to: 0
+                duration: 4000
+                onStopped: {
+                    if (fillRect.width > 0)
+                        fillRect.width = window.width;
+                    else
+                        users.model.removeUser(user.id);
+                }
             }
         }
         header: Item {

@@ -22,6 +22,8 @@ public:
 
     Q_INVOKABLE virtual void setMode(const Mode mode) override;
 
+    Q_INVOKABLE void removeUser(int id);
+
 private slots:
     void _setBayesItems();
 
@@ -30,14 +32,15 @@ private:
         BayesTlog(int userId = 0, int last = 0);
         BayesTlog(User* user);
         ~BayesTlog();
+        inline bool operator==(const BayesTlog& other);
+        inline bool operator==(const int& userId);
         void loadInfo();
         User* user;
         int id;
         int latest;
-        bool include;
-        bool removed;
     };
-    BayesTlog _findTlog(int id, bool included = false);
+
+    int _findTlog(int& type, int id);
 
     void _initDb();
     void _loadDb();
