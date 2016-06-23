@@ -3,6 +3,8 @@
 
 #include "usersmodeltlog.h"
 
+class Trainer;
+
 
 
 class UsersModelBayes : public UsersModel
@@ -28,27 +30,9 @@ private slots:
     void _setBayesItems();
 
 private:
-    struct BayesTlog {
-        BayesTlog(int userId = 0, int last = 0);
-        BayesTlog(User* user);
-        ~BayesTlog();
-        inline bool operator==(const BayesTlog& other);
-        inline bool operator==(const int& userId);
-        void loadInfo();
-        User* user;
-        int id;
-        int latest;
-    };
-
-    int _findTlog(int& type, int id);
-
-    void _initDb();
-    void _loadDb();
-    void _saveDb();
-
     void _loadBayesTlogs();
 
-    QList<BayesTlog> _tlogs[2];
+    Trainer*        _trainer;
     UsersModelTlog* _tlogModel;
 };
 

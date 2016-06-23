@@ -9,12 +9,15 @@
 
 class Bayes;
 class Tlog;
+class User;
 
 
 
 class Trainer : public QObject
 {
     Q_OBJECT
+
+    friend class UsersModelBayes;
 
 public:
     enum Mode {
@@ -55,12 +58,30 @@ private slots:
     void _trainEntry(const Entry* entry);
 
 private:
+    struct BayesTlog {
+        BayesTlog(int userId = 0, int last = 0);
+        BayesTlog(User* user);
+        ~BayesTlog();
+        inline bool operator==(const BayesTlog& other);
+        inline bool operator==(const int& userId);
+        void loadInfo();
+        User* user;
+        int id;
+        int latest;
+    };
+
+    int _findTlog(int& type, int id);
+
+    void _initDb();
+    void _loadDb();
+    void _saveDb();
+
     Bayes* _bayes;
 
     Mode                _curMode;
     int                 _iCurTlog;
     CalendarModel*      _curTlog;
-    UsersModelBayes*    _users;
+    QList<BayesTlog>    _tlogs[2];
 };
 
 #endif // TRAINER_H

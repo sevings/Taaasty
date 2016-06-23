@@ -32,6 +32,7 @@ public:
     int entryVoteType(const Entry* entry) const;
 
     Trainer* trainer();
+    QSqlDatabase& db() { return _db; }
 
 signals:
 
