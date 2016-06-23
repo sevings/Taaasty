@@ -17,7 +17,7 @@ CalendarEntry::CalendarEntry(const QJsonObject data, QObject *parent)
     : QObject(parent)
     , _entry(nullptr)
 {
-    _id              = data.value("id").toInt();
+    _id              = data.value("entry_id").toInt();
     _createdAt       = Tasty::parseDate(data.value("created_at").toString());
     _url             = data.value("entry_url").toString();
     _type            = data.value("type").toString();
@@ -63,6 +63,7 @@ void Entry::setId(const int id)
 
     auto request = new ApiRequest(QString("entries/%1.json").arg(_id));
     connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
+    connect(request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading()));
 
     _loading = true;
     emit loadingChanged();
@@ -227,6 +228,31 @@ void Entry::_correctHtml()
 
     emit htmlUpdated();
 }
+
+
+
+void Entry::_setNotLoading()
+{
+    _loading = false;
+    emit loadingChanged();
+
+    if (!_tlog)
+        emit updatingError();
+}
+
+
+
+Tlog* Entry::tlog() const
+{
+    return _tlog;
+}
+
+bool Entry::loading() const
+{
+    return _loading;
+}
+
+
 
 Rating* Entry::rating() const
 {

@@ -39,6 +39,7 @@ void Trainer::setMode(const Trainer::Mode mode)
         return;
 
     _curMode = mode;
+    emit modeChanged();
 }
 
 
@@ -108,6 +109,8 @@ void Trainer::train()
 //                _users->_tlogs[type].removeAt(tlog);
 
     _curMode = WaterMode;
+    emit modeChanged();
+
     _iCurTlog = -1;
 
     _trainNextTlog();
@@ -123,6 +126,7 @@ void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
         return;
 
     _curMode = mode;
+    emit modeChanged();
 
     _curTlog = new CalendarModel(this);
     _curTlog->setTlog(tlogId);
@@ -134,7 +138,11 @@ void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
     Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),        this, SLOT(_finishTraining())));
     Q_TEST(connect(_curTlog, SIGNAL(entryLoaded(const Entry*)), this, SLOT(_trainEntry(const Entry*))));
 
-    _curTlog->loadAllEntries();
+    int type;
+    auto i = _findTlog(type, tlogId);
+    auto after = i > 0 ? _tlogs[type].at(i).latest : -1;
+
+    _curTlog->loadAllEntries(after);
 
     emit trainStarted(false);
 }
@@ -155,6 +163,8 @@ void Trainer::_trainNextTlog()
             }
 
             _curMode = FireMode;
+            emit modeChanged();
+
             _iCurTlog = 0;
         }
         else
@@ -190,6 +200,8 @@ void Trainer::_trainEntry(const Entry* entry)
 void Trainer::_finishTraining()
 {
     _curMode = UndefinedMode;
+    emit modeChanged();
+
     _iCurTlog = 0;
     _curTlog = nullptr;
 

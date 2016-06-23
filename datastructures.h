@@ -101,6 +101,10 @@ public:
 
     Rating* rating() const;
 
+    bool loading() const;
+
+    Tlog* tlog() const;
+
 public slots:
     int entryId() const { return _id; }
     void setId(const int id);
@@ -111,6 +115,7 @@ public slots:
 
 signals:
     void updated();
+    void updatingError();
     void htmlUpdated();
 
     void commentsCountChanged();
@@ -127,6 +132,7 @@ private slots:
     void _setCommentsCount(int tc);
     void _setWatched();
     void _correctHtml();
+    void _setNotLoading();
 
 private:
     int         _id;

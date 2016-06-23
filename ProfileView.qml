@@ -142,8 +142,8 @@ Rectangle {
                     enabled: glowing || parent.tlogMode == 2 //Trainer.UndefinedMode
                     glowing: parent.tlogMode == 0 //Trainer.WaterMode
                     onClicked: {
-//                        Trainer.trainTlog(tlog.tlogId, 0);
-                        window.pushTrainingProgress();
+                        Trainer.trainTlog(tlog.tlogId, 0);
+//                        window.pushTrainingProgress();
                     }
                 }
                 ThemedButton {
@@ -157,7 +157,7 @@ Rectangle {
                     enabled: glowing || parent.tlogMode == 2 //Trainer.UndefinedMode
                     glowing: parent.tlogMode == 1 //Trainer.FireMode
                     onClicked: {
-//                        Trainer.trainTlog(tlog.tlogId, 1);
+                        Trainer.trainTlog(tlog.tlogId, 1);
                     }
                 }
             }

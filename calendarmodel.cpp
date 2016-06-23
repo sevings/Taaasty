@@ -86,6 +86,7 @@ void CalendarModel::loadAllEntries(const int after)
 
         auto full = entry->full();
         Q_TEST(connect(full, SIGNAL(updated()), this, SLOT(_emitEntryLoaded())));
+        Q_TEST(connect(full, SIGNAL(updatingError()), this, SLOT(_incLoadedCount())));
     }
 
     if (_loadingEntriesCount == 0)
@@ -125,7 +126,7 @@ void CalendarModel::_setCalendar(QJsonObject data)
     endResetModel();
 
     if (_loadAfter)
-            loadAllEntries(_loadAfter);
+        loadAllEntries(_loadAfter);
 }
 
 
@@ -138,6 +139,13 @@ void CalendarModel::_emitEntryLoaded()
 
     emit entryLoaded(entry);
 
+    _incLoadedCount();
+}
+
+
+
+void CalendarModel::_incLoadedCount()
+{
     _loadedEntriesCount++;
     emit loadedEntriesCountChanged();
 

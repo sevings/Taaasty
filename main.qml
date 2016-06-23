@@ -180,14 +180,14 @@ ApplicationWindow {
                    }
                    )
     }
-    function pushTrainingProgress() {
+    function pushTrainingProgress(full) {
         stack.push(stack.trainingProgress,
                    {
+                       fullLoad: full,
                        poppable: true
                    }
                    )
     }
-
     function popFromStack() {
         stack.pop();
     }
@@ -382,6 +382,19 @@ ApplicationWindow {
             }
             onAuthorized: {
                 if (stack.currentItem.isLoginDialog)
+                    window.popFromStack();
+            }
+        }
+        Connections {
+            target: Trainer
+            onTrainStarted: {
+                if (!stack.find(function (item) {
+                    return item.isTrainingProgress;
+                }))
+                    window.pushTrainingProgress(full);
+            }
+            onTrainFinished: {
+                if (stack.currentItem.isTrainingProgress)
                     window.popFromStack();
             }
         }

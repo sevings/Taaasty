@@ -19,6 +19,14 @@ class Trainer : public QObject
 
     friend class UsersModelBayes;
 
+    Q_PROPERTY(Mode mode READ mode WRITE setMode NOTIFY modeChanged)
+
+    Q_PROPERTY(int      currentTlog         READ currentTlog            NOTIFY currentTlogChanged)
+    Q_PROPERTY(int      tlogsCount          READ tlogsCount             NOTIFY tlogsCountChanged)
+    Q_PROPERTY(int      trainedEntriesCount READ trainedEntriesCount    NOTIFY trainedEntriesCountChanged)
+    Q_PROPERTY(int      entriesCount        READ entriesCount           NOTIFY entriesCountChanged)
+    Q_PROPERTY(QString  currentName         READ currentName            NOTIFY currentNameChanged)
+
 public:
     enum Mode {
         WaterMode = UsersModel::WaterMode,
@@ -43,6 +51,8 @@ public:
     Q_INVOKABLE Mode    typeOfTlog(int id)      const;
 
 signals:
+    void modeChanged();
+
     void trainStarted(bool full);
     void trainFinished();
 

@@ -40,6 +40,7 @@ protected:
 private slots:
     void _setCalendar(QJsonObject data);
     void _emitEntryLoaded();
+    void _incLoadedCount();
 
 private:
     QList<CalendarEntry*> _calendar;
