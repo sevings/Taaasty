@@ -142,22 +142,10 @@ Rectangle {
                     enabled: glowing || parent.tlogMode == 2 //Trainer.UndefinedMode
                     glowing: parent.tlogMode == 0 //Trainer.WaterMode
                     onClicked: {
-                        Trainer.trainTlog(tlog.tlogId, 0);
+//                        Trainer.trainTlog(tlog.tlogId, 0);
+                        window.pushTrainingProgress();
                     }
                 }
-//                ThemedButton {
-//                    id: tlogTraibButton
-//                    anchors.top: parent.top
-//                    anchors.left: tlogVoteAgainstButton.right
-//                    anchors.topMargin: 0
-//                    height: tlogVoteAgainstButton.height
-//                    width: tlogVoteAgainstButton.width
-//                    text: 'Трен'
-//                    enabled: parent.tlogMode != 2 //Trainer.UndefinedMode
-//                    onClicked: {
-//                        Trainer.trainTlog(tlog.tlogId, parent.tlogMode);
-//                    }
-//                }
                 ThemedButton {
                     id: tlogVoteButton
                     anchors.top: parent.top
@@ -169,7 +157,7 @@ Rectangle {
                     enabled: glowing || parent.tlogMode == 2 //Trainer.UndefinedMode
                     glowing: parent.tlogMode == 1 //Trainer.FireMode
                     onClicked: {
-                        Trainer.trainTlog(tlog.tlogId, 1);
+//                        Trainer.trainTlog(tlog.tlogId, 1);
                     }
                 }
             }

@@ -180,6 +180,14 @@ ApplicationWindow {
                    }
                    )
     }
+    function pushTrainingProgress() {
+        stack.push(stack.trainingProgress,
+                   {
+                       poppable: true
+                   }
+                   )
+    }
+
     function popFromStack() {
         stack.pop();
     }
@@ -359,10 +367,11 @@ ApplicationWindow {
                 poppable: StackView.index > 0
             }
         }
-        property Component fullEntry:   Qt.createComponent("FullEntryView.qml",   Component.Asynchronous, stack);
-        property Component profile:     Qt.createComponent("ProfileView.qml",     Component.Asynchronous, stack);
-        property Component users:       Qt.createComponent("UsersView.qml",       Component.Asynchronous, stack);
-        property Component loginDialog: Qt.createComponent("LoginDialog.qml",     Component.Asynchronous, stack);
+        property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack);
+        property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack);
+        property Component users:               Qt.createComponent("UsersView.qml",         Component.Asynchronous, stack);
+        property Component loginDialog:         Qt.createComponent("LoginDialog.qml",       Component.Asynchronous, stack);
+        property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack);
         Connections {
             target: Tasty
             onAuthorizationNeeded: {

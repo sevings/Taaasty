@@ -24,5 +24,7 @@
         <file>Popup.qml</file>
         <file>ThemedText.qml</file>
         <file>InputDialog.qml</file>
+        <file>ThemedProgressBar.qml</file>
+        <file>TrainingProgress.qml</file>
     </qresource>
 </RCC>
