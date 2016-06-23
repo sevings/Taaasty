@@ -15,8 +15,9 @@
 Trainer::Trainer(Bayes* parent)
     : QObject(parent)
     , _bayes(parent)
-    , _curMode(WaterMode)
+    , _curMode(UndefinedMode)
     , _iCurTlog(0)
+    , _curTlog(nullptr)
 {
     Q_ASSERT(_bayes);
 
@@ -44,7 +45,15 @@ void Trainer::setMode(const Trainer::Mode mode)
 
 int Trainer::currentTlog() const
 {
-    return _curMode == WaterMode ? _iCurTlog + 1 : _tlogs[WaterMode].size() + _iCurTlog + 1;
+    switch(_curMode)
+    {
+    case WaterMode:
+        return _iCurTlog + 1;
+    case FireMode:
+        return _tlogs[WaterMode].size() + _iCurTlog + 1;
+    default:
+        return 0;
+    }
 }
 
 
@@ -72,8 +81,20 @@ int Trainer::entriesCount() const
 
 QString Trainer::currentName() const
 {
-    return _iCurTlog < _tlogs[_curMode].size()
+    return _curMode != UndefinedMode && _iCurTlog < _tlogs[_curMode].size()
             ? _tlogs[_curMode].at(_iCurTlog).user->name() : "";
+}
+
+
+
+Trainer::Mode Trainer::typeOfTlog(int id) const
+{
+    int type = -1;
+    auto i = _findTlog(type, id);
+    if (i < 0)
+        return UndefinedMode;
+
+    return (Trainer::Mode)type;
 }
 
 
@@ -98,18 +119,24 @@ void Trainer::train()
 
 void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
 {
-    if (tlogId <= 0 || mode != Trainer::WaterMode || mode != Trainer::FireMode)
+    if (tlogId <= 0 || (mode != Trainer::WaterMode && mode != Trainer::FireMode))
         return;
 
     _curMode = mode;
 
-    auto calendar = new CalendarModel(this);
-    calendar->setTlog(tlogId);
+    _curTlog = new CalendarModel(this);
+    _curTlog->setTlog(tlogId);
 
-    connect(calendar, SIGNAL(allEntriesLoaded()),    calendar, SLOT(deleteLater()));
-    connect(calendar, SIGNAL(entryLoaded(const Entry*)), this, SLOT(_trainEntry(const Entry*)));
+    Q_TEST(connect(_curTlog, SIGNAL(loadingEntriesCountChanged()), this, SIGNAL(entriesCountChanged())));
+    Q_TEST(connect(_curTlog, SIGNAL(loadedEntriesCountChanged()),  this, SIGNAL(trainedEntriesCountChanged())));
 
-    calendar->loadAllEntries();
+    Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),    _curTlog, SLOT(deleteLater())));
+    Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),        this, SLOT(_finishTraining())));
+    Q_TEST(connect(_curTlog, SIGNAL(entryLoaded(const Entry*)), this, SLOT(_trainEntry(const Entry*))));
+
+    _curTlog->loadAllEntries();
+
+    emit trainStarted(false);
 }
 
 
@@ -123,7 +150,7 @@ void Trainer::_trainNextTlog()
         {
             if (_tlogs[FireMode].isEmpty())
             {
-                emit trainFinished();
+                _finishTraining();
                 return;
             }
 
@@ -132,20 +159,23 @@ void Trainer::_trainNextTlog()
         }
         else
         {
-            emit trainFinished();
+            _finishTraining();
             return;
         }
     }
 
     auto tlog = _tlogs[_curMode].at(_iCurTlog);
-    auto calendar = new CalendarModel(this);
-    calendar->setTlog(tlog.id);
+    _curTlog = new CalendarModel(this);
+    _curTlog->setTlog(tlog.id);
 
-    connect(calendar, SIGNAL(allEntriesLoaded()),    calendar, SLOT(deleteLater()));
-    connect(calendar, SIGNAL(allEntriesLoaded()),        this, SLOT(_trainNextTlog()));
-    connect(calendar, SIGNAL(entryLoaded(const Entry*)), this, SLOT(_trainEntry(const Entry*)));
+    Q_TEST(connect(_curTlog, SIGNAL(loadingEntriesCountChanged()), this, SIGNAL(entriesCountChanged())));
+    Q_TEST(connect(_curTlog, SIGNAL(loadedEntriesCountChanged()),  this, SIGNAL(trainedEntriesCountChanged())));
 
-    calendar->loadAllEntries(tlog.latest);
+    Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),    _curTlog, SLOT(deleteLater())));
+    Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),        this, SLOT(_trainNextTlog())));
+    Q_TEST(connect(_curTlog, SIGNAL(entryLoaded(const Entry*)), this, SLOT(_trainEntry(const Entry*))));
+
+    _curTlog->loadAllEntries(tlog.latest);
 }
 
 
@@ -157,7 +187,20 @@ void Trainer::_trainEntry(const Entry* entry)
 
 
 
-int Trainer::_findTlog(int& type, int id)
+void Trainer::_finishTraining()
+{
+    _curMode = UndefinedMode;
+    _iCurTlog = 0;
+    _curTlog = nullptr;
+
+    _bayes->_saveDb();
+
+    emit trainFinished();
+}
+
+
+
+int Trainer::_findTlog(int& type, int id) const
 {
     for (type = 0; type < 2; type++)
         for (int i = 0; i < _tlogs[type].size(); i++)

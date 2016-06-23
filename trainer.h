@@ -22,8 +22,11 @@ class Trainer : public QObject
 public:
     enum Mode {
         WaterMode = UsersModel::WaterMode,
-        FireMode = UsersModel::FireMode
+        FireMode = UsersModel::FireMode,
+        UndefinedMode
     };
+
+    Q_ENUMS(Mode)
 
     explicit Trainer(Bayes* parent = 0);
     ~Trainer();
@@ -36,6 +39,8 @@ public:
     Q_INVOKABLE int     trainedEntriesCount()   const;
     Q_INVOKABLE int     entriesCount()          const;
     Q_INVOKABLE QString currentName()           const;
+
+    Q_INVOKABLE Mode    typeOfTlog(int id)      const;
 
 signals:
     void trainStarted(bool full);
@@ -56,6 +61,7 @@ public slots:
 private slots:
     void _trainNextTlog();
     void _trainEntry(const Entry* entry);
+    void _finishTraining();
 
 private:
     struct BayesTlog {
@@ -70,7 +76,7 @@ private:
         int latest;
     };
 
-    int _findTlog(int& type, int id);
+    int _findTlog(int& type, int id) const;
 
     void _initDb();
     void _loadDb();

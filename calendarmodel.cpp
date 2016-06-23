@@ -91,6 +91,8 @@ void CalendarModel::loadAllEntries(const int after)
     if (_loadingEntriesCount == 0)
         emit allEntriesLoaded();
 
+    emit loadingEntriesCountChanged();
+
     _loadAfter = 0;
 }
 

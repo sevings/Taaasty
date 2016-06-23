@@ -22,7 +22,7 @@
 #include "usersmodelbayes.h"
 #include "notificationsmodel.h"
 #include "bayes.h"
-//#include "trainer.h"
+#include "trainer.h"
 
 
 int main(int argc, char *argv[])
@@ -72,8 +72,8 @@ int main(int argc, char *argv[])
     auto bayes = Bayes::instance(tasty);
     engine.rootContext()->setContextProperty("Bayes", bayes);
 
-//    auto trainer = bayes->trainer();
-//    engine.rootContext()->setContextProperty("Trainer", trainer);
+    auto trainer = bayes->trainer();
+    engine.rootContext()->setContextProperty("Trainer", trainer);
 
 #ifdef Q_OS_ANDROID
     //  BUG with dpi on some androids: https://bugreports.qt-project.org/browse/QTBUG-35701

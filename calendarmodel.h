@@ -31,6 +31,7 @@ public slots:
 signals:
     void entryLoaded(const Entry* entry);
     void loadedEntriesCountChanged();
+    void loadingEntriesCountChanged();
     void allEntriesLoaded();
 
 protected:

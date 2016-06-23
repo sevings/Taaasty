@@ -125,6 +125,54 @@ Rectangle {
                 visible: tlog.tlogId === author.id && !author.isFlow
                          && tlog.hisRelationship !== Tlog.Undefined && tlog.hisRelationship !== Tlog.Me
             }
+            Item {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: tlogVoteButton.height
+                property int tlogMode: Trainer.typeOfTlog(tlog.tlogId)
+//                onTlogModeChanged: console.log('tlog mode', tlogMode)
+                ThemedButton {
+                    id: tlogVoteAgainstButton
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.topMargin: 0
+                    height: 6 * mm
+                    width: (parent.width - 3 * mm) / 2
+                    text: 'Фу…'
+                    enabled: glowing || parent.tlogMode == 2 //Trainer.UndefinedMode
+                    glowing: parent.tlogMode == 0 //Trainer.WaterMode
+                    onClicked: {
+                        Trainer.trainTlog(tlog.tlogId, 0);
+                    }
+                }
+//                ThemedButton {
+//                    id: tlogTraibButton
+//                    anchors.top: parent.top
+//                    anchors.left: tlogVoteAgainstButton.right
+//                    anchors.topMargin: 0
+//                    height: tlogVoteAgainstButton.height
+//                    width: tlogVoteAgainstButton.width
+//                    text: 'Трен'
+//                    enabled: parent.tlogMode != 2 //Trainer.UndefinedMode
+//                    onClicked: {
+//                        Trainer.trainTlog(tlog.tlogId, parent.tlogMode);
+//                    }
+//                }
+                ThemedButton {
+                    id: tlogVoteButton
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.topMargin: 0
+                    height: tlogVoteAgainstButton.height
+                    width: tlogVoteAgainstButton.width
+                    text: 'Да!'
+                    enabled: glowing || parent.tlogMode == 2 //Trainer.UndefinedMode
+                    glowing: parent.tlogMode == 1 //Trainer.FireMode
+                    onClicked: {
+                        Trainer.trainTlog(tlog.tlogId, 1);
+                    }
+                }
+            }
             ThemedButton {
                 anchors.left: parent.left
                 anchors.right: parent.right
