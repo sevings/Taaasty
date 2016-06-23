@@ -25,6 +25,8 @@ public:
     int loadedEntriesCount()  const { return _loadedEntriesCount; }
     int loadingEntriesCount() const { return _loadingEntriesCount; }
 
+    int lastEntry() const;
+
 public slots:
     void loadAllEntries(const int after = -1);
 

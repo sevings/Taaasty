@@ -184,6 +184,10 @@ void Bayes::_loadDb()
     if (_loaded)
         return;
 
+#ifdef QT_DEBUG
+    auto now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+#endif
+
     _initDb();
 
     Q_TEST(_db.transaction());
@@ -205,6 +209,11 @@ void Bayes::_loadDb()
     query.finish();
 
     Q_TEST(_db.commit());
+
+#ifdef QT_DEBUG
+    auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
+    qDebug() << "Loaded in" << ms << "ms";
+#endif
 
     _loaded = true;
 }

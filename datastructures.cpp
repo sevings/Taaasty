@@ -39,6 +39,11 @@ Entry* CalendarEntry::full()
     return _entry;
 }
 
+int CalendarEntry::id() const
+{
+    return _id;
+}
+
 
 
 Entry::Entry(const QJsonObject data, QObject *parent)
@@ -236,7 +241,7 @@ void Entry::_setNotLoading()
     _loading = false;
     emit loadingChanged();
 
-    if (!_tlog)
+    if (!_tlog || _tlog->tlogId() <= 0)
         emit updatingError();
 }
 

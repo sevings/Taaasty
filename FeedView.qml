@@ -329,7 +329,7 @@ Rectangle {
                 height: 6 * mm
                 text: 'Да!'
 //                visible: entry.isVotable && Tasty.isAuthorized
-//                enabled: entry.rating.isVotable || (!entry.rating.isBayesVoted && !entry.isVotedAgainst)
+                enabled: entry.rating.isVotable || entry.rating.isBayesVoted
                 glowing: entry.rating.isVoted || entry.rating.isBayesVoted
                 onClicked: {
                     if (back.x > 0) {

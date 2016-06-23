@@ -184,7 +184,7 @@ ApplicationWindow {
         stack.push(stack.trainingProgress,
                    {
                        fullLoad: full,
-                       poppable: true
+                       poppable: false
                    }
                    )
     }

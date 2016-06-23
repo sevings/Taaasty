@@ -41,6 +41,8 @@ public:
 
     Entry* full();
 
+    int id() const;
+
 private:
     int     _id;
     QString _createdAt;

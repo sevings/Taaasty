@@ -140,7 +140,18 @@ void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
 
     int type;
     auto i = _findTlog(type, tlogId);
-    auto after = i > 0 ? _tlogs[type].at(i).latest : -1;
+    int after;
+    if (i > 0)
+    {
+        after = _tlogs[type].at(i).latest;
+        _iCurTlog = i;
+    }
+    else
+    {
+        _tlogs[mode] << BayesTlog(tlogId);
+        _iCurTlog = _tlogs[mode].size() - 1;
+        after = -1;
+    }
 
     _curTlog->loadAllEntries(after);
 
@@ -199,6 +210,8 @@ void Trainer::_trainEntry(const Entry* entry)
 
 void Trainer::_finishTraining()
 {
+    _tlogs[_curMode][_iCurTlog].latest = _curTlog->lastEntry();
+
     _curMode = UndefinedMode;
     emit modeChanged();
 
@@ -206,6 +219,7 @@ void Trainer::_finishTraining()
     _curTlog = nullptr;
 
     _bayes->_saveDb();
+    _saveDb();
 
     emit trainFinished();
 }

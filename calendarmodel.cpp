@@ -66,26 +66,41 @@ void CalendarModel::setTlog(const int tlog)
 
 
 
+int CalendarModel::lastEntry() const
+{
+    if (_calendar.isEmpty())
+        return 0;
+
+    return _calendar.last()->id();
+}
+
+
+
 void CalendarModel::loadAllEntries(const int after)
 {
     if (_calendar.isEmpty())
     {
-        _loadAfter = after;
+        _loadAfter = after ? after : -1;
         return;
     }
 
     _loadedEntriesCount = 0;
     _loadingEntriesCount = 0;
 
-    foreach (auto entry, _calendar)
+    for (int i = _calendar.size() - 1; i >= 0; i--)
     {
-        if (entry->_id == after)
+        auto entry = _calendar.at(i);
+
+        if (entry->id() == after)
             break;
+
+        if (entry->id() <= 0)
+            continue;
 
         _loadingEntriesCount++;
 
         auto full = entry->full();
-        Q_TEST(connect(full, SIGNAL(updated()), this, SLOT(_emitEntryLoaded())));
+        Q_TEST(connect(full, SIGNAL(updated()),       this, SLOT(_emitEntryLoaded())));
         Q_TEST(connect(full, SIGNAL(updatingError()), this, SLOT(_incLoadedCount())));
     }
 

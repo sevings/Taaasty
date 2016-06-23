@@ -67,7 +67,7 @@ void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 //                                            this, SLOT(_restart(QNetworkAccessManager::NetworkAccessibility))));
 //    }
 //    else
-//        deleteLater();
+        deleteLater();
 }
 
 
@@ -90,7 +90,7 @@ void ApiRequest::_finished()
 
     QJsonParseError jpe;
     auto json = QJsonDocument::fromJson(data, &jpe);
-    if (jpe.error != QJsonParseError::NoError) //! TODO: emit signal
+    if (jpe.error != QJsonParseError::NoError)
     {
         qDebug() << "parse error: " << jpe.errorString();
         qDebug() << "json:" << data;
