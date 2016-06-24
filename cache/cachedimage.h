@@ -1,7 +1,6 @@
 #ifndef CACHEDIMAGE_H
 #define CACHEDIMAGE_H
 
-#include <QObject>
 #include <QNetworkReply>
 #include <QSslError>
 

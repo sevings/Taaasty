@@ -249,7 +249,9 @@ Rectangle {
                 text: '-'
                 height: 6 * mm
                 width: fullEntryFavButton.width
-                enabled: !entry.rating.isBayesVoted && !entry.rating.isVotedAgainst
+                enabled: !entry.rating.isBayesVoted
+                glowing: entry.rating.isVotedAgainst
+                glowColor: window.darkRed
                 onClicked: entry.rating.voteAgainst()
             }
             ThemedButton {
@@ -260,8 +262,9 @@ Rectangle {
                 anchors.margins: 1 * mm
                 text: '+' + (entry.isVotable ? ' ' + entry.rating.votes : '')
                 height: 6 * mm
-                enabled: entry.rating.isVotable || (!entry.rating.isBayesVoted && !entry.isVotedAgainst)
-                glowing: entry.rating.isVoted
+                enabled: !entry.rating.isVotedAgainst
+                glowing: ((entry.rating.isVotable === entry.rating.isVoted) )
+                         && entry.rating.isBayesVoted
                 onClicked: entry.rating.vote()
             }
             ThemedButton {

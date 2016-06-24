@@ -328,9 +328,9 @@ Rectangle {
                 width: parent.width / 3
                 height: 6 * mm
                 text: 'Да!'
-//                visible: entry.isVotable && Tasty.isAuthorized
-                enabled: entry.rating.isVotable || entry.rating.isBayesVoted
-                glowing: entry.rating.isVoted || entry.rating.isBayesVoted
+                enabled: !entry.rating.isVotedAgainst
+                glowing: ((entry.rating.isVotable === entry.rating.isVoted) )
+                         && entry.rating.isBayesVoted
                 onClicked: {
                     if (back.x > 0) {
                         mouse.accepted = false;
@@ -347,9 +347,9 @@ Rectangle {
                 height: entryVoteButton.height
                 width: parent.width / 3
                 text: 'Фу…'
-//                visible: entry.isVotable && Tasty.isAuthorized
-                enabled: !entry.rating.isBayesVoted && !entry.rating.isVotedAgainst
+                enabled: !entry.rating.isBayesVoted
                 glowing: entry.rating.isVotedAgainst
+                glowColor: window.darkRed
                 onClicked: {
                     if (back.x > 0) {
                         mouse.accepted = false;

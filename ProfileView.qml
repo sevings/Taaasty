@@ -141,6 +141,7 @@ Rectangle {
                     text: 'Фу…'
                     enabled: glowing || parent.tlogMode == 2 //Trainer.UndefinedMode
                     glowing: parent.tlogMode == 0 //Trainer.WaterMode
+                    glowColor: window.darkRed
                     onClicked: {
                         parent.tlogMode = 0;
                         Trainer.trainTlog(tlog.tlogId, 0);
@@ -168,7 +169,7 @@ Rectangle {
                 anchors.right: parent.right
                 text: author.isFlow ? 'Читать' : author.publicEntriesCount
                 onClicked: window.pushTlog(tlog.tlogId)
-                enabled: !author.isPrivacy || tlog.amIFollowing || tlog.isMe
+                enabled: !author.isPrivacy || tlog.myRelationship === Tlog.Friend || tlog.myRelationship === Tlog.Me
             }
             ThemedButton {
                 anchors.left: parent.left

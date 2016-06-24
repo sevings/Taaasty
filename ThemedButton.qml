@@ -7,6 +7,7 @@ Button {
     implicitHeight: 8 * mm
     implicitWidth: 20 * mm
     property bool glowing: false
+    property color glowColor: window.greenColor
     font.pointSize: window.fontNormal
     padding: 2 * mm
     contentItem: Text {
@@ -31,7 +32,7 @@ Button {
                 position: 1
                 color: {
                     if (button.glowing)
-                        window.greenColor;
+                        button.glowColor;
                     else
                         '#373737';
                 }
