@@ -140,7 +140,7 @@ Rectangle {
                     }
 
                     saveCurrentIndex();
-                    window.pushFullEntry(entry);
+                    window.pushFullEntry(entry, mode !== FeedModel.AnonymousMode);
                 }
             }
             ThemedText {
