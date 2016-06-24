@@ -20,6 +20,7 @@ FeedModel::FeedModel(QObject* parent)
     , _lastEntry(0)
     , _isPrivate(false)
     , _minRating(0)
+    , _page(1)
     , _request(nullptr)
 {
     Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideShortPostsChanged()),    this, SLOT(_changeHideShort())));
@@ -68,8 +69,6 @@ bool FeedModel::canFetchMore(const QModelIndex& parent) const
 
 void FeedModel::fetchMore(const QModelIndex& parent)
 {
-//    qDebug() << "fetch more";
-
     if (!_hasMore || _loading || parent.isValid() || (_mode == TlogMode && _tlog <= 0 && _slug.isEmpty()))
         return;
 
@@ -93,13 +92,14 @@ void FeedModel::fetchMore(const QModelIndex& parent)
         url = url.arg(_minRating);
 
     if (!_query.isEmpty())
-        url += QString("q=%1&").arg(_query);
+        url += QString("q=%1&page=%2").arg(_query).arg(_page++);
 
     url += QString("limit=%1").arg(limit);
     if (_lastEntry)
         url += QString("&since_entry_id=%1").arg(_lastEntry);
 
     _request = new ApiRequest(url);
+
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
     Q_TEST(connect(_request, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
     Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading(QObject*))));
@@ -166,6 +166,7 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query)
     if (!slug.isEmpty())
         _slug = slug;
 
+    _page = 1;
     _query = QUrl::toPercentEncoding(query);
     emit queryChanged();
 

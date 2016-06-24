@@ -29,6 +29,8 @@ ProgressBar {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.leftMargin: 5 * mm
+            anchors.rightMargin: anchors.leftMargin
             text: control.text + (control.value <= control.to && control.to > 0
                                   ? ' — ' + (control.percents ? Math.round(control.value / control.to * 100) + '%'
                                                               : control.value + '/' + control.to) : '')

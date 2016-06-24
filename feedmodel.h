@@ -108,6 +108,7 @@ private:
     bool _isPrivate;
     int _minRating;
     QString _query;
+    int     _page;
 
     ApiRequest* _request;
 };

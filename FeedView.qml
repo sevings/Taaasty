@@ -46,8 +46,8 @@ Rectangle {
     readonly property bool isFeedView: true
     signal pushed
     function setMode(m, t, s) {
+        query = '';
         if (mode === m) {
-            query = '';
             feedModel.reset(m, t, s);
         }
         else {

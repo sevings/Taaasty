@@ -91,7 +91,7 @@ void CalendarModel::loadAllEntries(const int after)
     {
         auto entry = _calendar.at(i);
 
-        if (entry->id() == after)
+        if (entry->id() <= after)
             break;
 
         if (entry->id() <= 0)
