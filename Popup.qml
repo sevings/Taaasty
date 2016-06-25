@@ -10,8 +10,8 @@ Rectangle {
     property bool outsideArea: true
     signal outsideClicked
     gradient: Gradient {
-        GradientStop { position: 0; color: '#373737' }
-        GradientStop { position: 1; color: '#000000' }
+        GradientStop { position: 0; color: window.darkTheme ? '#373737' : '#adbac6' }
+        GradientStop { position: 1; color: window.darkTheme ? '#000000' : '#42515a' }
     }
     state: "closed"
     states: [

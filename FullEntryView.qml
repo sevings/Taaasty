@@ -65,7 +65,7 @@ Rectangle {
                 anchors.leftMargin: 1 * mm
                 anchors.rightMargin: 1 * mm
                 wrapMode: Text.Wrap
-                font.pointSize: window.fontNormal
+                font.pointSize: window.fontSmaller
                 font.bold: true
                 style: Text.Raised
                 styleColor: window.greenColor
@@ -251,7 +251,7 @@ Rectangle {
                 width: fullEntryFavButton.width
                 enabled: !entry.rating.isBayesVoted
                 glowing: entry.rating.isVotedAgainst
-                glowColor: window.darkRed
+                glowColor: window.darkTheme ? window.darkRed : window.redColor
                 onClicked: entry.rating.voteAgainst()
             }
             ThemedButton {

@@ -143,7 +143,7 @@ Rectangle {
                     text: 'Фу…'
                     enabled: glowing || parent.tlogMode == 2 //Trainer.UndefinedMode
                     glowing: parent.tlogMode == 0 //Trainer.WaterMode
-                    glowColor: window.darkRed
+                    glowColor: window.darkTheme ? window.darkRed : window.redColor
                     onClicked: {
                         parent.tlogMode = 0;
                         Trainer.trainTlog(tlog.tlogId, 0);

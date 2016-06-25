@@ -49,8 +49,8 @@ Flickable {
 //        selectByMouse: true
         background: Rectangle {
             gradient: Gradient {
-                GradientStop { position: 0; color: 'black' }
-                GradientStop { position: 1; color: '#181818' }
+                GradientStop { position: 0; color: window.darkTheme ? 'black'   : '#adbac6' }
+                GradientStop { position: 1; color: window.darkTheme ? '#181818' : 'white' }
             }
             border.color: window.textColor
             border.width: 0.2 * mm

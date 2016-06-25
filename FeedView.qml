@@ -297,7 +297,8 @@ Rectangle {
                 property int maxWidth: comments.x - 2 * mm
                 property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
                 width: length < maxWidth ? length : maxWidth
-                color: entry.rating.bayesRating > 0 ? window.darkGreen : window.darkRed
+                color: entry.rating.bayesRating > 0 ? (window.darkTheme ? window.darkGreen : window.greenColor)
+                                                    : (window.darkTheme ? window.darkRed : window.redColor)
                 Behavior on width {
                     NumberAnimation {
                         duration: 300
@@ -349,7 +350,7 @@ Rectangle {
                 text: 'Фу…'
                 enabled: !entry.rating.isBayesVoted
                 glowing: entry.rating.isVotedAgainst
-                glowColor: window.darkRed
+                glowColor: window.darkTheme ? window.darkRed : window.redColor
                 onClicked: {
                     if (back.x > 0) {
                         mouse.accepted = false;

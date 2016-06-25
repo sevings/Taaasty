@@ -129,3 +129,19 @@ void Settings::setHideNegativeRated(bool hide)
 
     emit hideNegativeRatedChanged();
 }
+
+
+
+bool Settings::darkTheme() const
+{
+    return _settings.value("dark_theme").toBool();
+}
+
+
+
+void Settings::setDarkTheme(bool dark)
+{
+    _settings.setValue("dark_theme", dark);
+
+    emit darkThemeChanged();
+}

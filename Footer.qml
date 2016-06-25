@@ -21,6 +21,7 @@ Popup {
         id: title
         text: footer.title || footer.tlog.author.name
         font.pointSize: window.fontBigger
+        color: 'white'
         anchors.left: avatar.right
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter

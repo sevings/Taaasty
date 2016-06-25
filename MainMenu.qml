@@ -41,7 +41,7 @@ MouseArea {
             topMargin: 1 * mm
             bottomMargin: 1 * mm
             contentWidth: parent.width
-            property int buttonsCount: Tasty.isAuthorized ? 17 : 15
+            property int buttonsCount: Tasty.isAuthorized ? 18 : 16
             contentHeight: 9 * mm * buttonsCount + space.height
             Column {
                 id: column
@@ -167,6 +167,13 @@ MouseArea {
                     text: 'Включить НБК'
                     glowing: Settings.hideNegativeRated
                     onClicked: { Settings.hideNegativeRated = !glowing }
+                }
+                ThemedButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: 'Темная тема'
+                    glowing: Settings.darkTheme
+                    onClicked: { Settings.darkTheme = !glowing }
                 }
                 ThemedButton {
                     anchors.left: parent.left

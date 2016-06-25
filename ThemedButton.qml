@@ -25,7 +25,7 @@ Button {
             GradientStop {
                 position: 0
                 color: {
-                        '#575757';
+                        window.darkTheme ? '#575757' : '#eff3f7';
                 }
             }
             GradientStop {
@@ -34,7 +34,7 @@ Button {
                     if (button.glowing)
                         button.glowColor;
                     else
-                        '#373737';
+                        window.darkTheme ? '#373737' : '#b5babd';
                 }
             }
         }

@@ -8,8 +8,9 @@ ApplicationWindow {
     visible: true
     width: 480
     height: 800
-    property color backgroundColor: 'black'
-    property color textColor: 'white'
+    readonly property bool darkTheme: Settings.darkTheme
+    property color backgroundColor: darkTheme ? 'black' : '#eff3f7'
+    property color textColor: darkTheme ? 'white' : '#424d52'
     property color secondaryTextColor: 'darkgrey'
     property color greenColor: '#00DF84'
     property color redColor: '#c00f19' // '#f3534b'

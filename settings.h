@@ -17,6 +17,7 @@ class Settings : public QObject
     Q_PROPERTY(bool     autoloadImages      READ autoloadImages     WRITE setAutoloadImages     NOTIFY autoloadImagesChanged)
     Q_PROPERTY(bool     hideShortPosts      READ hideShortPosts     WRITE setHideShortPosts     NOTIFY hideShortPostsChanged)
     Q_PROPERTY(bool     hideNegativeRated   READ hideNegativeRated  WRITE setHideNegativeRated  NOTIFY hideNegativeRatedChanged)
+    Q_PROPERTY(bool darkTheme               READ darkTheme          WRITE setDarkTheme          NOTIFY darkThemeChanged)
 
 public:
     explicit Settings(QObject *parent = 0);
@@ -42,6 +43,9 @@ public:
     bool hideNegativeRated() const;
     void setHideNegativeRated(bool hide);
 
+    bool darkTheme() const;
+    void setDarkTheme(bool dark);
+
 signals:
     void loginChanged();
     void accessTokenChanged();
@@ -49,6 +53,7 @@ signals:
     void autoloadImagesChanged(bool);
     void hideShortPostsChanged();
     void hideNegativeRatedChanged();
+    void darkThemeChanged();
 
 public slots:
 
