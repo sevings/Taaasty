@@ -75,7 +75,8 @@ void UsersModelTlog::fetchMore(const QModelIndex& parent)
     if (_lastPosition)
         url += QString("&since_position=%1").arg(_lastPosition);
 
-    auto request = new ApiRequest(url);
+    auto accessTokenRequired = _mode == MyFollowersMode || _mode == MyFollowingsMode || _mode == MyIgnoredMode;
+    auto request = new ApiRequest(url, accessTokenRequired);
     connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject)));
 }
 

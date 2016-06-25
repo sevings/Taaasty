@@ -102,11 +102,13 @@ Rectangle {
                 text: {
                     switch (tlog.myRelationship) {
                     case Tlog.Friend:
-                        'Вы подписаны';     break;
+                        'Вы подписаны';         break;
                     case Tlog.None:
-                        'Вы не подписаны';  break;
+                        'Вы не подписаны';      break;
                     case Tlog.Me:
-                        'Это вы';           break;
+                        'Это вы';               break;
+                    case Tlog.Ignored:
+                        'Тлог заблокирован';    break;
                     default:
                         '';
                     }

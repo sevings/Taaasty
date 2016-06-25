@@ -650,33 +650,8 @@ void Tlog::_init(const QJsonObject data)
     _followingsCount = Tasty::num2str(relations.value("followings_count").toInt(), "подписка", "подписки", "подписок");
     _ignoredCount = Tasty::num2str(relations.value("ignored_count").toInt(), "блокирован", "блокировано", "блокировано");
 
-    if (!data.contains("his_relationship"))
-        _hisRelation = Undefined;
-    else
-    {
-        auto his = data.value("his_relationship").toString();
-        if (his == "friend")
-            _hisRelation = Friend;
-        else if (his == "none")
-            _hisRelation = None;
-        else if (his.isEmpty())
-            _hisRelation = Me;
-
-    }
-
-    if (!data.contains("my_relationship"))
-        _myRelation = Undefined;
-    else
-    {
-        auto my = data.value("my_relationship").toString();
-        if (my == "friend")
-            _myRelation = Friend;
-        else if (my == "none")
-            _myRelation = None;
-        else if (my.isEmpty())
-            _myRelation = Me;
-
-    }
+    _hisRelation = _relationship(data, "his_relationship");
+    _myRelation =  _relationship(data, "my_relationship");
 
     auto authorData = data.value("author").toObject();
     if (_author)
@@ -688,6 +663,27 @@ void Tlog::_init(const QJsonObject data)
 
     _loading = false;
     emit loadingChanged();
+}
+
+
+
+Tlog::Relationship Tlog::_relationship(const QJsonObject& data, const QString field)
+{
+    if (!data.contains(field))
+        return Undefined;
+
+    auto relation = data.value(field).toString();
+    if (relation == "friend")
+        return Friend;
+    if (relation == "none")
+        return None;
+    if (relation == "ignored")
+        return Ignored;
+    if (relation.isEmpty())
+        return Me;
+
+    qDebug() << "relation:" << relation;
+    return Undefined;
 }
 
 

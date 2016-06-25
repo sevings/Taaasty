@@ -395,6 +395,7 @@ public:
         Undefined,
         Me,
         Friend,
+        Ignored,
         None
     };
 
@@ -419,6 +420,8 @@ private slots:
     void _init(const QJsonObject data);
 
 private:
+    Relationship _relationship(const QJsonObject& data, const QString field);
+
     int             _id;
     QString         _slug;
     QString         _title;
