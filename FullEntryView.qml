@@ -11,7 +11,7 @@ Rectangle {
     }
     readonly property Tlog tlog: entry.tlog
     property CommentsModel commentsModel: entry.commentsModel
-    property bool showProfiles: true
+    property bool showProfiles: tlog.tlogId !== window.anonymousId
     signal popped
     property bool poppable
     readonly property bool isFullEntryView: true

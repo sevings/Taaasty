@@ -88,7 +88,7 @@ ApplicationWindow {
             var slug = matches[1];
             var entryId = matches[2];
             if (entryId) {
-                pushFullEntryById(entryId); // TODO: showProfiles
+                pushFullEntryById(entryId);
             }
             else if (slug) {
                 pushProfileBySlug(slug);
@@ -104,23 +104,21 @@ ApplicationWindow {
         inputDialog.text = image.fileName;
         showLineInput('save');
     }
-    function pushFullEntry(entry, showProfiles) {
+    function pushFullEntry(entry) {
         stack.push(stack.fullEntry,
                    {
                        entry: entry,
-                       showProfiles: showProfiles,
                        poppable: true
                    }
                    )
     }
-    function pushFullEntryById(entryId, showProfiles) {
+    function pushFullEntryById(entryId) {
         if (stack.currentItem.isFullEntryView && stack.currentItem.entryId === entryId)
             return;
 
         stack.push(stack.fullEntry,
                    {
                        entryId: entryId,
-                       showProfiles: showProfiles,
                        poppable: true
                    }
                    )

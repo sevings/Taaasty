@@ -55,7 +55,6 @@ Rectangle {
             width: window.width
             readonly property int h: notifName.paintedHeight + notifText.paintedHeight
             height: (h > notifAvatar.height ? h : notifAvatar.height) + 2 * mm
-            readonly property bool showProfile: notification.parentType !== 'AnonymousEntry'
             onClicked: {
                 if (notification.entityType === 'Entry')
                 {
@@ -63,7 +62,12 @@ Rectangle {
                         return;
 
                     window.hideNotifs();
-                    window.pushFullEntryById(notification.entityId, showProfile);
+                    window.pushFullEntryById(notification.entityId);
+                }
+                else if (notification.entityType === 'Relationship')
+                {
+                    window.hideNotifs();
+                    window.pushTlog(notification.sender.id);
                 }
                 else if (notification.entityType === 'Comment')
                 {
@@ -71,12 +75,7 @@ Rectangle {
                         return;
 
                     window.hideNotifs();
-                    window.pushFullEntryById(notification.parentId, showProfile);
-                }
-                else if (notification.entityType === 'Relationship')
-                {
-                    window.hideNotifs();
-                    window.pushTlog(notification.sender.id);
+                    window.pushFullEntryById(notification.parentId);
                 }
                 else
                     console.log(notification.entityType);
@@ -87,7 +86,7 @@ Rectangle {
                 user: notification.sender
                 MouseArea {
                     anchors.fill: parent
-                    enabled: showProfile
+                    enabled: notification.parentType !== 'AnonymousEntry'
                     onClicked: {
                         if (back.y > 0)
                             return;
