@@ -1,5 +1,6 @@
 #include "androidnotifier.h"
 
+#ifdef Q_OS_ANDROID
 #include <QAndroidJniObject>
 
 #include <QDebug>
@@ -19,3 +20,4 @@ void AndroidNotifier::setNotification(const QString& notification)
                                        "(Ljava/lang/String;)V",
                                        javaNotification.object<jstring>());
 }
+#endif

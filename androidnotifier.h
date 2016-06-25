@@ -1,6 +1,7 @@
 #ifndef ANDROIDNOTIFIER_H
 #define ANDROIDNOTIFIER_H
 
+#ifdef Q_OS_ANDROID
 #include <QObject>
 
 class AndroidNotifier : public QObject
@@ -16,4 +17,5 @@ signals:
 public slots:
 };
 
+#endif
 #endif // ANDROIDNOTIFIER_H
