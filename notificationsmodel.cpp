@@ -9,6 +9,9 @@
 #include "datastructures.h"
 #include "tasty.h"
 
+#ifdef Q_OS_ANDROID
+#   include "androidnotifier.h"
+#endif
 
 
 NotificationsModel::NotificationsModel(QObject* parent)
@@ -16,6 +19,9 @@ NotificationsModel::NotificationsModel(QObject* parent)
     , _url("messenger/notifications.json?limit=20")
     , _loading(false)
     , _totalCount(1)
+#ifdef Q_OS_ANDROID
+    , _androidNotifier(new AndroidNotifier(this))
+#endif
 {
     _timer.setInterval(30000);
     _timer.setSingleShot(false);
@@ -190,6 +196,12 @@ void NotificationsModel::_addItems(QJsonObject data)
     {
         auto notification = new Notification(notif.toObject(), this);
         _notifs.insert(size, notification);
+
+//#ifdef Q_OS_ANDROID
+//        auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
+//                .arg(notification->actionText()).arg(notification->text());
+//        _androidNotifier->setNotification(text);
+//#endif
     }
 
     endInsertRows();
@@ -224,6 +236,15 @@ void NotificationsModel::_addNewest(QJsonObject data)
     {
         auto notification = new Notification(notif.toObject(), this);
         _notifs.prepend(notification);
+
+#ifdef Q_OS_ANDROID
+    if (!notification->_read)
+    {
+        auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
+                .arg(notification->actionText()).arg(notification->text());
+        _androidNotifier->setNotification(text);
+    }
+#endif
 
         if (!notification->_read && notification->_action == "new_comment")
             emit commentAdded(notification->_parentId, notification);

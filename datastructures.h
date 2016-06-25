@@ -513,6 +513,12 @@ public:
     
     int entityId() const;
 
+    User* sender() const;
+
+    QString actionText() const;
+
+    QString text() const;
+
 signals:
     void read();
     

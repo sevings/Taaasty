@@ -818,3 +818,18 @@ int Notification::entityId() const
 {
     return _entityId;
 }
+
+User* Notification::sender() const
+{
+    return _sender;
+}
+
+QString Notification::actionText() const
+{
+    return _actionText;
+}
+
+QString Notification::text() const
+{
+    return _text;
+}

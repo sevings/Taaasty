@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     cache/cachedimage.cpp \
     stemmerv.cpp \
     usersmodeltlog.cpp \
-    usersmodelbayes.cpp
+    usersmodelbayes.cpp \
+    androidnotifier.cpp
 
 RESOURCES += qml.qrc
 
@@ -51,7 +52,8 @@ HEADERS += \
     defines.h \
     stemmerv.h \
     usersmodeltlog.h \
-    usersmodelbayes.h
+    usersmodelbayes.h \
+    androidnotifier.h
 
 DISTFILES += \
     android/AndroidManifest.xml \
@@ -60,7 +62,8 @@ DISTFILES += \
     android/res/values/libs.xml \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
-    android/gradlew.bat
+    android/gradlew.bat \
+    android/src/org/binque/taaasty/NotificationClient.java
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 

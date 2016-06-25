@@ -8,6 +8,9 @@
 
 class Notification;
 
+#ifdef Q_OS_ANDROID
+class AndroidNotifier;
+#endif
 
 
 class NotificationsModel : public QAbstractListModel
@@ -57,6 +60,10 @@ private:
     bool _loading;
     int _totalCount;
     QTimer _timer;
+
+#ifdef Q_OS_ANDROID
+    AndroidNotifier* _androidNotifier;
+#endif
 };
 
 #endif // NOTIFICATIONSMODEL_H
