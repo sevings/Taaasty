@@ -41,6 +41,15 @@ public:
 
     Q_ENUMS(Mode)
 
+    enum Privacy
+    {
+        Private,
+        Public,
+        Voting
+    };
+
+    Q_ENUMS(Privacy)
+
     FeedModel(QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -72,16 +81,21 @@ public:
     bool hideShort() const;
     bool hideNegative() const;
 
+    void postText(const QString title, const QString content, Privacy privacy = Public);
+    void postAnonymous(const QString title, const QString content);
+
 signals:
     void hasMoreChanged();
     void isPrivateChanged();
     void queryChanged();
+    void entryCreated(Entry* entry);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
     void _addItems(QJsonObject data);
+    void _addNewPost(QJsonObject data);
     void _changeHideShort();
     void _changeHideNegative();
     void _setPrivate(int errorCode);

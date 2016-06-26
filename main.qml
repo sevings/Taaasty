@@ -371,6 +371,7 @@ ApplicationWindow {
         property Component users:               Qt.createComponent("UsersView.qml",         Component.Asynchronous, stack);
         property Component loginDialog:         Qt.createComponent("LoginDialog.qml",       Component.Asynchronous, stack);
         property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack);
+        property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack);
         Connections {
             target: Tasty
             onAuthorizationNeeded: {

@@ -148,3 +148,35 @@ void Settings::setDarkTheme(bool dark)
 
     emit darkThemeChanged();
 }
+
+
+
+QString Settings::lastTitle() const
+{
+    return _settings.value("last_title").toString();
+}
+
+
+
+void Settings::setLastTitle(const QString title)
+{
+    _settings.setValue("last_title", title);
+
+    emit lastTitleChanged();
+}
+
+
+
+QString Settings::lastText() const
+{
+    return _settings.value("last_text").toString();
+}
+
+
+
+void Settings::setLastText(const QString text)
+{
+    _settings.setValue("last_text", text);
+
+    emit lastTextChanged();
+}

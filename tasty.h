@@ -55,7 +55,6 @@ signals:
 
 public slots:
     void authorize(const QString login, const QString password);
-    void postEntry(const QString title, const QString content);
 
     void getMe();
 

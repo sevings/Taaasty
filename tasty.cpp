@@ -141,26 +141,6 @@ void Tasty::authorize(const QString login, const QString password)
 
 
 
-void Tasty::postEntry(const QString title, const QString content)
-{
-    auto data = QString("title=%1&text=%2&privacy=%3&tlog_id=%4")
-            .arg(title)
-            .arg(content)
-            .arg("public_with_voting")
-            .arg("");
-
-    qDebug() << data;
-
-    auto request = new ApiRequest("entries/text.json", true,
-                                  QNetworkAccessManager::PostOperation, data);
-
-    Q_UNUSED(request);
-
-    //connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readAccessToken(const QJsonObject)));
-}
-
-
-
 void Tasty::getMe()
 {
     auto request = new ApiRequest("users/me.json", true);

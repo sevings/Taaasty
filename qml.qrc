@@ -26,5 +26,6 @@
         <file>InputDialog.qml</file>
         <file>ThemedProgressBar.qml</file>
         <file>TrainingProgress.qml</file>
+        <file>EntryEditor.qml</file>
     </qresource>
 </RCC>
