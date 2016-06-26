@@ -42,6 +42,8 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
         return;
     }
 
+    qDebug() << "CachedImage from url: " << url;
+
     if (_man->autoload())
         download();
     else
@@ -335,6 +337,9 @@ QString CachedImage::_path() const
 void CachedImage::_saveFile()
 {
     auto path = QString("%1/%2.%3").arg(_man->path()).arg(_hash).arg(_extension);
+
+    qDebug() << "Saving image from" << _url << "to" << path;
+
     if (_man->maxWidth() && _format != UnknownFormat && _format != GifFormat)
     {
         auto pic = QImage::fromData(_data);

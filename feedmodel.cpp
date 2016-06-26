@@ -23,6 +23,8 @@ FeedModel::FeedModel(QObject* parent)
     , _page(1)
     , _request(nullptr)
 {
+    qDebug() << "FeedModel";
+
     Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideShortPostsChanged()),    this, SLOT(_changeHideShort())));
     Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideNegativeRatedChanged()), this, SLOT(_changeHideNegative())));
 
@@ -71,6 +73,8 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 {
     if (!_hasMore || _loading || parent.isValid() || (_mode == TlogMode && _tlog <= 0 && _slug.isEmpty()))
         return;
+
+    qDebug() << "FeedModel::fetchMore";
 
     _loading = true;
 
@@ -228,7 +232,7 @@ QHash<int, QByteArray> FeedModel::roleNames() const
 
 void FeedModel::_addItems(QJsonObject data)
 {
-//    qDebug() << "adding entries";
+    qDebug() << "FeedModel::_addItems";
 
     auto feed = data.value("entries").toArray();
     if (feed.isEmpty())

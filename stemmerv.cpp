@@ -1,5 +1,6 @@
 #include "stemmerv.h"
 
+#include <QDebug>
 
 
 StemmerV* StemmerV::instance()
@@ -85,14 +86,16 @@ StemmerV::StemmerV()
     , _doubleN("нн$")
     , _separators("[^а-яА-ЯёЁa-zA-Z]+")
 {
-//    _pvre.optimize();
-//    _reflexive.optimize();
-//    _suffix.optimize();
-//    _plural.optimize();
-//    _derivational.optimize();
-//    _perfectivePrefix.optimize();
-//    _perfectiveSuffix.optimize();
-//    _softSign.optimize();
-//    _doubleN.optimize();
-//    _separators.optimize();
+    qDebug() << "StemmerV";
+
+    _pvre.optimize();
+    _reflexive.optimize();
+    _suffix.optimize();
+    _plural.optimize();
+    _derivational.optimize();
+    _perfectivePrefix.optimize();
+    _perfectiveSuffix.optimize();
+    _softSign.optimize();
+    _doubleN.optimize();
+    _separators.optimize();
 }

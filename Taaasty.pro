@@ -53,7 +53,8 @@ HEADERS += \
     stemmerv.h \
     usersmodeltlog.h \
     usersmodelbayes.h \
-    androidnotifier.h
+    androidnotifier.h \
+    messageoutput.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

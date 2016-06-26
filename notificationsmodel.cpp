@@ -23,6 +23,8 @@ NotificationsModel::NotificationsModel(QObject* parent)
     , _androidNotifier(new AndroidNotifier(this))
 #endif
 {
+    qDebug() << "NotificationsModel";
+
     _timer.setInterval(30000);
     _timer.setSingleShot(false);
     _timer.start();

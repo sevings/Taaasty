@@ -28,6 +28,8 @@ Bayes::Bayes(QObject *parent)
     , _saveTimer(new QTimer(this))
 
 {
+    qDebug() << "Bayes";
+
     _total[Water] = 0;
     _total[Fire]  = 0;
 
@@ -161,6 +163,8 @@ void Bayes::_saveDb()
 #ifdef QT_DEBUG
     auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
     qDebug() << "Saved in" << ms << "ms";
+#else
+    qDebug() << "Bayes saved";
 #endif
 }
 
@@ -213,6 +217,8 @@ void Bayes::_loadDb()
 #ifdef QT_DEBUG
     auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
     qDebug() << "Loaded in" << ms << "ms";
+#else
+    qDebug() << "Bayes loaded";
 #endif
 
     _loaded = true;

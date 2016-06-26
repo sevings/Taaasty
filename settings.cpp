@@ -2,6 +2,7 @@
 
 #include <QGuiApplication>
 #include <QScreen>
+#include <QDebug>
 
 
 
@@ -9,6 +10,8 @@ Settings::Settings(QObject *parent)
     : QObject(parent)
     , _settings(this)
 {
+    qDebug() << "Settings";
+
     if (!_settings.contains("max_image_width"))
     {
         auto screen = qApp->primaryScreen();

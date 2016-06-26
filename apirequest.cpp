@@ -2,6 +2,7 @@
 
 #include <QNetworkRequest>
 #include <QJsonParseError>
+#include <QDebug>
 
 #include "defines.h"
 
@@ -15,6 +16,8 @@ ApiRequest::ApiRequest(const QString url,
     , _readyData(data.toUtf8())
     , _method(method)
 {
+    qDebug() << "ApiRequest to" << url;
+
     QUrl fullUrl(QString("http://api.taaasty.com:80/v1/%1").arg(url));
 
     auto tasty = Tasty::instance();

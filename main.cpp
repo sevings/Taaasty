@@ -24,12 +24,17 @@
 #include "bayes.h"
 #include "trainer.h"
 
+#include "messageoutput.h"
+
+
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
     app.setApplicationName("Taaasty");
     app.setOrganizationName("binque");
+
+    installLog();
 
     qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
@@ -101,6 +106,8 @@ int main(int argc, char *argv[])
     int res = app.exec();
 
     delete tasty;
+
+    finishLog();
 
     return res;
 }

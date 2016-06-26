@@ -21,6 +21,8 @@ Trainer::Trainer(Bayes* parent)
 {
     Q_ASSERT(_bayes);
 
+    qDebug() << "Trainer";
+
     _loadDb();
 }
 

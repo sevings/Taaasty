@@ -1,6 +1,7 @@
 #include "calendarmodel.h"
 
 #include <QJsonArray>
+#include <QDebug>
 
 #include "defines.h"
 
@@ -15,7 +16,7 @@ CalendarModel::CalendarModel(QObject* parent)
     , _loadingEntriesCount(0)
     , _loadAfter(0)
 {
-
+    qDebug() << "CalendarModel";
 }
 
 

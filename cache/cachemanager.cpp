@@ -3,6 +3,7 @@
 #include <QNetworkAccessManager>
 #include <QStandardPaths>
 #include <QDir>
+#include <QDebug>
 
 #include <QSslSocket>
 
@@ -22,6 +23,8 @@ CacheManager::CacheManager(QNetworkAccessManager* web)
     : _maxWidth(0)
     , _autoload(true)
 {
+    qDebug() << "CacheManager";
+
     auto cachePath = QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
     cachePath.mkpath("images");
     cachePath.cd("images");
