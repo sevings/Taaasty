@@ -11,8 +11,8 @@ TextField {
     implicitWidth: 30 * mm
     background: Rectangle {
         gradient: Gradient {
-            GradientStop { position: 0; color: 'black' }
-            GradientStop { position: 1; color: '#292929' }
+            GradientStop { position: 0; color: window.darkTheme ? 'black'   : '#adbac6' }
+            GradientStop { position: 1; color: window.darkTheme ? '#181818' : 'white' }
         }
         border.color: window.secondaryTextColor
         border.width: 0.1 * mm
