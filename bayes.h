@@ -29,7 +29,7 @@ public:
 
     int classify(const Entry* entry, const int minLength = 0) const;
     int voteForEntry(const Entry* entry, const Type type);
-    int entryVoteType(const Entry* entry) const;
+    int entryVoteType(const int id) const;
 
     Trainer* trainer();
     QSqlDatabase& db() { return _db; }
@@ -62,11 +62,11 @@ private:
 
     int _calcText(QString text, QMap<QString, FeatureCount>& wordCounts) const;
     int _calcEntry(const Entry* entry, QMap<QString, FeatureCount>& wordCounts, const int minLength = 0) const;
-    int _addEntry(const Entry* entry, const Type type);
+    void _addEntry(const Entry* entry, const Type type);
 
     QMap<QString, FeatureCount> _wordCounts[2];
     QMap<int, bool>             _entriesChanged[2];
-    int                          _total[2];
+    int                         _total[2];
 
     bool _loaded;
 

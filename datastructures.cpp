@@ -705,7 +705,7 @@ Rating::Rating(const QJsonObject data, Entry* parent)
 
 void Rating::reCalcBayes()
 {
-    auto type = Bayes::instance()->entryVoteType(_parent);
+    auto type = Bayes::instance()->entryVoteType(_parent->entryId());
     switch (type)
     {
     case Bayes::Water:

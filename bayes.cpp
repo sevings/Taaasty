@@ -101,18 +101,18 @@ int Bayes::classify(const Entry *entry, const int minLength) const
 
 int Bayes::voteForEntry(const Entry *entry, const Bayes::Type type)
 {
-    _total[type] += _addEntry(entry, type);
+    _addEntry(entry, type);
     return classify(entry);
 }
 
 
 
-int Bayes::entryVoteType(const Entry* entry) const
+int Bayes::entryVoteType(const int id) const
 {
-    if (_entriesChanged[Water].contains(entry->_id))
+    if (_entriesChanged[Water].contains(id))
         return Bayes::Water;
 
-    if (_entriesChanged[Fire].contains(entry->_id))
+    if (_entriesChanged[Fire].contains(id))
         return Bayes::Fire;
 
     return -1;
@@ -313,13 +313,13 @@ int Bayes::_calcEntry(const Entry *entry, QMap<QString, Bayes::FeatureCount> &wo
 
 
 
-int Bayes::_addEntry(const Entry *entry, const Bayes::Type type)
+void Bayes::_addEntry(const Entry *entry, const Bayes::Type type)
 {
     if (_isEntryAdded(entry->_id))
-        return 0;
+        return;
 
-    _entriesChanged[type][entry->_id] =  true;
-    return _calcEntry(entry, _wordCounts[type]);
+    _entriesChanged[type][entry->_id] = true;
+    _total[type] +=  _calcEntry(entry, _wordCounts[type]);
 }
 
 
