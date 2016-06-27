@@ -21,6 +21,12 @@ Rectangle {
         else
             commentsModel.check();
     }
+    Timer {
+        interval: 20000
+        running: back.visible
+        repeat: true
+        onTriggered: commentsModel.check()
+    }
     Poppable {
         body: back
     }

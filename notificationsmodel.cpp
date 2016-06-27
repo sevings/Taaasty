@@ -25,7 +25,7 @@ NotificationsModel::NotificationsModel(QObject* parent)
 {
     qDebug() << "NotificationsModel";
 
-    _timer.setInterval(30000);
+    _timer.setInterval(60000);
     _timer.setSingleShot(false);
     _timer.start();
 

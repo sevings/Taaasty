@@ -7,6 +7,7 @@ Rectangle {
     y: 0
     z: 20
     visible: y < window.height || !outsideArea
+    enabled: visible
     property bool outsideArea: true
     signal outsideClicked
     gradient: Gradient {
