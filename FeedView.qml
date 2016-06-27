@@ -329,7 +329,7 @@ Rectangle {
                 width: parent.width / 3
                 height: 6 * mm
                 text: 'Да!'
-                enabled: !entry.rating.isVotedAgainst
+                enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable
                 glowing: ((entry.rating.isVotable === entry.rating.isVoted) )
                          && entry.rating.isBayesVoted
                 onClicked: {
