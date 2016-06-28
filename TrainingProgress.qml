@@ -11,6 +11,9 @@ Rectangle {
     Poppable {
         body: back
     }
+    Splash {
+        visible: tlogBar.to <= 0
+    }
     ThemedProgressBar {
         id: tlogBar
         anchors.bottom: allBar.visible ? parent.verticalCenter : undefined

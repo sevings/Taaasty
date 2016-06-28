@@ -126,13 +126,13 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: 'Неинтересные'
-                onClicked: { area.waterTlogsRequested() }
+                onClicked: { waterTlogsRequested() }
             }
             ThemedButton {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: 'Интересные'
-                onClicked: { area.fireTlogsRequested() }
+                onClicked: { fireTlogsRequested() }
             }
             //                ThemedButton {
             //                    anchors.left: parent.left
