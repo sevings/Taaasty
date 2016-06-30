@@ -42,7 +42,6 @@ private:
     QString _url;
     QString _field;
     int  _tlog;
-    Mode _mode;
     int  _total;
     int  _lastPosition;
 };

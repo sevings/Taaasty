@@ -64,7 +64,7 @@ int Bayes::classify(const Entry *entry, const int minLength) const
     if (!_total[Water] || !_total[Fire])
         return 0;
 
-    QMap<QString, Bayes::FeatureCount> features;
+    QHash<QString, Bayes::FeatureCount> features;
     int length = _calcEntry(entry, features, minLength);
     if (length <= 0)
         return length;
@@ -142,6 +142,8 @@ void Bayes::_saveDb()
                 query.addBindValue(word);
                 query.addBindValue(_wordCounts[type][word].count);
                 Q_TEST(query.exec());
+                
+                _wordCounts[type][word].changed = false;
             }
 
         foreach (auto entry, _entriesChanged[type].keys())
@@ -234,7 +236,7 @@ bool Bayes::_isEntryAdded(int id) const
 
 
 
-int Bayes::_calcText(QString text, QMap<QString, Bayes::FeatureCount>& wordCounts) const
+int Bayes::_calcText(QString text, QHash<QString, Bayes::FeatureCount>& wordCounts) const
 {
     if (text.isEmpty())
         return 0;
@@ -272,7 +274,7 @@ int Bayes::_calcText(QString text, QMap<QString, Bayes::FeatureCount>& wordCount
 
 
 
-int Bayes::_calcEntry(const Entry *entry, QMap<QString, Bayes::FeatureCount> &wordCounts, const int minLength) const
+int Bayes::_calcEntry(const Entry *entry, QHash<QString, FeatureCount>& wordCounts, const int minLength) const
 {
     int content = _calcText(entry->_text, wordCounts);
     int title   = _calcText(entry->_title, wordCounts);

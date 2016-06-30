@@ -67,8 +67,8 @@ void Entry::setId(const int id)
     _id = id;
 
     auto request = new ApiRequest(QString("entries/%1.json").arg(_id));
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
-    connect(request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading()));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
 
     _loading = true;
     emit loadingChanged();
@@ -78,6 +78,12 @@ void Entry::setId(const int id)
 
 void Entry::addComment(const QString text)
 {
+    if (_loading || _id <= 0)
+        return;
+
+    _loading = true;
+    emit loadingChanged();
+    
     auto content = QUrl::toPercentEncoding(text.trimmed());
     auto data    = QString("entry_id=%1&text=%2").arg(_id).arg(QString::fromUtf8(content));
     auto request = new ApiRequest("comments.json", true,
@@ -85,12 +91,19 @@ void Entry::addComment(const QString text)
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(commentAdded(const QJsonObject))));
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_setWatched())));
+    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
 }
 
 
 
 void Entry::watch()
 {
+    if (_loading || _id <= 0)
+        return;
+
+    _loading = true;
+    emit loadingChanged();
+    
     ApiRequest* request = nullptr;
     if (_isWatched)
     {
@@ -105,12 +118,19 @@ void Entry::watch()
     }
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeWatched(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
 }
 
 
 
 void Entry::favorite()
 {
+    if (_loading || _id <= 0)
+        return;
+
+    _loading = true;
+    emit loadingChanged();
+    
     ApiRequest* request = nullptr;
     if (_isFavorited)
     {
@@ -125,6 +145,7 @@ void Entry::favorite()
     }
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeFavorited(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
 }
 
 
@@ -156,8 +177,10 @@ void Entry::_init(const QJsonObject data)
 
     _correctHtml();
 
-    QRegularExpression re("\\s[^\\s]+\\s");
-    _wordCount       = _title.count(re) + _text.count(re);
+    // QRegularExpression re("\\s[^\\s]+\\s");
+    QRegularExpression tagRe("<[^>]*>");
+    QRegularExpression wordRe("\\b\\w+\\b");
+    _wordCount       = _title.remove(tagRe).count(wordRe) + _text.remove(tagRe).count(wordRe);
 
     delete _commentsModel;
     _commentsModel = new CommentsModel(this);
@@ -242,7 +265,7 @@ void Entry::_setNotLoading()
     emit loadingChanged();
 
     if (!_tlog || _tlog->tlogId() <= 0)
-        emit updatingError();
+        emit updatingError(); // TODO: emit it only after setId()
 }
 
 
@@ -554,7 +577,7 @@ void Author::_init(const QJsonObject data)
 
     _followingsCount = Tasty::num2str(data.value("followings_count").toInt(), "подписка", "подписки", "подписок");
 
-    emit updated();
+    emit authorUpdated();
 
     _initStatus(data);
 }

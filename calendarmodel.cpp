@@ -12,9 +12,6 @@
 
 CalendarModel::CalendarModel(QObject* parent)
     : QAbstractListModel(parent)
-    , _loadedEntriesCount(0)
-    , _loadingEntriesCount(0)
-    , _loadAfter(0)
 {
     qDebug() << "CalendarModel";
 }
@@ -59,58 +56,26 @@ void CalendarModel::setTlog(const int tlog)
     qDeleteAll(_calendar);
     _calendar.clear();
 
-    _loadedEntriesCount = 0;
-    _loadingEntriesCount = 0;
-
     endResetModel();
 }
 
 
 
-int CalendarModel::lastEntry() const
+int CalendarModel::lastEntryId() const
 {
     if (_calendar.isEmpty())
         return 0;
 
-    return _calendar.last()->id();
+    return _calendar.last()->id(); // TODO: not zero
 }
 
 
 
-void CalendarModel::loadAllEntries(const int after)
+CalendarEntry* CalendarModel::at(int row) const
 {
-    if (_calendar.isEmpty())
-    {
-        _loadAfter = after ? after : -1;
-        return;
-    }
-
-    _loadedEntriesCount = 0;
-    _loadingEntriesCount = 0;
-
-    for (int i = _calendar.size() - 1; i >= 0; i--)
-    {
-        auto entry = _calendar.at(i);
-
-        if (entry->id() <= after)
-            break;
-
-        if (entry->id() <= 0)
-            continue;
-
-        _loadingEntriesCount++;
-
-        auto full = entry->full();
-        Q_TEST(connect(full, SIGNAL(updated()),       this, SLOT(_emitEntryLoaded())));
-        Q_TEST(connect(full, SIGNAL(updatingError()), this, SLOT(_incLoadedCount())));
-    }
-
-    if (_loadingEntriesCount == 0)
-        emit allEntriesLoaded();
-
-    emit loadingEntriesCountChanged();
-
-    _loadAfter = 0;
+    Q_ASSERT(row > 0 && row < _calendar.size());
+    
+    return _calendar.at(row);
 }
 
 
@@ -141,30 +106,5 @@ void CalendarModel::_setCalendar(QJsonObject data)
 
     endResetModel();
 
-    if (_loadAfter)
-        loadAllEntries(_loadAfter);
-}
-
-
-
-void CalendarModel::_emitEntryLoaded()
-{
-    auto entry = static_cast<Entry*>(sender());
-    if (!entry)
-        return;
-
-    emit entryLoaded(entry);
-
-    _incLoadedCount();
-}
-
-
-
-void CalendarModel::_incLoadedCount()
-{
-    _loadedEntriesCount++;
-    emit loadedEntriesCountChanged();
-
-    if (_loadedEntriesCount >= _loadingEntriesCount)
-        emit allEntriesLoaded();
+    emit loaded();
 }

@@ -22,33 +22,21 @@ public:
 
     Q_INVOKABLE void setTlog(const int tlog);
 
-    int loadedEntriesCount()  const { return _loadedEntriesCount; }
-    int loadingEntriesCount() const { return _loadingEntriesCount; }
+    int lastEntryId() const;
 
-    int lastEntry() const;
-
-public slots:
-    void loadAllEntries(const int after = -1);
-
+    CalendarEntry* at(int row) const;
+    
 signals:
-    void entryLoaded(const Entry* entry);
-    void loadedEntriesCountChanged();
-    void loadingEntriesCountChanged();
-    void allEntriesLoaded();
+    void loaded();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
     void _setCalendar(QJsonObject data);
-    void _emitEntryLoaded();
-    void _incLoadedCount();
 
 private:
     QList<CalendarEntry*> _calendar;
-    int _loadedEntriesCount;
-    int _loadingEntriesCount;
-    int _loadAfter;
 };
 
 #endif // CALENDARMODEL_H

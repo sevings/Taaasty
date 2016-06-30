@@ -18,6 +18,9 @@ Trainer::Trainer(Bayes* parent)
     , _curMode(UndefinedMode)
     , _iCurTlog(0)
     , _curTlog(nullptr)
+    , _trainedEntriesCount(0)
+    , _trainingEntriesCount(0)
+    , _loadAfter(0)
 {
     Q_ASSERT(_bayes);
 
@@ -70,14 +73,14 @@ int Trainer::tlogsCount() const
 
 int Trainer::trainedEntriesCount() const
 {
-    return _curTlog ? _curTlog->loadedEntriesCount() : 0;
+    return _trainedEntriesCount;
 }
 
 
 
 int Trainer::entriesCount() const
 {
-    return _curTlog ? _curTlog->loadingEntriesCount() : 0;
+    return _trainingEntriesCount;
 }
 
 
@@ -133,31 +136,59 @@ void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
     _curTlog = new CalendarModel(this);
     _curTlog->setTlog(tlogId);
 
-    Q_TEST(connect(_curTlog, SIGNAL(loadingEntriesCountChanged()), this, SIGNAL(entriesCountChanged())));
-    Q_TEST(connect(_curTlog, SIGNAL(loadedEntriesCountChanged()),  this, SIGNAL(trainedEntriesCountChanged())));
-
-    Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),    _curTlog, SLOT(deleteLater())));
-    Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),        this, SLOT(_finishTraining())));
-    Q_TEST(connect(_curTlog, SIGNAL(entryLoaded(const Entry*)), this, SLOT(_trainEntry(const Entry*))));
+    Q_TEST(connect(_curTlog, SIGNAL(loaded()), this, SLOT(_loadTlogEntries())));
 
     int type;
     auto i = _findTlog(type, tlogId);
-    int after;
     if (i > 0)
     {
-        after = _tlogs[type].at(i).latest;
-        _iCurTlog = i;
+        _loadAfter = _tlogs[type].at(i).latest;
+        _iCurTlog  = i;
     }
     else
     {
         _tlogs[mode] << BayesTlog(tlogId);
-        _iCurTlog = _tlogs[mode].size() - 1;
-        after = -1;
+        _loadAfter = 0;
+        _iCurTlog  = _tlogs[mode].size() - 1;
     }
 
-    _curTlog->loadAllEntries(after);
-
     emit trainStarted(false);
+}
+
+
+
+void Trainer::_loadTlogEntries()
+{
+    _trainedEntriesCount  = 0;
+    emit trainedEntriesCountChanged();
+    
+    _trainingEntriesCount = 0;
+    emit entriesCountChanged();
+
+    for (int i = _curTlog->rowCount() - 1; i >= 0; i--)
+    {
+        auto entry = _curTlog->at(i);
+        auto id = entry->id();
+        
+        if (id <= _loadAfter)
+            break;
+
+        if (id <= 0 || _bayes->_isEntryAdded(id))
+            continue;
+
+        _trainingEntriesCount++;
+
+        auto full = entry->full();
+        Q_TEST(connect(full, SIGNAL(updated()),       this, SLOT(_trainEntry())));
+        Q_TEST(connect(full, SIGNAL(updatingError()), this, SLOT(_incTrainedCount())));
+    }
+
+    if (_trainingEntriesCount == 0)
+        _finishTraining();
+
+    emit entriesCountChanged();
+
+    _loadAfter = 0;
 }
 
 
@@ -191,28 +222,47 @@ void Trainer::_trainNextTlog()
     _curTlog = new CalendarModel(this);
     _curTlog->setTlog(tlog.id);
 
-    Q_TEST(connect(_curTlog, SIGNAL(loadingEntriesCountChanged()), this, SIGNAL(entriesCountChanged())));
-    Q_TEST(connect(_curTlog, SIGNAL(loadedEntriesCountChanged()),  this, SIGNAL(trainedEntriesCountChanged())));
+//    Q_TEST(connect(_curTlog, SIGNAL(loadingEntriesCountChanged()), this, SIGNAL(entriesCountChanged())));
+//    Q_TEST(connect(_curTlog, SIGNAL(loadedEntriesCountChanged()),  this, SIGNAL(trainedEntriesCountChanged())));
 
-    Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),    _curTlog, SLOT(deleteLater())));
-    Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),        this, SLOT(_trainNextTlog())));
-    Q_TEST(connect(_curTlog, SIGNAL(entryLoaded(const Entry*)), this, SLOT(_trainEntry(const Entry*))));
-
-    _curTlog->loadAllEntries(tlog.latest);
+//    Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),    _curTlog, SLOT(deleteLater())));
+//    Q_TEST(connect(_curTlog, SIGNAL(allEntriesLoaded()),        this, SLOT(_trainNextTlog())));
+//    Q_TEST(connect(_curTlog, SIGNAL(entryLoaded(const Entry*)), this, SLOT(_trainEntry(const Entry*))));
 }
 
 
 
-void Trainer::_trainEntry(const Entry* entry)
+void Trainer::_trainEntry()
 {
+    auto entry = static_cast<Entry*>(sender());
+    if (!entry)
+        return;
+
     _bayes->_addEntry(entry, (Bayes::Type)_curMode);
+
+    _incTrainedCount();
 }
 
+
+
+void Trainer::_incTrainedCount()
+{
+    _trainedEntriesCount++;
+    emit trainedEntriesCountChanged();
+
+    if (_trainedEntriesCount >= _trainingEntriesCount)
+    {
+        _curTlog->deleteLater();
+        _curTlog = nullptr;
+        
+        _finishTraining();
+    }
+}
 
 
 void Trainer::_finishTraining()
 {
-    _tlogs[_curMode][_iCurTlog].latest = _curTlog->lastEntry();
+    _tlogs[_curMode][_iCurTlog].latest = _curTlog->lastEntryId();
 
     _curMode = UndefinedMode;
     emit modeChanged();

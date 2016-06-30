@@ -69,14 +69,16 @@ public slots:
     void trainTlog(const int tlogId, const Mode mode);
 
 private slots:
+    void _loadTlogEntries();
     void _trainNextTlog();
-    void _trainEntry(const Entry* entry);
+    void _trainEntry();
+    void _incTrainedCount();
     void _finishTraining();
 
 private:
     struct BayesTlog {
-        BayesTlog(int userId = 0, int last = 0);
-        BayesTlog(User* user);
+        explicit BayesTlog(int userId = 0, int last = 0);
+        explicit BayesTlog(User* user);
         ~BayesTlog();
         inline bool operator==(const BayesTlog& other);
         inline bool operator==(const int& userId);
@@ -98,6 +100,10 @@ private:
     int                 _iCurTlog;
     CalendarModel*      _curTlog;
     QList<BayesTlog>    _tlogs[2];
+    
+    int _trainedEntriesCount;
+    int _trainingEntriesCount;
+    int _loadAfter;
 };
 
 #endif // TRAINER_H

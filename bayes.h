@@ -2,7 +2,7 @@
 #define BAYES_H
 
 #include <QObject>
-#include <QMap>
+#include <QHash>
 #include <QSqlDatabase>
 
 class Entry;
@@ -60,13 +60,13 @@ private:
 
     bool _isEntryAdded(int id) const;
 
-    int _calcText(QString text, QMap<QString, FeatureCount>& wordCounts) const;
-    int _calcEntry(const Entry* entry, QMap<QString, FeatureCount>& wordCounts, const int minLength = 0) const;
+    int _calcText(QString text, QHash<QString, FeatureCount>& wordCounts) const;
+    int _calcEntry(const Entry* entry, QHash<QString, FeatureCount>& wordCounts, const int minLength = 0) const;
     void _addEntry(const Entry* entry, const Type type);
 
-    QMap<QString, FeatureCount> _wordCounts[2];
-    QMap<int, bool>             _entriesChanged[2];
-    int                         _total[2];
+    QHash<QString, FeatureCount> _wordCounts[Unclassified];
+    QHash<int, bool>             _entriesChanged[Unclassified];
+    int                          _total[Unclassified];
 
     bool _loaded;
 

@@ -100,9 +100,12 @@ QString Tasty::parseDate(const QString d, const bool bigLetter)
 
 void Tasty::correctHtml(QString& html, bool isEntry)
 {
-    QRegularExpression slugRe("([^'/>\\w\\-\\.])(~|@)([\\w\\-\\.]+)");
+    QRegularExpression slugRe("([^'/>\\w\\-\\.])(~|@)([a-zA-Z0-9_\\-\\.]+)");
     html.replace(slugRe, "\\1<a href='http://taaasty.com/~\\3'>\\2\\3</a>");
 
+    QRegularExpression imageLinkRe("<a[^>]*>(<img[^>]*>)</a>");
+    html.replace(imageLinkRe, "\\1");
+    
     auto width = isEntry ? Tasty::instance()->_entryImageWidth
                          : Tasty::instance()->_commentImageWidth;
     QRegularExpression imgRe("<img (?:width=\\d+ )?");

@@ -318,18 +318,18 @@ class Author: public User
 
     friend class Tlog;
 
-    Q_PROPERTY(bool    isFemale            MEMBER _isFemale            NOTIFY updated)
-    Q_PROPERTY(bool    isPrivacy           MEMBER _isPrivacy           NOTIFY updated)
+    Q_PROPERTY(bool    isFemale            MEMBER _isFemale            NOTIFY authorUpdated)
+    Q_PROPERTY(bool    isPrivacy           MEMBER _isPrivacy           NOTIFY authorUpdated)
     Q_PROPERTY(bool    isOnline            MEMBER _isOnline            NOTIFY statusUpdated)
-    Q_PROPERTY(bool    isFlow              MEMBER _isFlow              NOTIFY updated)
-    Q_PROPERTY(bool    isPremium           MEMBER _isPremium           NOTIFY updated)
-    Q_PROPERTY(bool    isDaylog            MEMBER _isDaylog            NOTIFY updated)
-    Q_PROPERTY(QString title               MEMBER _title               NOTIFY updated)
-    Q_PROPERTY(QString entriesCount        MEMBER _entriesCount        NOTIFY updated)
-    Q_PROPERTY(QString publicEntriesCount  MEMBER _publicEntriesCount  NOTIFY updated)
-    Q_PROPERTY(QString privateEntriesCount MEMBER _privateEntriesCount NOTIFY updated)
-    Q_PROPERTY(QString daysCount           MEMBER _daysCount           NOTIFY updated)
-    Q_PROPERTY(QString followingsCount     MEMBER _followingsCount     NOTIFY updated)
+    Q_PROPERTY(bool    isFlow              MEMBER _isFlow              NOTIFY authorUpdated)
+    Q_PROPERTY(bool    isPremium           MEMBER _isPremium           NOTIFY authorUpdated)
+    Q_PROPERTY(bool    isDaylog            MEMBER _isDaylog            NOTIFY authorUpdated)
+    Q_PROPERTY(QString title               MEMBER _title               NOTIFY authorUpdated)
+    Q_PROPERTY(QString entriesCount        MEMBER _entriesCount        NOTIFY authorUpdated)
+    Q_PROPERTY(QString publicEntriesCount  MEMBER _publicEntriesCount  NOTIFY authorUpdated)
+    Q_PROPERTY(QString privateEntriesCount MEMBER _privateEntriesCount NOTIFY authorUpdated)
+    Q_PROPERTY(QString daysCount           MEMBER _daysCount           NOTIFY authorUpdated)
+    Q_PROPERTY(QString followingsCount     MEMBER _followingsCount     NOTIFY authorUpdated)
     Q_PROPERTY(QString lastSeenAt          MEMBER _lastSeenAt          NOTIFY statusUpdated)
 
 public:
@@ -344,7 +344,7 @@ public slots:
     void checkStatus();
 
 signals:
-    void updated();
+    void authorUpdated();
     void statusUpdated();
 
 private slots:
