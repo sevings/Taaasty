@@ -136,6 +136,12 @@ void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
     _curMode = mode;
     emit modeChanged();
 
+    _trainedEntriesCount  = 0;
+    emit trainedEntriesCountChanged();
+
+    _trainingEntriesCount = 0;
+    emit entriesCountChanged();
+
     _curTlog = new CalendarModel(this);
     _curTlog->setTlog(tlogId);
 
@@ -162,12 +168,6 @@ void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
 
 void Trainer::_loadTlogEntries()
 {
-    _trainedEntriesCount  = 0;
-    emit trainedEntriesCountChanged();
-    
-    _trainingEntriesCount = 0;
-    emit entriesCountChanged();
-
     for (int i = _curTlog->rowCount() - 1; i >= 0; i--)
     {
         auto entry = _curTlog->at(i);
@@ -254,12 +254,7 @@ void Trainer::_incTrainedCount()
     emit trainedEntriesCountChanged();
 
     if (_trainedEntriesCount >= _trainingEntriesCount)
-    {
-        _curTlog->deleteLater();
-        _curTlog = nullptr;
-        
         _finishTraining();
-    }
 }
 
 
@@ -271,6 +266,8 @@ void Trainer::_finishTraining()
     emit modeChanged();
 
     _iCurTlog = 0;
+
+    _curTlog->deleteLater();
     _curTlog = nullptr;
 
     _bayes->_saveDb();

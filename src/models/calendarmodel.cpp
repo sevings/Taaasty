@@ -73,7 +73,7 @@ int CalendarModel::lastEntryId() const
 
 CalendarEntry* CalendarModel::at(int row) const
 {
-    Q_ASSERT(row > 0 && row < _calendar.size());
+    Q_ASSERT(row >= 0 && row < _calendar.size());
     
     return _calendar.at(row);
 }
