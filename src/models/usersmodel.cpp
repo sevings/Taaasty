@@ -7,7 +7,7 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include "defines.h"
+#include "../defines.h"
 
 
 

@@ -21,5 +21,7 @@ void AndroidNotifier::setNotification(const QString& notification)
                                        "notify",
                                        "(Ljava/lang/String;)V",
                                        javaNotification.object<jstring>());
+#else
+    Q_UNUSED(notification);
 #endif
 }

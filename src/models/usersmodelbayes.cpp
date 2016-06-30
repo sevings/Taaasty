@@ -4,12 +4,12 @@
 
 #include <QVariant>
 
-#include "defines.h"
+#include "../defines.h"
 
-#include "apirequest.h"
-#include "data/User.h"
-#include "bayes.h"
-#include "trainer.h"
+#include "../apirequest.h"
+#include "../data/User.h"
+#include "../nbc/bayes.h"
+#include "../nbc/trainer.h"
 
 
 

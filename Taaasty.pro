@@ -6,34 +6,34 @@ android: QT += androidextras
 
 CONFIG += c++11 qtquickcompiler
 
-SOURCES += main.cpp \
-    tasty.cpp \
-    settings.cpp \
-    apirequest.cpp \
-    feedmodel.cpp \
-    commentsmodel.cpp \
-    attachedimagesmodel.cpp \
-    usersmodel.cpp \
-    notificationsmodel.cpp \
-    bayes.cpp \
-    trainer.cpp \
-    calendarmodel.cpp \
-    cache/cachemanager.cpp \
-    cache/cachedimage.cpp \
-    stemmerv.cpp \
-    usersmodeltlog.cpp \
-    usersmodelbayes.cpp \
-    androidnotifier.cpp \
-    data/AttachedImage.cpp \
-    data/Author.cpp \
-    data/CalendarEntry.cpp \
-    data/Comment.cpp \
-    data/Entry.cpp \
-    data/Media.cpp \
-    data/Notification.cpp \
-    data/Rating.cpp \
-    data/Tlog.cpp \
-    data/User.cpp
+SOURCES += src/main.cpp \
+    src/tasty.cpp \
+    src/settings.cpp \
+    src/apirequest.cpp \
+    src/models/feedmodel.cpp \
+    src/models/commentsmodel.cpp \
+    src/models/attachedimagesmodel.cpp \
+    src/models/usersmodel.cpp \
+    src/models/notificationsmodel.cpp \
+    src/nbc/bayes.cpp \
+    src/nbc/trainer.cpp \
+    src/models/calendarmodel.cpp \
+    src/cache/cachemanager.cpp \
+    src/cache/cachedimage.cpp \
+    src/nbc/stemmerv.cpp \
+    src/models/usersmodeltlog.cpp \
+    src/models/usersmodelbayes.cpp \
+    src/androidnotifier.cpp \
+    src/data/AttachedImage.cpp \
+    src/data/Author.cpp \
+    src/data/CalendarEntry.cpp \
+    src/data/Comment.cpp \
+    src/data/Entry.cpp \
+    src/data/Media.cpp \
+    src/data/Notification.cpp \
+    src/data/Rating.cpp \
+    src/data/Tlog.cpp \
+    src/data/User.cpp
 
 RESOURCES += qml.qrc
 
@@ -44,35 +44,35 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    tasty.h \
-    settings.h \
-    apirequest.h \
-    feedmodel.h \
-    commentsmodel.h \
-    attachedimagesmodel.h \
-    usersmodel.h \
-    notificationsmodel.h \
-    bayes.h \
-    trainer.h \
-    calendarmodel.h \
-    cache/cachemanager.h \
-    cache/cachedimage.h \
-    defines.h \
-    stemmerv.h \
-    usersmodeltlog.h \
-    usersmodelbayes.h \
-    androidnotifier.h \
-    messageoutput.h \
-    data/AttachedImage.h \
-    data/Author.h \
-    data/CalendarEntry.h \
-    data/Comment.h \
-    data/Entry.h \
-    data/Media.h \
-    data/Notification.h \
-    data/Rating.h \
-    data/Tlog.h \
-    data/User.h
+    src/tasty.h \
+    src/settings.h \
+    src/apirequest.h \
+    src/models/feedmodel.h \
+    src/models/commentsmodel.h \
+    src/models/attachedimagesmodel.h \
+    src/models/usersmodel.h \
+    src/models/notificationsmodel.h \
+    src/nbc/bayes.h \
+    src/nbc/trainer.h \
+    src/models/calendarmodel.h \
+    src/cache/cachemanager.h \
+    src/cache/cachedimage.h \
+    src/defines.h \
+    src/nbc/stemmerv.h \
+    src/models/usersmodeltlog.h \
+    src/models/usersmodelbayes.h \
+    src/androidnotifier.h \
+    src/messageoutput.h \
+    src/data/AttachedImage.h \
+    src/data/Author.h \
+    src/data/CalendarEntry.h \
+    src/data/Comment.h \
+    src/data/Entry.h \
+    src/data/Media.h \
+    src/data/Notification.h \
+    src/data/Rating.h \
+    src/data/Tlog.h \
+    src/data/User.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

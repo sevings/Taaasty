@@ -1,10 +1,10 @@
 #include "Rating.h"
 
-#include "./defines.h"
+#include "../defines.h"
 
 #include "../apirequest.h"
-#include "../bayes.h"
-#include "data/Entry.h"
+#include "../nbc/bayes.h"
+#include "Entry.h"
 
 
 

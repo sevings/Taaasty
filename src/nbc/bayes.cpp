@@ -12,10 +12,10 @@
 #   include <QDateTime>
 #endif
 
-#include "defines.h"
+#include "../defines.h"
 
-#include "data/Entry.h"
-#include "data/Author.h"
+#include "../data/Entry.h"
+#include "../data/Author.h"
 #include "trainer.h"
 #include "stemmerv.h"
 

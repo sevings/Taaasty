@@ -4,12 +4,12 @@
 #include <QJsonArray>
 #include <QDebug>
 
-#include "defines.h"
+#include "../defines.h"
 
-#include "tasty.h"
-#include "apirequest.h"
-#include "data/Entry.h"
-#include "data/Rating.h"
+#include "../tasty.h"
+#include "../apirequest.h"
+#include "../data/Entry.h"
+#include "../data/Rating.h"
 
 
 

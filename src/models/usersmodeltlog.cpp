@@ -4,10 +4,10 @@
 
 #include <QVariant>
 
-#include "defines.h"
+#include "../defines.h"
 
-#include "apirequest.h"
-#include "data/User.h"
+#include "../apirequest.h"
+#include "../data/User.h"
 
 
 

@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QAbstractListModel>
 
-#include "calendarmodel.h"
-#include "usersmodelbayes.h"
+#include "../models/calendarmodel.h"
+#include "../models/usersmodelbayes.h"
 
 class Bayes;
 class Tlog;

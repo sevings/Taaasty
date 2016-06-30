@@ -3,11 +3,11 @@
 #include <QJsonArray>
 #include <QDebug>
 
-#include "defines.h"
+#include "../defines.h"
 
-#include "apirequest.h"
-#include "data/Notification.h"
-#include "tasty.h"
+#include "../apirequest.h"
+#include "../data/Notification.h"
+#include "../tasty.h"
 
 #ifdef Q_OS_ANDROID
 #   include "androidnotifier.h"

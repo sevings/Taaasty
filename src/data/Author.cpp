@@ -1,9 +1,9 @@
 #include "Author.h"
 
-#include "defines.h"
+#include "../defines.h"
 
-#include "tasty.h"
-#include "apirequest.h"
+#include "../tasty.h"
+#include "../apirequest.h"
 
 
 

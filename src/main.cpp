@@ -15,14 +15,14 @@
 #include "settings.h"
 #include "cache/cachemanager.h"
 #include "cache/cachedimage.h"
-#include "feedmodel.h"
-#include "commentsmodel.h"
-#include "attachedimagesmodel.h"
-#include "usersmodeltlog.h"
-#include "usersmodelbayes.h"
-#include "notificationsmodel.h"
-#include "bayes.h"
-#include "trainer.h"
+#include "models/feedmodel.h"
+#include "models/commentsmodel.h"
+#include "models/attachedimagesmodel.h"
+#include "models/usersmodeltlog.h"
+#include "models/usersmodelbayes.h"
+#include "models/notificationsmodel.h"
+#include "nbc/bayes.h"
+#include "nbc/trainer.h"
 
 #include "data/AttachedImage.h"
 #include "data/Author.h"
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
                    density < 360 ? 2 : 3;
     engine.rootContext()->setContextProperty("dp", scale); // N900: 1.5; Q10: 2
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     int res = app.exec();
 

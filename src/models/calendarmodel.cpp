@@ -3,10 +3,10 @@
 #include <QJsonArray>
 #include <QDebug>
 
-#include "defines.h"
+#include "../defines.h"
 
-#include "data/CalendarEntry.h"
-#include "apirequest.h"
+#include "../data/CalendarEntry.h"
+#include "../apirequest.h"
 
 
 

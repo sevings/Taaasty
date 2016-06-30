@@ -12,8 +12,8 @@
 
 #include "../tasty.h"
 #include "../apirequest.h"
-#include "../commentsmodel.h"
-#include "../attachedimagesmodel.h"
+#include "../models/commentsmodel.h"
+#include "../models/attachedimagesmodel.h"
 
 
 
