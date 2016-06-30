@@ -12,7 +12,6 @@ SOURCES += main.cpp \
     apirequest.cpp \
     feedmodel.cpp \
     commentsmodel.cpp \
-    datastructures.cpp \
     attachedimagesmodel.cpp \
     usersmodel.cpp \
     notificationsmodel.cpp \
@@ -24,7 +23,17 @@ SOURCES += main.cpp \
     stemmerv.cpp \
     usersmodeltlog.cpp \
     usersmodelbayes.cpp \
-    androidnotifier.cpp
+    androidnotifier.cpp \
+    data/AttachedImage.cpp \
+    data/Author.cpp \
+    data/CalendarEntry.cpp \
+    data/Comment.cpp \
+    data/Entry.cpp \
+    data/Media.cpp \
+    data/Notification.cpp \
+    data/Rating.cpp \
+    data/Tlog.cpp \
+    data/User.cpp
 
 RESOURCES += qml.qrc
 
@@ -40,7 +49,6 @@ HEADERS += \
     apirequest.h \
     feedmodel.h \
     commentsmodel.h \
-    datastructures.h \
     attachedimagesmodel.h \
     usersmodel.h \
     notificationsmodel.h \
@@ -54,7 +62,17 @@ HEADERS += \
     usersmodeltlog.h \
     usersmodelbayes.h \
     androidnotifier.h \
-    messageoutput.h
+    messageoutput.h \
+    data/AttachedImage.h \
+    data/Author.h \
+    data/CalendarEntry.h \
+    data/Comment.h \
+    data/Entry.h \
+    data/Media.h \
+    data/Notification.h \
+    data/Rating.h \
+    data/Tlog.h \
+    data/User.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

@@ -1,6 +1,6 @@
 #include "attachedimagesmodel.h"
 
-#include "datastructures.h"
+#include "data/AttachedImage.h"
 
 #include <QJsonObject>
 #include <QJsonArray>

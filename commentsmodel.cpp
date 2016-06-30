@@ -6,6 +6,9 @@
 
 #include "defines.h"
 
+#include "data/Comment.h"
+#include "data/Notification.h"
+#include "data/Entry.h"
 #include "apirequest.h"
 #include "notificationsmodel.h"
 

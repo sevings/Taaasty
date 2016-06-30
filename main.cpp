@@ -24,6 +24,17 @@
 #include "bayes.h"
 #include "trainer.h"
 
+#include "data/AttachedImage.h"
+#include "data/Author.h"
+#include "data/CalendarEntry.h"
+#include "data/Comment.h"
+#include "data/Entry.h"
+#include "data/Media.h"
+#include "data/Notification.h"
+#include "data/Rating.h"
+#include "data/Tlog.h"
+#include "data/User.h"
+
 #include "messageoutput.h"
 
 

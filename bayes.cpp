@@ -14,7 +14,8 @@
 
 #include "defines.h"
 
-#include "datastructures.h"
+#include "data/Entry.h"
+#include "data/Author.h"
 #include "trainer.h"
 #include "stemmerv.h"
 

@@ -7,7 +7,7 @@
 #include "defines.h"
 
 #include "apirequest.h"
-#include "datastructures.h"
+#include "data/User.h"
 
 
 

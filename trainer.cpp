@@ -7,7 +7,10 @@
 
 #include "defines.h"
 
-#include "datastructures.h"
+#include "data/Tlog.h"
+#include "data/Entry.h"
+#include "data/CalendarEntry.h"
+#include "data/User.h"
 #include "bayes.h"
 
 

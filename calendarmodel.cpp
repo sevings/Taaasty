@@ -5,7 +5,7 @@
 
 #include "defines.h"
 
-#include "datastructures.h"
+#include "data/CalendarEntry.h"
 #include "apirequest.h"
 
 

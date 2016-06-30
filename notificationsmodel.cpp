@@ -6,7 +6,7 @@
 #include "defines.h"
 
 #include "apirequest.h"
-#include "datastructures.h"
+#include "data/Notification.h"
 #include "tasty.h"
 
 #ifdef Q_OS_ANDROID

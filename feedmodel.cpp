@@ -8,7 +8,8 @@
 
 #include "tasty.h"
 #include "apirequest.h"
-#include "datastructures.h"
+#include "data/Entry.h"
+#include "data/Rating.h"
 
 
 

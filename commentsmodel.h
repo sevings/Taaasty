@@ -2,10 +2,12 @@
 #define COMMENTSMODEL_H
 
 #include <QAbstractListModel>
-
-#include "datastructures.h"
+#include <QJsonObject>
 
 class ApiRequest;
+class Comment;
+class Notification;
+class Entry;
 
 
 
