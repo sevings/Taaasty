@@ -53,7 +53,7 @@ void Entry::addComment(const QString text)
         return;
 
     _loading = true;
-    emit loadingChanged();
+//    emit loadingChanged();
     
     auto content = QUrl::toPercentEncoding(text.trimmed());
     auto data    = QString("entry_id=%1&text=%2").arg(_id).arg(QString::fromUtf8(content));
@@ -73,7 +73,7 @@ void Entry::watch()
         return;
 
     _loading = true;
-    emit loadingChanged();
+//    emit loadingChanged();
     
     ApiRequest* request = nullptr;
     if (_isWatched)
@@ -100,7 +100,7 @@ void Entry::favorite()
         return;
 
     _loading = true;
-    emit loadingChanged();
+//    emit loadingChanged();
     
     ApiRequest* request = nullptr;
     if (_isFavorited)
@@ -148,10 +148,11 @@ void Entry::_init(const QJsonObject data)
 
     _correctHtml();
 
-    // QRegularExpression re("\\s[^\\s]+\\s");
+    QRegularExpression wordRe("\\s[^\\s]+\\s");
     QRegularExpression tagRe("<[^>]*>");
-    QRegularExpression wordRe("\\b\\w+\\b");
-    _wordCount       = _title.remove(tagRe).count(wordRe) + _text.remove(tagRe).count(wordRe);
+//    QRegularExpression wordRe("\\b\\w+\\b");
+    auto content = _title + _text;
+    _wordCount   = content.remove(tagRe).count(wordRe);
 
     delete _commentsModel;
     _commentsModel = new CommentsModel(this);

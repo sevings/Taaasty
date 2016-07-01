@@ -9,10 +9,37 @@ MouseArea {
     drag.minimumX: 0
     drag.maximumX: body.width * 0.9
     drag.threshold: 2 * mm
+    property bool shiftable: true
 //    propagateComposedEvents: true
     enabled: false
     Component.onCompleted: {
         enabled = true;
+    }
+    onPressedChanged: {
+        if (pressed) {
+            scalebackAnimation.stop()
+            scaleAnimation.start()
+        }
+        else {
+            scaleAnimation.stop()
+            scalebackAnimation.start()
+        }
+    }
+    NumberAnimation {
+        id: scaleAnimation
+        target: parent
+        property: "scale"
+        duration: 200
+        to: 0.95
+        easing.type: Easing.InOutQuad
+    }
+    NumberAnimation {
+        id: scalebackAnimation
+        target: parent
+        property: "scale"
+        duration: 200
+        to: 1
+        easing.type: Easing.InOutQuad
     }
     onReleased: {
         if (body.poppable)
@@ -24,7 +51,7 @@ MouseArea {
         }
         else
         {
-            if (body.x > body.width / 3)
+            if (body.x > body.width / 3 && shiftable)
                 forwardAnimation.start();
             else
                 backAnimation.start();

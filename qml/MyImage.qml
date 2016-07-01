@@ -74,6 +74,9 @@ AnimatedImage {
             Behavior on width {
                 NumberAnimation { duration: 100 }
             }
+            Behavior on scale {
+                NumberAnimation { duration: 200 }
+            }
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
@@ -84,6 +87,12 @@ AnimatedImage {
                 }
                 onDoubleClicked: {
                     // supress second click
+                }
+                onPressedChanged: {
+                    if (pressed)
+                        parent.scale = 0.9;
+                    else
+                        parent.scale = 1;
                 }
             }
             Text {

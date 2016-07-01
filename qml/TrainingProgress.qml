@@ -10,12 +10,14 @@ Rectangle {
     readonly property bool isTrainingProgress: true
     Poppable {
         body: back
+        shiftable: false
     }
     Splash {
         visible: tlogBar.to <= 0
     }
     ThemedProgressBar {
         id: tlogBar
+        visible: to > 0
         anchors.bottom: allBar.visible ? parent.verticalCenter : undefined
         anchors.verticalCenter: allBar.visible ? undefined : parent.verticalCenter
         anchors.left: parent.left

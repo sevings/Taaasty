@@ -133,6 +133,7 @@ Rectangle {
                 height: tlogVoteButton.height
                 property int tlogMode: Trainer.typeOfTlog(tlog.tlogId)
 //                onTlogModeChanged: console.log('tlog mode', tlogMode)
+                enabled: readButton.enabled
                 ThemedButton {
                     id: tlogVoteAgainstButton
                     anchors.top: parent.top
@@ -167,6 +168,7 @@ Rectangle {
                 }
             }
             ThemedButton {
+                id: readButton
                 anchors.left: parent.left
                 anchors.right: parent.right
                 text: author.isFlow ? 'Читать' : author.publicEntriesCount

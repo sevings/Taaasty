@@ -10,7 +10,8 @@
 #include "../tasty.h"
 
 #ifdef Q_OS_ANDROID
-#   include "androidnotifier.h"
+#   include "../androidnotifier.h"
+#   include "../data/User.h"
 #endif
 
 
