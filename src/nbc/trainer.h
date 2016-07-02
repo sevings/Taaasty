@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QAbstractListModel>
+#include <QFutureSynchronizer>
+#include <QFutureWatcher>
 
 #include "../models/calendarmodel.h"
 #include "../models/usersmodelbayes.h"
@@ -69,7 +71,8 @@ public slots:
     void trainTlog(const int tlogId, const Mode mode);
 
 private slots:
-    void _loadTlogEntries();
+    void _runAddingEntries();
+    void _loadEntries();
     void _trainNextTlog();
     void _trainEntry();
     void _incTrainedCount();
@@ -94,6 +97,8 @@ private:
     void _loadDb();
     void _saveDb();
 
+    void _addEntriesToLoad();
+
     Bayes* _bayes;
 
     Mode                _curMode;
@@ -101,9 +106,14 @@ private:
     CalendarModel*      _curTlog;
     QList<BayesTlog>    _tlogs[2];
     
+    QList<CalendarEntry*> _entries;
+
     int _trainedEntriesCount;
     int _trainingEntriesCount;
     int _loadAfter;
+
+    QFutureWatcher<void>      _addWatcher;
+    QFutureSynchronizer<void> _sync;
 };
 
 #endif // TRAINER_H

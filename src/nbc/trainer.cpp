@@ -4,6 +4,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QtConcurrent>
 
 #include "../defines.h"
 
@@ -28,6 +29,8 @@ Trainer::Trainer(Bayes* parent)
     Q_ASSERT(_bayes);
 
     qDebug() << "Trainer";
+
+    Q_TEST(connect(&_addWatcher, SIGNAL(finished()), this, SLOT(_loadEntries())));
 
     _loadDb();
 }
@@ -143,9 +146,8 @@ void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
     emit entriesCountChanged();
 
     _curTlog = new CalendarModel(this);
+    Q_TEST(connect(_curTlog, SIGNAL(loaded()), this, SLOT(_runAddingEntries())));
     _curTlog->setTlog(tlogId);
-
-    Q_TEST(connect(_curTlog, SIGNAL(loaded()), this, SLOT(_loadTlogEntries())));
 
     int type;
     auto i = _findTlog(type, tlogId);
@@ -166,32 +168,22 @@ void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
 
 
 
-void Trainer::_loadTlogEntries()
+void Trainer::_runAddingEntries()
 {
-    for (int i = _curTlog->rowCount() - 1; i >= 0; i--)
+    auto future = QtConcurrent::run(this, &Trainer::_addEntriesToLoad);
+    _addWatcher.setFuture(future);
+}
+
+
+
+void Trainer::_loadEntries()
+{
+    foreach (auto entry, _entries)
     {
-        auto entry = _curTlog->at(i);
-        auto id = entry->id();
-        
-        if (id <= _loadAfter)
-            break;
-
-        if (id <= 0 || _bayes->_isEntryAdded(id))
-            continue;
-
-        _trainingEntriesCount++;
-
         auto full = entry->full();
         Q_TEST(connect(full, SIGNAL(updated()),       this, SLOT(_trainEntry())));
         Q_TEST(connect(full, SIGNAL(updatingError()), this, SLOT(_incTrainedCount())));
     }
-
-    if (_trainingEntriesCount == 0)
-        _finishTraining();
-
-    emit entriesCountChanged();
-
-    _loadAfter = 0;
 }
 
 
@@ -241,7 +233,8 @@ void Trainer::_trainEntry()
     if (!entry)
         return;
 
-    _bayes->_addEntry(entry, (Bayes::Type)_curMode);
+    auto future = QtConcurrent::run(_bayes, &Bayes::_addEntry, entry, (Bayes::Type)_curMode);
+    _sync.addFuture(future);
 
     _incTrainedCount();
 }
@@ -265,13 +258,15 @@ void Trainer::_finishTraining()
     _curMode = UndefinedMode;
     emit modeChanged();
 
+    _entries.clear();
     _iCurTlog = 0;
-
     _curTlog->deleteLater();
     _curTlog = nullptr;
 
     _bayes->_saveDb();
     _saveDb();
+
+    _sync.waitForFinished();
 
     emit trainFinished();
 }
@@ -345,6 +340,34 @@ void Trainer::_saveDb()
     }
 
     Q_TEST(_bayes->db().commit());
+}
+
+
+
+void Trainer::_addEntriesToLoad()
+{
+    for (int i = _curTlog->rowCount() - 1; i >= 0; i--)
+    {
+        auto entry = _curTlog->at(i);
+        auto id = entry->id();
+
+        if (id <= _loadAfter)
+            break;
+
+        if (id <= 0 || _bayes->_isEntryAdded(id))
+            continue;
+
+        _trainingEntriesCount++;
+
+        _entries << entry;
+    }
+
+    if (_trainingEntriesCount == 0)
+        _finishTraining();
+
+    emit entriesCountChanged();
+
+    _loadAfter = 0;
 }
 
 

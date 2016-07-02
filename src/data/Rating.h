@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QFutureWatcher>
 
 class Entry;
 
@@ -23,6 +24,7 @@ class Rating: public QObject
 
 public:
     Rating(const QJsonObject data = QJsonObject(), Entry* parent = nullptr);
+    ~Rating();
 
     void reCalcBayes();
 
@@ -39,6 +41,9 @@ signals:
     void dataChanged();
     void bayesChanged();
 
+private slots:
+    void _changeBayesRating();
+
 private:
     int  _entryId;
     int  _votes;
@@ -51,4 +56,6 @@ private:
     bool _isVotedAgainst;
 
     Entry* _parent;
+
+    QFutureWatcher<int> _watcher;
 };

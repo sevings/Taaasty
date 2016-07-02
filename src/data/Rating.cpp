@@ -1,5 +1,7 @@
 #include "Rating.h"
 
+#include <QtConcurrent>
+
 #include "../defines.h"
 
 #include "../apirequest.h"
@@ -19,6 +21,15 @@ Rating::Rating(const QJsonObject data, Entry* parent)
     init(data);
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(ratingChanged(QJsonObject)), this, SLOT(init(QJsonObject))));
+    Q_TEST(connect(&_watcher,         SIGNAL(finished()),                 this, SLOT(_changeBayesRating())));
+}
+
+
+
+Rating::~Rating()
+{
+    if (!_watcher.isFinished())
+        _watcher.waitForFinished();
 }
 
 
@@ -47,8 +58,8 @@ void Rating::reCalcBayes()
         }
     }
 
-    _bayesRating = Bayes::instance()->classify(_parent);
-    emit bayesChanged();
+    auto future = QtConcurrent::run(Bayes::instance(), &Bayes::classify, _parent, 0);
+    _watcher.setFuture(future);
 }
 
 
@@ -76,10 +87,10 @@ void Rating::voteBayes()
     if (_isBayesVoted || _isVotedAgainst)
         return;
 
-    _bayesRating = Bayes::instance()->voteForEntry(_parent, Bayes::Fire);
-    _isBayesVoted = true;
+    auto future = QtConcurrent::run(Bayes::instance(), &Bayes::voteForEntry, _parent, Bayes::Fire);
+    _watcher.setFuture(future);
 
-    emit bayesChanged();
+    _isBayesVoted = true;
 }
 
 
@@ -89,10 +100,10 @@ void Rating::voteAgainst()
     if (_isBayesVoted || _isVotedAgainst)
         return;
 
-    _bayesRating = Bayes::instance()->voteForEntry(_parent, Bayes::Water);
-    _isVotedAgainst = true;
+    auto future = QtConcurrent::run(Bayes::instance(), &Bayes::voteForEntry, _parent, Bayes::Water);
+    _watcher.setFuture(future);
 
-    emit bayesChanged();
+    _isVotedAgainst = true;
 }
 
 
@@ -109,6 +120,15 @@ void Rating::init(const QJsonObject data)
     _isVotable  = data.value("is_voteable").toBool();
 
     emit dataChanged();
+}
+
+
+
+void Rating::_changeBayesRating()
+{
+    _bayesRating = _watcher.result();
+
+    emit bayesChanged();
 }
 
 
