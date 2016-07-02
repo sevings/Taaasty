@@ -5,6 +5,7 @@
 #include <QAbstractListModel>
 #include <QFutureSynchronizer>
 #include <QFutureWatcher>
+#include <QReadWriteLock>
 
 #include "../models/calendarmodel.h"
 #include "../models/usersmodelbayes.h"
@@ -114,6 +115,7 @@ private:
 
     QFutureWatcher<void>      _addWatcher;
     QFutureSynchronizer<void> _sync;
+    mutable QReadWriteLock    _lock;
 };
 
 #endif // TRAINER_H

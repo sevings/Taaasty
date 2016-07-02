@@ -57,6 +57,8 @@ void Trainer::setMode(const Trainer::Mode mode)
 
 int Trainer::currentTlog() const
 {
+    QReadLocker lock(&_lock);
+
     switch(_curMode)
     {
     case WaterMode:
@@ -72,6 +74,8 @@ int Trainer::currentTlog() const
 
 int Trainer::tlogsCount() const
 {
+    QReadLocker lock(&_lock);
+
     return _tlogs[WaterMode].size() + _tlogs[FireMode].size();
 }
 
@@ -79,6 +83,8 @@ int Trainer::tlogsCount() const
 
 int Trainer::trainedEntriesCount() const
 {
+    QReadLocker lock(&_lock);
+
     return _trainedEntriesCount;
 }
 
@@ -86,6 +92,8 @@ int Trainer::trainedEntriesCount() const
 
 int Trainer::entriesCount() const
 {
+    QReadLocker lock(&_lock);
+
     return _trainingEntriesCount;
 }
 
@@ -93,6 +101,8 @@ int Trainer::entriesCount() const
 
 QString Trainer::currentName() const
 {
+    QReadLocker lock(&_lock);
+
     return _curMode != UndefinedMode && _iCurTlog < _tlogs[_curMode].size()
             ? _tlogs[_curMode].at(_iCurTlog).user->name() : "";
 }
@@ -101,6 +111,8 @@ QString Trainer::currentName() const
 
 Trainer::Mode Trainer::typeOfTlog(int id) const
 {
+    QReadLocker lock(&_lock);
+
     int type = -1;
     auto i = _findTlog(type, id);
     if (i < 0)
@@ -251,8 +263,11 @@ void Trainer::_incTrainedCount()
 }
 
 
+
 void Trainer::_finishTraining()
 {
+    _sync.waitForFinished();
+
     _tlogs[_curMode][_iCurTlog].latest = _curTlog->lastEntryId();
 
     _curMode = UndefinedMode;
@@ -264,9 +279,9 @@ void Trainer::_finishTraining()
     _curTlog = nullptr;
 
     _bayes->_saveDb();
-    _saveDb();
 
-    _sync.waitForFinished();
+    auto future = QtConcurrent::run(this, &Trainer::_saveDb);
+    _sync.setFuture(future);
 
     emit trainFinished();
 }
@@ -275,6 +290,8 @@ void Trainer::_finishTraining()
 
 int Trainer::_findTlog(int& type, int id) const
 {
+    QReadLocker lock(&_lock);
+
     for (type = 0; type < 2; type++)
         for (int i = 0; i < _tlogs[type].size(); i++)
             if (_tlogs[type].at(i).id == id)
@@ -297,6 +314,8 @@ void Trainer::_loadDb()
 {
     _initDb();
 
+    QWriteLocker locker(&_lock);
+
     Q_TEST(_bayes->db().transaction());
 
     QSqlQuery query;
@@ -316,6 +335,8 @@ void Trainer::_loadDb()
 
 void Trainer::_saveDb()
 {
+    QReadLocker lock(&_lock);
+
     Q_TEST(_bayes->db().transaction());
 
     QSqlQuery query;
@@ -340,6 +361,8 @@ void Trainer::_saveDb()
     }
 
     Q_TEST(_bayes->db().commit());
+
+    _bayes->_saveDb();
 }
 
 

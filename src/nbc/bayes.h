@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QHash>
 #include <QSqlDatabase>
+#include <QReadWriteLock>
 
 class Entry;
 class Trainer;
@@ -74,6 +75,7 @@ private:
     StemmerV* _stemmer;
     QSqlDatabase _db;
     QTimer* _saveTimer;
+    mutable QReadWriteLock _lock;
 };
 
 #endif // BAYES_H

@@ -62,6 +62,8 @@ Bayes *Bayes::instance(QObject *parent)
 
 int Bayes::classify(const Entry *entry, const int minLength) const
 {
+    QReadLocker locker(&_lock);
+
     if (!_total[Water] || !_total[Fire])
         return 0;
 
@@ -125,6 +127,8 @@ void Bayes::_saveDb()
 {
     if (!_loaded)
         return;
+
+    QReadLocker locker(&_lock);
 
 #ifdef QT_DEBUG
     auto now = QDateTime::currentDateTime().toMSecsSinceEpoch();
@@ -197,6 +201,8 @@ void Bayes::_loadDb()
 
     _initDb();
 
+    QWriteLocker locker(&_lock);
+
     Q_TEST(_db.transaction());
 
     QSqlQuery query;
@@ -231,6 +237,8 @@ void Bayes::_loadDb()
 
 bool Bayes::_isEntryAdded(int id) const
 {
+    QReadLocker locker(&_lock);
+
     return _entriesChanged[Water].contains(id)
             || _entriesChanged[Fire].contains(id);
 }
@@ -320,6 +328,8 @@ void Bayes::_addEntry(const Entry *entry, const Bayes::Type type)
 {
     if (_isEntryAdded(entry->_id))
         return;
+
+    QWriteLocker locker(&_lock);
 
     _entriesChanged[type][entry->_id] = true;
     _total[type] +=  _calcEntry(entry, _wordCounts[type]);
