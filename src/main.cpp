@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     app.setApplicationName("Taaasty");
     app.setOrganizationName("binque");
 
-    installLog();
+//    installLog();
 
     qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 
     delete tasty;
 
-    finishLog();
+//    finishLog();
 
     return res;
 }

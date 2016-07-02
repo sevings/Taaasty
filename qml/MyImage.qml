@@ -68,14 +68,14 @@ AnimatedImage {
                                                                               / cachedImage.kbytesTotal + 12 * mm
                                                                             : 12 * mm
             height: 12 * mm
-            radius: width / 2
+            radius: height / 2
             color: window.greenColor
             visible: image.url && parent.width > 12 * mm && parent.height > 12 * mm
             Behavior on width {
                 NumberAnimation { duration: 100 }
             }
             Behavior on scale {
-                NumberAnimation { duration: 200 }
+                NumberAnimation { easing.overshoot: 5; easing.type: Easing.OutBack; duration: 400; }
             }
             MouseArea {
                 anchors.fill: parent
@@ -90,7 +90,7 @@ AnimatedImage {
                 }
                 onPressedChanged: {
                     if (pressed)
-                        parent.scale = 0.9;
+                        parent.scale = 0.8;
                     else
                         parent.scale = 1;
                 }

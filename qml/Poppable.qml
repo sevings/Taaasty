@@ -15,32 +15,32 @@ MouseArea {
     Component.onCompleted: {
         enabled = true;
     }
-    onPressedChanged: {
-        if (pressed) {
-            scalebackAnimation.stop()
-            scaleAnimation.start()
-        }
-        else {
-            scaleAnimation.stop()
-            scalebackAnimation.start()
-        }
-    }
-    NumberAnimation {
-        id: scaleAnimation
-        target: parent
-        property: "scale"
-        duration: 200
-        to: 0.95
-        easing.type: Easing.InOutQuad
-    }
-    NumberAnimation {
-        id: scalebackAnimation
-        target: parent
-        property: "scale"
-        duration: 200
-        to: 1
-        easing.type: Easing.InOutQuad
-    }
+//    onPressedChanged: {
+//        if (pressed) {
+//            scalebackAnimation.stop()
+//            scaleAnimation.start()
+//        }
+//        else {
+//            scaleAnimation.stop()
+//            scalebackAnimation.start()
+//        }
+//    }
+//    NumberAnimation {
+//        id: scaleAnimation
+//        target: parent
+//        property: "scale"
+//        duration: 200
+//        to: 0.95
+//        easing.type: Easing.InOutQuad
+//    }
+//    NumberAnimation {
+//        id: scalebackAnimation
+//        target: parent
+//        property: "scale"
+//        duration: 200
+//        to: 1
+//        easing.type: Easing.InOutQuad
+//    }
     onReleased: {
         if (body.poppable)
         {
