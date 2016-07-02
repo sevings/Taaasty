@@ -79,7 +79,6 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 
     _loading = true;
 
-    int limit = _entries.isEmpty() ? 10 : 20;
     QString url = _url;
     if (_mode == TlogMode)
     {
@@ -97,11 +96,12 @@ void FeedModel::fetchMore(const QModelIndex& parent)
         url = url.arg(_minRating);
 
     if (!_query.isEmpty())
-        url += QString("q=%1&page=%2").arg(_query).arg(_page++);
+        url += QString("q=%1&page=%2&").arg(_query).arg(_page++);
+    else if (_lastEntry)
+        url += QString("since_entry_id=%1&").arg(_lastEntry);
 
+    int limit = _entries.isEmpty() && _query.isEmpty() ? 10 : 20;
     url += QString("limit=%1").arg(limit);
-    if (_lastEntry)
-        url += QString("&since_entry_id=%1").arg(_lastEntry);
 
     _request = new ApiRequest(url);
 
