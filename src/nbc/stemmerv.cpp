@@ -22,34 +22,34 @@ QString StemmerV::stemWord(const QString word)
         return stem;
 
     // Step 1
-    stem.replace(_reflexive, QString());
+    stem.remove(_reflexive);
     auto test = stem;
-    test.replace(_suffix, QString());
+    test.remove(_suffix);
     if (_pvre.match(test).hasMatch())
         stem = test;
     else
         return stem;
 
     // Step 2
-    test.replace(_plural, QString());
+    test.remove(_plural);
     if (_pvre.match(test).hasMatch())
         stem = test;
     else
         return stem;
 
     // Step 3
-    test.replace(_derivational, QString());
+    test.remove(_derivational);
     if (_pvre.match(test).hasMatch())
         stem = test;
     else
         return stem;
 
     // Step 4
-    test.replace(_softSign, QString());
+    test.remove(_softSign);
     if (test == stem)
     {
-        stem.replace(_perfectivePrefix, QString());
-        stem.replace(_perfectiveSuffix, QString());
+        stem.remove(_perfectivePrefix);
+        stem.remove(_perfectiveSuffix);
         stem.replace(_doubleN, "н");
     }
     else
@@ -77,9 +77,15 @@ QStringList StemmerV::stem(const QString text)
 StemmerV::StemmerV()
     : _pvre("^(.*?[уеыаоэяию])(.*)$")
     , _reflexive("(с[яьи])$")
-    , _suffix("([иы]?в(?:ши)?|[иыое][йме]|[ео]го|[ео]му|[ая]я|[еоую]?ю|[иы]х|[иы]ми|[ие]шь|[ие]т|[ие]м|[ие]те|[уюя]т|л[аои]?|[тч][ьи]|вши?|[ео]в|[ая]ми|еи|и|а|я|е|й|о|у|и?[ея]м|[ао]м|ах|и?ях|ы|ию|ь[юя]?|ия|ени|енем|от)$")
+    , _suffix("([иы]?в(?:ши)?|[иыое][йме]|[ео]го|[ео]му|[ая]я|[еоую]?ю"
+              "|[иы]х|[иы]ми|[ие]шь|[ие]т|[ие]м|[ие]те|[уюя]т|л[аои]?"
+              "|[тч][ьи]|вши?|[ео]в|[ая]ми|еи|и|а|я|е|й|о|у|и?[ея]м"
+              "|[ао]м|ах|и?ях|ы|ию|ь[юя]?|ия|ени|енем|от)$")
     , _plural("и$")
-    , _derivational("(е?[мн]?ост|лк|(?:ль)?[нчщ]?ик|и?к|льн|ь|енн|тор|тель|овец|ист|ец|ач|[аея]нт|[ая]не?ц|ч?[ая]н(?:ин)?|е?н[иь]|[ая]ци|фикаци|е?ств|изм|ур|аж|ч?ик|очк|[еи]?ц|[уыю]шк|[ео]нь?к|ищ|ующ)$")
+    , _derivational("(е?[мн]?ост|лк|(?:ль)?[нчщ]?ик|и?к|льн|ь|енн|тор"
+                    "|тель|овец|ист|ец|ач|[аея]нт|[ая]не?ц|ч?[ая]н(?:ин)?"
+                    "|е?н[иь]|[ая]ци|фикаци|е?ств|изм|ур|аж|ч?ик|очк|"
+                    "[еи]?ц|[уыю]шк|[ео]нь?к|ищ|ующ)$")
     , _perfectivePrefix("^(наи)")
     , _perfectiveSuffix("([ае]йш)$")
     , _softSign("ь$")
