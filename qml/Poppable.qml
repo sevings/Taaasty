@@ -97,7 +97,7 @@ MouseArea {
         PropertyAnimation {
             target: body
             property: "x"
-            to: 35 * mm
+            to: 40 * mm
             duration: 100
         }
         PropertyAnimation {

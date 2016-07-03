@@ -15,17 +15,11 @@ Popup {
     function clear() {
         input.text = '';
     }
-    onVisibleChanged: {
-        if (visible)
-            input.forceActiveFocus();
-        else
-            focus = false;
+    onFocusChanged: {
+        if (focus)
+            input.focus = true;
     }
-    onOutsideClicked: window.hideLineInput()
-    Keys.onBackPressed: {
-        window.hideLineInput();
-        event.accepted = true;
-    }
+    onClosing: window.hideLineInput()
     ThemedText {
         id: label
         text: {

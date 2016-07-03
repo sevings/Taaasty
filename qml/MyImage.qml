@@ -80,6 +80,8 @@ AnimatedImage {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
+                    mouse.accepted = true;
+
                     if (cachedImage.isDownloading)
                         cachedImage.abortDownload();
                     else

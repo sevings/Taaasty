@@ -6,13 +6,31 @@ Rectangle {
     anchors.right: parent.right
     y: 0
     z: 20
-    visible: y < window.height || !outsideArea
+    visible: y < window.height || !closable
     enabled: visible
-    property bool outsideArea: true
-    signal outsideClicked
+    property bool closable: true
+    signal closing
     gradient: Gradient {
         GradientStop { position: 0; color: window.darkTheme ? '#373737' : '#adbac6' }
         GradientStop { position: 1; color: window.darkTheme ? '#000000' : '#42515a' }
+    }
+    onVisibleChanged: {
+        if (!closable)
+            return;
+
+        if (visible) {
+            enabled = true;
+            popup.forceActiveFocus();
+        }
+        else
+            enabled = false;
+    }
+    Keys.onBackPressed: {
+        if (!closable)
+            return;
+
+        closing();
+        event.accepted = true;
     }
     state: "closed"
     states: [
@@ -54,11 +72,11 @@ Rectangle {
         anchors.right: parent.right
         anchors.bottom: parent.top
         height: parent.y
-        visible: outsideArea && parent.visible
-        onClicked: outsideClicked()
+        visible: closable && parent.visible
+        onClicked: closing()
     }
     MouseArea {
         anchors.fill: parent
-        visible: outsideArea
+        visible: closable
     }
 }

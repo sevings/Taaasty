@@ -70,6 +70,7 @@ Rectangle {
                 anchors.fill: parent
                 body: back
                 onClicked: {
+                    mouse.accepted = true;
                     window.pushTlog(user.id);
                     removing.stop();
                 }
@@ -83,6 +84,7 @@ Rectangle {
                 Poppable {
                     body: back
                     onClicked: {
+                        mouse.accepted = true;
                         if (bayesMode)
                         {
                             if (removing.running)

@@ -48,7 +48,6 @@ Rectangle {
             Poppable {
                 body: back
                 onClicked: {
-//                    fullEntry.currentIndex = fullEntry.indexAt(mouse.x + 1, mouse.y + 1);
                     menu.show(comment);
                 }
             }
@@ -58,7 +57,11 @@ Rectangle {
                 user: comment.user
                 Poppable {
                     body: back
-                    onClicked: if (back.showProfiles) window.pushProfileById(comment.user.id);
+                    onClicked: {
+                        mouse.accepted = true;
+                        if (back.showProfiles)
+                            window.pushProfileById(comment.user.id);
+                    }
                 }
             }
             Text {
@@ -330,7 +333,7 @@ Rectangle {
             window.hideFooter();
             state = "opened";
         }
-        onOutsideClicked: menu.close()
+        onClosing: menu.close()
         Column {
             id: menuColumn
             anchors.left: parent.left

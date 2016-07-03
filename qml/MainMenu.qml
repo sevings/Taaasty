@@ -6,7 +6,7 @@ Rectangle {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.left: parent.left
-    width: 35 * mm
+    width: 40 * mm
     color: window.backgroundColor
     signal modeChanged(int mode)
     signal tlogRequested

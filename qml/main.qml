@@ -39,11 +39,14 @@ ApplicationWindow {
         Tasty.setImageWidth(window.width - 2 * mm, window.width - 11 * mm);
         loadingText.visible = false;
     }
-    Keys.onBackPressed: {
-        console.log('back window');
-        if (stack.depth > 1) {
+    onClosing: {
+        if (notifsView.state === "opened") {
+            hideNotifs();
+            close.accepted = false;
+        }
+        else if (stack.depth > 1) {
             stack.pop();
-            event.accepted = true;
+            close.accepted = false;
         }
     }
     function showNotifs() {

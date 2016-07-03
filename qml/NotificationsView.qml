@@ -42,9 +42,6 @@ Rectangle {
             }
         }
     ]
-    Poppable {
-        body: back
-    }
     MyListView {
         id: notifsView
         anchors.fill: parent

@@ -4,7 +4,7 @@ import org.binque.taaasty 1.0
 Popup {
     id: footer
     height: avatar.height
-    outsideArea: false
+    closable: false
     property string title
     property Tlog tlog
 //    gradient: Gradient {

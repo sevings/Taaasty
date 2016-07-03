@@ -161,7 +161,8 @@ Rectangle {
                 Poppable {
                     body: back
                     onClicked: {
-                        window.pushTlog(entry.tlog.author.id)
+                        mouse.accepted = true;
+                        window.pushTlog(entry.tlog.author.id);
                     }
                 }
             }
@@ -178,6 +179,8 @@ Rectangle {
                             mouse.accepted = false;
                             return;
                         }
+
+                        mouse.accepted = true;
 
                         saveCurrentIndex();
                         window.pushProfile(entry.tlog, entry.author);
