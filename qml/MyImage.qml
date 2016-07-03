@@ -40,11 +40,11 @@ AnimatedImage {
         onAvailable: {
             showImage();
         }
-        onReadyToDownload: {
-            if ((width > 0 && width < 12 * mm)
-                    || (height > 0 && height < 12 * mm)) {
-                cachedImage.download();
-            }
+    }
+    Component.onCompleted: {
+        if ((width > 0 && width < 12 * mm)
+                || (height > 0 && height < 12 * mm)) {
+            cachedImage.download();
         }
     }
     Poppable {

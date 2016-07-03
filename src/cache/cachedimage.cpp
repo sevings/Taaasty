@@ -59,13 +59,6 @@ QString CachedImage::source() const
 
 
 
-bool CachedImage::isReadyToDownload() const
-{
-    return !_headReply && !_reply;
-}
-
-
-
 bool CachedImage::isDownloading() const
 {
     return _reply && _reply->isRunning();
@@ -140,7 +133,7 @@ void CachedImage::getInfo()
 
 void CachedImage::download()
 {
-    if (_url.isEmpty() || !isReadyToDownload() || isDownloading())
+    if (_url.isEmpty() || isDownloading())
         return;
 
     if (_available)
@@ -239,8 +232,6 @@ void CachedImage::_setProperties()
 
     _headReply->deleteLater();
     _headReply = nullptr;
-
-    emit readyToDownload();
 }
 
 

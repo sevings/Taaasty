@@ -12,7 +12,6 @@ class CachedImage : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString      source              READ source                         NOTIFY available)
-    Q_PROPERTY(bool         isReadyToDownload   READ isReadyToDownload              NOTIFY readyToDownload)
     Q_PROPERTY(int          kbytesReceived      READ received                       NOTIFY receivedChanged)
     Q_PROPERTY(int          kbytesTotal         READ total                          NOTIFY totalChanged)
     Q_PROPERTY(bool         isDownloading       READ isDownloading                  NOTIFY downloadingChanged)
@@ -31,7 +30,6 @@ public:
     Q_INVOKABLE int     received() const    { return _kbytesReceived; }
     Q_INVOKABLE int     total() const       { return _kbytesTotal; }
 
-    Q_INVOKABLE bool    isReadyToDownload() const;
     Q_INVOKABLE bool    isDownloading() const;
     Q_INVOKABLE bool    isAvailable() const { return _available; }
 
@@ -55,7 +53,6 @@ private slots:
 
 signals:
     void available();
-    void readyToDownload();
     void receivedChanged();
     void totalChanged();
     void downloadingChanged();
