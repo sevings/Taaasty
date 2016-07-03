@@ -24,7 +24,7 @@
 #include "models/commentsmodel.h"
 #include "models/attachedimagesmodel.h"
 #include "models/usersmodeltlog.h"
-#include "models/usersmodelbayes.h"
+//#include "models/usersmodelbayes.h"
 #include "models/notificationsmodel.h"
 #include "nbc/bayes.h"
 #include "nbc/trainer.h"
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
     qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
     qmlRegisterType<UsersModelTlog>     ("org.binque.taaasty", 1, 0, "UsersModelTlog");
-    qmlRegisterType<UsersModelBayes>    ("org.binque.taaasty", 1, 0, "UsersModelBayes");
+//    qmlRegisterType<UsersModelBayes>    ("org.binque.taaasty", 1, 0, "UsersModelBayes");
 
     qmlRegisterUncreatableType<UsersModel>("org.binque.taaasty", 1, 0, "UsersModel", "Use subclasses instead");
 
@@ -77,7 +77,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");
 
     QQmlApplicationEngine engine;
-    auto tasty = Tasty::instance();
+    auto web = engine.networkAccessManager();
+    auto tasty = Tasty::instance(web);
     engine.rootContext()->setContextProperty("Tasty", tasty);
 
     auto settings = tasty->settings();
@@ -86,7 +87,6 @@ int main(int argc, char *argv[])
     auto notifs = NotificationsModel::instance(tasty);
     engine.rootContext()->setContextProperty("NotifsModel", notifs);
 
-    auto web = tasty->manager();
     auto cache = CacheManager::instance(web);
     cache->setMaxWidth(settings->maxImageWidth());
     cache->setAutoload(settings->autoloadImages());

@@ -9,10 +9,10 @@
 
 
 
-Tasty::Tasty(QObject *parent)
-    : QObject(parent)
+Tasty::Tasty(QNetworkAccessManager* web)
+    : QObject()
     , _settings(new Settings(this))
-    , _manager(new QNetworkAccessManager(this))
+    , _manager(web ? web : new QNetworkAccessManager(this))
     , _busy(0)
     , _entryImageWidth(_settings->maxImageWidth())
     , _commentImageWidth(_entryImageWidth)
@@ -32,9 +32,9 @@ Tasty::~Tasty()
 
 
 
-Tasty* Tasty::instance()
+Tasty* Tasty::instance(QNetworkAccessManager* web)
 {
-    static auto tasty = new Tasty;
+    static auto tasty = new Tasty(web);
     return tasty;
 }
 

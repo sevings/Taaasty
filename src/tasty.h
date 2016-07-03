@@ -19,10 +19,10 @@ class Tasty : public QObject
     Q_PROPERTY(bool isAuthorized READ isAuthorized NOTIFY authorized)
 
 public:
-    explicit Tasty(QObject *parent = 0);
+    explicit Tasty(QNetworkAccessManager* web = nullptr);
     ~Tasty();
 
-    static Tasty* instance();
+    static Tasty* instance(QNetworkAccessManager* web = nullptr);
     Settings* settings() const { return _settings; }
     QNetworkAccessManager* manager() const { return _manager; }
 

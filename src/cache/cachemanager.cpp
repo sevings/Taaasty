@@ -25,11 +25,6 @@ CacheManager::CacheManager(QNetworkAccessManager* web)
 {
     qDebug() << "CacheManager";
 
-    auto cachePath = QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
-    cachePath.mkpath("images");
-    cachePath.cd("images");
-    _path = cachePath.absolutePath();
-
     _web = web ? web : new QNetworkAccessManager(this);
 
     Q_ASSERT(QSslSocket::supportsSsl());
@@ -88,6 +83,14 @@ CachedImage* CacheManager::image(QString url)
         if (_autoload && !image->isAvailable())
             image->download();
         return image;
+    }
+
+    if (_path.isEmpty())
+    {
+        auto cachePath = QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
+        cachePath.mkpath("images");
+        cachePath.cd("images");
+        _path = cachePath.absolutePath();
     }
 
     auto image = new CachedImage(this, url);
