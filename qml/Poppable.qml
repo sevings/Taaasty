@@ -47,14 +47,14 @@ MouseArea {
 
         if (body.poppable)
         {
-            if (body.x > body.width / 3)
+            if (body.x > window.width / 2)
                 body.popped();
             else
                 backAnimation.start();
         }
         else
         {
-            if (body.x > body.width / 3 && shiftable)
+            if (body.x > 20 * mm && shiftable)
                 forwardAnimation.start();
             else
                 backAnimation.start();
