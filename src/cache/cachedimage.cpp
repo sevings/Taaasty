@@ -142,6 +142,12 @@ void CachedImage::download()
         return;
     }
 
+    if (_headReply)
+    {
+        _headReply->deleteLater();
+        _headReply = nullptr;
+    }
+
     _reply = _man->web()->get(QNetworkRequest(_url));
 
     Q_TEST(connect(_reply, SIGNAL(finished()),                         this, SLOT(_saveData())));
@@ -213,6 +219,9 @@ void CachedImage::saveToFile(const QString filename)
 
 void CachedImage::_setProperties()
 {
+    if (!_headReply)
+        return;
+
     auto mime = _headReply->header(QNetworkRequest::ContentTypeHeader).toString().split('/');
     if (mime.isEmpty())
         mime << "";
