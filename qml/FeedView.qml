@@ -1,12 +1,8 @@
 import QtQuick 2.7
 import org.binque.taaasty 1.0
 
-Rectangle {
+Pane {
     id: back
-    color: window.backgroundColor
-    signal popped
-    onPopped: window.popFromStack()
-    property bool poppable
     property int mode: FeedModel.LiveMode
     property int tlogId: 0
     property string slug: ''

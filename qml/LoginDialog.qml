@@ -1,13 +1,9 @@
 import QtQuick 2.7
 
-Rectangle {
+Pane {
     id: dialog
 //    anchors.fill: parent
     readonly property bool isLoginDialog: true // how to find this in the StackView?
-    color: window.backgroundColor
-    signal popped
-    onPopped: window.popFromStack()
-    property bool poppable
     function clear() {
         mail.line = '';
         password.line = '';

@@ -1,10 +1,8 @@
 import QtQuick 2.7
 import org.binque.taaasty 1.0
 
-Rectangle {
+Pane {
     id: profileView
-    color: window.backgroundColor
-    onPopped: window.popFromStack()
     property int tlogId
     property string slug: ''
     property Tlog tlog: Tlog {
@@ -12,8 +10,6 @@ Rectangle {
         slug: profileView.slug
     }
     property Author author: tlog.author
-    signal popped
-    property bool poppable
     Splash {
         visible: !column.visible
     }

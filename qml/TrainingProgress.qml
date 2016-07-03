@@ -1,11 +1,7 @@
 import QtQuick 2.7
 
-Rectangle {
+Pane {
     id: back
-    color: window.backgroundColor
-    signal popped
-    onPopped: window.popFromStack()
-    property bool poppable
     property bool fullLoad: true
     readonly property bool isTrainingProgress: true
     Poppable {

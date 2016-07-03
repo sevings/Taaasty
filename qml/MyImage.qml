@@ -13,7 +13,7 @@ AnimatedImage {
     property string extension: ''
     property CachedImage cachedImage: Cache.image()
     property color backgroundColor: '#373737'
-    property Item popBody: Item { }
+    property Pane popBody: Pane { }
     property bool savable: false
     signal available
     function showImage() {

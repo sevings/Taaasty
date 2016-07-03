@@ -1,7 +1,7 @@
 import QtQuick 2.7
 
 MouseArea {
-    property Item body
+    property Pane body
     signal popped
     anchors.fill: parent
     drag.target: body

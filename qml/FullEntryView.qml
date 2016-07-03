@@ -1,10 +1,8 @@
 import QtQuick 2.7
 import org.binque.taaasty 1.0
 
-Rectangle {
+Pane {
     id: back
-    color: window.backgroundColor
-    onPopped: window.popFromStack()
     property int entryId
     property TlogEntry entry: TlogEntry {
         entryId: back.entryId
@@ -12,8 +10,6 @@ Rectangle {
     readonly property Tlog tlog: entry.tlog
     property CommentsModel commentsModel: entry.commentsModel
     property bool showProfiles: tlog.tlogId !== window.anonymousId
-    signal popped
-    property bool poppable
     readonly property bool isFullEntryView: true
     Component.onCompleted: {
         if (commentsModel.rowCount() === 0)
