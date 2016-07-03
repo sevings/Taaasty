@@ -43,19 +43,25 @@ Pane {
     signal pushed
     function setMode(m, t, s) {
         query = '';
-        if (mode === m) {
+
+        if (t && t > 0)
+            tlogId = t;
+        else
+            tlogId = 0;
+
+        if (s)
+            slug = s;
+        else
+            slug = '';
+
+        if (m === FeedModel.TlogMode) {
+            mode = m;
+        }
+        else if (mode === m) {
             feedModel.reset(m, t, s);
         }
         else {
             mode = m;
-            if (m === FeedModel.TlogMode)
-            {
-                if (t && t > 0)
-                    tlogId = t;
-                if (s)
-                    slug = s;
-//                if (q)
-            }
         }
     }
     Poppable {
