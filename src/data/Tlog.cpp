@@ -9,6 +9,19 @@
 
 
 
+Tlog::Tlog(QObject* parent)
+    : QObject(parent)
+    , _id(0)
+    , _myRelation(Undefined)
+    , _hisRelation(Undefined)
+    , _author(new Author(this))
+    , _loading(false)
+{
+
+}
+
+
+
 Tlog::Tlog(const QJsonObject data, QObject *parent)
     : QObject(parent)
     , _author(nullptr)

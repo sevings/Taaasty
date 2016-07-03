@@ -10,6 +10,22 @@
 
 
 
+Rating::Rating(QObject* parent)
+    : QObject(parent)
+    , _entryId(0)
+    , _votes(0)
+    , _rating(0)
+    , _isVoted(false)
+    , _isVotable(false)
+    , _bayesRating(0)
+    , _isBayesVoted(false)
+    , _isVotedAgainst(false)
+{
+
+}
+
+
+
 Rating::Rating(const QJsonObject data, Entry* parent)
     : QObject(parent)
     , _entryId(0)

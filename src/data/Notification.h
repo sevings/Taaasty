@@ -27,7 +27,8 @@ class Notification: public QObject
     Q_PROPERTY(QString parentType MEMBER _parentType CONSTANT)
     
 public:
-    Notification(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    Notification(QObject* parent = nullptr);
+    Notification(const QJsonObject data, QObject* parent = nullptr);
     
     int entityId() const;
 

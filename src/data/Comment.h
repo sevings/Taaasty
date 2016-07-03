@@ -23,7 +23,8 @@ class Comment: public QObject
     Q_PROPERTY(bool        isDeletable  MEMBER _isDeletable    NOTIFY updated)
 
 public:
-    Comment(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    Comment(QObject* parent = nullptr);
+    Comment(const QJsonObject data, QObject* parent = nullptr);
     Comment(const Notification* data, QObject* parent = nullptr);
 
 public slots:

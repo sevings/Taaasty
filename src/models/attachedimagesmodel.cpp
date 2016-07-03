@@ -8,6 +8,14 @@
 
 
 
+AttachedImagesModel::AttachedImagesModel(QObject* parent)
+    : QAbstractListModel(parent)
+{
+
+}
+
+
+
 AttachedImagesModel::AttachedImagesModel(const QJsonArray *data, QObject *parent)
     : QAbstractListModel(parent)
 {

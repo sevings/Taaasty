@@ -7,6 +7,18 @@
 
 
 
+CalendarEntry::CalendarEntry(QObject* parent)
+    : QObject(parent)
+    , _id(0)
+    , _isPrivate(false)
+    , _commentsCount(0)
+    , _isFlow(false)
+    , _entry(nullptr)
+    , _base(nullptr)
+{
+
+}
+
 CalendarEntry::CalendarEntry(const QJsonObject data, QObject *parent)
     : QObject(parent)
     , _entry(nullptr)

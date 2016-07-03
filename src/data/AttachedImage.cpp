@@ -6,6 +6,16 @@
 
 
 
+AttachedImage::AttachedImage(QObject* parent)
+    : QObject(parent)
+    , _width(0)
+    , _height(0)
+{
+
+}
+
+
+
 AttachedImage::AttachedImage(const QJsonObject data, QObject *parent)
     : QObject(parent)
 {

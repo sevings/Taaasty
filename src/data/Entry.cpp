@@ -19,6 +19,7 @@
 
 EntryBase::EntryBase(QObject* parent)
     : QObject(parent)
+    , _id(0)
     , _author(nullptr)
 {
 
@@ -87,6 +88,26 @@ Author* EntryBase::author() const
 }
 
 
+
+Entry::Entry(QObject* parent)
+    : EntryBase(parent)
+    , _isVotable(false)
+    , _isWatchable(false)
+    , _isWatched(false)
+    , _isFavoritable(false)
+    , _isFavorited(false)
+    , _isPrivate(false)
+    , _tlog(new Tlog(this))
+    , _rating(new Rating(this))
+    , _commentsCount(0)
+    , _media(new Media(this))
+    , _wordCount(0)
+    , _commentsModel(new CommentsModel(this))
+    , _attachedImagesModel(new AttachedImagesModel(this))
+    , _loading(false)
+{
+
+}
 
 Entry::Entry(const QJsonObject data, QObject *parent)
     : EntryBase(parent)

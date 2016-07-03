@@ -82,7 +82,8 @@ class Entry: public EntryBase
     Q_PROPERTY(bool loading               MEMBER _loading           NOTIFY loadingChanged)
 
 public:
-    Entry(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    Entry(QObject* parent = nullptr);
+    Entry(const QJsonObject data, QObject* parent = nullptr);
 
     Q_INVOKABLE CommentsModel*       commentsModel()       { return _commentsModel; }
     Q_INVOKABLE AttachedImagesModel* attachedImagesModel() { return _attachedImagesModel; }

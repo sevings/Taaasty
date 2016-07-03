@@ -7,6 +7,20 @@
 
 
 
+Author::Author(QObject* parent)
+    : User(parent)
+    , _isFemale(false)
+    , _isPrivacy(false)
+    , _isOnline(false)
+    , _isFlow(false)
+    , _isPremium(false)
+    , _isDaylog(false)
+{
+
+}
+
+
+
 Author::Author(const QJsonObject data, QObject *parent)
     : User(data, parent)
 {

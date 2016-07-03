@@ -19,7 +19,8 @@ class AttachedImage: public QObject
     Q_PROPERTY(QString type   MEMBER _type   CONSTANT)
 
 public:
-    AttachedImage(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    AttachedImage(QObject* parent = nullptr);
+    AttachedImage(const QJsonObject data, QObject* parent = nullptr);
     AttachedImage(const QJsonObject data, Media* parent);
 
 private:

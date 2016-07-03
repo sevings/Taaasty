@@ -38,7 +38,8 @@ public:
 
     Q_ENUMS(Relationship)
 
-    Tlog(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    Tlog(QObject* parent = nullptr);
+    Tlog(const QJsonObject data, QObject* parent = nullptr);
 
     Author* author() const { return _author; }
 

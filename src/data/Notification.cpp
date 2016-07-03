@@ -6,6 +6,17 @@
 #include "../tasty.h"
 
 
+Notification::Notification(QObject* parent)
+    : QObject(parent)
+    , _id(0)
+    , _sender(new User(this))
+    , _read(false)
+    , _entityId(0)
+    , _parentId(0)
+{
+
+}
+
 Notification::Notification(const QJsonObject data, QObject *parent)
     : QObject(parent)
 {

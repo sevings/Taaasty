@@ -23,7 +23,8 @@ class User: public QObject
     Q_PROPERTY(QString nameColor       MEMBER _nameColor       NOTIFY updated)
 
 public:
-    User(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    User(QObject* parent = nullptr);
+    User(const QJsonObject data, QObject* parent = nullptr);
 
     int     id() const;
     void    setId(int id);

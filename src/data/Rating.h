@@ -23,7 +23,8 @@ class Rating: public QObject
     Q_PROPERTY (bool isVotedAgainst MEMBER _isVotedAgainst  NOTIFY bayesChanged)
 
 public:
-    Rating(const QJsonObject data = QJsonObject(), Entry* parent = nullptr);
+    Rating(QObject* parent = nullptr);
+    Rating(const QJsonObject data, Entry* parent = nullptr);
     ~Rating();
 
     void reCalcBayes();

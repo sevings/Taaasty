@@ -18,7 +18,8 @@ class Media: public QObject
     Q_PROPERTY(AttachedImage* icon      MEMBER _icon      CONSTANT)
 
 public:
-    Media(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    Media(QObject* parent = nullptr);
+    Media(const QJsonObject data, QObject* parent = nullptr);
 
 private:
     QString _url;

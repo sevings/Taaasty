@@ -13,7 +13,8 @@ class AttachedImagesModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    AttachedImagesModel(const QJsonArray* data = nullptr, QObject* parent = nullptr);
+    AttachedImagesModel(QObject* parent = nullptr);
+    AttachedImagesModel(const QJsonArray* data, QObject* parent = nullptr);
 
     Q_INVOKABLE int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;

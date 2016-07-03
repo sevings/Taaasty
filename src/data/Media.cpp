@@ -8,6 +8,17 @@
 
 
 
+Media::Media(QObject* parent)
+    : QObject(parent)
+    , _duration(0)
+    , _thumbnail(new AttachedImage(this))
+    , _icon(new AttachedImage(this))
+{
+
+}
+
+
+
 Media::Media(const QJsonObject data, QObject* parent)
     : QObject(parent)
 {

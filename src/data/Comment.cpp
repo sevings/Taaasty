@@ -10,6 +10,19 @@
 
 
 
+Comment::Comment(QObject* parent)
+    : QObject(parent)
+    , _id(0)
+    , _user(new User(this))
+    , _isEditable(false)
+    , _isReportable(false)
+    , _isDeletable(false)
+{
+
+}
+
+
+
 Comment::Comment(const QJsonObject data, QObject *parent)
     : QObject(parent)
 {

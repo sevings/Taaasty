@@ -6,6 +6,16 @@
 
 
 
+User::User(QObject* parent)
+    : QObject(parent)
+    , _id(0)
+    , _loading(false)
+{
+
+}
+
+
+
 User::User(const QJsonObject data, QObject *parent)
     : QObject(parent)
     , _loading(false)

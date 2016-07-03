@@ -29,7 +29,8 @@ class Author: public User
     Q_PROPERTY(QString lastSeenAt          MEMBER _lastSeenAt          NOTIFY statusUpdated)
 
 public:
-    Author(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    Author(QObject* parent = nullptr);
+    Author(const QJsonObject data, QObject* parent = nullptr);
 
     bool isFemale() const;
     bool isFlow() const;

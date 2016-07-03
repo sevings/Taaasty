@@ -24,7 +24,8 @@ class CalendarEntry: public QObject
     Q_PROPERTY(bool    isFlow         MEMBER _isFlow         CONSTANT)
 
 public:
-    CalendarEntry(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
+    CalendarEntry(QObject* parent = nullptr);
+    CalendarEntry(const QJsonObject data, QObject* parent = nullptr);
 
     Entry* full();
     EntryBase* base();
