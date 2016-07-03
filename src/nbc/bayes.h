@@ -6,7 +6,7 @@
 #include <QSqlDatabase>
 #include <QReadWriteLock>
 
-class Entry;
+class EntryBase;
 class Trainer;
 class StemmerV;
 
@@ -28,8 +28,8 @@ public:
 
     static Bayes* instance(QObject* parent = nullptr);
 
-    int classify(const Entry* entry, const int minLength = 0) const;
-    int voteForEntry(const Entry* entry, const Type type);
+    int classify(const EntryBase* entry, const int minLength = 0) const;
+    int voteForEntry(const EntryBase* entry, const Type type);
     int entryVoteType(const int id) const;
 
     Trainer* trainer();
@@ -62,8 +62,8 @@ private:
     bool _isEntryAdded(int id) const;
 
     int _calcText(QString text, QHash<QString, FeatureCount>& wordCounts) const;
-    int _calcEntry(const Entry* entry, QHash<QString, FeatureCount>& wordCounts, const int minLength = 0) const;
-    void _addEntry(const Entry* entry, const Type type);
+    int _calcEntry(const EntryBase* entry, QHash<QString, FeatureCount>& wordCounts, const int minLength = 0) const;
+    void _addEntry(const EntryBase* entry, const Type type);
 
     QHash<QString, FeatureCount> _wordCounts[Unclassified];
     QHash<int, bool>             _entriesChanged[Unclassified];

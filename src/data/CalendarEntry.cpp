@@ -10,6 +10,7 @@
 CalendarEntry::CalendarEntry(const QJsonObject data, QObject *parent)
     : QObject(parent)
     , _entry(nullptr)
+    , _base(nullptr)
 {
     _id              = data.value("entry_id").toInt();
     _createdAt       = Tasty::parseDate(data.value("created_at").toString());
@@ -31,6 +32,18 @@ Entry* CalendarEntry::full()
     _entry = new Entry(QJsonObject(), this);
     _entry->setId(_id);
     return _entry;
+}
+
+
+
+EntryBase*CalendarEntry::base()
+{
+    if (_base)
+        return _base;
+
+    _base = new EntryBase(this);
+    _base->load(_id);
+    return _base;
 }
 
 

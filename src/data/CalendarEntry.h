@@ -4,6 +4,7 @@
 #include <QJsonObject>
 
 class Entry;
+class EntryBase;
 
 
 
@@ -26,6 +27,7 @@ public:
     CalendarEntry(const QJsonObject data = QJsonObject(), QObject* parent = nullptr);
 
     Entry* full();
+    EntryBase* base();
 
     int id() const;
 
@@ -40,4 +42,5 @@ private:
     bool    _isFlow;
 
     Entry* _entry;
+    EntryBase* _base;
 };

@@ -17,8 +17,79 @@
 
 
 
-Entry::Entry(const QJsonObject data, QObject *parent)
+EntryBase::EntryBase(QObject* parent)
     : QObject(parent)
+    , _author(nullptr)
+{
+
+}
+
+
+
+void EntryBase::load(int id)
+{
+    if (id <= 0)
+        return;
+
+    _id = id;
+
+    auto request = new ApiRequest(QString("entries/%1.json").arg(id));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initBase(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_maybeError())));
+}
+
+
+
+void EntryBase::_initBase(QJsonObject data)
+{
+    _author = new Author(data.value("author").toObject(), this);
+    _type   = data.value("type").toString();
+    _text   = data.value("text").toString().trimmed();
+    _title  = data.value("title").toString().trimmed();
+
+    emit loaded();
+}
+
+
+
+void EntryBase::_maybeError()
+{
+    if (!_author)
+        emit loadingError();
+}
+
+
+
+QString EntryBase::type() const
+{
+    return _type;
+}
+
+
+
+QString EntryBase::title() const
+{
+    return _title;
+}
+
+
+
+QString EntryBase::text() const
+{
+    return _text;
+}
+
+
+
+Author* EntryBase::author() const
+{
+    return _author;
+}
+
+
+
+Entry::Entry(const QJsonObject data, QObject *parent)
+    : EntryBase(parent)
     , _commentsModel(nullptr)
     , _attachedImagesModel(nullptr)
     , _loading(false)
@@ -126,7 +197,6 @@ void Entry::_init(const QJsonObject data)
     _id              = data.value("id").toInt();
     _createdAt       = Tasty::parseDate(data.value("created_at").toString());
     _url             = data.value("entry_url").toString();
-    _type            = data.value("type").toString();
     _isVotable       = data.value("is_voteable").toBool();
     _isFavoritable   = data.value("can_favorite").toBool();
     _isFavorited     = data.value("is_favorited").toBool();
@@ -134,17 +204,16 @@ void Entry::_init(const QJsonObject data)
     _isWatched       = data.value("is_watching").toBool();
     _isPrivate       = data.value("is_private").toBool();
     _tlog            = new Tlog(data.value("tlog").toObject(), this);
-    _author          = new Author(data.value("author").toObject(), this);
     _rating          = new Rating(data.value("rating").toObject(), this);
     _commentsCount   = data.value("comments_count").toInt();
-    _title           = data.value("title").toString().trimmed();
     _truncatedTitle  = data.value("title_truncated").toString();
-    _text            = data.value("text").toString().trimmed();
     _truncatedText   = data.value("text_truncated").toString();
     _source          = data.value("source").toString();
     _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
                                          : nullptr; // music?
 //    _imagePreview    = data.value("preview_image").toObject();
+
+    _initBase(data);
 
     _correctHtml();
 

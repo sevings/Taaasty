@@ -12,12 +12,46 @@ class AttachedImagesModel;
 
 
 
-class Entry: public QObject
+class EntryBase: public QObject
+{
+    Q_OBJECT
+
+public:
+    EntryBase(QObject* parent = nullptr);
+
+    void load(int id);
+
+    Author* author() const;
+    QString text() const;
+    QString title() const;
+    QString type() const;
+
+public slots:
+    int entryId() const { return _id; }
+
+signals:
+    void loaded();
+    void loadingError();
+
+protected slots:
+    void _initBase(QJsonObject data);
+    void _maybeError();
+
+protected:
+    int         _id;
+    Author*     _author;
+    QString     _text;
+    QString     _title;
+    QString     _type;
+};
+
+
+
+class Entry: public EntryBase
 {
     Q_OBJECT
 
     friend class CommentsModel;
-    friend class Bayes;
 
     Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated)
     Q_PROPERTY(QString     createdAt      MEMBER _createdAt         NOTIFY updated)
@@ -62,7 +96,6 @@ public:
     Tlog* tlog() const;
 
 public slots:
-    int entryId() const { return _id; }
     void setId(const int id);
 
     void addComment(const QString text);
@@ -91,10 +124,8 @@ private slots:
     void _setNotLoading();
 
 private:
-    int         _id;
     QString     _createdAt;
     QString     _url;
-    QString     _type;
     bool        _isVotable;
     bool        _isWatchable;
     bool        _isWatched;
@@ -102,12 +133,9 @@ private:
     bool        _isFavorited;
     bool        _isPrivate;
     Tlog*       _tlog;
-    Author*     _author;
     Rating*     _rating;
     int         _commentsCount;
-    QString     _title;
     QString     _truncatedTitle;
-    QString     _text;
     QString     _truncatedText;
     QString     _source;
     Media*      _media;

@@ -60,7 +60,7 @@ Bayes *Bayes::instance(QObject *parent)
 
 
 
-int Bayes::classify(const Entry *entry, const int minLength) const
+int Bayes::classify(const EntryBase* entry, const int minLength) const
 {
     QReadLocker locker(&_lock);
 
@@ -102,7 +102,7 @@ int Bayes::classify(const Entry *entry, const int minLength) const
 
 
 
-int Bayes::voteForEntry(const Entry *entry, const Bayes::Type type)
+int Bayes::voteForEntry(const EntryBase* entry, const Bayes::Type type)
 {
     _addEntry(entry, type);
     return classify(entry);
@@ -283,10 +283,10 @@ int Bayes::_calcText(QString text, QHash<QString, Bayes::FeatureCount>& wordCoun
 
 
 
-int Bayes::_calcEntry(const Entry *entry, QHash<QString, FeatureCount>& wordCounts, const int minLength) const
+int Bayes::_calcEntry(const EntryBase* entry, QHash<QString, FeatureCount>& wordCounts, const int minLength) const
 {
-    int content = _calcText(entry->_text, wordCounts);
-    int title   = _calcText(entry->_title, wordCounts);
+    int content = _calcText(entry->text(), wordCounts);
+    int title   = _calcText(entry->title(), wordCounts);
 
     if (minLength > 0 && content < minLength && title < minLength)
         return -1;
@@ -296,25 +296,25 @@ int Bayes::_calcEntry(const Entry *entry, QHash<QString, FeatureCount>& wordCoun
     else
         ++wordCounts[".short"];
 
-    ++wordCounts[QString(".type_%1").arg(entry->_type)];
-    ++wordCounts[QString(".author_%1").arg(entry->_author->slug())];
+    ++wordCounts[QString(".type_%1").arg(entry->type())];
+    ++wordCounts[QString(".author_%1").arg(entry->author()->slug())];
 
-    if (entry->_author->isFemale())
+    if (entry->author()->isFemale())
         ++wordCounts[".female"];
     else
         ++wordCounts[".male"];
 
-    if (entry->_author->isDaylog())
+    if (entry->author()->isDaylog())
         ++wordCounts[".daylog"];
     else
         ++wordCounts[".wholelog"];
 
-    if (entry->_author->isFlow())
+    if (entry->author()->isFlow())
         ++wordCounts[".flow"];
     else
         ++wordCounts[".tlog"];
 
-    if (entry->_author->isPremium())
+    if (entry->author()->isPremium())
         ++wordCounts[".premium"];
     else
         ++wordCounts[".free"];
@@ -324,14 +324,14 @@ int Bayes::_calcEntry(const Entry *entry, QHash<QString, FeatureCount>& wordCoun
 
 
 
-void Bayes::_addEntry(const Entry *entry, const Bayes::Type type)
+void Bayes::_addEntry(const EntryBase* entry, const Bayes::Type type)
 {
-    if (_isEntryAdded(entry->_id))
+    if (_isEntryAdded(entry->entryId()))
         return;
 
     QWriteLocker locker(&_lock);
 
-    _entriesChanged[type][entry->_id] = true;
+    _entriesChanged[type][entry->entryId()] = true;
     _total[type] +=  _calcEntry(entry, _wordCounts[type]);
 }
 

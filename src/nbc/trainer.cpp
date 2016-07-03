@@ -192,9 +192,9 @@ void Trainer::_loadEntries()
 {
     foreach (auto entry, _entries)
     {
-        auto full = entry->full();
-        Q_TEST(connect(full, SIGNAL(updated()),       this, SLOT(_trainEntry())));
-        Q_TEST(connect(full, SIGNAL(updatingError()), this, SLOT(_incTrainedCount())));
+        auto base = entry->base();
+        Q_TEST(connect(base, SIGNAL(loaded()),       this, SLOT(_trainEntry())));
+        Q_TEST(connect(base, SIGNAL(loadingError()), this, SLOT(_incTrainedCount())));
     }
 }
 
@@ -241,7 +241,7 @@ void Trainer::_trainNextTlog()
 
 void Trainer::_trainEntry()
 {
-    auto entry = static_cast<Entry*>(sender());
+    auto entry = static_cast<EntryBase*>(sender());
     if (!entry)
         return;
 
