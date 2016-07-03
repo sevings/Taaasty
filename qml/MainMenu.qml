@@ -6,7 +6,7 @@ Rectangle {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.left: parent.left
-    width: parent.width * 0.7
+    width: 35 * mm
     color: window.backgroundColor
     signal modeChanged(int mode)
     signal tlogRequested
@@ -34,7 +34,7 @@ Rectangle {
         topMargin: 1 * mm
         bottomMargin: 1 * mm
         contentWidth: parent.width
-        property int buttonsCount: Tasty.isAuthorized ? 18 : 16
+        property int buttonsCount: Tasty.isAuthorized ? 16 : 14
         contentHeight: 9 * mm * buttonsCount + space.height
         Column {
             id: column
@@ -122,18 +122,18 @@ Rectangle {
                 anchors.margins: 1 * mm
                 height: 2 * mm
             }
-            ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                text: 'Неинтересные'
-                onClicked: { waterTlogsRequested() }
-            }
-            ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                text: 'Интересные'
-                onClicked: { fireTlogsRequested() }
-            }
+//            ThemedButton {
+//                anchors.left: parent.left
+//                anchors.right: parent.right
+//                text: 'Неинтересные'
+//                onClicked: { waterTlogsRequested() }
+//            }
+//            ThemedButton {
+//                anchors.left: parent.left
+//                anchors.right: parent.right
+//                text: 'Интересные'
+//                onClicked: { fireTlogsRequested() }
+//            }
             //                ThemedButton {
             //                    anchors.left: parent.left
             //                    anchors.right: parent.right

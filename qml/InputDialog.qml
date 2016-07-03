@@ -22,6 +22,10 @@ Popup {
             focus = false;
     }
     onOutsideClicked: window.hideLineInput()
+    Keys.onBackPressed: {
+        window.hideLineInput();
+        event.accepted = true;
+    }
     ThemedText {
         id: label
         text: {
