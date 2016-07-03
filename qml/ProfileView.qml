@@ -112,6 +112,7 @@ Pane {
 
                 height: text.length > 0 ? paintedHeight : 0
                 visible: tlog.tlogId === author.id && tlog.myRelationship !== Tlog.Undefined
+                         && Tasty.isAuthorized
             }
             ThemedText {
                 anchors.left: parent.left
@@ -122,6 +123,7 @@ Pane {
                 height: text.length > 0 ? paintedHeight : 0
                 visible: tlog.tlogId === author.id && !author.isFlow
                          && tlog.hisRelationship !== Tlog.Undefined && tlog.hisRelationship !== Tlog.Me
+                         && Tasty.isAuthorized
             }
             Item {
                 anchors.left: parent.left
