@@ -3,6 +3,11 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 
+#ifdef QT_DEBUG
+#   include <QDateTime>
+#   include <QDebug>
+#endif
+
 #if defined(Q_OS_ANDROID)
 #   include <QtAndroidExtras/QAndroidJniObject>
 #else
@@ -46,6 +51,10 @@ int main(int argc, char *argv[])
     app.setOrganizationName("binque");
 
 //    installLog();
+
+#ifdef QT_DEBUG
+    auto now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+#endif
 
     qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
@@ -112,7 +121,13 @@ int main(int argc, char *argv[])
                    density < 360 ? 2 : 3;
     engine.rootContext()->setContextProperty("dp", scale); // N900: 1.5; Q10: 2
 
-    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    engine.setBaseUrl(QStringLiteral("qrc:/qml/"));
+    engine.load(QUrl(QStringLiteral("main.qml")));
+
+#ifdef QT_DEBUG
+    auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
+    qDebug() << "Started in" << ms << "ms";
+#endif
 
     int res = app.exec();
 
