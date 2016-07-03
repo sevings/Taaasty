@@ -58,8 +58,10 @@ void Rating::reCalcBayes()
         }
     }
 
-    auto future = QtConcurrent::run(Bayes::instance(), &Bayes::classify, _parent, 0);
-    _watcher.setFuture(future);
+    _bayesRating = Bayes::instance()->classify(_parent);
+    emit bayesChanged();
+//    auto future = QtConcurrent::run(Bayes::instance(), &Bayes::classify, _parent, 0);
+//    _watcher.setFuture(future);
 }
 
 
