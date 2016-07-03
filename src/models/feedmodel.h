@@ -96,8 +96,7 @@ protected:
 private slots:
     void _addItems(QJsonObject data);
     void _addNewPost(QJsonObject data);
-    void _changeHideShort();
-    void _changeHideNegative();
+    void _changeHideSome();
     void _setPrivate(int errorCode);
     void _setNotLoading(QObject* request);
     void _reloadRatings();
@@ -105,8 +104,7 @@ private slots:
 
 private:
     void _addAll(QList<Entry*>& all);
-    bool _addLonger(QList<Entry*>& all);
-    bool _addNonNegative(QList<Entry*>& all);
+    bool _addSome(QList<Entry*>& all);
 
     void _setUrl(Mode mode);
 
