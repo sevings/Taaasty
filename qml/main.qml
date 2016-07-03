@@ -197,6 +197,12 @@ ApplicationWindow {
                    }
                    )
     }
+    function pushAbout() {
+        stack.push(stack.about,
+                   {
+                       poppable: true
+                   })
+    }
     function popFromStack() {
         stack.pop();
     }
@@ -270,6 +276,10 @@ ApplicationWindow {
         onLoginRequested: {
             backAnimation.start();
             window.pushLoginDialog();
+        }
+        onAboutRequested: {
+            backAnimation.start();
+            window.pushAbout();
         }
     }
     ParallelAnimation {
@@ -382,6 +392,7 @@ ApplicationWindow {
         property Component loginDialog:         Qt.createComponent("LoginDialog.qml",       Component.Asynchronous, stack);
         property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack);
         property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack);
+        property Component about:               Qt.createComponent("About.qml",             Component.Asynchronous, stack);
         Connections {
             target: Tasty
             onAuthorizationNeeded: {

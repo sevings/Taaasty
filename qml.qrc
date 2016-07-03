@@ -28,5 +28,6 @@
         <file>qml/UsersView.qml</file>
         <file>qml/BusyBar.qml</file>
         <file>qml/Pane.qml</file>
+        <file>qml/About.qml</file>
     </qresource>
 </RCC>

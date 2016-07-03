@@ -15,6 +15,7 @@ Rectangle {
     signal waterTlogsRequested
     signal fireTlogsRequested
     signal loginRequested
+    signal aboutRequested
 //    MouseArea {
 //        id: area
 //        anchors.top: parent.top
@@ -34,7 +35,7 @@ Rectangle {
         topMargin: 1 * mm
         bottomMargin: 1 * mm
         contentWidth: parent.width
-        property int buttonsCount: Tasty.isAuthorized ? 16 : 14
+        property int buttonsCount: Tasty.isAuthorized ? 17 : 15
         contentHeight: 9 * mm * buttonsCount + space.height
         Column {
             id: column
@@ -174,6 +175,12 @@ Rectangle {
                 text: 'Войти'
                 visible: !Tasty.isAuthorized
                 onClicked: { loginRequested() }
+            }
+            ThemedButton {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                text: 'О клиенте'
+                onClicked: { aboutRequested() }
             }
         }
     }
