@@ -147,7 +147,12 @@ Rectangle {
                 media: entry.media
                 Poppable {
                     body: back
-                    onClicked: mediaLink.play()
+                    onClicked: {
+                        if (!mediaLink.source.toString() && mediaLink.url)
+                            mouse.accepted = false;
+                        else
+                            mediaLink.play();
+                    }
                 }
             }
             ThemedText {
