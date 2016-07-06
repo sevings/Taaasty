@@ -12,7 +12,7 @@ AnimatedImage {
     property string url: ''
     property string extension: ''
     property CachedImage cachedImage: Cache.image()
-    property color backgroundColor: '#373737'
+    property color backgroundColor: window.darkTheme ? '#373737' : '#b5babd'
     property Pane popBody: Pane { }
     property bool savable: false
     signal available
@@ -61,9 +61,11 @@ AnimatedImage {
         color: image.backgroundColor
         Rectangle {
             id: downloadButton
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottomMargin: 1 * mm
+            anchors {
+                verticalCenter: parent.verticalCenter
+                horizontalCenter: parent.horizontalCenter
+                bottomMargin: 1 * mm
+            }
             width: cachedImage.kbytesTotal > 0 ? cachedImage.kbytesReceived * (parent.width - 12 * mm)
                                                                               / cachedImage.kbytesTotal + 12 * mm
                                                                             : 12 * mm
@@ -105,10 +107,12 @@ AnimatedImage {
                       + (cachedImage.kbytesTotal > 0
                          ? cachedImage.kbytesTotal + ' KB ' : '')
                       + (cachedImage.extension ? '\n' + cachedImage.extension : '')
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.margins: 1 * mm
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    left: parent.left
+                    right: parent.right
+                    margins: 1 * mm
+                }
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
                 color: 'black'

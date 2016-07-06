@@ -51,8 +51,6 @@ class Entry: public EntryBase
 {
     Q_OBJECT
 
-    friend class CommentsModel;
-
     Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated)
     Q_PROPERTY(QString     createdAt      MEMBER _createdAt         NOTIFY updated)
     Q_PROPERTY(QString     url            MEMBER _url               NOTIFY updated)
@@ -95,6 +93,8 @@ public:
     bool loading() const;
 
     Tlog* tlog() const;
+
+    int commentsCount() const;
 
 public slots:
     void setId(const int id);

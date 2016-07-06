@@ -21,6 +21,7 @@
 #include "cache/cachemanager.h"
 #include "cache/cachedimage.h"
 #include "models/feedmodel.h"
+#include "models/calendarmodel.h"
 #include "models/commentsmodel.h"
 #include "models/attachedimagesmodel.h"
 #include "models/usersmodeltlog.h"
@@ -58,6 +59,7 @@ int main(int argc, char *argv[])
 #endif
 
     qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
+    qmlRegisterType<CalendarModel>      ("org.binque.taaasty", 1, 0, "CalendarModel");
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
     qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
     qmlRegisterType<UsersModelTlog>     ("org.binque.taaasty", 1, 0, "UsersModelTlog");
@@ -66,6 +68,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<UsersModel>("org.binque.taaasty", 1, 0, "UsersModel", "Use subclasses instead");
 
     qmlRegisterType<Entry>          ("org.binque.taaasty", 1, 0, "TlogEntry");
+    qmlRegisterType<CalendarEntry>  ("org.binque.taaasty", 1, 0, "CalendarEntry");
     qmlRegisterType<Comment>        ("org.binque.taaasty", 1, 0, "Comment");
     qmlRegisterType<User>           ("org.binque.taaasty", 1, 0, "User");
     qmlRegisterType<Author>         ("org.binque.taaasty", 1, 0, "Author");

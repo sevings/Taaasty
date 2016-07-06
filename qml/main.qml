@@ -6,8 +6,8 @@ import ImageCache 2.0
 ApplicationWindow {
     id: window
     visible: true
-    width: 480
-    height: 800
+    width: 540
+    height: 960
     readonly property bool darkTheme: Settings.darkTheme
     property color backgroundColor: darkTheme ? 'black' : '#eff3f7'
     property color textColor: darkTheme ? 'white' : '#424d52'
@@ -40,7 +40,7 @@ ApplicationWindow {
         loadingText.visible = false;
     }
     onClosing: {
-        if (notifsView.state === "opened") {
+        if (notifsShows) {
             hideNotifs();
             close.accepted = false;
         }
@@ -167,6 +167,14 @@ ApplicationWindow {
         stack.push(feed,
                    {
                        mode: FeedModel.TlogMode,
+                       tlogId: tlogId,
+                       poppable: true
+                   }
+                   )
+    }
+    function pushCalendar(tlogId) {
+        stack.push(stack.calendar,
+                   {
                        tlogId: tlogId,
                        poppable: true
                    }
@@ -388,6 +396,7 @@ ApplicationWindow {
         }
         property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack);
         property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack);
+        property Component calendar:            Qt.createComponent("CalendarView.qml",      Component.Asynchronous, stack);
         property Component users:               Qt.createComponent("UsersView.qml",         Component.Asynchronous, stack);
         property Component loginDialog:         Qt.createComponent("LoginDialog.qml",       Component.Asynchronous, stack);
         property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack);

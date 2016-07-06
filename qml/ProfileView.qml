@@ -29,16 +29,20 @@ Pane {
         }
         Column {
             id: column
-            anchors.left: parent.left
-            anchors.right: parent.right
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
             spacing: 1 * mm
             visible: !tlog.loading
             MyImage {
                 id: bigAvatar
-                anchors.topMargin: 2 * mm
-                anchors.bottomMargin: 2 * mm
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    topMargin: 2 * mm
+                    bottomMargin: 2 * mm
+                    left: parent.left
+                    right: parent.right
+                }
                 height: width
                 url: author.largePic
                 savable: true
@@ -46,54 +50,68 @@ Pane {
             }
             ThemedText {
                 id: name
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 font.pointSize: window.fontBiggest
                 horizontalAlignment: Text.AlignHCenter
                 text: author.name
                 height: text.length > 0 ? paintedHeight : 0
             }
             ThemedText {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 horizontalAlignment: Text.AlignHCenter
                 text: author.title
                 height: text.length > 0 ? paintedHeight : 0
             }
             ThemedText {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 horizontalAlignment: Text.AlignHCenter
                 text: author.isFemale ? 'Девушка' : 'Парень'
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
             }
             ThemedText {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 horizontalAlignment: Text.AlignHCenter
                 text: author.lastSeenAt
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
             }
             ThemedText {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 horizontalAlignment: Text.AlignHCenter
                 text: author.isPrivacy ? 'Закрытый тлог' : 'Открытый тлог'
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
             }
             ThemedText {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 horizontalAlignment: Text.AlignHCenter
                 text: author.daysCount
                 height: text.length > 0 ? paintedHeight : 0
             }
             ThemedText {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 horizontalAlignment: Text.AlignHCenter
                 text: {
                     switch (tlog.myRelationship) {
@@ -115,8 +133,10 @@ Pane {
                          && Tasty.isAuthorized
             }
             ThemedText {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 horizontalAlignment: Text.AlignHCenter
                 text: tlog.hisRelationship === Tlog.Friend ? 'Следит за вашим тлогом'
                                                            : 'Не следит за вашим тлогом'
@@ -126,17 +146,21 @@ Pane {
                          && Tasty.isAuthorized
             }
             Item {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 height: tlogVoteButton.height
                 property int tlogMode: Trainer.typeOfTlog(tlog.tlogId)
 //                onTlogModeChanged: console.log('tlog mode', tlogMode)
                 enabled: readButton.enabled
                 ThemedButton {
                     id: tlogVoteAgainstButton
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.topMargin: 0
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        topMargin: 0
+                    }
                     height: 6 * mm
                     width: (parent.width - 3 * mm) / 2
                     text: 'Фу…'
@@ -151,9 +175,11 @@ Pane {
                 }
                 ThemedButton {
                     id: tlogVoteButton
-                    anchors.top: parent.top
-                    anchors.right: parent.right
-                    anchors.topMargin: 0
+                    anchors {
+                        top: parent.top
+                        right: parent.right
+                        topMargin: 0
+                    }
                     height: tlogVoteAgainstButton.height
                     width: tlogVoteAgainstButton.width
                     text: 'Да!'
@@ -167,25 +193,50 @@ Pane {
             }
             ThemedButton {
                 id: readButton
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 text: author.isFlow ? 'Читать' : author.publicEntriesCount
-                onClicked: window.pushTlog(tlog.tlogId)
+                onClicked: window.pushTlog(author.id)
                 enabled: !author.isPrivacy || tlog.myRelationship === Tlog.Friend || tlog.myRelationship === Tlog.Me
             }
             ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                id: calendarButton
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                text: 'Обзор постов'
+                onClicked: window.pushCalendar(author.id)
+                enabled: readButton.enabled
+            }
+            ThemedButton {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 text: tlog.followersCount
                 onClicked: window.pushUsers(UsersModel.FollowersMode, author.id, tlog)
                 visible: tlog.tlogId === author.id && !author.isFlow
             }
             ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 text: tlog.followingsCount
                 onClicked: window.pushUsers(UsersModel.FollowingsMode, author.id, tlog)
                 visible: tlog.tlogId === author.id && !author.isFlow
+            }
+            ThemedButton {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                text: tlog.ignoredCount
+                onClicked: window.pushUsers(UsersModel.MyIgnoredMode)
+                visible: tlog.myRelationship === Tlog.Me
             }
         }
     }

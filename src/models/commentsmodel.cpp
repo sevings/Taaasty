@@ -22,8 +22,8 @@ CommentsModel::CommentsModel(Entry *entry)
     if (!entry)
         return;
 
-    _entryId = entry->_id;
-    _totalCount = entry->_commentsCount;
+    _entryId = entry->entryId();
+    _totalCount = entry->commentsCount();
 
     Q_TEST(connect(entry, SIGNAL(commentAdded(QJsonObject)), this, SLOT(_addComment(QJsonObject))));
     Q_TEST(connect(NotificationsModel::instance(), SIGNAL(commentAdded(int,const Notification*)),
@@ -123,21 +123,21 @@ void CommentsModel::_addComments(const QJsonObject data)
         return;
     }
 
+    beginInsertRows(QModelIndex(), 0, feed.size() - 1);
+
     _setTotalCount(data.value("total_count").toInt());
 
     _comments.reserve(_comments.size() + feed.size());
 
     for (int i = 0; i < feed.size(); i++)
     {
-        beginInsertRows(QModelIndex(), i, i);
-
         auto cmt = new Comment(feed.at(i).toObject(), this);
         _comments.insert(i, cmt);
 
         Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
-
-        endInsertRows();
     }
+
+    endInsertRows();
 
     if (_comments.size() >= _totalCount)
         emit hasMoreChanged();

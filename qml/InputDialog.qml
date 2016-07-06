@@ -32,16 +32,20 @@ Popup {
             else if (mode === 'save')
                 'Название изображения';
         }
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
         height: contentHeight
     }
     LineInput {
         id: input
-        anchors.top: label.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors {
+            top: label.bottom
+            left: parent.left
+            right: parent.right
+        }
         onAccepted: {
             if (acceptButton.enabled)
                 window.handleInputLine(mode, input.text);
@@ -57,9 +61,11 @@ Popup {
     }
     ThemedButton {
         id: acceptButton
-        anchors.top: input.bottom
-        anchors.right: parent.right
-        anchors.left: parent.left
+        anchors {
+            top: input.bottom
+            right: parent.right
+            left: parent.left
+        }
         width: window.width / 5
         text: {
             if (mode === 'tlog')

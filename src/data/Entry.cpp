@@ -43,6 +43,7 @@ void EntryBase::load(int id)
 
 void EntryBase::_initBase(QJsonObject data)
 {
+    _id     = data.value("id").toInt();
     _author = new Author(data.value("author").toObject(), this);
     _type   = data.value("type").toString();
     _text   = data.value("text").toString().trimmed();
@@ -215,7 +216,8 @@ void Entry::favorite()
 
 void Entry::_init(const QJsonObject data)
 {
-    _id              = data.value("id").toInt();
+    _initBase(data);
+
     _createdAt       = Tasty::parseDate(data.value("created_at").toString());
     _url             = data.value("entry_url").toString();
     _isVotable       = data.value("is_voteable").toBool();
@@ -233,8 +235,6 @@ void Entry::_init(const QJsonObject data)
     _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
                                          : nullptr; // music?
 //    _imagePreview    = data.value("preview_image").toObject();
-
-    _initBase(data);
 
     _correctHtml();
 
@@ -328,6 +328,11 @@ void Entry::_setNotLoading()
 
     if (!_tlog || _tlog->tlogId() <= 0)
         emit updatingError(); // TODO: emit it only after setId()
+}
+
+int Entry::commentsCount() const
+{
+    return _commentsCount;
 }
 
 

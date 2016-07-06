@@ -3,9 +3,10 @@ import org.binque.taaasty 1.0
 
 MyImage {
     id: avatar
-    anchors.top: parent.top
-    anchors.left: parent.left
-    //anchors.margins: 1 * mm
+    anchors {
+        top: parent.top
+        left: parent.left
+    }
     width: 8 * mm
     height: 8 * mm
     property User user: User { }

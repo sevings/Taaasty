@@ -16,6 +16,8 @@ Pane {
             title = 'Подписчики';
         else if (mode === UsersModel.FollowingsMode)
             title = 'Подписки';
+        else if (mode === UsersModel.MyIgnoredMode)
+            title = 'Заблокированы';
         else if (mode === UsersModel.FireMode)
             title = 'Интересные тлоги';
         else if (mode === UsersModel.WaterMode)
@@ -30,9 +32,11 @@ Pane {
     }
     MyListView {
         id: users
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
         visible: count > 0
         height: contentHeight > parent.height ? parent.height : contentHeight
         Component.onCompleted: {
@@ -54,9 +58,11 @@ Pane {
             height: usersAvatar.height + 2 * mm
             Rectangle {
                 id: fillRect
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                    left: parent.left
+                }
                 width: parent.width
                 color: window.greenColor
                 visible: usersMouse.pressed || removing.running
@@ -73,9 +79,11 @@ Pane {
             }
             SmallAvatar {
                 id: usersAvatar
-                anchors.top: undefined
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: 1 * mm
+                anchors {
+                    top: undefined
+                    verticalCenter: parent.verticalCenter
+                    margins: 1 * mm
+                }
                 user: model.user
                 Poppable {
                     body: back
@@ -98,11 +106,13 @@ Pane {
                 font.pointSize: window.fontBigger
                 color: window.textColor //(window.secondMode === 'bayes' && !bayes_include) ? '#808080' : window.textColor
                 text: user.name
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: usersAvatar.right
-                anchors.right: parent.right
-                anchors.leftMargin: 1 * mm
-                anchors.rightMargin: 1 * mm
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    left: usersAvatar.right
+                    right: parent.right
+                    leftMargin: 1 * mm
+                    rightMargin: 1 * mm
+                }
                 elide: Text.ElideRight
             }
             NumberAnimation {
@@ -133,15 +143,5 @@ Pane {
                 y: 1 * mm
             }
         }
-        //    footer: Item {
-        //        anchors.left: parent.left
-        //        anchors.right: parent.right
-        //        height: usersAdd.visible ? usersAdd.height : 0
-        //        MessageEditor {
-        //            id: usersAdd
-        //            visible: window.secondMode === 'bayes'
-        //            onSent: Bayes.addTlog(users.type, usersAdd.message.trim());
-        //        }
-        //    }
     }
 }

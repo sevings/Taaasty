@@ -7,10 +7,6 @@ Popup {
     closable: false
     property string title
     property Tlog tlog
-//    gradient: Gradient {
-//        GradientStop { position: 0; color: '#373737' }
-//        GradientStop { position: 1; color: '#000000' }
-//    }
     SmallAvatar {
         id: avatar
         anchors.left: parent.left
@@ -22,18 +18,22 @@ Popup {
         text: footer.title || footer.tlog.author.name
         font.pointSize: window.fontBigger
         color: 'white'
-        anchors.left: avatar.right
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
+        anchors {
+            left: avatar.right
+            right: parent.right
+            verticalCenter: parent.verticalCenter
+        }
         horizontalAlignment: Text.AlignLeft
         elide: Text.ElideRight
         wrapMode: Text.NoWrap
     }
     MouseArea {
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: notifButton.visible ? notifButton.left : parent.right
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            left: parent.left
+            right: notifButton.visible ? notifButton.left : parent.right
+        }
         onClicked: {
             if (window.notifsShows)
                 window.hideNotifs();
@@ -43,9 +43,11 @@ Popup {
     }
     MouseArea {
         id: notifButton
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        anchors {
+            right: parent.right
+            top: parent.top
+            bottom: parent.bottom
+        }
         width: parent.height * 1.5
         visible: Tasty.isAuthorized
         onClicked: {
@@ -53,9 +55,11 @@ Popup {
         }
         Rectangle {
             id: notifNotice
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.top
-            color: window.unreadNotifications ? window.greenColor : '#575757'
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                verticalCenter: parent.top
+            }
+            color: window.unreadNotifications ? window.greenColor : (window.darkTheme ? '#575757' : '#8d9aa6')
             width: 1.5 * mm
             height: width
             radius: height / 2

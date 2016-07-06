@@ -17,23 +17,29 @@ Rectangle {
     }
     LineInput {
         id: titleInput
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
     }
     TextEditor {
         id: textInput
-        anchors.top: titleInput.bottom
-        anchors.bottom: formatButtons.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors {
+            top: titleInput.bottom
+            bottom: formatButtons.top
+            left: parent.left
+            right: parent.right
+        }
     }
     Row {
         id: formatButtons
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: post.top
-        anchors.margins: 1 * mm
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: post.top
+            margins: 1 * mm
+        }
         spacing: 1 * mm
         ThemedButton {
             id: italic
@@ -63,9 +69,11 @@ Rectangle {
     }
     ThemedButton {
         id: post
-        anchors.bottom: notNow.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors {
+            bottom: notNow.top
+            left: parent.left
+            right: parent.right
+        }
         text: 'Отправить ' + back.where
         onClicked: {
 //            Settings.lastTitle = '';
@@ -74,9 +82,11 @@ Rectangle {
     }
     ThemedButton {
         id: notNow
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
         text: 'Позже'
         onClicked: {
             Settings.lastTitle = titleInput.text;

@@ -26,11 +26,13 @@ ProgressBar {
         implicitHeight: 1 * mm + label.height + 1 * mm + control.padding * 2
         ThemedText {
             id: label
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 5 * mm
-            anchors.rightMargin: anchors.leftMargin
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+                leftMargin: 5 * mm
+                rightMargin: anchors.leftMargin
+            }
             text: control.text + (control.value <= control.to && control.to > 0
                                   ? ' — ' + (control.percents ? Math.round(control.value / control.to * 100) + '%'
                                                               : control.value + '/' + control.to) : '')

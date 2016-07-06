@@ -66,7 +66,7 @@ int CalendarModel::lastEntryId() const
     if (_calendar.isEmpty())
         return 0;
 
-    return _calendar.last()->id(); // TODO: not zero
+    return _calendar.last()->id();
 }
 
 
@@ -99,8 +99,14 @@ void CalendarModel::_setCalendar(QJsonObject data)
         auto markers = periods.at(i).toObject().value("markers").toArray();
         for (int j = markers.size(); j >= 0; j--)
         {
-            auto entry = markers.at(j).toObject();
-            _calendar << new CalendarEntry(entry, this);
+            auto entry = new CalendarEntry(markers.at(j).toObject(), this);
+            if (entry->id() <= 0)
+            {
+                delete entry;
+                continue;
+            }
+
+            _calendar << entry;
         }
     }
 

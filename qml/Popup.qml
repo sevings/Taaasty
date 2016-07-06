@@ -2,8 +2,10 @@ import QtQuick 2.7
 
 Rectangle {
     id: popup
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors {
+        left: parent.left
+        right: parent.right
+    }
     y: 0
     z: 20
     visible: y < window.height || !closable
@@ -38,16 +40,20 @@ Rectangle {
             name: "opened"
             AnchorChanges {
                 target: popup
-                anchors.top: undefined
-                anchors.bottom: parent.bottom
+                anchors {
+                    top: undefined
+                    bottom: parent.bottom
+                }
             }
         },
         State {
             name: "closed"
             AnchorChanges {
                 target: popup
-                anchors.top: parent.bottom
-                anchors.bottom: undefined
+                anchors {
+                    top: parent.bottom
+                    bottom: undefined
+                }
             }
         }
     ]
@@ -68,9 +74,11 @@ Rectangle {
         }
     ]
     MouseArea {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.top
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.top
+        }
         height: parent.y
         visible: closable && parent.visible
         onClicked: closing()

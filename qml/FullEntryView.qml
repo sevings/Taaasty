@@ -32,9 +32,11 @@ Pane {
     signal addGreeting(string slug)
     MyListView {
         id: fullEntry
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: !entry.loading
         model: commentsModel
@@ -64,11 +66,13 @@ Pane {
                 id: nameText
                 text: comment.user.name
                 color: window.textColor
-                anchors.top: parent.top
-                anchors.left: commentAvatar.right
-                anchors.right: commentDate.left
-                anchors.leftMargin: 1 * mm
-                anchors.rightMargin: 1 * mm
+                anchors {
+                    top: parent.top
+                    left: commentAvatar.right
+                    right: commentDate.left
+                    leftMargin: 1 * mm
+                    rightMargin: 1 * mm
+                }
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
                 font.bold: true
@@ -79,20 +83,24 @@ Pane {
                 id: commentDate
                 text: comment.createdAt
                 color: window.secondaryTextColor
-                anchors.baseline: nameText.baseline
-                anchors.right: parent.right
-                anchors.leftMargin: 1 * mm
-                anchors.rightMargin: 1 * mm
+                anchors {
+                    baseline: nameText.baseline
+                    right: parent.right
+                    leftMargin: 1 * mm
+                    rightMargin: 1 * mm
+                }
                 font.pointSize: window.fontSmaller
             }
             Text {
                 id: commentText
                 text: comment.html
                 color: window.textColor
-                anchors.rightMargin: 1 * mm
-                anchors.top: nameText.bottom
-                anchors.left: nameText.left
-                anchors.right: parent.right
+                anchors {
+                    rightMargin: 1 * mm
+                    top: nameText.bottom
+                    left: nameText.left
+                    right: parent.right
+                }
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
                 textFormat: Text.RichText
@@ -111,10 +119,12 @@ Pane {
             }
             ListView {
                 id: fullEntryImages
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottomMargin: 1 * mm
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                    bottomMargin: 1 * mm
+                }
                 interactive: false
                 spacing: 1 * mm
                 property AttachedImagesModel imagesModel: entry.attachedImagesModel
@@ -123,8 +133,10 @@ Pane {
                 model: imagesModel
                 delegate: MyImage {
                     id: picture
-                    anchors.topMargin: 1 * mm
-                    anchors.bottomMargin: 1 * mm
+                    anchors {
+                        topMargin: 1 * mm
+                        bottomMargin: 1 * mm
+                    }
                     width: window.width
                     height: image.height / image.width * width
                     url: image.url
@@ -136,10 +148,12 @@ Pane {
             MediaLink {
                 id: mediaLink
                 visible: entry.media
-                anchors.top: fullEntryImages.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottomMargin: 1 * mm
+                anchors {
+                    top: fullEntryImages.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottomMargin: 1 * mm
+                }
                 media: entry.media
                 Poppable {
                     body: back
@@ -154,9 +168,11 @@ Pane {
             ThemedText {
                 id: fullTitle
                 text: entry.title
-                anchors.top: mediaLink.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    top: mediaLink.bottom
+                    left: parent.left
+                    right: parent.right
+                }
                 font.pointSize: (entry.text.length > 0 ? window.fontBigger
                                                       : window.fontNormal)
                 textFormat: Text.RichText
@@ -166,10 +182,12 @@ Pane {
             ThemedText {
                 id: fullContent
                 text: entry.text
-                anchors.top: fullTitle.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: entry.type === 'quote' ? 5 * mm : 1 * mm
+                anchors {
+                    top: fullTitle.bottom
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: entry.type === 'quote' ? 5 * mm : 1 * mm
+                }
                 textFormat: Text.RichText
                 height: entry.text.length > 0 ? contentHeight : entry.title.length > 0 ? -1 * mm : 0
                 onLinkActivated: window.openLink(link)
@@ -177,9 +195,11 @@ Pane {
             ThemedText {
                 id: quoteSource
                 text: entry.source
-                anchors.top: fullContent.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    top: fullContent.bottom
+                    left: parent.left
+                    right: parent.right
+                }
                 font.pointSize: window.fontSmaller
                 font.italic: true
                 textFormat: Text.RichText
@@ -188,27 +208,33 @@ Pane {
             }
             Text {
                 id: fullEntryDate
+                anchors {
+                    top: quoteSource.bottom
+                    left: parent.left
+                    margins: 1 * mm
+                }
                 text: entry.createdAt
                 color: window.secondaryTextColor
-                anchors.top: quoteSource.bottom
-                anchors.left: parent.left
-                anchors.margins: 1 * mm
                 font.pointSize: window.fontSmallest
             }
             Text {
                 id: fullEntryCommentsCount
+                anchors {
+                    top: quoteSource.bottom
+                    right: parent.right
+                    margins: 1 * mm
+                }
                 text: entry.commentsCount + ' коммент.'
                 color: window.secondaryTextColor
-                anchors.top: quoteSource.bottom
-                anchors.right: parent.right
-                anchors.margins: 1 * mm
                 font.pointSize: window.fontSmallest
             }
             Rectangle {
                 id: br
-                anchors.top: fullEntryDate.bottom
-                anchors.left: parent.left
-                anchors.margins: 1 * mm
+                anchors {
+                    top: fullEntryDate.bottom
+                    left: parent.left
+                    margins: 1 * mm
+                }
                 height: 0.5 * mm
                 property int maxWidth: window.width - 2 * mm
                 property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
@@ -227,9 +253,11 @@ Pane {
             }
             ThemedButton {
                 id: fullEntryFavButton
-                anchors.top: br.bottom
-                anchors.left: parent.left
-                anchors.margins: 1 * mm
+                anchors {
+                    top: br.bottom
+                    left: parent.left
+                    margins: 1 * mm
+                }
                 text: '*'
                 height: 6 * mm
                 width: (parent.width - 5 * mm) / 4
@@ -240,9 +268,11 @@ Pane {
             }
             ThemedButton {
                 id: fullEntryWatchButton
-                anchors.top: br.bottom
-                anchors.left: fullEntryFavButton.right
-                anchors.margins: 1 * mm
+                anchors {
+                    top: br.bottom
+                    left: fullEntryFavButton.right
+                    margins: 1 * mm
+                }
                 text: 'V'
                 height: 6 * mm
                 width: fullEntryFavButton.width
@@ -253,9 +283,11 @@ Pane {
             }
             ThemedButton {
                 id: fullEntryVoteAgainstButton
-                anchors.top: br.bottom
-                anchors.left: fullEntryWatchButton.right
-                anchors.margins: 1 * mm
+                anchors {
+                    top: br.bottom
+                    left: fullEntryWatchButton.right
+                    margins: 1 * mm
+                }
                 text: '-'
                 height: 6 * mm
                 width: fullEntryFavButton.width
@@ -266,10 +298,12 @@ Pane {
             }
             ThemedButton {
                 id: fullEntryVoteButton
-                anchors.top: br.bottom
-                anchors.left: fullEntryVoteAgainstButton.right
-                anchors.right: parent.right
-                anchors.margins: 1 * mm
+                anchors {
+                    top: br.bottom
+                    left: fullEntryVoteAgainstButton.right
+                    right: parent.right
+                    margins: 1 * mm
+                }
                 text: '+' + (entry.isVotable ? ' ' + entry.rating.votes : '')
                 height: 6 * mm
                 enabled: !entry.rating.isVotedAgainst
@@ -279,10 +313,12 @@ Pane {
             }
             ThemedButton {
                 id: loadMoreButton
-                anchors.top: fullEntryVoteButton.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.margins: 1 * mm
-                anchors.topMargin: 2 * mm
+                anchors {
+                    top: fullEntryVoteButton.bottom
+                    horizontalCenter: parent.horizontalCenter
+                    margins: 1 * mm
+                    topMargin: 2 * mm
+                }
                 text: enabled || fullEntry.count > 0 ? 'Еще' : ''
                 height: visible ? 6 * mm : 0
                 width: parent.width / 3
@@ -337,15 +373,19 @@ Pane {
         onClosing: menu.close()
         Column {
             id: menuColumn
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.topMargin: 1 * mm
-            anchors.bottomMargin: 1 * mm
+            anchors {
+                left: parent.left
+                right: parent.right
+                top: parent.top
+                topMargin: 1 * mm
+                bottomMargin: 1 * mm
+            }
             spacing: 1 * mm
             ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 text: 'Ответить'
                 onClicked: {
                     addGreeting(menu.comment.user.slug);
@@ -364,8 +404,10 @@ Pane {
 //                visible: menu.comment && menu.comment.isEditable === true
 //            }
             ThemedButton {
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 text: 'Удалить'
                 onClicked: {
                     menu.comment.remove();

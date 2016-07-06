@@ -2,8 +2,10 @@ import QtQuick 2.7
 
 Item {
     id: editor
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors {
+        left: parent.left
+        right: parent.right
+    }
     implicitHeight: input.height + 2 * mm
     property alias message: input.text
     signal sent
@@ -16,15 +18,19 @@ Item {
     }
     TextEditor {
         id: input
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: button.left
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: button.left
+        }
         height: 12 * mm
     }
     ThemedButton {
         id: button
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
+        anchors {
+            bottom: parent.bottom
+            right: parent.right
+        }
         width: parent.width / 5
         text: '+'
         enabled: input.text

@@ -374,10 +374,10 @@ void Trainer::_addEntriesToLoad()
         auto entry = _curTlog->at(i);
         auto id = entry->id();
 
-        if (id <= _loadAfter && _loadAfter > 0)
+        if (id <= _loadAfter)
             break;
 
-        if (id <= 0 || _bayes->_isEntryAdded(id))
+        if (_bayes->_isEntryAdded(id))
             continue;
 
         _trainingEntriesCount++;

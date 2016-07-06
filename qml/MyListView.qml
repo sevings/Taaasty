@@ -10,19 +10,18 @@ ListView {
     interactive: parent.x <= 0
     property bool poppable: true
     boundsBehavior: Flickable.DragOverBounds
-//    signal aboveBegin
-//    onDraggingVerticallyChanged: {
-//        if (!draggingVertically && contentY < -8 * mm)
-//            list.aboveBegin();
-//    }
     onVerticalVelocityChanged: {
         if (!dragging)
             return;
 
-        if (verticalVelocity > 0)
+        if (verticalVelocity > 0) {
             window.hideFooter();
-        else if (verticalVelocity < 0)
+//            upButton.state = "down";
+        }
+        else if (verticalVelocity < 0) {
             window.showFooter();
+//            upButton.state = "up";
+        }
     }
     add: Transition {
         NumberAnimation { property: "opacity"; from: 0;   to: 1.0; duration: 300 }
@@ -37,8 +36,10 @@ ListView {
     }
     Rectangle {
         id: scrollbar
-        anchors.right: parent.right
-        anchors.margins: 0.5 * mm
+        anchors {
+            right: parent.right
+            margins: 0.5 * mm
+        }
         y: parent.visibleArea.yPosition * (parent.height - height + h)
         width: 1 * mm
         property int h: parent.visibleArea.heightRatio * parent.height
@@ -54,4 +55,56 @@ ListView {
         }
         radius: 0.5 * mm
     }
+/*    Rectangle {
+        id: upButton
+        anchors {
+            right: parent.right
+            margins: 1 * mm
+        }
+        width: 10 * mm
+        height: width
+        radius: width / 2
+        color: window.textColor
+        opacity: 0.3
+        visible: y < window.height
+        Text {
+            anchors.centerIn: parent
+            font.pointSize: window.fontBiggest
+            text: '^'
+            color: window.textColor
+        }
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                upButton.state = "down";
+                list.positionViewAtBeginning();
+            }
+        }
+        state: "down"
+        states: [
+            State {
+                name: "up"
+                PropertyChanges {
+                    target: upButton
+                    y: window.height - height - 10 * mm
+                }
+            },
+            State {
+                name: "down"
+                PropertyChanges {
+                    target: upButton
+                    y: window.height
+                }
+            }
+        ]
+        transitions: [
+            Transition {
+                NumberAnimation {
+                    easing.type: Easing.OutCubic
+                    duration: 400
+                    property: 'y'
+                }
+            }
+        ]
+    }*/
 }

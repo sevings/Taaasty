@@ -98,11 +98,13 @@ Rectangle {
                 text: '<b>' + notification.sender.name + '</b> ' 
                         + notification.actionText
                 color: window.textColor
-                anchors.top: notifAvatar.top
-                anchors.left: notifAvatar.right
-                anchors.right: unreadNotice.left
-                anchors.leftMargin: 1 * mm
-                anchors.rightMargin: 1 * mm
+                anchors {
+                    top: notifAvatar.top
+                    left: notifAvatar.right
+                    right: unreadNotice.left
+                    leftMargin: 1 * mm
+                    rightMargin: 1 * mm
+                }
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
                 style: Text.Raised
@@ -110,9 +112,11 @@ Rectangle {
             }
             Rectangle {
                 id: unreadNotice
-                anchors.verticalCenter: notifAvatar.verticalCenter
-                anchors.right: parent.right
-                anchors.margins: 2 * mm
+                anchors {
+                    verticalCenter: notifAvatar.verticalCenter
+                    right: parent.right
+                    margins: 2 * mm
+                }
                 width: 1.5 * mm
                 height: width
                 radius: height / 2
@@ -122,9 +126,11 @@ Rectangle {
             ThemedText {
                 id: notifText
                 text: notification.text
-                anchors.top: notifName.bottom
-                anchors.left: notifName.left
-                anchors.right: notifName.right
+                anchors {
+                    top: notifName.bottom
+                    left: notifName.left
+                    right: notifName.right
+                }
                 font.pointSize: window.fontSmaller
             }
         }

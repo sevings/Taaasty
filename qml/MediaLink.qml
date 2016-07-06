@@ -14,10 +14,12 @@ MyImage {
         Qt.openUrlExternally(media.url)
     }
     ThemedText {
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 0.5 * mm
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            margins: 0.5 * mm
+        }
         horizontalAlignment: Text.AlignHCenter
         font.pointSize: window.fontSmaller
         style: Text.Outline
