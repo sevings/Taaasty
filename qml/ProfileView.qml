@@ -235,7 +235,7 @@ Pane {
                     right: parent.right
                 }
                 text: tlog.ignoredCount
-                onClicked: window.pushUsers(UsersModel.MyIgnoredMode)
+                onClicked: window.pushUsers(UsersModel.MyIgnoredMode, author.id, tlog)
                 visible: tlog.myRelationship === Tlog.Me
             }
         }
