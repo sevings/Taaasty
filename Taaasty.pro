@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick quickcontrols2 sql concurrent network
+QT += qml quick quickcontrols2 sql concurrent network websockets
 
 android: QT += androidextras
 
@@ -33,7 +33,9 @@ SOURCES += src/main.cpp \
     src/data/Notification.cpp \
     src/data/Rating.cpp \
     src/data/Tlog.cpp \
-    src/data/User.cpp
+    src/data/User.cpp \
+    src/qpusher/channel.cpp \
+    src/qpusher/pusher.cpp
 
 RESOURCES += qml.qrc
 
@@ -72,7 +74,9 @@ HEADERS += \
     src/data/Notification.h \
     src/data/Rating.h \
     src/data/Tlog.h \
-    src/data/User.h
+    src/data/User.h \
+    src/qpusher/channel.h \
+    src/qpusher/pusher.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

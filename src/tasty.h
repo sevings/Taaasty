@@ -8,6 +8,7 @@
 #include "settings.h"
 
 class ApiRequest;
+class Pusher;
 
 
 
@@ -68,6 +69,10 @@ private slots:
 private:
     Settings* _settings;
     QNetworkAccessManager* _manager;
+
+    Pusher* _pusher;
+    QString _privateChannel;
+
     int _busy;
     int _entryImageWidth;
     int _commentImageWidth;

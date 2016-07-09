@@ -1,5 +1,6 @@
 #include "tasty.h"
 #include "apirequest.h"
+#include "qpusher/pusher.h"
 
 #include "defines.h"
 
@@ -13,6 +14,7 @@ Tasty::Tasty(QNetworkAccessManager* web)
     : QObject()
     , _settings(new Settings(this))
     , _manager(web ? web : new QNetworkAccessManager(this))
+    , _pusher(new Pusher("40dbf1d864d4b366b5e6", this))
     , _busy(0)
     , _entryImageWidth(_settings->maxImageWidth())
     , _commentImageWidth(_entryImageWidth)
@@ -21,6 +23,8 @@ Tasty::Tasty(QNetworkAccessManager* web)
 
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
+
+    _pusher->subscribe("live");
 }
 
 
