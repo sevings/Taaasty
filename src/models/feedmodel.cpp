@@ -31,7 +31,7 @@ FeedModel::FeedModel(QObject* parent)
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(_reloadRatings())));
 
-    setMode(LiveMode);
+    setMode(Tasty::instance()->isAuthorized() ? FriendsMode : LiveMode);
 }
 
 

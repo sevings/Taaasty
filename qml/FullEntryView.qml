@@ -187,6 +187,7 @@ Pane {
                     left: parent.left
                     right: parent.right
                     leftMargin: entry.type === 'quote' ? 5 * mm : 1 * mm
+                    rightMargin: anchors.leftMargin
                 }
                 textFormat: Text.RichText
                 height: entry.text.length > 0 ? contentHeight : entry.title.length > 0 ? -1 * mm : 0
@@ -352,7 +353,6 @@ Pane {
                     commentEditor.addGreeting(slug);
                 }
             }
-            Component.onCompleted: commentEditor.focus = true
         }
     }
     Popup {

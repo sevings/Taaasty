@@ -24,7 +24,7 @@ Tasty::Tasty(QNetworkAccessManager* web)
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
 
-    _pusher->subscribe("live");
+//    _pusher->subscribe("live");
 }
 
 

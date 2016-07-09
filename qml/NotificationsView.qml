@@ -5,10 +5,10 @@ Rectangle {
     id: back
     color: window.backgroundColor
     clip: true
-    height: parent.height
-    y: height
+    height: visible ? parent.height : 0
+    y: window.height
     z: 5
-    visible: y < height
+    visible: y < window.height
     state: "closed"
     states: [
         State {
@@ -47,6 +47,7 @@ Rectangle {
         anchors.fill: parent
         model: NotifsModel
         spacing: 2 * mm
+        cacheBuffer: back.visible ? 2 * window.height : 0
         delegate: MouseArea {
             id: notif
             width: window.width

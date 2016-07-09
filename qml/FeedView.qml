@@ -3,7 +3,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    property int mode: FeedModel.LiveMode
+    property int mode
     property int tlogId: 0
     property string slug: ''
     property int minRating: 0

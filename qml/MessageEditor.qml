@@ -9,7 +9,6 @@ Item {
     implicitHeight: input.height + 2 * mm
     property alias message: input.text
     signal sent
-    onFocusChanged: if (focus) input.focus = true
     function clear() {
         input.clear();
     }

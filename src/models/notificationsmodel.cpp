@@ -17,7 +17,7 @@
 
 NotificationsModel::NotificationsModel(QObject* parent)
     : QAbstractListModel(parent)
-    , _url("messenger/notifications.json?limit=20")
+    , _url("messenger/notifications.json?limit=2")
     , _loading(false)
     , _totalCount(1)
 #ifdef Q_OS_ANDROID
@@ -99,7 +99,7 @@ void NotificationsModel::fetchMore(const QModelIndex& parent)
     if (!_notifs.isEmpty())
     {
         auto lastId = _notifs.last()->_id;
-        url += QString("&to_notification_id=%1").arg(lastId);
+        url += QString("0&to_notification_id=%1").arg(lastId); // load ten times more
     }
     
     auto request = new ApiRequest(url, true);
