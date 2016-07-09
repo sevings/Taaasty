@@ -13,6 +13,7 @@ class Settings : public QObject
 
     Q_PROPERTY(QString  login               READ login              WRITE setLogin              NOTIFY loginChanged)
     Q_PROPERTY(QString  accessToken         READ accessToken        WRITE setAccessToken        NOTIFY accessTokenChanged)
+    Q_PROPERTY(int      userId              READ userId             WRITE setUserId             NOTIFY userIdChanged)
     Q_PROPERTY(int      maxImageWidth       READ maxImageWidth      WRITE setMaxImageWidth      NOTIFY maxImageWidthChanged)
     Q_PROPERTY(bool     autoloadImages      READ autoloadImages     WRITE setAutoloadImages     NOTIFY autoloadImagesChanged)
     Q_PROPERTY(bool     hideShortPosts      READ hideShortPosts     WRITE setHideShortPosts     NOTIFY hideShortPostsChanged)
@@ -32,6 +33,9 @@ public:
 
     QDateTime expiresAt() const;
     void setExpiresAt(const QString date);
+
+    int userId() const;
+    void setUserId(const int id);
 
     int maxImageWidth() const;
     void setMaxImageWidth(const int width);
@@ -57,6 +61,7 @@ public:
 signals:
     void loginChanged();
     void accessTokenChanged();
+    void userIdChanged();
     void maxImageWidthChanged();
     void autoloadImagesChanged(bool);
     void hideShortPostsChanged();

@@ -47,12 +47,14 @@ signals:
     void authorizationNeeded();
     void authorized();
 
-    void ratingChanged(const QJsonObject data);
+    void ratingChanged(QJsonObject data);
 
     void error(const int code, const QString text);
     void info(const QString text);
 
     void htmlRecorrectionNeeded();
+
+    void notification(const QJsonObject data);
 
 public slots:
     void authorize(const QString login, const QString password);
@@ -64,9 +66,15 @@ private slots:
 
     void _showNetAccessibility(QNetworkAccessManager::NetworkAccessibility accessible);
 
+    void _getPusherAuth();
+    void _subscribeToPrivate(const QJsonObject data);
+    void _handlePrivatePusherEvent(const QString event, const QString data);
+
     void _readMe(const QJsonObject data);
 
 private:
+    void _addPrivateChannel();
+
     Settings* _settings;
     QNetworkAccessManager* _manager;
 

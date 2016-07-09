@@ -9,6 +9,9 @@
 
 void Channel::subscribeToPrivate(const QString auth, const QString data)
 {
+    if (_subscribed)
+        return;
+
     _sendSubscription(auth, data);
 }
 

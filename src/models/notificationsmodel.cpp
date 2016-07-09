@@ -26,12 +26,13 @@ NotificationsModel::NotificationsModel(QObject* parent)
 {
     qDebug() << "NotificationsModel";
 
-    _timer.setInterval(60000);
-    _timer.setSingleShot(false);
-    _timer.start();
+//    _timer.setInterval(60000);
+//    _timer.setSingleShot(false);
+//    _timer.start();
 
-    Q_TEST(connect(&_timer, SIGNAL(timeout()),              this, SLOT(_check())));
-    Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(_reloadAll())));
+//    Q_TEST(connect(&_timer, SIGNAL(timeout()),                           this, SLOT(_check())));
+    Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()),              this, SLOT(_reloadAll())));
+    Q_TEST(connect(Tasty::instance(), SIGNAL(notification(QJsonObject)), this, SLOT(_addPush(QJsonObject))));
 }
 
 
@@ -139,24 +140,24 @@ QHash<int, QByteArray> NotificationsModel::roleNames() const
 
 
 
-void NotificationsModel::_check()
-{
-    if (_loading || !Tasty::instance()->isAuthorized())
-        return;
+//void NotificationsModel::_check()
+//{
+//    if (_loading || !Tasty::instance()->isAuthorized())
+//        return;
 
-    _loading = true;
+//    _loading = true;
 
-    QString url = _url;
-    if (!_notifs.isEmpty())
-    {
-        auto firstId = _notifs.first()->_id;
-        url += QString("&from_notification_id=%1").arg(firstId);
-    }
+//    QString url = _url;
+//    if (!_notifs.isEmpty())
+//    {
+//        auto firstId = _notifs.first()->_id;
+//        url += QString("&from_notification_id=%1").arg(firstId);
+//    }
     
-    auto request = new ApiRequest(url, true);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
-}
+//    auto request = new ApiRequest(url, true);
+//    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject))));
+//    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
+//}
 
 
 
@@ -220,25 +221,54 @@ void NotificationsModel::_addItems(QJsonObject data)
 
 
 
-void NotificationsModel::_addNewest(QJsonObject data)
-{
-//    qDebug() << "adding entries";
+//void NotificationsModel::_addNewest(QJsonObject data)
+//{
+////    qDebug() << "adding entries";
 
-    auto list = data.value("notifications").toArray();
-    if (list.isEmpty())
-    {
-        _loading = false;
-        return;
-    }
+//    auto list = data.value("notifications").toArray();
+//    if (list.isEmpty())
+//    {
+//        _loading = false;
+//        return;
+//    }
     
-    _totalCount = data.value("total_count").toInt();
+//    _totalCount = data.value("total_count").toInt();
 
-    beginInsertRows(QModelIndex(), 0, list.size() - 1);
+//    beginInsertRows(QModelIndex(), 0, list.size() - 1);
 
-    foreach(auto notif, list)
-    {
-        auto notification = new Notification(notif.toObject(), this);
-        _notifs.prepend(notification);
+//    foreach(auto notif, list)
+//    {
+//        auto notification = new Notification(notif.toObject(), this);
+//        _notifs.prepend(notification);
+
+//#ifdef Q_OS_ANDROID
+//    if (!notification->_read)
+//    {
+//        auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
+//                .arg(notification->actionText()).arg(notification->text());
+//        _androidNotifier->setNotification(text);
+//    }
+//#endif
+
+//        if (!notification->_read && notification->_action == "new_comment")
+//            emit commentAdded(notification->_parentId, notification);
+//    }
+        
+//    endInsertRows();
+
+//    _loading = false;
+
+//    emit unreadChanged();
+//}
+
+
+
+void NotificationsModel::_addPush(QJsonObject data)
+{
+    beginInsertRows(QModelIndex(), 0, 0);
+
+    auto notification = new Notification(data, this);
+    _notifs.prepend(notification);
 
 #ifdef Q_OS_ANDROID
     if (!notification->_read)
@@ -249,13 +279,10 @@ void NotificationsModel::_addNewest(QJsonObject data)
     }
 #endif
 
-        if (!notification->_read && notification->_action == "new_comment")
-            emit commentAdded(notification->_parentId, notification);
-    }
-        
-    endInsertRows();
+    if (!notification->_read && notification->_action == "new_comment")
+        emit commentAdded(notification->_parentId, notification);
 
-    _loading = false;
+    endInsertRows();
 
     emit unreadChanged();
 }

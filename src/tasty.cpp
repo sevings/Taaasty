@@ -1,9 +1,11 @@
 #include "tasty.h"
 #include "apirequest.h"
 #include "qpusher/pusher.h"
+#include "qpusher/channel.h"
 
 #include "defines.h"
 
+#include <QJsonDocument>
 #include <QDateTime>
 #include <QRegularExpression>
 #include <QDebug>
@@ -23,6 +25,9 @@ Tasty::Tasty(QNetworkAccessManager* web)
 
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
+
+    if (isAuthorized())
+        _addPrivateChannel();
 
 //    _pusher->subscribe("live");
 }
@@ -161,14 +166,16 @@ void Tasty::_readAccessToken(const QJsonObject data)
     auto apiKey = data.value("api_key").toObject();
     auto accessToken = apiKey.value("access_token").toString();
     auto expiresAt = apiKey.value("expires_at").toString();
-
-    qDebug() << "Access token:" << accessToken;
-    qDebug() << "Expires at: " << expiresAt;
+    auto userId = apiKey.value("user_id").toInt();
 
     _settings->setAccessToken(accessToken);
     _settings->setExpiresAt(expiresAt);
+    _settings->setUserId(userId);
 
     emit authorized();
+
+    _pusher->unsubscribe(_privateChannel);
+    _addPrivateChannel();
 }
 
 
@@ -181,7 +188,61 @@ void Tasty::_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility ac
 
 
 
+void Tasty::_getPusherAuth()
+{
+    auto socket = _pusher->socketId();
+    auto data = QString("socket_id=%1&channel_name=%2").arg(socket).arg(_privateChannel);
+
+    auto request = new ApiRequest("messenger/auth.json", true, QNetworkAccessManager::PostOperation, data);
+    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_subscribeToPrivate(QJsonObject)));
+}
+
+
+
+void Tasty::_subscribeToPrivate(const QJsonObject data)
+{
+    auto auth = data.value("auth").toString();
+    _pusher->channel(_privateChannel)->subscribeToPrivate(auth);
+}
+
+
+
+void Tasty::_handlePrivatePusherEvent(const QString event, const QString data)
+{
+    QJsonParseError jpe;
+    auto json = QJsonDocument::fromJson(data.toUtf8(), &jpe).object();
+    if (jpe.error != QJsonParseError::NoError)
+    {
+        qDebug() << "parse error: " << jpe.errorString();
+        qDebug() << "json:" << data;
+        return;
+    }
+
+
+    if (event == "push_notification")
+    {
+        emit notification(json);
+        return;
+    }
+
+    qDebug() << "Pusher event:" << event;
+    qDebug() << "Data:" << data;
+}
+
+
+
 void Tasty::_readMe(const QJsonObject data)
 {
     qDebug() << data.value("title").toString();
+}
+
+
+
+void Tasty::_addPrivateChannel()
+{
+    _privateChannel = QString("private-%1-messaging").arg(_settings->userId());
+    auto ch = _pusher->subscribe(_privateChannel, false);
+
+    Q_TEST(connect(ch, SIGNAL(authNeeded()),           this, SLOT(_getPusherAuth())));
+    Q_TEST(connect(ch, SIGNAL(event(QString,QString)), this, SLOT(_handlePrivatePusherEvent(QString,QString))));
 }

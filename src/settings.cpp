@@ -71,6 +71,22 @@ void Settings::setExpiresAt(const QString date)
 
 
 
+int Settings::userId() const
+{
+    return _settings.value("user_id").toInt();
+}
+
+
+
+void Settings::setUserId(const int id)
+{
+    _settings.setValue("user_id", id);
+
+    emit userIdChanged();
+}
+
+
+
 int Settings::maxImageWidth() const
 {
     return _settings.value("max_image_width").toInt();
