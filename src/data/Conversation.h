@@ -7,6 +7,7 @@ class Message;
 class Entry;
 class User;
 class Author;
+class MessagesModel;
 
 
 
@@ -29,6 +30,7 @@ class Conversation: public QObject
     Q_PROPERTY(QList<User*>     users           MEMBER _users           NOTIFY updated)
     Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
     Q_PROPERTY(Author*          recipient       MEMBER _recipient       NOTIFY updated)
+    Q_PROPERTY(MessagesModel*   messages        MEMBER _messages        NOTIFY updated)
     
 public:
     enum ConversationType {
@@ -74,6 +76,7 @@ private:
     QList<User*>        _users;
     QList<User*>        _deletedUsers;
     Author*             _recipient;
-    
+    MessagesModel*      _messages;
+
     bool _loading;
 };

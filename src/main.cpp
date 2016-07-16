@@ -40,6 +40,7 @@
 #include "data/Media.h"
 #include "data/Notification.h"
 #include "data/Message.h"
+#include "data/Conversation.h"
 #include "data/Rating.h"
 #include "data/Tlog.h"
 #include "data/User.h"
@@ -82,6 +83,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Media>          ("org.binque.taaasty", 1, 0, "Media");
     qmlRegisterType<Notification>   ("org.binque.taaasty", 1, 0, "Notification");
     qmlRegisterType<Message>        ("org.binque.taaasty", 1, 0, "Message");
+    qmlRegisterType<Conversation>   ("org.binque.taaasty", 1, 0, "Chat");
 
     qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");
 

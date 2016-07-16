@@ -34,7 +34,7 @@ void EntryBase::load(int id)
 
     _id = id;
 
-    auto request = new ApiRequest(QString("v1/entries/%1.json").arg(id));
+    auto request = new ApiRequest(QString("v1/entries/%1.json").arg(_id));
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initBase(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_maybeError())));
 }
@@ -130,6 +130,13 @@ void Entry::setId(const int id)
 
     _id = id;
 
+    reload();
+}
+
+
+
+void Entry::reload()
+{
     auto request = new ApiRequest(QString("v1/entries/%1.json").arg(_id));
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));

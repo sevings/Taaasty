@@ -11,6 +11,8 @@
 #include "User.h"
 #include "Author.h"
 
+#include "../models/messagesmodel.h"
+
 
 
 Conversation::Conversation(QObject* parent)
@@ -28,6 +30,7 @@ Conversation::Conversation(QObject* parent)
     , _lastMessage(nullptr)
     , _entry(nullptr)
     , _recipient(nullptr)
+    , _messages(nullptr)
     , _loading(false)
 {
     
@@ -40,6 +43,7 @@ Conversation::Conversation(const QJsonObject data, QObject *parent)
     , _lastMessage(nullptr)
     , _entry(nullptr)
     , _recipient(nullptr)
+    , _messages(nullptr)
     , _loading(false)
 {
     _init(data);
@@ -157,7 +161,10 @@ void Conversation::_init(const QJsonObject data)
      }
      else
          _recipient = nullptr;
-     
+
+     delete _messages;
+     _messages = new MessagesModel(this);
+
      qDeleteAll(_users);
      _users.clear();
      auto users = data.value("users").toArray();
@@ -169,7 +176,7 @@ void Conversation::_init(const QJsonObject data)
      users = data.value("users_deleted").toArray();
      foreach(auto userData, users)
         _deletedUsers << new User(userData.toObject(), this);
-        
+
      emit updated();
 }
 

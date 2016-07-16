@@ -11,17 +11,12 @@ Pane {
     property CommentsModel commentsModel: entry.commentsModel
     property bool showProfiles: tlog.tlogId !== window.anonymousId
     readonly property bool isFullEntryView: true
-    Component.onCompleted: {
-        if (commentsModel.rowCount() === 0)
-            commentsModel.loadMore();
-        else
-            commentsModel.check();
-    }
     Timer {
         interval: 20000
         running: back.visible
         repeat: true
         onTriggered: commentsModel.check()
+        triggeredOnStart: true
     }
     Poppable {
         body: back

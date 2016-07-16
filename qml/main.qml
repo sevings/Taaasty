@@ -121,6 +121,14 @@ ApplicationWindow {
                    }
                    )
     }
+    function pushMessages(chat) {
+        stack.push(stack.messages,
+                   {
+                       chat: chat,
+                       poppable: true
+                   }
+                   )
+    }
     function pushFullEntry(entry) {
         stack.push(stack.fullEntry,
                    {
@@ -405,7 +413,8 @@ ApplicationWindow {
                 poppable: StackView.index > 0
             }
         }
-        property Component chats:               Qt.createComponent("ChatsView.qml",     Component.Asynchronous, stack);
+        property Component chats:               Qt.createComponent("ChatsView.qml",         Component.Asynchronous, stack);
+        property Component messages:            Qt.createComponent("MessagesView.qml",      Component.Asynchronous, stack);
         property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack);
         property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack);
         property Component calendar:            Qt.createComponent("CalendarView.qml",      Component.Asynchronous, stack);

@@ -21,6 +21,7 @@ public:
 
     void load(int id);
 
+
     Author* author() const;
     QString text() const;
     QString title() const;
@@ -98,6 +99,7 @@ public:
 
 public slots:
     void setId(const int id);
+    void reload();
 
     void addComment(const QString text);
     void watch();

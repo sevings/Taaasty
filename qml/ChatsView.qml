@@ -3,20 +3,14 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    readonly property bool customTitle: true
+    readonly property string title: 'Сообщения'
     Poppable {
         body: back
-        Text {
-            visible: !listView.visible && !listView.model.hasMore
-            anchors.centerIn: parent
-            color: window.secondaryTextColor
-            horizontalAlignment: Text.AlignHCenter
-            font.pointSize: window.fontBigger
-            wrapMode: Text.Wrap
-            text: 'Нет бесед'
-        }
     }
     Splash {
-        visible: !listView.visible && listView.model.hasMore
+        visible: !listView.visible
+        text: listView.model.hasMore ? 'Загрузка…' : 'Нет бесед'
     }
     MyListView {
         id: listView
@@ -34,7 +28,13 @@ Pane {
             Poppable {
                 body: back
                 onClicked: {
-//                    window.pushFullEntry(entry);
+                    if (chat.entry) {
+                        if (!chat.entry.url.length)
+                            chat.entry.reload();
+                        window.pushFullEntry(chat.entry);
+                    }
+                    else
+                        window.pushMessages(chat);
                 }
             }
             SmallAvatar {
@@ -44,19 +44,14 @@ Pane {
                     margins: 1 * mm
                 }
                 user: chat.recipient
-//                Component.onCompleted: {
-//                    if (chat.recipient)
-//                        user = chat.recipient
-//                }
                 Poppable {
                     body: back
                     onClicked:
                     {
-                        if (chat.recipient)
-                            window.pushProfileById(chat.recipient.id);
-                        else if (chat.entry)
-                            window.pushFullEntryById(chat.entry.entryId);
+                        if (!chat.recipient)
+                            return;
 
+                        window.pushProfileById(chat.recipient.id);
                         mouse.accepted = true;
                     }
                 }
@@ -95,7 +90,7 @@ Pane {
                 }
                 font.pointSize: window.fontSmallest
                 color: window.secondaryTextColor
-                text: chat.lastMessage.content
+                text: chat.lastMessage.text
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
             }

@@ -172,6 +172,9 @@ void CommentsModel::_addLastComments(const QJsonObject data)
     }
 
     endInsertRows();
+
+    if (_comments.size() >= _totalCount)
+        emit hasMoreChanged();
 }
 
 
