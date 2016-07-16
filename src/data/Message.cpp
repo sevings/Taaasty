@@ -45,7 +45,7 @@ void Message::_init(const QJsonObject data)
     _conversationId = data.value("conversation_id").toInt();
     _read           = !data.value("read_at").isNull();
     _createdAt      = Tasty::parseDate(data.value("created_at").toString());
-    _text           = data.value("content_html").toString();
+    _text           = data.value("content_html").toString(); // TODO: SystemMessage
 //    _author         = new Author(data.value("author").toObject(), this);
     // _attachments    = data.value("attachments").toArray();
     

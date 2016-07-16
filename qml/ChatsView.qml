@@ -63,7 +63,7 @@ Pane {
                     left: chatAvatar.right
                     right: date.left
                 }
-                text: chat.recipient ? chat.recipient.name : (chat.entry.title || chat.entry.text)
+                text: chat.topic
                 font.pointSize: window.fontSmaller
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap

@@ -7,6 +7,8 @@ Pane {
     property Tlog tlog: Tlog {
         tlogId: chat.recipientId
     }
+    readonly property bool customTitle: chat.type === Chat.GroupConversation
+    readonly property string title: chat.topic
     Component.onCompleted: {
         chat.messages.check();
         listView.positionViewAtEnd();
@@ -60,22 +62,25 @@ Pane {
 //                    }
 //                }
 //            }
-//            ThemedText {
-//                id: messageNick
-//                anchors {
-//                    top: parent.top
-//                    left: messageAvatar.right
-//                    margins: 1 * mm
-//                    right: unreadMessage.visible ? unreadMessage.left : messageDate.left
-//                }
-//                text: message.author.name
-//                font.pointSize: window.fontSmaller
-//                elide: Text.ElideRight
-//                wrapMode: Text.NoWrap
-//                font.bold: true
-//                style: Text.Raised
-//                styleColor: window.greenColor
-//            }
+            ThemedText {
+                id: messageNick
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: unreadMessage.visible ? unreadMessage.left : messageDate.left
+                    margins: 1 * mm
+                    leftMargin: Settings.userId === message.userId ? 10 * mm : anchors.margins
+                }
+                readonly property Author author: chat.author(message.userId)
+                text: author.name
+                font.pointSize: window.fontSmaller
+                elide: Text.ElideRight
+                wrapMode: Text.NoWrap
+                font.bold: true
+                style: Text.Raised
+                styleColor: window.greenColor
+                visible: chat.type === Chat.GroupConversation
+            }
             ThemedText {
                 id: messageDate
                 anchors {

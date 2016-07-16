@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QHash>
 
 class Message;
 class Entry;
@@ -25,6 +26,7 @@ class Conversation: public QObject
     Q_PROPERTY(bool             isDisabled      MEMBER _isDisabled      NOTIFY updated)
     Q_PROPERTY(bool             notDisturb      MEMBER _notDisturb      NOTIFY updated)
     Q_PROPERTY(bool             isAnonymous     MEMBER _isAnonymous     NOTIFY updated)
+    Q_PROPERTY(QString          topic           MEMBER _topic           NOTIFY updated)
     Q_PROPERTY(Message*         lastMessage     MEMBER _lastMessage     NOTIFY updated)
     Q_PROPERTY(Entry*           entry           MEMBER _entry           NOTIFY updated)
     Q_PROPERTY(QList<User*>     users           MEMBER _users           NOTIFY updated)
@@ -36,6 +38,7 @@ public:
     enum ConversationType {
         UninitializedConversation,
         PublicConversation,
+        GroupConversation,
         PrivateConversation
     };
     
@@ -43,6 +46,7 @@ public:
 
     Conversation(QObject* parent = nullptr);
     Conversation(const QJsonObject data, QObject* parent = nullptr);
+    ~Conversation();
 
     int  id() const;
     void setId(int id);
@@ -51,6 +55,8 @@ public:
     void setEntryId(int entryId);
 
     int totalCount() const;
+
+    Q_INVOKABLE Author* author(int id);
 
 signals:
     void updated();
@@ -71,12 +77,16 @@ private:
     bool                _isDisabled;
     bool                _notDisturb;
     bool                _isAnonymous;
+    QString             _topic;
     Message*            _lastMessage;
     Entry*              _entry;
     QList<User*>        _users;
     QList<User*>        _deletedUsers;
+    QList<User*>        _leftUsers;
     Author*             _recipient;
     MessagesModel*      _messages;
+
+    QHash<int, Author*> _allUsers;
 
     bool _loading;
 };

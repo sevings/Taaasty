@@ -1,5 +1,6 @@
 #include "Conversation.h"
 
+#include <QQmlEngine>
 #include <QDebug>
 
 #include "../defines.h"
@@ -46,7 +47,14 @@ Conversation::Conversation(const QJsonObject data, QObject *parent)
     , _messages(nullptr)
     , _loading(false)
 {
+//    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
     _init(data);
+}
+
+Conversation::~Conversation()
+{
+
 }
 
 
@@ -132,6 +140,8 @@ void Conversation::_init(const QJsonObject data)
          _type = PublicConversation;
      else if (type == "PrivateConversation")
          _type = PrivateConversation;
+     else if (type == "GroupConversation")
+         _type = GroupConversation;
      else
      {
          qDebug() << "Unsupported conversation type:" << type;
@@ -160,7 +170,16 @@ void Conversation::_init(const QJsonObject data)
          _recipient->reload();
      }
      else
-         _recipient = nullptr;
+         _recipient     = nullptr;
+
+     if (data.contains("topic"))
+         _topic         = data.value("topic").toString();
+     else if (_recipient)
+         _topic         = _recipient->name();
+     else if (_entry)
+         _topic         = _entry->title().isEmpty() ? _entry->text() : _entry->title();
+     else
+         _topic.clear();
 
      delete _messages;
      _messages = new MessagesModel(this);
@@ -177,6 +196,12 @@ void Conversation::_init(const QJsonObject data)
      foreach(auto userData, users)
         _deletedUsers << new User(userData.toObject(), this);
 
+     qDeleteAll(_leftUsers);
+     _leftUsers.clear();
+     users = data.value("users_left").toArray();
+     foreach(auto userData, users)
+        _leftUsers << new User(userData.toObject(), this);
+
      emit updated();
 }
 
@@ -191,4 +216,20 @@ void Conversation::_setNotLoading()
 int Conversation::totalCount() const
 {
     return _totalCount;
+}
+
+
+
+Author* Conversation::author(int id)
+{
+    if (id <= 0)
+        return nullptr;
+
+    if (_allUsers.contains(id))
+        return _allUsers.value(id);
+
+    auto author = new Author(this);
+    author->setId(id);
+    _allUsers[id] = author;
+    return author;
 }
