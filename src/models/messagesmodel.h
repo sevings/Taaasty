@@ -47,7 +47,7 @@ private slots:
     void _addMessages(const QJsonObject data);
     void _addLastMessages(const QJsonObject data);
     void _addMessage(const QJsonObject data);
-    void _addMessage(const int entryId, const QJsonObject data);
+    void _addMessage(const int chatId, const QJsonObject data);
     void _removeMessage(QObject* msg);
     void _setNotLoading(QObject* request);
 

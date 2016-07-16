@@ -1,6 +1,6 @@
 #include "Conversation.h"
 
-#include <QQmlEngine>
+#include <QUuid>
 #include <QDebug>
 
 #include "../defines.h"
@@ -47,8 +47,6 @@ Conversation::Conversation(const QJsonObject data, QObject *parent)
     , _messages(nullptr)
     , _loading(false)
 {
-//    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
-
     _init(data);
 }
 
@@ -232,4 +230,26 @@ Author* Conversation::author(int id)
     author->setId(id);
     _allUsers[id] = author;
     return author;
+}
+
+void Conversation::sendMessage(const QString text)
+{
+    if (_loading || _id <= 0)
+        return;
+
+    _loading = true;
+//    emit loadingChanged();
+
+    auto content = QUrl::toPercentEncoding(text.trimmed());
+    auto uuid    = QUuid::createUuid().toString();
+
+    qDebug() << uuid;
+
+    auto data    = QString("content=%1&uuid=%2").arg(QString::fromUtf8(content)).arg(uuid).remove('{').remove('}');
+    auto url     = QString("v2/messenger/conversations/by_id/%1/messages.json").arg(_id);
+    auto request = new ApiRequest(url, true,
+                                  QNetworkAccessManager::PostOperation, data);
+
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(messageSent(const QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
 }

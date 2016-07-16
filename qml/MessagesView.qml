@@ -40,6 +40,10 @@ Pane {
             height: textHeight + 5 * mm
             Poppable {
                 body: back
+                onClicked: {
+                    if (!message.isRead)
+                        message.read();
+                }
             }
             Component.onCompleted: {
                 if (index === 10)
@@ -106,7 +110,7 @@ Pane {
                 height: width
                 radius: height / 2
                 color: window.greenColor
-                visible: !message.read
+                visible: !message.isRead
             }
             ThemedText {
                 id: messageText
@@ -127,7 +131,13 @@ Pane {
         footer: MessageEditor {
             id: messageEditor
             onSent: {
-                //                    Ctrl.sendMessage(messageEditor.message)
+                chat.sendMessage(messageEditor.message)
+            }
+            Connections {
+                target: chat
+                onMessageSent: {
+                    messageEditor.clear();
+                }
             }
         }
     }

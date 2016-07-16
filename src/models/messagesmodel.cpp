@@ -25,7 +25,7 @@ MessagesModel::MessagesModel(Conversation* chat)
     _chatId = chat->id();
     _totalCount = chat->totalCount();
 
-    // Q_TEST(connect(entry, SIGNAL(commentAdded(QJsonObject)), this, SLOT(_addComment(QJsonObject))));
+     Q_TEST(connect(chat, SIGNAL(messageSent(QJsonObject)), this, SLOT(_addMessage(QJsonObject))));
     // Q_TEST(connect(NotificationsModel::instance(), SIGNAL(commentAdded(int,const Notification*)),
                                                 // this, SLOT(_addComment(int,const Notification*))));
 }

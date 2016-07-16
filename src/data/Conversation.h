@@ -58,9 +58,13 @@ public:
 
     Q_INVOKABLE Author* author(int id);
 
+public slots:
+    void sendMessage(const QString text);
+
 signals:
     void updated();
     void loadingChanged();
+    void messageSent(const QJsonObject);
 
 protected slots:
     void _init(const QJsonObject data);

@@ -37,6 +37,20 @@ int Message::id() const
 
 
 
+void Message::read()
+{
+    if (_id <= 0 || _read)
+        return;
+
+    auto url = QString("v2/messenger/conversations/by_id/%1/messages/read.json").arg(_conversationId);
+    auto data = QString("ids=%1").arg(_id);
+    auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation, data);
+
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
+}
+
+
+
 void Message::_init(const QJsonObject data)
 {
     _id             = data.value("id").toInt();
@@ -51,13 +65,29 @@ void Message::_init(const QJsonObject data)
     
     _correctHtml();
 
-    emit read();
+    emit readChanged();
     emit updated();
 }
+
+
 
 void Message::_correctHtml()
 {
     Tasty::correctHtml(_text, false);
 
     emit textUpdated();
+}
+
+
+
+void Message::_markRead(const QJsonObject data)
+{
+    if (data.value("status").toString() != "success")
+    {
+        qDebug() << "error read message" << _id;
+        return;
+    }
+
+    _read = true;
+    emit readChanged();
 }
