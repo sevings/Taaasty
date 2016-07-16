@@ -47,7 +47,7 @@ void CalendarModel::setTlog(const int tlog)
     if (tlog <= 0)
         return;
 
-    QString url = QString("tlog/%1/calendar.json").arg(tlog);
+    QString url = QString("v1/tlog/%1/calendar.json").arg(tlog);
     auto request = new ApiRequest(url);
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
 

@@ -145,7 +145,7 @@ void Tasty::authorize(const QString login, const QString password)
             .arg(login)
             .arg(password);
 
-    auto request = new ApiRequest("sessions.json", false,
+    auto request = new ApiRequest("v1/sessions.json", false,
                                   QNetworkAccessManager::PostOperation, data);
 
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readAccessToken(const QJsonObject)));
@@ -155,7 +155,7 @@ void Tasty::authorize(const QString login, const QString password)
 
 void Tasty::getMe()
 {
-    auto request = new ApiRequest("users/me.json", true);
+    auto request = new ApiRequest("v1/users/me.json", true);
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readMe(const QJsonObject)));
 }
 
@@ -193,7 +193,7 @@ void Tasty::_getPusherAuth()
     auto socket = _pusher->socketId();
     auto data = QString("socket_id=%1&channel_name=%2").arg(socket).arg(_privateChannel);
 
-    auto request = new ApiRequest("messenger/auth.json", true, QNetworkAccessManager::PostOperation, data);
+    auto request = new ApiRequest("v1/messenger/auth.json", true, QNetworkAccessManager::PostOperation, data);
     connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_subscribeToPrivate(QJsonObject)));
 }
 
@@ -203,6 +203,8 @@ void Tasty::_subscribeToPrivate(const QJsonObject data)
 {
     auto auth = data.value("auth").toString();
     _pusher->channel(_privateChannel)->subscribeToPrivate(auth);
+
+    new ApiRequest("v1/messenger/only_ready.json", true, QNetworkAccessManager::PostOperation);
 }
 
 

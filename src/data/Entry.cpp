@@ -34,7 +34,7 @@ void EntryBase::load(int id)
 
     _id = id;
 
-    auto request = new ApiRequest(QString("entries/%1.json").arg(id));
+    auto request = new ApiRequest(QString("v1/entries/%1.json").arg(id));
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initBase(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_maybeError())));
 }
@@ -130,7 +130,7 @@ void Entry::setId(const int id)
 
     _id = id;
 
-    auto request = new ApiRequest(QString("entries/%1.json").arg(_id));
+    auto request = new ApiRequest(QString("v1/entries/%1.json").arg(_id));
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
 
@@ -150,7 +150,7 @@ void Entry::addComment(const QString text)
     
     auto content = QUrl::toPercentEncoding(text.trimmed());
     auto data    = QString("entry_id=%1&text=%2").arg(_id).arg(QString::fromUtf8(content));
-    auto request = new ApiRequest("comments.json", true,
+    auto request = new ApiRequest("v1/comments.json", true,
                                   QNetworkAccessManager::PostOperation, data);
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(commentAdded(const QJsonObject))));
@@ -171,12 +171,12 @@ void Entry::watch()
     ApiRequest* request = nullptr;
     if (_isWatched)
     {
-        auto url = QString("watching.json?entry_id=%1").arg(_id);
+        auto url = QString("v1/watching.json?entry_id=%1").arg(_id);
         request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
     }
     else
     {
-        auto url = QString("watching.json");
+        auto url = QString("v1/watching.json");
         auto data = QString("entry_id=%1").arg(_id);
         request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
     }
@@ -198,12 +198,12 @@ void Entry::favorite()
     ApiRequest* request = nullptr;
     if (_isFavorited)
     {
-        auto url = QString("favorites.json?entry_id=%1").arg(_id);
+        auto url = QString("v1/favorites.json?entry_id=%1").arg(_id);
         request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
     }
     else
     {
-        auto url = QString("favorites.json");
+        auto url = QString("v1/favorites.json");
         auto data = QString("entry_id=%1").arg(_id);
         request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
     }

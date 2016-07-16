@@ -18,7 +18,7 @@ ApiRequest::ApiRequest(const QString url,
 {
     qDebug() << "ApiRequest to" << url;
 
-    QUrl fullUrl(QString("http://api.taaasty.com:80/v1/%1").arg(url));
+    QUrl fullUrl(QString("http://api.taaasty.com:80/%1").arg(url));
 
     auto tasty = Tasty::instance();
     auto settings = tasty->settings();
@@ -63,14 +63,7 @@ void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 
     emit error(code);
 
-//    auto manager = Tasty::instance()->manager();
-//    if (manager->networkAccessible() == QNetworkAccessManager::NotAccessible)
-//    {
-//        Q_TEST(connect(manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
-//                                            this, SLOT(_restart(QNetworkAccessManager::NetworkAccessibility))));
-//    }
-//    else
-        deleteLater();
+    deleteLater();
 }
 
 
@@ -85,9 +78,7 @@ void ApiRequest::_restart(QNetworkAccessManager::NetworkAccessibility na)
 
 void ApiRequest::_finished()
 {
-//    auto manager = Tasty::instance()->manager();
-//    if (manager->networkAccessible() == QNetworkAccessManager::Accessible)
-        deleteLater();
+    deleteLater();
 
     auto data = _reply->readAll();
 

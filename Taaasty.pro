@@ -35,7 +35,11 @@ SOURCES += src/main.cpp \
     src/data/Tlog.cpp \
     src/data/User.cpp \
     src/qpusher/channel.cpp \
-    src/qpusher/pusher.cpp
+    src/qpusher/pusher.cpp \
+    src/data/Conversation.cpp \
+    src/data/Message.cpp \
+    src/models/chatsmodel.cpp \
+    src/models/messagesmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -76,7 +80,11 @@ HEADERS += \
     src/data/Tlog.h \
     src/data/User.h \
     src/qpusher/channel.h \
-    src/qpusher/pusher.h
+    src/qpusher/pusher.h \
+    src/data/Conversation.h \
+    src/data/Message.h \
+    src/models/chatsmodel.h \
+    src/models/messagesmodel.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

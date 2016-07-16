@@ -27,6 +27,8 @@
 #include "models/usersmodeltlog.h"
 //#include "models/usersmodelbayes.h"
 #include "models/notificationsmodel.h"
+#include "models/chatsmodel.h"
+#include "models/messagesmodel.h"
 #include "nbc/bayes.h"
 #include "nbc/trainer.h"
 
@@ -37,6 +39,7 @@
 #include "data/Entry.h"
 #include "data/Media.h"
 #include "data/Notification.h"
+#include "data/Message.h"
 #include "data/Rating.h"
 #include "data/Tlog.h"
 #include "data/User.h"
@@ -64,6 +67,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
     qmlRegisterType<UsersModelTlog>     ("org.binque.taaasty", 1, 0, "UsersModelTlog");
 //    qmlRegisterType<UsersModelBayes>    ("org.binque.taaasty", 1, 0, "UsersModelBayes");
+    qmlRegisterType<MessagesModel>      ("org.binque.taaasty", 1, 0, "MessagesModel");
 
     qmlRegisterUncreatableType<UsersModel>("org.binque.taaasty", 1, 0, "UsersModel", "Use subclasses instead");
 
@@ -77,6 +81,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<AttachedImage>  ("org.binque.taaasty", 1, 0, "AttachedImage");
     qmlRegisterType<Media>          ("org.binque.taaasty", 1, 0, "Media");
     qmlRegisterType<Notification>   ("org.binque.taaasty", 1, 0, "Notification");
+    qmlRegisterType<Message>        ("org.binque.taaasty", 1, 0, "Message");
 
     qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");
 
@@ -90,6 +95,9 @@ int main(int argc, char *argv[])
 
     auto notifs = NotificationsModel::instance(tasty);
     engine.rootContext()->setContextProperty("NotifsModel", notifs);
+
+    auto chats = ChatsModel::instance(tasty);
+    engine.rootContext()->setContextProperty("ChatsModel", chats);
 
     auto cache = CacheManager::instance(web);
     cache->setMaxWidth(settings->maxImageWidth());

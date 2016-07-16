@@ -39,7 +39,7 @@ void User::setId(int id)
 
     _id = id;
 
-    auto request = new ApiRequest(QString("tlog/%1.json").arg(_id));
+    auto request = new ApiRequest(QString("v1/tlog/%1.json").arg(_id));
     connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject)));
 
     _loading = true;

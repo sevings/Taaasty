@@ -12,6 +12,7 @@ Rectangle {
     color: window.backgroundColor
     signal modeChanged(int mode)
     signal tlogRequested
+    signal chatsRequested
     signal searchRequested
     signal settingsRequested
     signal waterTlogsRequested
@@ -24,7 +25,7 @@ Rectangle {
         topMargin: 1 * mm
         bottomMargin: 1 * mm
         contentWidth: parent.width
-        property int buttonsCount: Tasty.isAuthorized ? 17 : 15
+        property int buttonsCount: Tasty.isAuthorized ? 18 : 15
         contentHeight: 9 * mm * buttonsCount + space.height
         Column {
             id: column
@@ -128,6 +129,15 @@ Rectangle {
                 }
                 text: 'Поиск'
                 onClicked: { searchRequested() }
+            }
+            ThemedButton {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                text: 'Сообщения'
+                onClicked: { chatsRequested() }
+                visible: Tasty.isAuthorized
             }
             Item {
                 id: space

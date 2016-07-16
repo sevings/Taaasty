@@ -193,6 +193,8 @@ void Pusher::_handleEvent(const QString& message)
     {
         _socketId = json.value("socket_id").toString();
 
+        qDebug() << "socket id:" << _socketId;
+
         auto activityTimeout = json.value("activity_timeout").toInt();
         if (activityTimeout > 0)
         {

@@ -114,6 +114,13 @@ ApplicationWindow {
         inputDialog.text = image.fileName;
         showLineInput('save');
     }
+    function pushChats() {
+        stack.push(stack.chats,
+                   {
+                       poppable: true
+                   }
+                   )
+    }
     function pushFullEntry(entry) {
         stack.push(stack.fullEntry,
                    {
@@ -266,6 +273,10 @@ ApplicationWindow {
             backAnimation.start();
             showLineInput('tlog');
         }
+        onChatsRequested: {
+            backAnimation.start();
+            window.pushChats();
+        }
         onSearchRequested: {
             backAnimation.start();
             showLineInput('query');
@@ -394,6 +405,7 @@ ApplicationWindow {
                 poppable: StackView.index > 0
             }
         }
+        property Component chats:               Qt.createComponent("ChatsView.qml",     Component.Asynchronous, stack);
         property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack);
         property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack);
         property Component calendar:            Qt.createComponent("CalendarView.qml",      Component.Asynchronous, stack);

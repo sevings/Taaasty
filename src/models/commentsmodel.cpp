@@ -17,7 +17,7 @@
 CommentsModel::CommentsModel(Entry *entry)
     : QAbstractListModel(entry)
     , _loading(false)
-    , _url("comments.json?entry_id=%1&limit=20&order=desc")
+    , _url("v1/comments.json?entry_id=%1&limit=20&order=desc")
 {
     if (!entry)
         return;

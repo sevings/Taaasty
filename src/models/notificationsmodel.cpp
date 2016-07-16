@@ -17,7 +17,7 @@
 
 NotificationsModel::NotificationsModel(QObject* parent)
     : QAbstractListModel(parent)
-    , _url("messenger/notifications.json?limit=2")
+    , _url("v2/messenger/notifications.json?limit=2")
     , _loading(false)
     , _totalCount(1)
 #ifdef Q_OS_ANDROID
@@ -121,7 +121,7 @@ void NotificationsModel::markAsRead()
     if (_notifs.isEmpty() || !unread())
         return;
     
-    QString url = "messenger/notifications/read.json";
+    QString url = "v2/messenger/notifications/read.json";
     QString data = QString("last_id=%1").arg(_notifs.first()->_id);
     
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);

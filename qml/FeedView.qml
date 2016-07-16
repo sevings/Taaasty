@@ -3,7 +3,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    property int mode
+    property int mode: Tasty.isAuthorized ? FeedModel.FriendsMode : FeedModel.LiveMode
     property int tlogId: 0
     property string slug: ''
     property int minRating: 0
@@ -183,7 +183,7 @@ Pane {
                     left: entryAvatar.right
                     right: parent.right
                 }
-                elide: Text.AlignRight
+                elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 horizontalAlignment: Text.AlignLeft
             }

@@ -30,5 +30,6 @@
         <file>qml/Pane.qml</file>
         <file>qml/About.qml</file>
         <file>qml/CalendarView.qml</file>
+        <file>qml/ChatsView.qml</file>
     </qresource>
 </RCC>

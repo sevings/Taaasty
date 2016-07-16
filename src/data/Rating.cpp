@@ -89,7 +89,7 @@ void Rating::vote()
     if (!_isVotable || !Tasty::instance()->isAuthorized())
         return;
 
-    auto url = QString("entries/%1/votes.json").arg(_entryId);
+    auto url = QString("v1/entries/%1/votes.json").arg(_entryId);
     auto operation = (_isVoted ? QNetworkAccessManager::DeleteOperation
                                : QNetworkAccessManager::PostOperation);
     auto request = new ApiRequest(url, true, operation);

@@ -89,23 +89,23 @@ void UsersModelTlog::setMode(const UsersModel::Mode mode)
     switch(mode)
     {
     case FollowersMode:
-        _url = QString("tlog/%1/followers.json?limit=20").arg(_tlog);
+        _url = QString("v1/tlog/%1/followers.json?limit=20").arg(_tlog);
         _field = "reader";
         break;
     case FollowingsMode:
-        _url = QString("tlog/%1/followings.json?limit=20").arg(_tlog);
+        _url = QString("v1/tlog/%1/followings.json?limit=20").arg(_tlog);
         _field = "user";
         break;
     case MyFollowingsMode:
-        _url = QString("relationships/to/friend.json?limit=20");
+        _url = QString("v1/relationships/to/friend.json?limit=20");
         _field = "user";
         break;
     case MyFollowersMode:
-        _url = QString("relationships/by/friend.json?limit=20"); //! TODO: test me
+        _url = QString("v1/relationships/by/friend.json?limit=20"); //! TODO: test me
         _field = "reader";
         break;
     case MyIgnoredMode:
-        _url = QString("relationships/to/ignored.json?limit=20");
+        _url = QString("v1/relationships/to/ignored.json?limit=20");
         _field = "user";
         break;
     default:

@@ -253,7 +253,7 @@ void FeedModel::postText(const QString title, const QString content, FeedModel::
 
     qDebug() << data;
 
-    auto request = new ApiRequest("entries/text.json", true,
+    auto request = new ApiRequest("v1/entries/text.json", true,
                                   QNetworkAccessManager::PostOperation, data);
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_addNewPost(QJsonObject))));
@@ -269,7 +269,7 @@ void FeedModel::postAnonymous(const QString title, const QString content)
 
     qDebug() << data;
 
-    auto request = new ApiRequest("entries/anonymous.json", true,
+    auto request = new ApiRequest("v1/entries/anonymous.json", true,
                                   QNetworkAccessManager::PostOperation, data);
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_addNewPost(const QJsonObject))));
@@ -467,37 +467,37 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
     switch(mode)
     {
     case MyTlogMode:
-        _url = "my_feeds/tlog.json?";
+        _url = "v1/my_feeds/tlog.json?";
         break;
     case FriendsMode:
-        _url = "my_feeds/friends.json?";
+        _url = "v1/my_feeds/friends.json?";
         break;
     case LiveMode:
-        _url = "feeds/live.json?";
+        _url = "v1/feeds/live.json?";
         break;
     case AnonymousMode:
-        _url = "feeds/anonymous.json?";
+        _url = "v1/feeds/anonymous.json?";
         break;
     case BestMode:
-        _url = "feeds/best.json?rating=best&";
+        _url = "v1/feeds/best.json?rating=best&";
         break;
     case ExcellentMode:
-        _url = "feeds/best.json?rating=excellent&";
+        _url = "v1/feeds/best.json?rating=excellent&";
         break;
     case WellMode:
-        _url = "feeds/best.json?rating=well&";
+        _url = "v1/feeds/best.json?rating=well&";
         break;
     case GoodMode:
-        _url = "feeds/best.json?rating=good&";
+        _url = "v1/feeds/best.json?rating=good&";
         break;
     case BetterThanMode:
-        _url = "feeds/best.json?rating=%1&";
+        _url = "v1/feeds/best.json?rating=%1&";
         break;
     case TlogMode:
-        _url = "tlog/%1/entries.json?";
+        _url = "v1/tlog/%1/entries.json?";
         break;
     case FavoritesMode:
-        _url = "my_feeds/favorites.json?";
+        _url = "v1/my_feeds/favorites.json?";
         break;
     default:
         qDebug() << "feed mode =" << mode;

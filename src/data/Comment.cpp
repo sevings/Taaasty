@@ -45,7 +45,7 @@ Comment::Comment(const Notification* data, QObject* parent)
     _isDeletable    = false;
 
     auto entryId = data->_parentId;
-    auto url = QString("comments.json?entry_id=%1&from_comment_id=%2&limit=1").arg(entryId).arg(_id - 1);
+    auto url = QString("v1/comments.json?entry_id=%1&from_comment_id=%2&limit=1").arg(entryId).arg(_id - 1);
     auto request = new ApiRequest(url);
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_update(const QJsonObject))));
@@ -55,7 +55,7 @@ Comment::Comment(const Notification* data, QObject* parent)
 
 void Comment::edit(const QString text)
 {
-    auto url = QString("comments/%1.json").arg(_id);
+    auto url = QString("v1/comments/%1.json").arg(_id);
     auto data = QString("text=%1").arg(text);
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation, data);
 
@@ -66,7 +66,7 @@ void Comment::edit(const QString text)
 
 void Comment::remove()
 {
-    auto url = QString("comments/%1.json").arg(_id);
+    auto url = QString("v1/comments/%1.json").arg(_id);
     auto request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
 
     connect(request, SIGNAL(success(const QString)), this, SLOT(_remove(const QString)));

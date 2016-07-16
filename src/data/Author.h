@@ -37,6 +37,8 @@ public:
     bool isPremium() const;
     bool isDaylog() const;
 
+    void reload();
+
 public slots:
     void checkStatus();
 
@@ -46,6 +48,7 @@ signals:
 
 private slots:
     void _init(const QJsonObject data);
+    void _initFromTlog(const QJsonObject data);
     void _initStatus(const QJsonArray data);
     void _initStatus(const QJsonObject data);
 
@@ -63,4 +66,6 @@ private:
     QString _daysCount;
     QString _followingsCount;
     QString _lastSeenAt;
+
+    bool _loading;
 };
