@@ -9,6 +9,7 @@ Pane {
     }
     Component.onCompleted: {
         chat.messages.check();
+        listView.positionViewAtEnd();
     }
     Poppable {
         body: back
@@ -27,15 +28,20 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
         model: chat.messages
+        onCountChanged: {
+            if (count <= 20)
+                positionViewAtEnd();
+        }
         delegate: Item {
             width: window.width
             readonly property int textHeight: messageText.y + messageText.height + 1 * mm
             height: textHeight + 5 * mm
             Poppable {
                 body: back
-                onClicked: {
-
-                }
+            }
+            Component.onCompleted: {
+                if (index === 10)
+                    listView.model.loadMore();
             }
 //            SmallAvatar {
 //                id: messageAvatar

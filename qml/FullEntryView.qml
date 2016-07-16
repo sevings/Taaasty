@@ -316,7 +316,7 @@ Pane {
                     topMargin: 2 * mm
                 }
                 text: enabled || fullEntry.count > 0 ? 'Еще' : ''
-                height: visible ? 6 * mm : 0
+                height: visible ? (enabled ? 6 * mm : 6 * mm - 1) : 0 // changing height forces layout
                 width: parent.width / 3
                 visible: commentsModel && commentsModel.hasMore
                 enabled: commentsModel && !commentsModel.loading
