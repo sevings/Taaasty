@@ -8,6 +8,7 @@
 #include "../apirequest.h"
 #include "../data/Notification.h"
 #include "../tasty.h"
+#include "../pusherclient.h"
 
 #ifdef Q_OS_ANDROID
 #   include "../androidnotifier.h"
@@ -31,8 +32,8 @@ NotificationsModel::NotificationsModel(QObject* parent)
 //    _timer.start();
 
 //    Q_TEST(connect(&_timer, SIGNAL(timeout()),                           this, SLOT(_check())));
-    Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()),              this, SLOT(_reloadAll())));
-    Q_TEST(connect(Tasty::instance(), SIGNAL(notification(QJsonObject)), this, SLOT(_addPush(QJsonObject))));
+    Q_TEST(connect(Tasty::instance(),           SIGNAL(authorized()),              this, SLOT(_reloadAll())));
+    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(notification(QJsonObject)), this, SLOT(_addPush(QJsonObject))));
 }
 
 

@@ -8,8 +8,7 @@
 #include "settings.h"
 
 class ApiRequest;
-class Pusher;
-
+class PusherClient;
 
 
 class Tasty : public QObject
@@ -24,8 +23,10 @@ public:
     ~Tasty();
 
     static Tasty* instance(QNetworkAccessManager* web = nullptr);
-    Settings* settings() const { return _settings; }
-    QNetworkAccessManager* manager() const { return _manager; }
+
+    Settings*               settings() const { return _settings; }
+    QNetworkAccessManager*  manager() const { return _manager; }
+    PusherClient*           pusher() const { return _pusher; }
 
     void incBusy();
     void decBusy();
@@ -54,7 +55,7 @@ signals:
 
     void htmlRecorrectionNeeded();
 
-    void notification(const QJsonObject data);
+    void networkAccessible();
 
 public slots:
     void authorize(const QString login, const QString password);
@@ -66,20 +67,12 @@ private slots:
 
     void _showNetAccessibility(QNetworkAccessManager::NetworkAccessibility accessible);
 
-    void _getPusherAuth();
-    void _subscribeToPrivate(const QJsonObject data);
-    void _handlePrivatePusherEvent(const QString event, const QString data);
-
     void _readMe(const QJsonObject data);
 
 private:
-    void _addPrivateChannel();
-
     Settings* _settings;
     QNetworkAccessManager* _manager;
-
-    Pusher* _pusher;
-    QString _privateChannel;
+    PusherClient* _pusher;
 
     int _busy;
     int _entryImageWidth;
