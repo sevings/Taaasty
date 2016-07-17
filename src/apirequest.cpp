@@ -86,7 +86,7 @@ void ApiRequest::_finished()
     auto json = QJsonDocument::fromJson(data, &jpe);
     if (jpe.error != QJsonParseError::NoError)
     {
-        qDebug() << "parse error: " << jpe.errorString();
+        qDebug() << "parse error:" << jpe.errorString();
         qDebug() << "json:" << data;
         emit success(QString::fromUtf8(data));
         return;

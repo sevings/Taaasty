@@ -25,6 +25,8 @@ Tasty::Tasty(QNetworkAccessManager* web)
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
 
+    Q_TEST(connect(_pusher, SIGNAL(unreadChats(int)), this, SLOT(_setUnreadChats(int))));
+
 //    _pusher->subscribe("live");
 }
 
@@ -186,4 +188,15 @@ void Tasty::_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility ac
 void Tasty::_readMe(const QJsonObject data)
 {
     qDebug() << data.value("title").toString();
+}
+
+
+
+void Tasty::_setUnreadChats(int count)
+{
+    if (count == _unreadChats)
+        return;
+
+    _unreadChats = count;
+    emit unreadChatsChanged();
 }

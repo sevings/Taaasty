@@ -70,6 +70,15 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
         return;
     }
 
+    if (event == "status" || event == "public_status" || event == "group_status")
+    {
+        auto count = json.value("unreadConversationsCount").toInt();
+
+        qDebug() << "Unread chats:" << count;
+
+        emit unreadChats(count);
+        return;
+    }
 
     if (event == "push_notification")
     {

@@ -17,6 +17,7 @@ class Tasty : public QObject
 
     Q_PROPERTY(int  busy         READ busy         NOTIFY busyChanged)
     Q_PROPERTY(bool isAuthorized READ isAuthorized NOTIFY authorized)
+    Q_PROPERTY(int  unreadChats  READ unreadChats  NOTIFY unreadChatsChanged)
 
 public:
     explicit Tasty(QNetworkAccessManager* web = nullptr);
@@ -35,6 +36,8 @@ public:
 
     Q_INVOKABLE bool isAuthorized() const;
 
+    Q_INVOKABLE int unreadChats() const { return _unreadChats; }
+
     Q_INVOKABLE static QString num2str(const int n, const QString str1,
                     const QString str234, const QString str5);
     static QString parseDate(const QString d, const bool bigLetter = true);
@@ -49,6 +52,7 @@ signals:
     void authorized();
 
     void ratingChanged(QJsonObject data);
+    void unreadChatsChanged();
 
     void error(const int code, const QString text);
     void info(const QString text);
@@ -69,6 +73,8 @@ private slots:
 
     void _readMe(const QJsonObject data);
 
+    void _setUnreadChats(int count);
+
 private:
     Settings* _settings;
     QNetworkAccessManager* _manager;
@@ -77,6 +83,8 @@ private:
     int _busy;
     int _entryImageWidth;
     int _commentImageWidth;
+
+    int _unreadChats;
 };
 
 #endif // TASTY_H

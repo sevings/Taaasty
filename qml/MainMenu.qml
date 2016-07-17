@@ -135,7 +135,7 @@ Rectangle {
                     left: parent.left
                     right: parent.right
                 }
-                text: 'Сообщения'
+                text: 'Сообщения' + (Tasty.unreadChats > 0 ? ' <b>+' + Tasty.unreadChats + '</b>' : '')
                 onClicked: { chatsRequested() }
                 visible: Tasty.isAuthorized
             }
