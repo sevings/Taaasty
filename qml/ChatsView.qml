@@ -43,15 +43,15 @@ Pane {
                     top: parent.top
                     margins: 1 * mm
                 }
-                user: chat.recipient
+                user: chat.entry ? chat.entry.author : chat.recipient
                 Poppable {
                     body: back
                     onClicked:
                     {
-                        if (!chat.recipient)
+                        if (chat.isAnonymous || (!chat.recipient && !chat.entry))
                             return;
 
-                        window.pushProfileById(chat.recipient.id);
+                        window.pushProfileById(chatAvatar.user.id);
                         mouse.accepted = true;
                     }
                 }
@@ -75,7 +75,7 @@ Pane {
                     top: parent.top
                     right: parent.right
                 }
-                text: chat.lastMessage.createdAt
+                text: chat.messages.lastMessage.createdAt
                 font.pointSize: window.fontSmaller
                 color: window.secondaryTextColor
                 elide: Text.AlignRight
@@ -90,7 +90,7 @@ Pane {
                 }
                 font.pointSize: window.fontSmallest
                 color: window.secondaryTextColor
-                text: chat.lastMessage.text
+                text: chat.messages.lastMessage.text
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
             }

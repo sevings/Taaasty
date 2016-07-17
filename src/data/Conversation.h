@@ -27,7 +27,6 @@ class Conversation: public QObject
     Q_PROPERTY(bool             notDisturb      MEMBER _notDisturb      NOTIFY updated)
     Q_PROPERTY(bool             isAnonymous     MEMBER _isAnonymous     NOTIFY updated)
     Q_PROPERTY(QString          topic           MEMBER _topic           NOTIFY updated)
-    Q_PROPERTY(Message*         lastMessage     MEMBER _lastMessage     NOTIFY updated)
     Q_PROPERTY(Entry*           entry           MEMBER _entry           NOTIFY updated)
     Q_PROPERTY(QList<User*>     users           MEMBER _users           NOTIFY updated)
     Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
@@ -82,7 +81,6 @@ private:
     bool                _notDisturb;
     bool                _isAnonymous;
     QString             _topic;
-    Message*            _lastMessage;
     Entry*              _entry;
     QList<User*>        _users;
     QList<User*>        _deletedUsers;

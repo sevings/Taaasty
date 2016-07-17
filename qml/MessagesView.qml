@@ -31,7 +31,7 @@ Pane {
         visible: count > 0
         model: chat.messages
         onCountChanged: {
-            if (count <= 20)
+            if (count < 30)
                 positionViewAtEnd();
         }
         delegate: Item {
@@ -46,7 +46,7 @@ Pane {
                 }
             }
             Component.onCompleted: {
-                if (index === 10)
+                if (index === 0)
                     listView.model.loadMore();
             }
 //            SmallAvatar {

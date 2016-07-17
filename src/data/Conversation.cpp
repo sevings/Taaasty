@@ -28,7 +28,6 @@ Conversation::Conversation(QObject* parent)
     , _isDisabled(false)
     , _notDisturb(false)
     , _isAnonymous(false)
-    , _lastMessage(nullptr)
     , _entry(nullptr)
     , _recipient(nullptr)
     , _messages(nullptr)
@@ -41,7 +40,6 @@ Conversation::Conversation(QObject* parent)
 
 Conversation::Conversation(const QJsonObject data, QObject *parent)
     : QObject(parent)
-    , _lastMessage(nullptr)
     , _entry(nullptr)
     , _recipient(nullptr)
     , _messages(nullptr)
@@ -155,9 +153,6 @@ void Conversation::_init(const QJsonObject data)
      _notDisturb        = data.value("not_disturb").toBool();
      _isAnonymous       = data.value("is_anonymous").toBool();
 
-     delete _lastMessage;
-     _lastMessage       = new Message(data.value("last_message").toObject(), this);
-
      delete _entry;
      _entry             = data.contains("entry") ? new Entry(data.value("entry").toObject(), this) : nullptr;
 
@@ -180,7 +175,8 @@ void Conversation::_init(const QJsonObject data)
          _topic.clear();
 
      delete _messages;
-     _messages = new MessagesModel(this);
+     auto last = new Message(data.value("last_message").toObject(), this);
+     _messages          = new MessagesModel(last, this);
 
      qDeleteAll(_users);
      _users.clear();

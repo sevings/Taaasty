@@ -14,8 +14,9 @@
 
 
 
-MessagesModel::MessagesModel(Conversation* chat)
+MessagesModel::MessagesModel(Message* last, Conversation* chat)
     : QAbstractListModel(chat)
+    , _lastMessage(last)
     , _loading(false)
     , _url("v2/messenger/conversations/by_id/%1/messages.json?limit=20&order=desc")
 {
@@ -79,6 +80,16 @@ void MessagesModel::check()
     _request = new ApiRequest(url);
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addLastMessages(QJsonObject))));
     Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),   this, SLOT(_setNotLoading(QObject*))));
+}
+
+
+
+Message* MessagesModel::lastMessage() const
+{
+    if (_messages.isEmpty())
+        return _lastMessage;
+
+    return _messages.last();
 }
 
 
@@ -170,6 +181,8 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
     }
 
     endInsertRows();
+
+    emit lastMessageChanged();
 }
 
 
@@ -186,6 +199,8 @@ void MessagesModel::_addMessage(const QJsonObject data)
     Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
 
     endInsertRows();
+
+    emit lastMessageChanged();
 }
 
 
@@ -218,6 +233,9 @@ void MessagesModel::_removeMessage(QObject* msg)
     endRemoveRows();
 
     _setTotalCount(_totalCount - 1);
+
+    if (i == _messages.size())
+        emit lastMessageChanged();
 }
 
 
