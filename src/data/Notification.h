@@ -13,6 +13,7 @@ class Notification: public QObject
     
     friend class NotificationsModel;
     friend class Comment;
+    friend class PusherClient;
     
     Q_PROPERTY(int     id         MEMBER _id         CONSTANT)
     Q_PROPERTY(QString createdAt  MEMBER _createdAt  CONSTANT)
@@ -29,6 +30,7 @@ class Notification: public QObject
 public:
     Notification(QObject* parent = nullptr);
     Notification(const QJsonObject data, QObject* parent = nullptr);
+    ~Notification();
     
     int entityId() const;
 
@@ -37,6 +39,8 @@ public:
     QString actionText() const;
 
     QString text() const;
+
+    int id() const;
 
 signals:
     void read();

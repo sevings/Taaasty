@@ -8,6 +8,7 @@
 
 #include "../tasty.h"
 #include "../apirequest.h"
+#include "../pusherclient.h"
 #include "../data/Conversation.h"
 
 
@@ -31,6 +32,7 @@ ChatsModel::ChatsModel(QObject* parent)
     qDebug() << "ChatsModel";
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(reset())));
+    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(chat(QJsonObject)), this, SLOT(_addChat(QJsonObject))));
 }
 
 
@@ -94,6 +96,7 @@ void ChatsModel::reset()
     
     qDeleteAll(_chats);
     _chats.clear();
+    _ids.clear();
 
     _hasMore = true;
     _loading = false;
@@ -116,6 +119,20 @@ QHash<int, QByteArray> ChatsModel::roleNames() const
 
 
 
+void ChatsModel::_addChat(const QJsonObject data)
+{
+    beginInsertRows(QModelIndex(), 0, 0);
+
+    auto chat = new Conversation(data, this);
+    _chats << chat;
+
+    _ids << chat->id();
+
+    endInsertRows();
+}
+
+
+
 void ChatsModel::_addChats(QJsonArray data)
 {
     qDebug() << "ChatsModel::_addChats";
@@ -130,14 +147,23 @@ void ChatsModel::_addChats(QJsonArray data)
         return;
     }
 
-    beginInsertRows(QModelIndex(), _chats.size(), _chats.size() + data.size() - 1);
-    
-    _chats.reserve(_chats.size() + data.size());
+    QList<Conversation*> chats;
     foreach(auto item, data)
     {
         auto chat = new Conversation(item.toObject(), this);
-        _chats << chat;
+        if (_ids.contains(chat->id()))
+        {
+            delete chat;
+            continue;
+        }
+
+        chats << chat;
+        _ids << chat->id();
     }
+
+    beginInsertRows(QModelIndex(), _chats.size(), _chats.size() + chats.size() - 1);
+    
+    _chats << chats;
 
     endInsertRows();
     
@@ -157,4 +183,31 @@ void ChatsModel::_setNotLoading(QObject* request)
         _loading = false;
         _request = nullptr;
     }
+}
+
+
+
+void ChatsModel::_bubbleChat(int id)
+{
+    if (!_ids.contains(id))
+        return;
+
+    int i = 0;
+    for (; i < _chats.size(); i++)
+        if (id == _chats.at(i)->id())
+            break;
+
+    if (i >= _chats.size())
+        return;
+
+    auto unread = Tasty::instance()->unreadChats();
+    if (i < unread)
+        return;
+
+    Q_TEST(beginMoveRows(QModelIndex(), i, i, QModelIndex(), unread));
+
+    auto chat = _chats.takeAt(i);
+    _chats.insert(unread - 1, chat);
+
+    endMoveRows();
 }

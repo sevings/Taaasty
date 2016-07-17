@@ -19,6 +19,7 @@ Tasty::Tasty(QNetworkAccessManager* web)
     , _busy(0)
     , _entryImageWidth(_settings->maxImageWidth())
     , _commentImageWidth(_entryImageWidth)
+    , _unreadChats(0)
 {
     qDebug() << "Tasty";
 

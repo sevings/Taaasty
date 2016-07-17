@@ -3,7 +3,9 @@
 #include "../defines.h"
 
 #include "User.h"
+
 #include "../tasty.h"
+#include "../pusherclient.h"
 
 
 Notification::Notification(QObject* parent)
@@ -31,6 +33,15 @@ Notification::Notification(const QJsonObject data, QObject *parent)
     _entityType = data.value("entity_type").toString();
     _parentId   = data.value("parent_id").toInt();
     _parentType = data.value("parent_type").toString();
+
+    Tasty::instance()->pusher()->addNotification(this);
+}
+
+
+
+Notification::~Notification()
+{
+    Tasty::instance()->pusher()->removeNotification(_id);
 }
 
 
@@ -59,4 +70,9 @@ QString Notification::actionText() const
 QString Notification::text() const
 {
     return _text;
+}
+
+int Notification::id() const
+{
+    return _id;
 }

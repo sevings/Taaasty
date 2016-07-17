@@ -3,9 +3,14 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QHash>
 
 class Pusher;
 class Tasty;
+class Conversation;
+class Message;
+class Comment;
+class Notification;
 
 
 
@@ -15,8 +20,21 @@ class PusherClient : public QObject
 public:
     explicit PusherClient(Tasty* tasty = nullptr);
 
+    void addChat(Conversation* chat);
+    void removeChat(int id);
+
+    void addMessage(Message* msg);
+    void removeMessage(int id);
+
+    void addComment(Comment* cmt);
+    void removeComment(int id);
+
+    void addNotification(Notification* notif);
+    void removeNotification(int id);
+
 signals:
     void notification(const QJsonObject data);
+    void chat(const QJsonObject data);
     void unreadChats(int count);
 
 public slots:
@@ -34,6 +52,11 @@ private:
     QString _privateChannel;
 
     Tasty* _tasty;
+
+    QHash<int, Conversation*>   _chats;
+    QHash<int, Message*>        _messages;
+    QHash<int, Comment*>        _comments;
+    QHash<int, Notification*>   _notifications;
 };
 
 #endif // PUSHERCLIENT_H

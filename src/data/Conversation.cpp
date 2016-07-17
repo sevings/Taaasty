@@ -6,6 +6,7 @@
 #include "../defines.h"
 
 #include "../apirequest.h"
+#include "../pusherclient.h"
 
 #include "Entry.h"
 #include "Message.h"
@@ -48,9 +49,11 @@ Conversation::Conversation(const QJsonObject data, QObject *parent)
     _init(data);
 }
 
+
+
 Conversation::~Conversation()
 {
-
+    Tasty::instance()->pusher()->removeChat(_id);
 }
 
 
@@ -153,8 +156,8 @@ void Conversation::_init(const QJsonObject data)
      _notDisturb        = data.value("not_disturb").toBool();
      _isAnonymous       = data.value("is_anonymous").toBool();
 
-     delete _entry;
-     _entry             = data.contains("entry") ? new Entry(data.value("entry").toObject(), this) : nullptr;
+     if (!_entry && data.contains("entry"))
+        _entry          =  new Entry(data.value("entry").toObject(), this);
 
      delete _recipient;
      if (data.contains("recipient"))
@@ -174,27 +177,25 @@ void Conversation::_init(const QJsonObject data)
      else
          _topic.clear();
 
-     delete _messages;
-     auto last = new Message(data.value("last_message").toObject(), this);
-     _messages          = new MessagesModel(last, this);
+     if (!_messages)
+     {
+         auto last = new Message(data.value("last_message").toObject(), this);
+         _messages          = new MessagesModel(last, this);
+     }
 
-     qDeleteAll(_users);
-     _users.clear();
      auto users = data.value("users").toArray();
      foreach(auto userData, users)
         _users << new User(userData.toObject(), this); // TODO: isOnline
              
-     qDeleteAll(_deletedUsers);
-     _deletedUsers.clear();
      users = data.value("users_deleted").toArray();
      foreach(auto userData, users)
         _deletedUsers << new User(userData.toObject(), this);
 
-     qDeleteAll(_leftUsers);
-     _leftUsers.clear();
      users = data.value("users_left").toArray();
      foreach(auto userData, users)
         _leftUsers << new User(userData.toObject(), this);
+
+     Tasty::instance()->pusher()->addChat(this);
 
      emit updated();
 }
@@ -206,6 +207,15 @@ void Conversation::_setNotLoading()
     _loading = false;
     emit loadingChanged();
 }
+
+
+
+void Conversation::_emitTyped(int userId)
+{
+    emit typed(author(userId));
+}
+
+
 
 int Conversation::totalCount() const
 {
@@ -228,6 +238,8 @@ Author* Conversation::author(int id)
     return author;
 }
 
+
+
 void Conversation::sendMessage(const QString text)
 {
     if (_loading || _id <= 0)
@@ -248,4 +260,17 @@ void Conversation::sendMessage(const QString text)
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(messageSent(const QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
+}
+
+
+
+void Conversation::readAll()
+{
+    if (_unreadCount <= 0 || _id <= 0)
+        return;
+
+    auto url = QString("v2/messenger/conversations/by_id/%1/messages/read_all.json").arg(_id);
+    auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation);
+
+    Q_UNUSED(request);
 }

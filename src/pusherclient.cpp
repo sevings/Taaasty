@@ -6,9 +6,15 @@
 #include "qpusher/pusher.h"
 #include "qpusher/channel.h"
 
+#include "data/Conversation.h"
+#include "data/Message.h"
+#include "data/Comment.h"
+#include "data/Notification.h"
+
 #include "defines.h"
 
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QDebug>
 
 
@@ -26,6 +32,62 @@ PusherClient::PusherClient(Tasty* tasty)
 
     Q_TEST(connect(tasty, SIGNAL(authorized()),         this, SLOT(_resubscribeToPrivate())));
     Q_TEST(connect(tasty, SIGNAL(networkAccessible()),  this, SLOT(_resubscribeToPrivate())));
+}
+
+
+
+void PusherClient::addChat(Conversation* chat)
+{
+    _chats.insert(chat->id(), chat);
+}
+
+
+
+void PusherClient::removeChat(int id)
+{
+    _chats.remove(id);
+}
+
+
+
+void PusherClient::addMessage(Message* msg)
+{
+    _messages.insert(msg->id(), msg);
+}
+
+
+
+void PusherClient::removeMessage(int id)
+{
+    _messages.remove(id);
+}
+
+
+
+void PusherClient::addComment(Comment* cmt)
+{
+    _comments.insert(cmt->id(), cmt);
+}
+
+
+
+void PusherClient::removeComment(int id)
+{
+    _comments.remove(id);
+}
+
+
+
+void PusherClient::addNotification(Notification* notif)
+{
+    _notifications.insert(notif->id(), notif);
+}
+
+
+
+void PusherClient::removeNotification(int id)
+{
+    _notifications.remove(id);
 }
 
 
@@ -70,7 +132,7 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
         return;
     }
 
-    if (event == "status" || event == "public_status" || event == "group_status")
+    if (event.endsWith("status"))
     {
         auto count = json.value("unreadConversationsCount").toInt();
 
@@ -83,6 +145,52 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
     if (event == "push_notification")
     {
         emit notification(json);
+        return;
+    }
+
+    if (event == "typed")
+    {
+        auto chatId = json.value("conversation_id").toInt();
+        auto userId = json.value("user_id").toInt();
+        if (_chats.contains(chatId))
+            _chats.value(chatId)->_emitTyped(userId);
+        return;
+    }
+
+    if (event.endsWith("update_conversation"))
+    {
+        auto chatId = json.value("id").toInt();
+        if (_chats.contains(chatId))
+            _chats.value(chatId)->_init(json);
+        else
+            emit chat(json);
+        return;
+    }
+
+    if (event.endsWith("push_message"))
+    {
+        auto chatId = json.value("conversation_id").toInt();
+        if (_chats.contains(chatId))
+            emit _chats.value(chatId)->messageReceived(json);
+        else
+            emit chat(json);
+        return;
+    }
+
+    if (event.endsWith("update_messages"))
+    {
+        auto chatId = json.value("conversation_id").toInt();
+        if (!_chats.contains(chatId))
+            return;
+
+        auto messages = json.value("messages").toArray();
+        foreach (auto msgData, messages)
+        {
+            auto msgId = msgData.toObject().value("id").toInt();
+            if (_messages.contains(msgId))
+                _messages.value(msgId)->_updateRead(msgData.toObject());
+        }
+
         return;
     }
 

@@ -11,6 +11,8 @@ class Message: public QObject
 {
     Q_OBJECT
 
+    friend class PusherClient;
+
     Q_PROPERTY(int      id              MEMBER _id             NOTIFY updated)
     Q_PROPERTY(int      userId          MEMBER _userId         NOTIFY updated)
     Q_PROPERTY(int      recipientId     MEMBER _recipientId    NOTIFY updated)
@@ -23,6 +25,7 @@ class Message: public QObject
 public:
     Message(QObject* parent = nullptr);
     Message(const QJsonObject data, QObject* parent = nullptr);
+    ~Message();
 
     int id() const;
     
@@ -40,6 +43,8 @@ private slots:
     void _markRead(const QJsonObject data);
 
 private:
+    void _updateRead(const QJsonObject data);
+
     int     _id;
     int     _userId;
     int     _recipientId;

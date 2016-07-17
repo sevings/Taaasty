@@ -26,7 +26,8 @@ MessagesModel::MessagesModel(Message* last, Conversation* chat)
     _chatId = chat->id();
     _totalCount = chat->totalCount();
 
-     Q_TEST(connect(chat, SIGNAL(messageSent(QJsonObject)), this, SLOT(_addMessage(QJsonObject))));
+//    Q_TEST(connect(chat, SIGNAL(messageSent(QJsonObject)),      this, SLOT(_addMessage(QJsonObject))));
+    Q_TEST(connect(chat, SIGNAL(messageReceived(QJsonObject)),  this, SLOT(_addMessage(QJsonObject))));
     // Q_TEST(connect(NotificationsModel::instance(), SIGNAL(commentAdded(int,const Notification*)),
                                                 // this, SLOT(_addComment(int,const Notification*))));
 }
@@ -96,7 +97,7 @@ Message* MessagesModel::lastMessage() const
 
 void MessagesModel::loadMore()
 {
-    if (_loading || !_chatId)
+    if (_loading || !_chatId || !hasMore())
         return;
 
     _loading = true;

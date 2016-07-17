@@ -16,6 +16,8 @@ class Conversation: public QObject
 {
     Q_OBJECT
 
+    friend class PusherClient;
+
     Q_PROPERTY(int              id              MEMBER _id              NOTIFY updated)
     Q_PROPERTY(ConversationType type            MEMBER _type            NOTIFY updated)
     Q_PROPERTY(int              unreadCount     MEMBER _unreadCount     NOTIFY updated)
@@ -59,17 +61,22 @@ public:
 
 public slots:
     void sendMessage(const QString text);
+    void readAll();
 
 signals:
     void updated();
     void loadingChanged();
     void messageSent(const QJsonObject);
+    void messageReceived(const QJsonObject);
+    void typed(Author* author);
 
-protected slots:
+private slots:
     void _init(const QJsonObject data);
     void _setNotLoading();
 
 private:
+    void _emitTyped(int userId);
+
     int                 _id;
     ConversationType    _type;
     int                 _unreadCount;

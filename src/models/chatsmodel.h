@@ -5,6 +5,7 @@
 #include <QAbstractListModel>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QSet>
 
 class Conversation;
 class ApiRequest;
@@ -39,11 +40,15 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
+    void _addChat(const QJsonObject data);
     void _addChats(QJsonArray data);
     void _setNotLoading(QObject* request);
 
 private:
+    void _bubbleChat(int id);
+
     QList<Conversation*> _chats;
+    QSet<int>            _ids;
 
     bool    _hasMore;
     

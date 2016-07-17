@@ -6,6 +6,7 @@
 #include "User.h"
 
 #include "../tasty.h"
+#include "../pusherclient.h"
 #include "../apirequest.h"
 
 
@@ -25,6 +26,7 @@ Comment::Comment(QObject* parent)
 
 Comment::Comment(const QJsonObject data, QObject *parent)
     : QObject(parent)
+    , _user(nullptr)
 {
     _init(data);
 
@@ -44,11 +46,27 @@ Comment::Comment(const Notification* data, QObject* parent)
     _isReportable   = false;
     _isDeletable    = false;
 
+    Tasty::instance()->pusher()->addComment(this);
+
     auto entryId = data->_parentId;
     auto url = QString("v1/comments.json?entry_id=%1&from_comment_id=%2&limit=1").arg(entryId).arg(_id - 1);
     auto request = new ApiRequest(url);
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_update(const QJsonObject))));
+}
+
+
+
+Comment::~Comment()
+{
+    Tasty::instance()->pusher()->removeComment(_id);
+}
+
+
+
+int Comment::id() const
+{
+    return _id;
 }
 
 
@@ -77,7 +95,10 @@ void Comment::remove()
 void Comment::_init(const QJsonObject data)
 {
     _id             = data.value("id").toInt();
+
+    delete _user;
     _user           = new User(data.value("user").toObject(), this);
+
     _html           = data.value("comment_html").toString();
     _createdAt      = Tasty::parseDate(data.value("created_at").toString());
     _isEditable     = data.value("can_edit").toBool();
@@ -87,6 +108,8 @@ void Comment::_init(const QJsonObject data)
     _correctHtml();
 
     emit updated();
+
+    Tasty::instance()->pusher()->addComment(this);
 }
 
 

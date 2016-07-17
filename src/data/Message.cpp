@@ -4,6 +4,7 @@
 
 #include "../apirequest.h"
 #include "../tasty.h"
+#include "../pusherclient.h"
 //#include "Author.h"
 
 
@@ -17,7 +18,6 @@ Message::Message(QObject* parent)
     , _read(false)
 //    , _author(new Author(this))
 {
-    Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
 }
 
 
@@ -26,6 +26,15 @@ Message::Message(const QJsonObject data, QObject *parent)
     : QObject(parent)
 {
     _init(data);
+
+    Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
+}
+
+
+
+Message::~Message()
+{
+    Tasty::instance()->pusher()->removeMessage(_id);
 }
 
 
@@ -65,6 +74,8 @@ void Message::_init(const QJsonObject data)
     
     _correctHtml();
 
+    Tasty::instance()->pusher()->addMessage(this);
+
     emit readChanged();
     emit updated();
 }
@@ -90,4 +101,22 @@ void Message::_markRead(const QJsonObject data)
 
     _read = true;
     emit readChanged();
+}
+
+
+
+void Message::_updateRead(const QJsonObject data)
+{
+    if (_read || data.value("id").toInt() != _id)
+        return;
+
+    auto userId = data.value("read_user_id").toInt();
+    if (userId <= 0)
+        return;
+
+    if (userId == _userId || userId == _recipientId)
+    {
+        _read = true;
+        emit readChanged();
+    }
 }
