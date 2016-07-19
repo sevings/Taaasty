@@ -163,7 +163,8 @@ void Conversation::_init(const QJsonObject data)
      if (data.contains("recipient"))
      {
          _recipient     =  new Author(data.value("recipient").toObject(), this);
-         _recipient->reload();
+         if (!_isAnonymous)
+             _recipient->reload();
      }
      else
          _recipient     = nullptr;

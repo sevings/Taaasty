@@ -46,7 +46,7 @@ Pane {
                 }
             }
             Component.onCompleted: {
-                if (index === 0)
+                if (index === 10)
                     listView.model.loadMore();
             }
 //            SmallAvatar {

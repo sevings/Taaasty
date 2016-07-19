@@ -30,8 +30,8 @@ PusherClient::PusherClient(Tasty* tasty)
     if (tasty->isAuthorized())
         _addPrivateChannel();
 
-    Q_TEST(connect(tasty, SIGNAL(authorized()),         this, SLOT(_resubscribeToPrivate())));
-    Q_TEST(connect(tasty, SIGNAL(networkAccessible()),  this, SLOT(_resubscribeToPrivate())));
+    Q_TEST(connect(tasty, SIGNAL(authorized()),         this,    SLOT(_resubscribeToPrivate())));
+    Q_TEST(connect(tasty, SIGNAL(networkAccessible()),  _pusher, SLOT(connect())));
 }
 
 
@@ -162,8 +162,8 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
         auto chatId = json.value("id").toInt();
         if (_chats.contains(chatId))
             _chats.value(chatId)->_init(json);
-        else
-            emit chat(json);
+//        else
+//            emit unreadChat();
         return;
     }
 
@@ -173,7 +173,7 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
         if (_chats.contains(chatId))
             emit _chats.value(chatId)->messageReceived(json);
         else
-            emit chat(json);
+            emit unreadChat();
         return;
     }
 
@@ -191,6 +191,12 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
                 _messages.value(msgId)->_updateRead(msgData.toObject());
         }
 
+        return;
+    }
+
+    if (event == "update_notifications")
+    {
+// Data: "{\"notifications\":[{\"id\":9006398,\"read_at\":\"2016-07-19T21:25:21.000+03:00\"}]}"
         return;
     }
 

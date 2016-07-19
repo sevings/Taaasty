@@ -31,8 +31,8 @@ ChatsModel::ChatsModel(QObject* parent)
 {
     qDebug() << "ChatsModel";
 
-    Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(reset())));
-    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(chat(QJsonObject)), this, SLOT(_addChat(QJsonObject))));
+    Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()),           this, SLOT(reset())));
+    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(unreadChat()), this, SLOT(loadUnread())));
 }
 
 
@@ -90,6 +90,21 @@ void ChatsModel::fetchMore(const QModelIndex& parent)
 
 
 
+void ChatsModel::loadUnread()
+{
+    qDebug() << "ChatsModel::loadUnread";
+
+    _loading = true;
+
+    QString url("v2/messenger/conversations.json?unread=true");
+    _request = new ApiRequest(url, true);
+
+    Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_addUnread(QJsonArray))));
+    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading(QObject*))));
+}
+
+
+
 void ChatsModel::reset()
 {
     beginResetModel();
@@ -127,6 +142,40 @@ void ChatsModel::_addChat(const QJsonObject data)
     _chats << chat;
 
     _ids << chat->id();
+
+    endInsertRows();
+}
+
+
+
+void ChatsModel::_addUnread(QJsonArray data)
+{
+    qDebug() << "ChatsModel::_addUnread";
+
+    _loading = false;
+    _request = nullptr;
+
+    if (data.isEmpty())
+        return;
+
+    QList<Conversation*> chats;
+    foreach(auto item, data)
+    {
+        auto chat = new Conversation(item.toObject(), this);
+        if (_ids.contains(chat->id()))
+        {
+            delete chat;
+            continue;
+        }
+
+        chats << chat;
+        _ids << chat->id();
+    }
+
+    beginInsertRows(QModelIndex(), 0, chats.size() - 1);
+
+    for (int i = 0; i < chats.size(); i++)
+        _chats.insert(i, chats.at(i));
 
     endInsertRows();
 }

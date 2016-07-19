@@ -31,6 +31,7 @@ public:
     Q_INVOKABLE bool hasMore() const { return _hasMore; }
 
 public slots:    
+    void loadUnread();
     void reset();
 
 signals:
@@ -41,6 +42,7 @@ protected:
 
 private slots:
     void _addChat(const QJsonObject data);
+    void _addUnread(QJsonArray data);
     void _addChats(QJsonArray data);
     void _setNotLoading(QObject* request);
 

@@ -146,6 +146,11 @@ Pane {
                 Poppable {
                     body: back
                     onClicked: {
+                        if (back.x > 0) {
+                            mouse.accepted = false;
+                            return;
+                        }
+
                         mouse.accepted = true;
                         window.pushTlog(entry.tlog.author.id);
                     }

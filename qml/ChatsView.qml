@@ -24,7 +24,8 @@ Pane {
         model: ChatsModel
         delegate: Item {
             width: window.width
-            height: chatAvatar.height + 2 * mm
+            readonly property int textHeight: lastMessage.y + lastMessage.height - 1 * mm
+            height: (textHeight > chatAvatar.height ? textHeight : chatAvatar.height) + 2 * mm
             Poppable {
                 body: back
                 onClicked: {
@@ -93,6 +94,7 @@ Pane {
                 text: chat.messages.lastMessage.text
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
+                textFormat: Text.RichText
             }
             Rectangle {
                 id: unreadMessages
@@ -105,7 +107,7 @@ Pane {
                 height: width
                 radius: height / 2
                 color: window.greenColor
-                visible: chat.unreadCount > 0
+                visible: !chat.messages.lastMessage.isRead
             }
         }
     }
