@@ -29,6 +29,9 @@ Pane {
             Poppable {
                 body: back
                 onClicked: {
+                    if (chat.unreadCount > 0)
+                        chat.readAll();
+
                     if (chat.entry) {
                         if (!chat.entry.url.length)
                             chat.entry.reload();
@@ -82,11 +85,25 @@ Pane {
                 elide: Text.AlignRight
                 wrapMode: Text.NoWrap
             }
+            SmallAvatar {
+                id: lastMessageAvatar
+                anchors {
+                    top: chatNick.bottom
+                    left: chatAvatar.right
+                    margins: 1 * mm
+                }
+                user: visible ? chat.author(chat.messages.lastMessage.userId)
+                              : chatAvatar.user
+                width: 4 * mm
+                height: 4 * mm
+                visible: !chat.isAnonymous && chat.messages.lastMessage.userId !== chat.recipientId
+                         && (chat.entry ? chat.messages.lastMessage.userId !== chat.entry.author.id : true)
+            }
             ThemedText {
                 id: lastMessage
                 anchors {
                     top: chatNick.bottom
-                    left: chatAvatar.right
+                    left: lastMessageAvatar.visible ? lastMessageAvatar.right : chatAvatar.right
                     right: unreadMessages.visible ? unreadMessages.left : parent.right
                 }
                 font.pointSize: window.fontSmallest
