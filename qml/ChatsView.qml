@@ -111,7 +111,7 @@ Pane {
                 text: chat.messages.lastMessage.text
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
-                textFormat: Text.RichText
+//                textFormat: Text.RichText
             }
             Rectangle {
                 id: unreadMessages

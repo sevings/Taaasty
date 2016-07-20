@@ -273,5 +273,5 @@ void Conversation::readAll()
     auto url = QString("v2/messenger/conversations/by_id/%1/messages/read_all.json").arg(_id);
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation);
 
-    Q_UNUSED(request);
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(markReadMessages(const QJsonObject))));
 }

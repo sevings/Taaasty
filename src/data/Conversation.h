@@ -68,6 +68,7 @@ signals:
     void loadingChanged();
     void messageSent(const QJsonObject);
     void messageReceived(const QJsonObject);
+    void markReadMessages(const QJsonObject data);
     void typed(Author* author);
 
 private slots:
