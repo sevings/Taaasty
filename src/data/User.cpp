@@ -71,9 +71,15 @@ void User::_init(const QJsonObject data)
     auto userpic = data.value("userpic").toObject();
 
     _originalPic    = userpic.value("original_url").toString();
-    _largePic       = userpic.value("large_url").toString();
-    _thumb128       = userpic.value("thumb128_url").toString();
-    _thumb64        = userpic.value("thumb64_url").toString();
+    if (!_originalPic.isEmpty())
+    {
+        _largePic   = userpic.contains("large_url")    ? userpic.value("large_url").toString()
+                        : QString("http://thumbor4.tasty0.ru/unsafe/800x800/%1").arg(_originalPic);
+        _thumb128   = userpic.contains("thumb128_url") ? userpic.value("thumb128_url").toString()
+                        : QString("http://thumbor4.tasty0.ru/unsafe/128x128/%1").arg(_originalPic);
+        _thumb64    = userpic.contains("thumb64_url")  ? userpic.value("thumb64_url").toString()
+                        : QString("http://thumbor4.tasty0.ru/unsafe/64x64/%1").arg(_originalPic);
+    }
     _symbol         = userpic.value("symbol").toString();
 
     auto colors = userpic.value("default_colors").toObject();

@@ -68,15 +68,13 @@ signals:
     void messageSent(const QJsonObject);
     void messageReceived(const QJsonObject);
     void markReadMessages(const QJsonObject data);
-    void typed(Author* author);
+    void typed(int userId);
 
 private slots:
     void _init(const QJsonObject data);
     void _setNotLoading();
 
 private:
-    void _emitTyped(int userId);
-
     int                 _id;
     ConversationType    _type;
     int                 _unreadCount;

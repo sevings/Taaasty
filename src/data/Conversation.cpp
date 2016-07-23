@@ -162,11 +162,7 @@ void Conversation::_init(const QJsonObject data)
 
      delete _recipient;
      if (data.contains("recipient"))
-     {
          _recipient     =  new Author(data.value("recipient").toObject(), this);
-         if (!_isAnonymous)
-             _recipient->reload();
-     }
      else
          _recipient     = nullptr;
 
@@ -211,11 +207,6 @@ void Conversation::_setNotLoading()
 }
 
 
-
-void Conversation::_emitTyped(int userId)
-{
-    emit typed(ChatsModel::instance()->author(userId));
-}
 
 bool Conversation::isAnonymous() const
 {

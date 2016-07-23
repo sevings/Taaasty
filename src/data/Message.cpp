@@ -74,10 +74,10 @@ void Message::_init(const QJsonObject data)
     _createdAt      = Tasty::parseDate(data.value("created_at").toString());
     _text           = data.value("content_html").toString(); // TODO: SystemMessage
 
-    if (_isAnonymous)
+//    if (_isAnonymous)
         _author     = new Author(data.value("author").toObject(), this);
-    else
-        _author     = ChatsModel::instance()->author(_userId);
+//    else
+//        _author     = ChatsModel::instance()->author(_userId);
     // _attachments    = data.value("attachments").toArray();
     
     _correctHtml();

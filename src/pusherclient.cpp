@@ -157,7 +157,7 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
         auto chatId = json.value("conversation_id").toInt();
         auto userId = json.value("user_id").toInt();
         if (_chats.contains(chatId))
-            _chats.value(chatId)->_emitTyped(userId);
+            emit _chats.value(chatId)->typed(userId);
         return;
     }
 

@@ -91,22 +91,6 @@ void ChatsModel::fetchMore(const QModelIndex& parent)
 
 
 
-Author* ChatsModel::author(int id)
-{
-    if (id <= 0)
-        return nullptr;
-
-    if (_allUsers.contains(id))
-        return _allUsers.value(id);
-
-    auto author = new Author(this);
-    author->setId(id);
-    _allUsers[id] = author;
-    return author;
-}
-
-
-
 void ChatsModel::loadUnread()
 {
     qDebug() << "ChatsModel::loadUnread";
