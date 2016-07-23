@@ -40,12 +40,11 @@ Pane {
             height: textHeight + 5 * mm
             Poppable {
                 body: back
-                onClicked: {
-                    if (!message.isRead)
-                        message.read();
-                }
             }
             Component.onCompleted: {
+                if (!message.isRead)
+                    message.read();
+
                 if (index === 10)
                     listView.model.loadMore();
             }
@@ -71,19 +70,18 @@ Pane {
                 anchors {
                     top: parent.top
                     left: parent.left
-                    right: unreadMessage.visible ? unreadMessage.left : messageDate.left
+//                    right: unreadMessage.visible ? unreadMessage.left : messageDate.left
                     margins: 1 * mm
                     leftMargin: Settings.userId === message.userId ? 10 * mm : anchors.margins
                 }
-                readonly property Author author: chat.author(message.userId)
-                text: author.name
+                text: message.author.name
                 font.pointSize: window.fontSmaller
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 font.bold: true
                 style: Text.Raised
                 styleColor: window.greenColor
-                visible: chat.type === Chat.GroupConversation
+//                visible: chat.type === Chat.GroupConversation
             }
             ThemedText {
                 id: messageDate

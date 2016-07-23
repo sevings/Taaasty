@@ -92,7 +92,7 @@ Pane {
                     left: chatAvatar.right
                     margins: 1 * mm
                 }
-                user: visible ? chat.author(chat.messages.lastMessage.userId)
+                user: visible ? chat.messages.lastMessage.author
                               : chatAvatar.user
                 width: 4 * mm
                 height: 4 * mm
@@ -124,7 +124,7 @@ Pane {
                 height: width
                 radius: height / 2
                 color: window.greenColor
-                visible: !chat.messages.lastMessage.isRead
+                visible: chat.unreadCount > 0
             }
         }
     }

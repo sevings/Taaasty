@@ -45,7 +45,8 @@ void PusherClient::addChat(Conversation* chat)
 
 void PusherClient::removeChat(int id)
 {
-    _chats.remove(id);
+    if (_chats.contains(id))
+        _chats.remove(id);
 }
 
 
@@ -59,7 +60,8 @@ void PusherClient::addMessage(Message* msg)
 
 void PusherClient::removeMessage(int id)
 {
-    _messages.remove(id);
+    if (_messages.contains(id))
+        _messages.remove(id);
 }
 
 
@@ -73,7 +75,8 @@ void PusherClient::addComment(Comment* cmt)
 
 void PusherClient::removeComment(int id)
 {
-    _comments.remove(id);
+    if (_comments.contains(id))
+        _comments.remove(id);
 }
 
 
@@ -87,7 +90,8 @@ void PusherClient::addNotification(Notification* notif)
 
 void PusherClient::removeNotification(int id)
 {
-    _notifications.remove(id);
+    if (_notifications.contains(id))
+        _notifications.remove(id);
 }
 
 

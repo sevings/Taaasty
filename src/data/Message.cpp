@@ -4,8 +4,10 @@
 
 #include "../apirequest.h"
 #include "../tasty.h"
+#include "../settings.h"
 #include "../pusherclient.h"
-//#include "Author.h"
+#include "../models/chatsmodel.h"
+#include "Author.h"
 
 
 
@@ -16,14 +18,16 @@ Message::Message(QObject* parent)
     , _recipientId(0)
     , _conversationId(0)
     , _read(false)
-//    , _author(new Author(this))
+    , _author(new Author(this))
+    , _isAnonymous(false)
 {
 }
 
 
 
-Message::Message(const QJsonObject data, QObject *parent)
+Message::Message(const QJsonObject data, bool isAnonymous, QObject *parent)
     : QObject(parent)
+    , _isAnonymous(isAnonymous)
 {
     _init(data);
 
@@ -48,7 +52,7 @@ int Message::id() const
 
 void Message::read()
 {
-    if (_id <= 0 || _read)
+    if (_read || _id <= 0 || _userId == Tasty::instance()->settings()->userId())
         return;
 
     auto url = QString("v2/messenger/conversations/by_id/%1/messages/read.json").arg(_conversationId);
@@ -69,7 +73,11 @@ void Message::_init(const QJsonObject data)
     _read           = !data.value("read_at").isNull();
     _createdAt      = Tasty::parseDate(data.value("created_at").toString());
     _text           = data.value("content_html").toString(); // TODO: SystemMessage
-//    _author         = new Author(data.value("author").toObject(), this);
+
+    if (_isAnonymous)
+        _author     = new Author(data.value("author").toObject(), this);
+    else
+        _author     = ChatsModel::instance()->author(_userId);
     // _attachments    = data.value("attachments").toArray();
     
     _correctHtml();

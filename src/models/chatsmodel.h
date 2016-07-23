@@ -6,9 +6,11 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QSet>
+#include <QHash>
 
 class Conversation;
 class ApiRequest;
+class Author;
 
 
 
@@ -29,6 +31,8 @@ public:
     void fetchMore(const QModelIndex& parent) override;
 
     Q_INVOKABLE bool hasMore() const { return _hasMore; }
+
+    Author* author(int id);
 
 public slots:    
     void loadUnread();
@@ -57,6 +61,8 @@ private:
     QString _url;
     bool    _loading;
     int     _page;
+
+    QHash<int, Author*> _allUsers;
 
     ApiRequest* _request;
 };

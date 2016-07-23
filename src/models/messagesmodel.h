@@ -63,9 +63,11 @@ private:
     int _chatId;
     bool _loading;
     int _totalCount;
+    bool _isAnonymous;
     const QString _url;
 
     ApiRequest* _request;
+
 };
 
 #endif // MESSAGESMODEL_H

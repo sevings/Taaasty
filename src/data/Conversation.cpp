@@ -14,6 +14,7 @@
 #include "Author.h"
 
 #include "../models/messagesmodel.h"
+#include "../models/chatsmodel.h"
 
 
 
@@ -180,8 +181,8 @@ void Conversation::_init(const QJsonObject data)
 
      if (!_messages)
      {
-         auto last = new Message(data.value("last_message").toObject(), this);
-         _messages          = new MessagesModel(last, this);
+         auto last = new Message(data.value("last_message").toObject(), _isAnonymous, this);
+         _messages      = new MessagesModel(last, this);
      }
 
      auto users = data.value("users").toArray();
@@ -213,7 +214,12 @@ void Conversation::_setNotLoading()
 
 void Conversation::_emitTyped(int userId)
 {
-    emit typed(author(userId));
+    emit typed(ChatsModel::instance()->author(userId));
+}
+
+bool Conversation::isAnonymous() const
+{
+    return _isAnonymous;
 }
 
 
@@ -221,22 +227,6 @@ void Conversation::_emitTyped(int userId)
 int Conversation::totalCount() const
 {
     return _totalCount;
-}
-
-
-
-Author* Conversation::author(int id)
-{
-    if (id <= 0)
-        return nullptr;
-
-    if (_allUsers.contains(id))
-        return _allUsers.value(id);
-
-    auto author = new Author(this);
-    author->setId(id);
-    _allUsers[id] = author;
-    return author;
 }
 
 

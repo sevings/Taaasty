@@ -2,7 +2,6 @@
 
 #include <QObject>
 #include <QJsonObject>
-#include <QHash>
 
 class Message;
 class Entry;
@@ -57,7 +56,7 @@ public:
 
     int totalCount() const;
 
-    Q_INVOKABLE Author* author(int id);
+    bool isAnonymous() const;
 
 public slots:
     void sendMessage(const QString text);
@@ -95,8 +94,6 @@ private:
     QList<User*>        _leftUsers;
     Author*             _recipient;
     MessagesModel*      _messages;
-
-    QHash<int, Author*> _allUsers;
 
     bool _loading;
 };

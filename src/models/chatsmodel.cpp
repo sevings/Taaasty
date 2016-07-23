@@ -10,6 +10,7 @@
 #include "../apirequest.h"
 #include "../pusherclient.h"
 #include "../data/Conversation.h"
+#include "../data/Author.h"
 
 
 
@@ -86,6 +87,22 @@ void ChatsModel::fetchMore(const QModelIndex& parent)
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_addChats(QJsonArray))));
     Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading(QObject*))));
+}
+
+
+
+Author* ChatsModel::author(int id)
+{
+    if (id <= 0)
+        return nullptr;
+
+    if (_allUsers.contains(id))
+        return _allUsers.value(id);
+
+    auto author = new Author(this);
+    author->setId(id);
+    _allUsers[id] = author;
+    return author;
 }
 
 

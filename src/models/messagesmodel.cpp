@@ -25,6 +25,7 @@ MessagesModel::MessagesModel(Message* last, Conversation* chat)
 
     _chatId = chat->id();
     _totalCount = chat->totalCount();
+    _isAnonymous = chat->isAnonymous();
 
 //    Q_TEST(connect(chat, SIGNAL(messageSent(QJsonObject)),      this, SLOT(_addMessage(QJsonObject))));
     Q_TEST(connect(chat, SIGNAL(messageReceived(QJsonObject)),  this, SLOT(_addMessage(QJsonObject))));
@@ -144,7 +145,7 @@ void MessagesModel::_addMessages(const QJsonObject data)
 
     for (int i = 0; i < msgs.size(); i++)
     {
-        auto msg = new Message(msgs.at(i).toObject(), this);
+        auto msg = new Message(msgs.at(i).toObject(), _isAnonymous, this);
         _messages.insert(i, msg);
 
         Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
@@ -175,7 +176,7 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
 
     for (int i = 0; i < msgs.size(); i++)
     {
-        auto msg = new Message(msgs.at(i).toObject(), this);
+        auto msg = new Message(msgs.at(i).toObject(), _isAnonymous, this);
         _messages << msg;
 
         Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
@@ -194,7 +195,7 @@ void MessagesModel::_addMessage(const QJsonObject data)
 
     beginInsertRows(QModelIndex(), _messages.size(), _messages.size());
 
-    auto msg = new Message(data, this);
+    auto msg = new Message(data, _isAnonymous, this);
     _messages << msg;
 
     Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
