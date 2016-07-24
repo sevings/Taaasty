@@ -3,7 +3,8 @@
 #include <QObject>
 #include <QJsonObject>
 
-class Author;
+class User;
+class Conversation;
 
 
 
@@ -20,11 +21,11 @@ class Message: public QObject
     Q_PROPERTY(bool     isRead          MEMBER _read           NOTIFY readChanged)
     Q_PROPERTY(QString  createdAt       MEMBER _createdAt      NOTIFY updated)
     Q_PROPERTY(QString  text            MEMBER _text           NOTIFY textUpdated)
-    Q_PROPERTY(Author*  author          MEMBER _author         NOTIFY updated)
+    Q_PROPERTY(User*    author          MEMBER _author         NOTIFY updated)
     
 public:
     Message(QObject* parent = nullptr);
-    Message(const QJsonObject data, bool isAnonymous = false, QObject* parent = nullptr);
+    Message(const QJsonObject data, Conversation* chat, QObject* parent = nullptr);
     ~Message();
 
     int id() const;
@@ -52,8 +53,8 @@ private:
     bool    _read;
     QString _createdAt;
     QString _text;
-    Author* _author;
-    // _attachments;
+    User*   _author;
 
-    bool _isAnonymous;
+    Conversation* _chat;
+    // _attachments;
 };

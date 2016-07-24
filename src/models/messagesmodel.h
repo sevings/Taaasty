@@ -14,19 +14,20 @@ class MessagesModel : public QAbstractListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(int chatId           READ chatId WRITE setChatId)
+    Q_PROPERTY(int chatId           READ chatId)
     Q_PROPERTY(bool hasMore         READ hasMore     NOTIFY hasMoreChanged)
     Q_PROPERTY(bool loading         READ loading     NOTIFY loadingChanged)
     Q_PROPERTY(Message* lastMessage READ lastMessage NOTIFY lastMessageChanged)
 
 public:
-    explicit MessagesModel(Message* last = nullptr, Conversation* chat = nullptr);
+    explicit MessagesModel(Conversation* chat = nullptr);
+    explicit MessagesModel(Message* last, Conversation* chat = nullptr);
 
     Q_INVOKABLE int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
     Q_INVOKABLE int chatId() const { return _chatId; }
-    Q_INVOKABLE void setChatId(const int id);
+    Q_INVOKABLE void reset();
 
     Q_INVOKABLE bool hasMore() const { return _messages.size() < _totalCount; }
     Q_INVOKABLE bool loading() const { return _loading; }
@@ -60,10 +61,10 @@ private:
 
     QList<Message*> _messages;
     Message*        _lastMessage;
+    Conversation*   _chat;
     int _chatId;
     bool _loading;
     int _totalCount;
-    bool _isAnonymous;
     const QString _url;
 
     ApiRequest* _request;

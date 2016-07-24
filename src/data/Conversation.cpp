@@ -40,6 +40,30 @@ Conversation::Conversation(QObject* parent)
 
 
 
+Conversation::Conversation(Entry* entry)
+    : QObject(entry)
+    , _id(0)
+    , _type(UninitializedConversation)
+    , _unreadCount(0)
+    , _unreceivedCount(0)
+    , _totalCount(0)
+    , _userId(0)
+    , _recipientId(0)
+    , _isDisabled(false)
+    , _notDisturb(false)
+    , _isAnonymous(false)
+    , _entry(nullptr)
+    , _recipient(nullptr)
+    , _messages(new MessagesModel(this))
+    , _loading(false)
+{
+    setEntryId(entry->entryId());
+
+    _entry = entry;
+}
+
+
+
 Conversation::Conversation(const QJsonObject data, QObject *parent)
     : QObject(parent)
     , _entry(nullptr)
@@ -157,6 +181,14 @@ void Conversation::_init(const QJsonObject data)
      _notDisturb        = data.value("not_disturb").toBool();
      _isAnonymous       = data.value("is_anonymous").toBool();
 
+     if (!_messages)
+     {
+         auto last = new Message(data.value("last_message").toObject(), this, this);
+         _messages      = new MessagesModel(last, this);
+     }
+     else
+         _messages->reset();
+
      if (!_entry && data.contains("entry"))
         _entry          =  new Entry(data.value("entry").toObject(), this);
 
@@ -175,23 +207,26 @@ void Conversation::_init(const QJsonObject data)
      else
          _topic.clear();
 
-     if (!_messages)
-     {
-         auto last = new Message(data.value("last_message").toObject(), _isAnonymous, this);
-         _messages      = new MessagesModel(last, this);
-     }
-
      auto users = data.value("users").toArray();
      foreach(auto userData, users)
-        _users << new User(userData.toObject(), this); // TODO: isOnline
+     {
+        auto user = new User(userData.toObject(), this); // TODO: isOnline
+        _users.insert(user->id(), user);
+     }
              
      users = data.value("users_deleted").toArray();
      foreach(auto userData, users)
-        _deletedUsers << new User(userData.toObject(), this);
+     {
+        auto user = new User(userData.toObject(), this);
+        _deletedUsers.insert(user->id(), user);
+     }
 
      users = data.value("users_left").toArray();
      foreach(auto userData, users)
-        _leftUsers << new User(userData.toObject(), this);
+     {
+        auto user = new User(userData.toObject(), this);
+        _leftUsers.insert(user->id(), user);
+     }
 
      Tasty::instance()->pusher()->addChat(this);
 
@@ -204,6 +239,34 @@ void Conversation::_setNotLoading()
 {
     _loading = false;
     emit loadingChanged();
+}
+
+
+
+MessagesModel* Conversation::messages() const
+{
+    return _messages;
+}
+
+
+
+User* Conversation::user(int id)
+{
+    if (_users.contains(id))
+        return _users.value(id);
+
+    if (!_isAnonymous)
+    {
+        auto user = new User(this);
+        user->setId(id);
+        _users[id] = user;
+        return user;
+    }
+
+    if (!_users.contains(0))
+        _users[0] = new User(this);
+
+    return _users[0];
 }
 
 

@@ -7,8 +7,10 @@ class Author;
 class Tlog;
 class Rating;
 class Media;
-class CommentsModel;
+class Conversation;
+//class CommentsModel;
 class AttachedImagesModel;
+class MessagesModel;
 
 
 
@@ -20,7 +22,6 @@ public:
     EntryBase(QObject* parent = nullptr);
 
     void load(int id);
-
 
     Author* author() const;
     QString text() const;
@@ -75,16 +76,17 @@ class Entry: public EntryBase
 //    Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      NOTIFY updated)
     Q_PROPERTY(int         wordCount      MEMBER _wordCount         NOTIFY updated)
 
-    Q_PROPERTY(CommentsModel*       commentsModel       READ commentsModel       NOTIFY updated)
+    Q_PROPERTY(Conversation* chat         MEMBER _chat              NOTIFY updated)
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel READ attachedImagesModel NOTIFY updated)
 
     Q_PROPERTY(bool loading               MEMBER _loading           NOTIFY loadingChanged)
 
 public:
     Entry(QObject* parent = nullptr);
+    Entry(const QJsonObject data, Conversation* chat);
     Entry(const QJsonObject data, QObject* parent = nullptr);
 
-    Q_INVOKABLE CommentsModel*       commentsModel()       { return _commentsModel; }
+//    Q_INVOKABLE CommentsModel*       commentsModel()       { return _commentsModel; }
     Q_INVOKABLE AttachedImagesModel* attachedImagesModel() { return _attachedImagesModel; }
 
     int wordCount() const;
@@ -145,7 +147,8 @@ private:
 //    QJsonObject _imagePreview;
     int         _wordCount;
 
-    CommentsModel*       _commentsModel;
+//    CommentsModel*       _commentsModel;
+    Conversation*        _chat;
     AttachedImagesModel* _attachedImagesModel;
 
     bool        _loading;

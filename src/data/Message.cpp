@@ -7,7 +7,8 @@
 #include "../settings.h"
 #include "../pusherclient.h"
 #include "../models/chatsmodel.h"
-#include "Author.h"
+#include "User.h"
+#include "Conversation.h"
 
 
 
@@ -18,16 +19,17 @@ Message::Message(QObject* parent)
     , _recipientId(0)
     , _conversationId(0)
     , _read(false)
-    , _author(new Author(this))
-    , _isAnonymous(false)
+    , _author(new User(this))
+    , _chat(nullptr)
 {
+
 }
 
 
 
-Message::Message(const QJsonObject data, bool isAnonymous, QObject *parent)
+Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
     : QObject(parent)
-    , _isAnonymous(isAnonymous)
+    , _chat(chat)
 {
     _init(data);
 
@@ -75,9 +77,9 @@ void Message::_init(const QJsonObject data)
     _text           = data.value("content_html").toString(); // TODO: SystemMessage
 
 //    if (_isAnonymous)
-        _author     = new Author(data.value("author").toObject(), this);
+//        _author     = new Author(data.value("author").toObject(), this);
 //    else
-//        _author     = ChatsModel::instance()->author(_userId);
+        _author     = _chat->user(_userId);
     // _attachments    = data.value("attachments").toArray();
     
     _correctHtml();

@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QHash>
 
 class Message;
 class Entry;
@@ -29,8 +30,8 @@ class Conversation: public QObject
     Q_PROPERTY(bool             isAnonymous     MEMBER _isAnonymous     NOTIFY updated)
     Q_PROPERTY(QString          topic           MEMBER _topic           NOTIFY updated)
     Q_PROPERTY(Entry*           entry           MEMBER _entry           NOTIFY updated)
-    Q_PROPERTY(QList<User*>     users           MEMBER _users           NOTIFY updated)
-    Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
+//    Q_PROPERTY(QList<User*>     users           MEMBER _users           NOTIFY updated)
+//    Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
     Q_PROPERTY(Author*          recipient       MEMBER _recipient       NOTIFY updated)
     Q_PROPERTY(MessagesModel*   messages        MEMBER _messages        NOTIFY updated)
     
@@ -45,6 +46,7 @@ public:
     Q_ENUMS(ConversationType)
 
     Conversation(QObject* parent = nullptr);
+    Conversation(Entry* entry);
     Conversation(const QJsonObject data, QObject* parent = nullptr);
     ~Conversation();
 
@@ -57,6 +59,10 @@ public:
     int totalCount() const;
 
     bool isAnonymous() const;
+
+    MessagesModel* messages() const;
+
+    User* user(int id);
 
 public slots:
     void sendMessage(const QString text);
@@ -87,9 +93,9 @@ private:
     bool                _isAnonymous;
     QString             _topic;
     Entry*              _entry;
-    QList<User*>        _users;
-    QList<User*>        _deletedUsers;
-    QList<User*>        _leftUsers;
+    QHash<int, User*>   _users;
+    QHash<int, User*>   _deletedUsers;
+    QHash<int, User*>   _leftUsers;
     Author*             _recipient;
     MessagesModel*      _messages;
 

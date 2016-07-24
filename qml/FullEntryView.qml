@@ -8,14 +8,14 @@ Pane {
         entryId: back.entryId
     }
     readonly property Tlog tlog: entry.tlog
-    property CommentsModel commentsModel: entry.commentsModel
+    property MessagesModel messagesModel: entry.chat.messages
     property bool showProfiles: tlog.tlogId !== window.anonymousId
     readonly property bool isFullEntryView: true
     Timer {
         interval: 20000
         running: back.visible
         repeat: true
-        onTriggered: commentsModel.check()
+        onTriggered: messagesModel.check()
         triggeredOnStart: true
     }
     Poppable {
@@ -34,32 +34,32 @@ Pane {
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: !entry.loading
-        model: commentsModel
+        model: messagesModel
         delegate: Item {
             width: window.width
             height: 4 * mm + commentText.contentHeight + nameText.contentHeight
             Poppable {
                 body: back
                 onClicked: {
-                    menu.show(comment);
+                    menu.show(message);
                 }
             }
             SmallAvatar {
                 id: commentAvatar
                 anchors.margins: 1 * mm
-                user: comment.user
+                user: message.author
                 Poppable {
                     body: back
                     onClicked: {
                         mouse.accepted = true;
                         if (back.showProfiles)
-                            window.pushProfileById(comment.user.id);
+                            window.pushProfileById(message.author.id);
                     }
                 }
             }
             Text {
                 id: nameText
-                text: comment.user.name
+                text: message.author.name
                 color: window.textColor
                 anchors {
                     top: parent.top
@@ -76,7 +76,7 @@ Pane {
             }
             Text {
                 id: commentDate
-                text: comment.createdAt
+                text: message.createdAt
                 color: window.secondaryTextColor
                 anchors {
                     baseline: nameText.baseline
@@ -88,7 +88,7 @@ Pane {
             }
             Text {
                 id: commentText
-                text: comment.html
+                text: message.text
                 color: window.textColor
                 anchors {
                     rightMargin: 1 * mm
@@ -318,9 +318,9 @@ Pane {
                 text: enabled || fullEntry.count > 0 ? 'Еще' : ''
                 height: visible ? (enabled ? 6 * mm : 6 * mm - 1) : 0 // changing height forces layout
                 width: parent.width / 3
-                visible: commentsModel && commentsModel.hasMore
-                enabled: commentsModel && !commentsModel.loading
-                onClicked: commentsModel.loadMore()
+                visible: messagesModel && messagesModel.hasMore
+                enabled: messagesModel && !messagesModel.loading
+                onClicked: messagesModel.loadMore()
             }
         }
         footer: MessageEditor {
@@ -336,8 +336,8 @@ Pane {
                     commentEditor.clear();
                 }
                 onUpdated: {
-                    if (commentsModel.rowCount() === 0)
-                        commentsModel.loadMore();
+                    if (messagesModel.rowCount() === 0)
+                        messagesModel.loadMore();
 
                     window.setFooterTlog(entry.tlog);
                 }
@@ -356,12 +356,12 @@ Pane {
         border.color: window.secondaryTextColor
         border.width: 0.2 * mm
         radius: 0.8 * mm
-        property Comment comment: Comment { }
+        property Message message: Message { }
         function close() {
             state = "closed";
         }
-        function show(cmt) {
-            menu.comment = cmt;
+        function show(msg) {
+            menu.message = msg;
             window.hideFooter();
             state = "opened";
         }
@@ -383,7 +383,7 @@ Pane {
                 }
                 text: 'Ответить'
                 onClicked: {
-                    addGreeting(menu.comment.user.slug);
+                    addGreeting(menu.message.author.slug);
                     menu.close();
                     fullEntry.positionViewAtEnd();
                 }
@@ -398,18 +398,18 @@ Pane {
 //                }
 //                visible: menu.comment && menu.comment.isEditable === true
 //            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Удалить'
-                onClicked: {
-                    menu.comment.remove();
-                    menu.close();
-                }
-                visible: menu.comment && menu.comment.isDeletable === true
-            }
+//            ThemedButton {
+//                anchors {
+//                    left: parent.left
+//                    right: parent.right
+//                }
+//                text: 'Удалить'
+//                onClicked: {
+//                    menu.comment.remove();
+//                    menu.close();
+//                }
+//                visible: menu.comment && menu.comment.isDeletable === true
+//            }
         }
     }
 }

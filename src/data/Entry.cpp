@@ -9,10 +9,12 @@
 #include "Rating.h"
 #include "Author.h"
 #include "Media.h"
+#include "Conversation.h"
 
 #include "../tasty.h"
 #include "../apirequest.h"
 #include "../models/commentsmodel.h"
+#include "../models/messagesmodel.h"
 #include "../models/attachedimagesmodel.h"
 
 
@@ -103,16 +105,34 @@ Entry::Entry(QObject* parent)
     , _commentsCount(0)
     , _media(new Media(this))
     , _wordCount(0)
-    , _commentsModel(new CommentsModel(this))
+//    , _commentsModel(new CommentsModel(this))
+    , _chat(new Conversation(this))
     , _attachedImagesModel(new AttachedImagesModel(this))
     , _loading(false)
 {
 
 }
 
+
+
+Entry::Entry(const QJsonObject data, Conversation* chat)
+    : EntryBase(chat)
+//    , _commentsModel(nullptr)
+    , _chat(chat)
+    , _attachedImagesModel(nullptr)
+    , _loading(false)
+{
+    _init(data);
+
+    Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
+}
+
+
+
 Entry::Entry(const QJsonObject data, QObject *parent)
     : EntryBase(parent)
-    , _commentsModel(nullptr)
+//    , _commentsModel(nullptr)
+    , _chat(nullptr)
     , _attachedImagesModel(nullptr)
     , _loading(false)
 {
@@ -131,6 +151,9 @@ void Entry::setId(const int id)
     _id = id;
 
     reload();
+
+    if (_chat)
+        _chat->setEntryId(_id);
 }
 
 
@@ -251,10 +274,16 @@ void Entry::_init(const QJsonObject data)
     auto content = _title + _text;
     _wordCount   = content.remove(tagRe).count(wordRe);
 
-    delete _commentsModel;
-    _commentsModel = new CommentsModel(this);
+//    delete _commentsModel;
+//    _commentsModel = new CommentsModel(this);
 
-    Q_TEST(connect(_commentsModel, SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
+//    Q_TEST(connect(_commentsModel, SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
+
+//    delete _chat;
+    if (!_chat)
+        _chat = new Conversation(this);
+
+    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
 
     auto imageAttach = data.value("image_attachments").toArray();
     delete _attachedImagesModel;
