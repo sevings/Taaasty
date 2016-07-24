@@ -232,6 +232,9 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
     endInsertRows();
 
     emit lastMessageChanged();
+
+    if (_messages.size() >= _totalCount)
+        emit hasMoreChanged();
 }
 
 

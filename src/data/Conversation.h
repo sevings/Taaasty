@@ -20,7 +20,7 @@ class Conversation: public QObject
 
     Q_PROPERTY(int              id              MEMBER _id              NOTIFY updated)
     Q_PROPERTY(ConversationType type            MEMBER _type            NOTIFY updated)
-    Q_PROPERTY(int              unreadCount     MEMBER _unreadCount     NOTIFY updated)
+    Q_PROPERTY(int              unreadCount     MEMBER _unreadCount     NOTIFY unreadCountChanged)
     Q_PROPERTY(int              unreceivedCount MEMBER _unreceivedCount NOTIFY updated)
     Q_PROPERTY(int              totalCount      MEMBER _totalCount      NOTIFY updated)
     Q_PROPERTY(int              userId          MEMBER _userId          NOTIFY updated)
@@ -70,6 +70,7 @@ public slots:
 
 signals:
     void updated();
+    void unreadCountChanged();
     void loadingChanged();
     void messageSent(const QJsonObject);
     void messageReceived(const QJsonObject);
@@ -79,6 +80,7 @@ signals:
 private slots:
     void _init(const QJsonObject data);
     void _setNotLoading();
+    void _markRead(const QJsonObject data);
 
 private:
     int                 _id;

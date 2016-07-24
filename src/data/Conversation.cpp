@@ -231,6 +231,7 @@ void Conversation::_init(const QJsonObject data)
      Tasty::instance()->pusher()->addChat(this);
 
      emit updated();
+     emit unreadCountChanged();
 }
 
 
@@ -239,6 +240,20 @@ void Conversation::_setNotLoading()
 {
     _loading = false;
     emit loadingChanged();
+}
+
+
+
+void Conversation::_markRead(const QJsonObject data)
+{
+    if (data.value("status").toString() != "success")
+    {
+        qDebug() << "error read chat" << _id;
+        return;
+    }
+
+    _unreadCount = _unreceivedCount;
+    emit unreadCountChanged();
 }
 
 
