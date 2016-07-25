@@ -309,17 +309,19 @@ void Conversation::sendMessage(const QString text)
 //    emit loadingChanged();
 
     auto content = QUrl::toPercentEncoding(text.trimmed());
-    auto uuid    = QUuid::createUuid().toString();
+    auto uuid    = QUuid::createUuid().toString().remove('{').remove('}');
 
     qDebug() << uuid;
 
-    auto data    = QString("content=%1&uuid=%2").arg(QString::fromUtf8(content)).arg(uuid).remove('{').remove('}');
+    auto data    = QString("content=%1&uuid=%2").arg(QString::fromUtf8(content)).arg(uuid);
     auto url     = QString("v2/messenger/conversations/by_id/%1/messages.json").arg(_id);
-    auto request = new ApiRequest(url, true,
-                                  QNetworkAccessManager::PostOperation, data);
+    auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(messageSent(const QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
+
+    if (_unreadCount > 0)
+        Q_TEST(connect(request, SIGNAL(success(QJsonObject)),   this, SLOT(readAll())));
 }
 
 

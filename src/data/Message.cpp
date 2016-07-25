@@ -34,6 +34,7 @@ Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
     _init(data);
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
+    Q_TEST(connect(chat, SIGNAL(markReadMessages(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
 }
 
 

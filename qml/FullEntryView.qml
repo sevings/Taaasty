@@ -13,7 +13,7 @@ Pane {
     readonly property bool isFullEntryView: true
     Timer {
         interval: 20000
-        running: back.visible
+        running: back.visible && !entry.isWatched
         repeat: true
         onTriggered: messagesModel.check()
         triggeredOnStart: true
