@@ -200,6 +200,9 @@ void MessagesModel::_addMessages(const QJsonObject data)
 
     endInsertRows();
 
+    if (_messages.size() <= msgs.size())
+        emit lastMessageChanged();
+
     if (_messages.size() >= _totalCount)
         emit hasMoreChanged();
 }
@@ -215,9 +218,9 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
     if (msgs.isEmpty())
         return;
 
-    _setTotalCount(data.value("total_count").toInt());
-
     beginInsertRows(QModelIndex(), _messages.size(), _messages.size() + msgs.size() - 1);
+
+    _setTotalCount(data.value("total_count").toInt());
 
     _messages.reserve(_messages.size() + msgs.size());
 

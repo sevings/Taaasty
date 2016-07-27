@@ -76,7 +76,7 @@ class Entry: public EntryBase
 //    Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      NOTIFY updated)
     Q_PROPERTY(int         wordCount      MEMBER _wordCount         NOTIFY updated)
 
-    Q_PROPERTY(Conversation* chat         MEMBER _chat              NOTIFY updated)
+    Q_PROPERTY(Conversation* chat         READ chat                 NOTIFY updated)
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel READ attachedImagesModel NOTIFY updated)
 
     Q_PROPERTY(bool loading               MEMBER _loading           NOTIFY loadingChanged)
@@ -98,6 +98,8 @@ public:
     Tlog* tlog() const;
 
     int commentsCount() const;
+
+    Conversation* chat();
 
 public slots:
     void setId(const int id);

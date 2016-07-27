@@ -90,8 +90,8 @@ void PusherClient::addNotification(Notification* notif)
 
 void PusherClient::removeNotification(int id)
 {
-    if (_notifications.contains(id))
-        _notifications.remove(id);
+//    if (_notifications.contains(id))
+//        _notifications.remove(id);
 }
 
 

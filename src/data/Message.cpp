@@ -34,7 +34,9 @@ Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
     _init(data);
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
-    Q_TEST(connect(chat, SIGNAL(markReadMessages(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
+
+    if (_userId != Tasty::instance()->settings()->userId())
+        Q_TEST(connect(chat, SIGNAL(markReadMessages(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
 }
 
 
@@ -75,7 +77,7 @@ void Message::_init(const QJsonObject data)
     _conversationId = data.value("conversation_id").toInt();
     _read           = !data.value("read_at").isNull();
     _createdAt      = Tasty::parseDate(data.value("created_at").toString());
-    _text           = data.value("content_html").toString(); // TODO: SystemMessage
+    _text           = data.value("content_html").toString().replace("&amp;", "&"); // TODO: SystemMessage
 
 //    if (_isAnonymous)
 //        _author     = new Author(data.value("author").toObject(), this);

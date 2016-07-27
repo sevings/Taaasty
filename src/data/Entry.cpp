@@ -125,6 +125,7 @@ Entry::Entry(const QJsonObject data, Conversation* chat)
     _init(data);
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
+    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)),   this, SLOT(_setCommentsCount(int))));
 }
 
 
@@ -274,17 +275,6 @@ void Entry::_init(const QJsonObject data)
     auto content = _title + _text;
     _wordCount   = content.remove(tagRe).count(wordRe);
 
-//    delete _commentsModel;
-//    _commentsModel = new CommentsModel(this);
-
-//    Q_TEST(connect(_commentsModel, SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
-
-//    delete _chat;
-    if (!_chat)
-        _chat = new Conversation(this);
-
-    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
-
     auto imageAttach = data.value("image_attachments").toArray();
     delete _attachedImagesModel;
     _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
@@ -369,6 +359,18 @@ void Entry::_setNotLoading()
 int Entry::commentsCount() const
 {
     return _commentsCount;
+}
+
+Conversation*Entry::chat()
+{
+    if (_chat)
+        return _chat;
+
+    _chat = new Conversation(this);
+
+    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
+
+    return _chat;
 }
 
 

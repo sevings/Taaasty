@@ -190,11 +190,13 @@ void Conversation::_init(const QJsonObject data)
          _messages->reset();
 
      if (!_entry && data.contains("entry"))
-        _entry          =  new Entry(data.value("entry").toObject(), this);
+        _entry          = new Entry(data.value("entry").toObject(), this);
+     else
+         _messages->loadMore();
 
      delete _recipient;
      if (data.contains("recipient"))
-         _recipient     =  new Author(data.value("recipient").toObject(), this);
+         _recipient     = new Author(data.value("recipient").toObject(), this);
      else
          _recipient     = nullptr;
 
@@ -310,10 +312,7 @@ void Conversation::sendMessage(const QString text)
 
     auto content = QUrl::toPercentEncoding(text.trimmed());
     auto uuid    = QUuid::createUuid().toString().remove('{').remove('}');
-
-    qDebug() << uuid;
-
-    auto data    = QString("content=%1&uuid=%2").arg(QString::fromUtf8(content)).arg(uuid);
+    auto data    = QString("uuid=%1&content=%2").arg(uuid).arg(QString::fromUtf8(content));
     auto url     = QString("v2/messenger/conversations/by_id/%1/messages.json").arg(_id);
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
 
