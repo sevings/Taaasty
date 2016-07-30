@@ -335,7 +335,7 @@ Pane {
             visible: Tasty.isAuthorized
             height: visible ? implicitHeight : - 1 * mm
             onSent: {
-                entry.chat.sendMessage(commentEditor.message);
+                entry.addComment(commentEditor.message);
             }
             Connections {
                 target: entry
