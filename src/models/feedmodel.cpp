@@ -115,7 +115,7 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 void FeedModel::setMode(const FeedModel::Mode mode)
 {
     reset(mode);
-    if (mode == TlogMode && _tlog <= 0)
+    if (mode == TlogMode && _tlog <= 0 && _slug.isEmpty())
         _hasMore = false;
 }
 
