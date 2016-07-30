@@ -191,8 +191,6 @@ void Conversation::_init(const QJsonObject data)
 
      if (!_entry && data.contains("entry"))
         _entry          = new Entry(data.value("entry").toObject(), this);
-     else
-         _messages->loadMore();
 
      delete _recipient;
      if (data.contains("recipient"))

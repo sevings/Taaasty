@@ -25,6 +25,12 @@ Pane {
         visible: !fullEntry.visible
     }
     signal addGreeting(string slug)
+    Connections {
+        target: entry
+        onUpdated: {
+            window.setFooterTlog(entry.tlog);
+        }
+    }
     MyListView {
         id: fullEntry
         anchors {
@@ -331,15 +337,13 @@ Pane {
                 entry.chat.sendMessage(commentEditor.message);
             }
             Connections {
-                target: entry
-                onCommentAdded: {
+                target: entry.chat
+                onMessageSent: {
                     commentEditor.clear();
                 }
                 onUpdated: {
                     if (messagesModel.rowCount() === 0)
                         messagesModel.loadMore();
-
-                    window.setFooterTlog(entry.tlog);
                 }
             }
             Connections {

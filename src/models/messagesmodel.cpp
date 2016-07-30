@@ -84,7 +84,9 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
 
 void MessagesModel::reset()
 {
-    beginResetModel();
+    auto reset = !_messages.isEmpty();
+    if (reset)
+        beginResetModel();
 
     _chatId = _chat->id();
 
@@ -93,6 +95,7 @@ void MessagesModel::reset()
 
     delete _lastMessage;
     _lastMessage = new Message(this);
+    emit lastMessageChanged();
 
     _loading = false;
     emit loadingChanged();
@@ -103,7 +106,8 @@ void MessagesModel::reset()
     delete _request;
     _request = nullptr;
 
-    endResetModel();
+    if (reset)
+        endResetModel();
 }
 
 

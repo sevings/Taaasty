@@ -93,14 +93,14 @@ ApplicationWindow {
         }
     }
     function openLink(url) {
-        var matches = /taaasty.com\/(?:~|%7E)([^\/]+)(?:\/([\d]+))?/.exec(url);
+        var matches = /taaasty.com\/(?:~|%7E)?([^\/]+)(?:\/([\d]+))?/.exec(url);
         if (matches) {
             var slug = matches[1];
             var entryId = matches[2];
             if (entryId) {
                 pushFullEntryById(entryId);
             }
-            else if (slug) {
+            else if (slug && slug !== 'anonymous') {
                 pushProfileBySlug(slug);
             }
             else
