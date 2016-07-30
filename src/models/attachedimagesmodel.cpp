@@ -19,7 +19,7 @@ AttachedImagesModel::AttachedImagesModel(QObject* parent)
 AttachedImagesModel::AttachedImagesModel(const QJsonArray *data, QObject *parent)
     : QAbstractListModel(parent)
 {
-    qDebug() << "AttachedImagesModel";
+//    qDebug() << "AttachedImagesModel";
 
     if (!data)
         return;

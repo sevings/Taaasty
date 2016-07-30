@@ -50,7 +50,7 @@ Pane {
             Poppable {
                 body: back
                 onClicked: {
-                    menu.show(message);
+                    menu.show(comment);
                 }
             }
             SmallAvatar {
@@ -359,12 +359,12 @@ Pane {
         border.color: window.secondaryTextColor
         border.width: 0.2 * mm
         radius: 0.8 * mm
-        property Message message: Message { }
+        property Comment comment: Comment { }
         function close() {
             state = "closed";
         }
-        function show(msg) {
-            menu.message = msg;
+        function show(cmt) {
+            menu.comment = cmt;
             window.hideFooter();
             state = "opened";
         }
@@ -386,7 +386,7 @@ Pane {
                 }
                 text: 'Ответить'
                 onClicked: {
-                    addGreeting(menu.message.author.slug);
+                    addGreeting(menu.comment.user.slug);
                     menu.close();
                     fullEntry.positionViewAtEnd();
                 }

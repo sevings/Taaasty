@@ -35,7 +35,7 @@ Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
     Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
 
     if (_userId != Tasty::instance()->settings()->userId())
-        Q_TEST(connect(chat, SIGNAL(markReadMessages(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
+        Q_TEST(connect(chat, SIGNAL(allMessagesRead(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
 }
 
 

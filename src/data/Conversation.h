@@ -78,7 +78,7 @@ signals:
     void loadingChanged();
     void messageSent(const QJsonObject);
     void messageReceived(const QJsonObject);
-    void markReadMessages(const QJsonObject data);
+    void allMessagesRead(const QJsonObject data);
     void typed(int userId);
     void lastMessageChanged();
 
