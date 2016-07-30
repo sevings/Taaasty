@@ -12,8 +12,10 @@
 #include "Message.h"
 #include "User.h"
 #include "Author.h"
+#include "Comment.h"
 
 #include "../models/messagesmodel.h"
+#include "../models/commentsmodel.h"
 #include "../models/chatsmodel.h"
 
 
@@ -180,17 +182,23 @@ void Conversation::_init(const QJsonObject data)
      _isDisabled        = data.value("is_disabled").toBool();
      _notDisturb        = data.value("not_disturb").toBool();
      _isAnonymous       = data.value("is_anonymous").toBool();
+     _lastMessage       = new Message(data.value("last_message").toObject(), this, this);
 
      if (!_messages)
      {
-         auto last = new Message(data.value("last_message").toObject(), this, this);
-         _messages      = new MessagesModel(last, this);
+         _messages      = new MessagesModel(this);
+
+         Q_TEST(connect(_messages, SIGNAL(lastMessageChanged()), this, SIGNAL(lastMessageChanged())));
      }
      else
          _messages->reset();
 
      if (!_entry && data.contains("entry"))
+     {
         _entry          = new Entry(data.value("entry").toObject(), this);
+
+        Q_TEST(connect(_entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
+     }
 
      delete _recipient;
      if (data.contains("recipient"))
@@ -230,6 +238,7 @@ void Conversation::_init(const QJsonObject data)
 
      Tasty::instance()->pusher()->addChat(this);
 
+     emit lastMessageChanged();
      emit updated();
      emit unreadCountChanged();
 }
@@ -282,6 +291,25 @@ User* Conversation::user(int id)
         _users[0] = new User(this);
 
     return _users[0];
+}
+
+
+
+MessageBase* Conversation::lastMessage() const
+{
+    MessageBase* last = nullptr;
+
+    if (_entry)
+        last = _entry->commentsModel()->lastComment();
+
+    if (last)
+        return last;
+
+    last = _messages->lastMessage();
+    if (last)
+        return last;
+
+    return _lastMessage;
 }
 
 

@@ -3,25 +3,22 @@
 #include <QObject>
 #include <QJsonObject>
 
-class User;
+#include "messagebase.h"
+
 class Conversation;
 
 
 
-class Message: public QObject
+class Message: public MessageBase
 {
     Q_OBJECT
 
     friend class PusherClient;
 
-    Q_PROPERTY(int      id              MEMBER _id             NOTIFY updated)
     Q_PROPERTY(int      userId          MEMBER _userId         NOTIFY updated)
     Q_PROPERTY(int      recipientId     MEMBER _recipientId    NOTIFY updated)
     Q_PROPERTY(int      conversationId  MEMBER _conversationId NOTIFY updated)
     Q_PROPERTY(bool     isRead          MEMBER _read           NOTIFY readChanged)
-    Q_PROPERTY(QString  createdAt       MEMBER _createdAt      NOTIFY updated)
-    Q_PROPERTY(QString  text            MEMBER _text           NOTIFY textUpdated)
-    Q_PROPERTY(User*    author          MEMBER _author         NOTIFY updated)
     
 public:
     Message(QObject* parent = nullptr);
@@ -35,7 +32,6 @@ public slots:
 
 signals:
     void updated();
-    void textUpdated();
     void readChanged();
 
 private slots:
@@ -46,14 +42,10 @@ private slots:
 private:
     void _updateRead(const QJsonObject data);
 
-    int     _id;
     int     _userId;
     int     _recipientId;
     int     _conversationId;
     bool    _read;
-    QString _createdAt;
-    QString _text;
-    User*   _author;
 
     Conversation* _chat;
     // _attachments;

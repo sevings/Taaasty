@@ -83,6 +83,16 @@ void CommentsModel::check()
 
 
 
+Comment* CommentsModel::lastComment() const
+{
+    if (_comments.isEmpty())
+        return nullptr;
+
+    return _comments.last();
+}
+
+
+
 void CommentsModel::loadMore()
 {
     if (_loading || !_entryId)
@@ -139,6 +149,9 @@ void CommentsModel::_addComments(const QJsonObject data)
 
     endInsertRows();
 
+    if (_comments.size() <= feed.size())
+        emit lastCommentChanged();
+
     if (_comments.size() >= _totalCount)
         emit hasMoreChanged();
 
@@ -173,6 +186,8 @@ void CommentsModel::_addLastComments(const QJsonObject data)
 
     endInsertRows();
 
+    emit lastCommentChanged();
+
     if (_comments.size() >= _totalCount)
         emit hasMoreChanged();
 }
@@ -191,6 +206,8 @@ void CommentsModel::_addComment(const QJsonObject data)
     Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
 
     endInsertRows();
+
+    emit lastCommentChanged();
 }
 
 
@@ -215,6 +232,8 @@ void CommentsModel::_addComment(const int entryId, const Notification* notif)
     Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
 
     endInsertRows();
+
+    emit lastCommentChanged();
 }
 
 
@@ -232,6 +251,9 @@ void CommentsModel::_removeComment(QObject* cmt)
     endRemoveRows();
 
     _setTotalCount(_totalCount - 1);
+
+    if (i == _comments.size())
+        emit lastCommentChanged();
 }
 
 

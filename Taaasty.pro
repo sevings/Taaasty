@@ -40,7 +40,8 @@ SOURCES += src/main.cpp \
     src/data/Message.cpp \
     src/models/chatsmodel.cpp \
     src/models/messagesmodel.cpp \
-    src/pusherclient.cpp
+    src/pusherclient.cpp \
+    src/data/messagebase.cpp
 
 RESOURCES += qml.qrc
 
@@ -86,7 +87,8 @@ HEADERS += \
     src/data/Message.h \
     src/models/chatsmodel.h \
     src/models/messagesmodel.h \
-    src/pusherclient.h
+    src/pusherclient.h \
+    src/data/messagebase.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

@@ -33,10 +33,13 @@ public:
 
     Q_INVOKABLE void check();
 
+    Comment* lastComment() const;
+
 signals:
     void hasMoreChanged();
     void loadingChanged();
     void totalCountChanged(int tc);
+    void lastCommentChanged();
 
 public slots:
     void loadMore();

@@ -79,7 +79,7 @@ Pane {
                     top: parent.top
                     right: parent.right
                 }
-                text: chat.messages.lastMessage.createdAt
+                text: chat.lastMessage.createdAt
                 font.pointSize: window.fontSmaller
                 color: window.secondaryTextColor
                 elide: Text.AlignRight
@@ -92,12 +92,12 @@ Pane {
                     left: chatAvatar.right
                     margins: 1 * mm
                 }
-                user: visible ? chat.messages.lastMessage.author
+                user: visible ? chat.lastMessage.user
                               : chatAvatar.user
                 width: 4 * mm
                 height: 4 * mm
-                visible: !chat.isAnonymous && chat.messages.lastMessage.userId !== chat.recipientId
-                         && (chat.entry ? chat.messages.lastMessage.userId !== chat.entry.author.id : true)
+                visible: !chat.isAnonymous && chat.lastMessage.userId !== chat.recipientId
+                         && (chat.entry ? chat.lastMessage.userId !== chat.entry.author.id : true)
             }
             ThemedText {
                 id: lastMessage
@@ -108,7 +108,7 @@ Pane {
                 }
                 font.pointSize: window.fontSmallest
                 color: window.secondaryTextColor
-                text: chat.messages.lastMessage.text
+                text: chat.lastMessage.text
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
 //                textFormat: Text.RichText

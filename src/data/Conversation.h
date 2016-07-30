@@ -4,6 +4,7 @@
 #include <QJsonObject>
 #include <QHash>
 
+class MessageBase;
 class Message;
 class Entry;
 class User;
@@ -34,6 +35,7 @@ class Conversation: public QObject
 //    Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
     Q_PROPERTY(Author*          recipient       MEMBER _recipient       NOTIFY updated)
     Q_PROPERTY(MessagesModel*   messages        MEMBER _messages        NOTIFY updated)
+    Q_PROPERTY(MessageBase*     lastMessage     READ lastMessage        NOTIFY lastMessageChanged)
     
 public:
     enum ConversationType {
@@ -64,6 +66,8 @@ public:
 
     User* user(int id);
 
+    MessageBase* lastMessage() const;
+
 public slots:
     void sendMessage(const QString text);
     void readAll();
@@ -76,6 +80,7 @@ signals:
     void messageReceived(const QJsonObject);
     void markReadMessages(const QJsonObject data);
     void typed(int userId);
+    void lastMessageChanged();
 
 private slots:
     void _init(const QJsonObject data);
@@ -100,6 +105,7 @@ private:
     QHash<int, User*>   _leftUsers;
     Author*             _recipient;
     MessagesModel*      _messages;
+    Message*            _lastMessage;
 
     bool _loading;
 };

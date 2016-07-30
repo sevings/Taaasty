@@ -7,28 +7,27 @@
 #include "../settings.h"
 #include "../pusherclient.h"
 #include "../models/chatsmodel.h"
+
 #include "User.h"
 #include "Conversation.h"
 
 
 
 Message::Message(QObject* parent)
-    : QObject(parent)
-    , _id(0)
+    : MessageBase(parent)
     , _userId(0)
     , _recipientId(0)
     , _conversationId(0)
     , _read(false)
-    , _author(new User(this))
     , _chat(nullptr)
 {
-
+    _user = new User(this);
 }
 
 
 
 Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
-    : QObject(parent)
+    : MessageBase(parent)
     , _chat(chat)
 {
     _init(data);
@@ -82,7 +81,7 @@ void Message::_init(const QJsonObject data)
 //    if (_isAnonymous)
 //        _author     = new Author(data.value("author").toObject(), this);
 //    else
-        _author     = _chat->user(_userId);
+        _user       = _chat->user(_userId);
     // _attachments    = data.value("attachments").toArray();
     
     _correctHtml();
@@ -90,6 +89,7 @@ void Message::_init(const QJsonObject data)
     Tasty::instance()->pusher()->addMessage(this);
 
     emit readChanged();
+    emit baseUpdated();
     emit updated();
 }
 

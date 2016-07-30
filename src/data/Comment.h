@@ -3,22 +3,19 @@
 #include <QObject>
 #include <QJsonObject>
 
-class User;
+#include "messagebase.h"
+
 class Notification;
 
 
 
-class Comment: public QObject
+class Comment: public MessageBase
 {
     Q_OBJECT
 
     friend class CommentsModel;
     friend class PusherClient;
 
-    Q_PROPERTY(int         id           MEMBER _id             NOTIFY updated)
-    Q_PROPERTY(User*       user         MEMBER _user           NOTIFY updated)
-    Q_PROPERTY(QString     text         MEMBER _html           NOTIFY htmlUpdated)
-    Q_PROPERTY(QString     createdAt    MEMBER _createdAt      NOTIFY updated)
     Q_PROPERTY(bool        isEditable   MEMBER _isEditable     NOTIFY updated)
     Q_PROPERTY(bool        isReportable MEMBER _isReportable   NOTIFY updated)
     Q_PROPERTY(bool        isDeletable  MEMBER _isDeletable    NOTIFY updated)
@@ -29,15 +26,12 @@ public:
     Comment(const Notification* data, QObject* parent = nullptr);
     ~Comment();
 
-    int id() const;
-
 public slots:
     void edit(const QString text);
     void remove();
 
 signals:
     void updated();
-    void htmlUpdated();
 
 private slots:
     void _init(const QJsonObject data);
@@ -46,10 +40,6 @@ private slots:
     void _remove(const QString data);
 
 private:
-    int         _id;
-    User*       _user;
-    QString     _html;
-    QString     _createdAt;
     bool        _isEditable;
     bool        _isReportable;
     bool        _isDeletable;

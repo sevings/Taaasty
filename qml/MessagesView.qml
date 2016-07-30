@@ -55,12 +55,12 @@ Pane {
 //                    margins: 1 * mm
 //                    leftMargin: Settings.userId === message.userId ? 5 * mm : anchors.margins
 //                }
-//                user: message.author
+//                user: message.user
 //                Poppable {
 //                    body: back
 //                    onClicked:
 //                    {
-//                        window.pushProfileById(message.author.id);
+//                        window.pushProfileById(message.user.id);
 //                        mouse.accepted = true;
 //                    }
 //                }
@@ -74,7 +74,7 @@ Pane {
                     margins: 1 * mm
                     leftMargin: Settings.userId === message.userId ? 10 * mm : anchors.margins
                 }
-                text: message.author.name
+                text: message.user.name
                 font.pointSize: window.fontSmaller
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap

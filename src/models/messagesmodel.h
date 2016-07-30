@@ -16,12 +16,9 @@ class MessagesModel : public QAbstractListModel
 
     Q_PROPERTY(int chatId           READ chatId)
     Q_PROPERTY(bool hasMore         READ hasMore     NOTIFY hasMoreChanged)
-    Q_PROPERTY(bool loading         READ loading     NOTIFY loadingChanged)
-    Q_PROPERTY(Message* lastMessage READ lastMessage NOTIFY lastMessageChanged)
 
 public:
     explicit MessagesModel(Conversation* chat = nullptr);
-    explicit MessagesModel(Message* last, Conversation* chat = nullptr);
 
     Q_INVOKABLE int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -60,7 +57,6 @@ private:
     void _setTotalCount(int tc);
 
     QList<Message*> _messages;
-    Message*        _lastMessage;
     Conversation*   _chat;
     int _chatId;
     bool _loading;

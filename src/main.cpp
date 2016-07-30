@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Media>          ("org.binque.taaasty", 1, 0, "Media");
     qmlRegisterType<Notification>   ("org.binque.taaasty", 1, 0, "Notification");
     qmlRegisterType<Message>        ("org.binque.taaasty", 1, 0, "Message");
+    qmlRegisterType<MessageBase>    ("org.binque.taaasty", 1, 0, "MessageBase");
     qmlRegisterType<Conversation>   ("org.binque.taaasty", 1, 0, "Chat");
 
     qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");

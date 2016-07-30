@@ -12,22 +12,21 @@
 
 
 Comment::Comment(QObject* parent)
-    : QObject(parent)
-    , _id(0)
-    , _user(new User(this))
+    : MessageBase(parent)
     , _isEditable(false)
     , _isReportable(false)
     , _isDeletable(false)
 {
-
+    _user = new User(this);
 }
 
 
 
 Comment::Comment(const QJsonObject data, QObject *parent)
-    : QObject(parent)
-    , _user(nullptr)
+    : MessageBase(parent)
 {
+    _user = nullptr;
+
     _init(data);
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
@@ -36,11 +35,11 @@ Comment::Comment(const QJsonObject data, QObject *parent)
 
 
 Comment::Comment(const Notification* data, QObject* parent)
-    : QObject(parent)
+    : MessageBase(parent)
 {
     _id             = data->_entityId;
     _user           = data->_sender;
-    _html           = data->_text;
+    _text           = data->_text;
     _createdAt      = Tasty::parseDate(data->_createdAt);
     _isEditable     = false;
     _isReportable   = false;
@@ -60,13 +59,6 @@ Comment::Comment(const Notification* data, QObject* parent)
 Comment::~Comment()
 {
     Tasty::instance()->pusher()->removeComment(_id);
-}
-
-
-
-int Comment::id() const
-{
-    return _id;
 }
 
 
@@ -99,7 +91,7 @@ void Comment::_init(const QJsonObject data)
     delete _user;
     _user           = new User(data.value("user").toObject(), this);
 
-    _html           = data.value("comment_html").toString();
+    _text           = data.value("comment_html").toString();
     _createdAt      = Tasty::parseDate(data.value("created_at").toString());
     _isEditable     = data.value("can_edit").toBool();
     _isReportable   = data.value("can_report").toBool();
@@ -107,6 +99,7 @@ void Comment::_init(const QJsonObject data)
 
     _correctHtml();
 
+    emit baseUpdated();
     emit updated();
 
     Tasty::instance()->pusher()->addComment(this);
@@ -127,9 +120,9 @@ void Comment::_update(const QJsonObject data)
 
 void Comment::_correctHtml()
 {
-    Tasty::correctHtml(_html, false);
+    Tasty::correctHtml(_text, false);
 
-    emit htmlUpdated();
+    emit textUpdated();
 }
 
 

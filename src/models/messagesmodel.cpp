@@ -16,29 +16,6 @@
 
 MessagesModel::MessagesModel(Conversation* chat)
     : QAbstractListModel(chat)
-    , _lastMessage(nullptr)
-    , _chat(chat)
-    , _loading(false)
-    , _url("v2/messenger/conversations/by_id/%1/messages.json?limit=20&order=desc")
-    , _request(nullptr)
-{
-    if (!chat)
-        return;
-
-    _chatId = chat->id();
-    _totalCount = chat->totalCount();
-
-//    Q_TEST(connect(chat, SIGNAL(messageSent(QJsonObject)),      this, SLOT(_addMessage(QJsonObject))));
-    Q_TEST(connect(chat, SIGNAL(messageReceived(QJsonObject)),  this, SLOT(_addMessage(QJsonObject))));
-    // Q_TEST(connect(NotificationsModel::instance(), SIGNAL(commentAdded(int,const Notification*)),
-                                                // this, SLOT(_addComment(int,const Notification*))));
-}
-
-
-
-MessagesModel::MessagesModel(Message* last, Conversation* chat)
-    : QAbstractListModel(chat)
-    , _lastMessage(last)
     , _chat(chat)
     , _loading(false)
     , _url("v2/messenger/conversations/by_id/%1/messages.json?limit=20&order=desc")
@@ -93,8 +70,6 @@ void MessagesModel::reset()
     qDeleteAll(_messages);
     _messages.clear();
 
-    delete _lastMessage;
-    _lastMessage = new Message(this);
     emit lastMessageChanged();
 
     _loading = false;
@@ -134,7 +109,7 @@ void MessagesModel::check()
 Message* MessagesModel::lastMessage() const
 {
     if (_messages.isEmpty())
-        return _lastMessage;
+        return nullptr;
 
     return _messages.last();
 }
