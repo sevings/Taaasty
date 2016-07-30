@@ -8,14 +8,14 @@ Pane {
         entryId: back.entryId
     }
     readonly property Tlog tlog: entry.tlog
-    property MessagesModel messagesModel: entry.chat.messages
+    property CommentsModel commentsModel: entry.comments
     property bool showProfiles: tlog.tlogId !== window.anonymousId
     readonly property bool isFullEntryView: true
     Timer {
         interval: 20000
         running: back.visible && !entry.isWatched
         repeat: true
-        onTriggered: messagesModel.check()
+        onTriggered: commentsModel.check()
         triggeredOnStart: true
     }
     Poppable {
@@ -29,6 +29,7 @@ Pane {
         target: entry
         onUpdated: {
             window.setFooterTlog(entry.tlog);
+            commentsModel.check();
         }
     }
     MyListView {
@@ -40,7 +41,7 @@ Pane {
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: !entry.loading
-        model: messagesModel
+        model: commentsModel
         delegate: Item {
             width: window.width
             height: 4 * mm + commentText.contentHeight + nameText.contentHeight
@@ -53,19 +54,19 @@ Pane {
             SmallAvatar {
                 id: commentAvatar
                 anchors.margins: 1 * mm
-                user: message.author
+                user: comment.user
                 Poppable {
                     body: back
                     onClicked: {
                         mouse.accepted = true;
                         if (back.showProfiles)
-                            window.pushProfileById(message.author.id);
+                            window.pushProfileById(comment.user.id);
                     }
                 }
             }
             Text {
                 id: nameText
-                text: message.author.name
+                text: comment.user.name
                 color: window.textColor
                 anchors {
                     top: parent.top
@@ -82,7 +83,7 @@ Pane {
             }
             Text {
                 id: commentDate
-                text: message.createdAt
+                text: comment.createdAt
                 color: window.secondaryTextColor
                 anchors {
                     baseline: nameText.baseline
@@ -94,7 +95,7 @@ Pane {
             }
             Text {
                 id: commentText
-                text: message.text
+                text: comment.text
                 color: window.textColor
                 anchors {
                     rightMargin: 1 * mm
@@ -324,9 +325,9 @@ Pane {
                 text: enabled || fullEntry.count > 0 ? 'Еще' : ''
                 height: visible ? (enabled ? 6 * mm : 6 * mm - 1) : 0 // changing height forces layout
                 width: parent.width / 3
-                visible: messagesModel && messagesModel.hasMore
-                enabled: messagesModel && !messagesModel.loading
-                onClicked: messagesModel.loadMore()
+                visible: commentsModel && commentsModel.hasMore
+                enabled: commentsModel && !commentsModel.loading
+                onClicked: commentsModel.loadMore()
             }
         }
         footer: MessageEditor {
@@ -337,13 +338,9 @@ Pane {
                 entry.chat.sendMessage(commentEditor.message);
             }
             Connections {
-                target: entry.chat
-                onMessageSent: {
+                target: entry
+                onCommentAdded: {
                     commentEditor.clear();
-                }
-                onUpdated: {
-                    if (messagesModel.rowCount() === 0)
-                        messagesModel.loadMore();
                 }
             }
             Connections {

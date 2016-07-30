@@ -105,8 +105,8 @@ Entry::Entry(QObject* parent)
     , _commentsCount(0)
     , _media(new Media(this))
     , _wordCount(0)
-//    , _commentsModel(new CommentsModel(this))
-    , _chat(new Conversation(this))
+    , _commentsModel(new CommentsModel(this))
+//    , _chat(new Conversation(this))
     , _attachedImagesModel(new AttachedImagesModel(this))
     , _loading(false)
 {
@@ -117,23 +117,23 @@ Entry::Entry(QObject* parent)
 
 Entry::Entry(const QJsonObject data, Conversation* chat)
     : EntryBase(chat)
-//    , _commentsModel(nullptr)
-    , _chat(chat)
+    , _commentsModel(nullptr)
+//    , _chat(chat)
     , _attachedImagesModel(nullptr)
     , _loading(false)
 {
     _init(data);
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
-    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)),   this, SLOT(_setCommentsCount(int))));
+//    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)),   this, SLOT(_setCommentsCount(int))));
 }
 
 
 
 Entry::Entry(const QJsonObject data, QObject *parent)
     : EntryBase(parent)
-//    , _commentsModel(nullptr)
-    , _chat(nullptr)
+    , _commentsModel(nullptr)
+//    , _chat(nullptr)
     , _attachedImagesModel(nullptr)
     , _loading(false)
 {
@@ -153,8 +153,8 @@ void Entry::setId(const int id)
 
     reload();
 
-    if (_chat)
-        _chat->setEntryId(_id);
+//    if (_chat)
+//        _chat->setEntryId(_id);
 }
 
 
@@ -265,6 +265,7 @@ void Entry::_init(const QJsonObject data)
     _source          = data.value("source").toString();
     _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
                                          : nullptr; // music?
+    _commentsModel   = new CommentsModel(this);
 //    _imagePreview    = data.value("preview_image").toObject();
 
     _correctHtml();
@@ -361,17 +362,17 @@ int Entry::commentsCount() const
     return _commentsCount;
 }
 
-Conversation*Entry::chat()
-{
-    if (_chat)
-        return _chat;
+//Conversation*Entry::chat()
+//{
+//    if (_chat)
+//        return _chat;
 
-    _chat = new Conversation(this);
+//    _chat = new Conversation(this);
 
-    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
+//    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
 
-    return _chat;
-}
+//    return _chat;
+//}
 
 
 

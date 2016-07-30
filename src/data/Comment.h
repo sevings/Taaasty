@@ -17,7 +17,7 @@ class Comment: public QObject
 
     Q_PROPERTY(int         id           MEMBER _id             NOTIFY updated)
     Q_PROPERTY(User*       user         MEMBER _user           NOTIFY updated)
-    Q_PROPERTY(QString     html         MEMBER _html           NOTIFY htmlUpdated)
+    Q_PROPERTY(QString     text         MEMBER _html           NOTIFY htmlUpdated)
     Q_PROPERTY(QString     createdAt    MEMBER _createdAt      NOTIFY updated)
     Q_PROPERTY(bool        isEditable   MEMBER _isEditable     NOTIFY updated)
     Q_PROPERTY(bool        isReportable MEMBER _isReportable   NOTIFY updated)
