@@ -16,7 +16,6 @@ Pane {
         running: back.visible && !entry.isWatched
         repeat: true
         onTriggered: commentsModel.check()
-        triggeredOnStart: true
     }
     Poppable {
         body: back
@@ -29,8 +28,11 @@ Pane {
         target: entry
         onUpdated: {
             window.setFooterTlog(entry.tlog);
-            commentsModel.check();
+            commentsModel.loadMore();
         }
+    }
+    Component.onCompleted: {
+        commentsModel.loadMore();
     }
     MyListView {
         id: fullEntry

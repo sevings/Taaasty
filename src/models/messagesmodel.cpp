@@ -27,10 +27,8 @@ MessagesModel::MessagesModel(Conversation* chat)
     _chatId = chat->id();
     _totalCount = chat->totalCount();
 
-//    Q_TEST(connect(chat, SIGNAL(messageSent(QJsonObject)),      this, SLOT(_addMessage(QJsonObject))));
+    Q_TEST(connect(chat, SIGNAL(messageSent(QJsonObject)),      this, SLOT(_addMessage(QJsonObject))));
     Q_TEST(connect(chat, SIGNAL(messageReceived(QJsonObject)),  this, SLOT(_addMessage(QJsonObject))));
-    // Q_TEST(connect(NotificationsModel::instance(), SIGNAL(commentAdded(int,const Notification*)),
-                                                // this, SLOT(_addComment(int,const Notification*))));
 }
 
 
@@ -223,11 +221,20 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
 
 void MessagesModel::_addMessage(const QJsonObject data)
 {
+    auto msg = new Message(data, _chat, this);
+
+// last ten messages must be enough
+     for (int i = _messages.size() - 1; i >= _messages.size() - 10 && i >= 0; i--)
+         if (_messages.at(i)->id() == msg->id())
+         {
+             delete msg;
+             return;
+         }
+
     _setTotalCount(_totalCount + 1);
 
     beginInsertRows(QModelIndex(), _messages.size(), _messages.size());
 
-    auto msg = new Message(data, _chat, this);
     _messages << msg;
 
     Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
@@ -243,11 +250,6 @@ void MessagesModel::_addMessage(const int chatId, const QJsonObject data)
 {
     if (chatId != _chatId)
         return;
-
-    // last ten comments must be enough
-    // for (int i = _messages.size() - 1; i >= _messages.size() - 10 && i >= 0; i--)
-        // if (_messages.at(i)->id() == notif->entityId())
-            // return;
 
     _addMessage(data);
 }

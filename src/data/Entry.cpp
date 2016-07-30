@@ -105,8 +105,8 @@ Entry::Entry(QObject* parent)
     , _commentsCount(0)
     , _media(new Media(this))
     , _wordCount(0)
+    , _chat(nullptr)
     , _commentsModel(new CommentsModel(this))
-//    , _chat(new Conversation(this))
     , _attachedImagesModel(new AttachedImagesModel(this))
     , _loading(false)
 {
@@ -117,8 +117,8 @@ Entry::Entry(QObject* parent)
 
 Entry::Entry(const QJsonObject data, Conversation* chat)
     : EntryBase(chat)
+    , _chat(chat)
     , _commentsModel(nullptr)
-//    , _chat(chat)
     , _attachedImagesModel(nullptr)
     , _loading(false)
 {
@@ -132,14 +132,27 @@ Entry::Entry(const QJsonObject data, Conversation* chat)
 
 Entry::Entry(const QJsonObject data, QObject *parent)
     : EntryBase(parent)
+    , _chat(nullptr)
     , _commentsModel(nullptr)
-//    , _chat(nullptr)
     , _attachedImagesModel(nullptr)
     , _loading(false)
 {
     _init(data);
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
+}
+
+
+
+CommentsModel* Entry::commentsModel()
+{
+    if (_commentsModel)
+        return _commentsModel;
+
+    _chat = new Conversation(this);
+    _commentsModel = new CommentsModel(this);
+
+    return _commentsModel;
 }
 
 
@@ -153,8 +166,8 @@ void Entry::setId(const int id)
 
     reload();
 
-//    if (_chat)
-//        _chat->setEntryId(_id);
+    if (_chat)
+        _chat->setEntryId(_id);
 }
 
 
@@ -265,7 +278,6 @@ void Entry::_init(const QJsonObject data)
     _source          = data.value("source").toString();
     _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
                                          : nullptr; // music?
-    _commentsModel   = new CommentsModel(this);
 //    _imagePreview    = data.value("preview_image").toObject();
 
     _correctHtml();
@@ -362,8 +374,10 @@ int Entry::commentsCount() const
     return _commentsCount;
 }
 
-//Conversation*Entry::chat()
-//{
+
+
+Conversation* Entry::chat()
+{
 //    if (_chat)
 //        return _chat;
 
@@ -371,8 +385,8 @@ int Entry::commentsCount() const
 
 //    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
 
-//    return _chat;
-//}
+    return _chat;
+}
 
 
 

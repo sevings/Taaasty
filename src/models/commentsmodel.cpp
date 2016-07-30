@@ -8,6 +8,7 @@
 
 #include "../data/Comment.h"
 #include "../data/Notification.h"
+#include "../data/Conversation.h"
 #include "../data/Entry.h"
 #include "../apirequest.h"
 #include "notificationsmodel.h"
@@ -26,8 +27,9 @@ CommentsModel::CommentsModel(Entry *entry)
     _totalCount = entry->commentsCount();
 
     Q_TEST(connect(entry, SIGNAL(commentAdded(QJsonObject)), this, SLOT(_addComment(QJsonObject))));
-    Q_TEST(connect(NotificationsModel::instance(), SIGNAL(commentAdded(int,const Notification*)),
-                                                this, SLOT(_addComment(int,const Notification*))));
+
+    if (entry->chat())
+        Q_TEST(connect(entry->chat(), SIGNAL(messageReceived(QJsonObject)), this, SLOT(check())));
 }
 
 
@@ -95,7 +97,7 @@ Comment* CommentsModel::lastComment() const
 
 void CommentsModel::loadMore()
 {
-    if (_loading || !_entryId)
+    if (_loading || !_entryId)// || !hasMore())
         return;
 
     _loading = true;
@@ -196,11 +198,20 @@ void CommentsModel::_addLastComments(const QJsonObject data)
 
 void CommentsModel::_addComment(const QJsonObject data)
 {
+    auto cmt = new Comment(data, this);
+
+    // last ten comments must be enough
+    for (int i = _comments.size() - 1; i >= _comments.size() - 10 && i >= 0; i--)
+        if (_comments.at(i)->_id == cmt->id())
+        {
+            delete cmt;
+            return;
+        }
+
     _setTotalCount(_totalCount + 1);
 
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
 
-    auto cmt = new Comment(data, this);
     _comments << cmt;
 
     Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));

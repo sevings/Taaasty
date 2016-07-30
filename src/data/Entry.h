@@ -77,7 +77,7 @@ class Entry: public EntryBase
     Q_PROPERTY(int         wordCount      MEMBER _wordCount         NOTIFY updated)
 
 //    Q_PROPERTY(Conversation* chat         READ chat                 NOTIFY updated)
-    Q_PROPERTY(CommentsModel* comments    MEMBER _commentsModel     NOTIFY updated)
+    Q_PROPERTY(CommentsModel* comments    READ commentsModel        NOTIFY updated)
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel READ attachedImagesModel NOTIFY updated)
 
     Q_PROPERTY(bool loading               MEMBER _loading           NOTIFY loadingChanged)
@@ -87,7 +87,7 @@ public:
     Entry(const QJsonObject data, Conversation* chat);
     Entry(const QJsonObject data, QObject* parent = nullptr);
 
-    Q_INVOKABLE CommentsModel*       commentsModel()       { return _commentsModel; }
+    Q_INVOKABLE CommentsModel*       commentsModel();
     Q_INVOKABLE AttachedImagesModel* attachedImagesModel() { return _attachedImagesModel; }
 
     int wordCount() const;
@@ -100,7 +100,7 @@ public:
 
     int commentsCount() const;
 
-//    Conversation* chat();
+    Conversation* chat();
 
 public slots:
     void setId(const int id);
@@ -150,8 +150,8 @@ private:
 //    QJsonObject _imagePreview;
     int         _wordCount;
 
+    Conversation*        _chat;
     CommentsModel*       _commentsModel;
-//    Conversation*        _chat;
     AttachedImagesModel* _attachedImagesModel;
 
     bool        _loading;
