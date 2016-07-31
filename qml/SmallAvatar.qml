@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 MyImage {
@@ -19,7 +20,7 @@ MyImage {
     }
     Text {
         id: letter
-        color: user && user.nameColor || window.textColor
+        color: user && user.nameColor || Material.foreground
         font.pixelSize: avatar.width / 2
         anchors.centerIn: parent
         text: parent.symbol.toUpperCase()

@@ -40,6 +40,8 @@
 ****************************************************************************/
 
 import QtQuick 2.7
+import QtQuick.Controls 2.0 as Q
+import QtQuick.Controls.Material 2.0
 
 MouseArea {
     id: area
@@ -75,7 +77,7 @@ MouseArea {
         Behavior on opacity {
             NumberAnimation { duration: 300 }
         }
-        Text {
+        Q.Label {
             id: dialogText
             anchors.centerIn: parent
             width: window.width - 8 * mm
@@ -83,7 +85,6 @@ MouseArea {
             font.pointSize: window.fontBigger
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
-            color: window.textColor
         }
     }
 }

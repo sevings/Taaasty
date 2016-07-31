@@ -1,10 +1,23 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
+import QtGraphicalEffects 1.0
 
-Q.Pane {
+Item {
+    property bool poppable
     signal popped
     onPopped: window.popFromStack()
-    property bool poppable
-    padding: 0
+    Q.Pane {
+        id: pane
+        anchors.fill: parent
+        padding: 0
+    }
+    DropShadow {
+        anchors.fill: pane
+        horizontalOffset: - 0.5 * mm
+        samples: 11
+        color: "#80000000"
+        source: pane
+        opacity: 1
+    }
 }

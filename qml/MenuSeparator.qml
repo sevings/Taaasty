@@ -3,6 +3,6 @@ import QtQuick.Controls.Material 2.0
 
 Rectangle {
     width: parent.width
-    height: 1
+    height: 0.2 * mm
     color: Material.primary
 }

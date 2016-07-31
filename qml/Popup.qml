@@ -85,5 +85,6 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         visible: closable
+        anchors.margins: -2 * mm
     }
 }

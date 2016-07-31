@@ -34,17 +34,11 @@ MouseArea {
                 backAnimation.start();
         }
     }
-//    onPositionChanged: {
-//        if (!drag.active)
-//            return;
-
-//        body.opacity =
+//    Binding {
+//        target: body
+//        property: 'opacity'
+//        value: 1 - body.x / body.width
 //    }
-    Binding {
-        target: body
-        property: 'opacity'
-        value: 1 - body.x / body.width
-    }
     onClicked: {
         if (body.x <= 0)
             mouse.accepted = false;

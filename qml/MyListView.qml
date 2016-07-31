@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 ListView {
@@ -44,7 +45,7 @@ ListView {
         width: 1 * mm
         property int h: parent.visibleArea.heightRatio * parent.height
         height: h > 5 * mm ? h : 5 * mm
-        color: window.textColor
+        color: Material.foreground
         opacity: parent.movingVertically ? 0.7 : 0
         visible: opacity > 0 && height < parent.height * 0.9
         Behavior on opacity {

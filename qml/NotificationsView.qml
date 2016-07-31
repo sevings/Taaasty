@@ -1,4 +1,6 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.0 as Q
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -94,11 +96,10 @@ Rectangle {
                     }
                 }
             }
-            Text {
+            Q.Label {
                 id: notifName
                 text: '<b>' + notification.sender.name + '</b> ' 
                         + notification.actionText
-                color: window.textColor
                 anchors {
                     top: notifAvatar.top
                     left: notifAvatar.right

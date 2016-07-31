@@ -1,10 +1,11 @@
 import QtQuick 2.7
+import QtQuick.Controls.Material 2.0
 
 Rectangle {
     id: bar
     width: parent.width / 5
     height: 0.5 * mm
-    color: window.textColor
+    color: Material.foreground
     x: 0
 //    y: busy ? 0 : -height
     visible: busy

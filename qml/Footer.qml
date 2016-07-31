@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 Popup {
@@ -17,7 +18,8 @@ Popup {
         id: title
         text: footer.title || footer.tlog.author.name
         font.pointSize: window.fontBigger
-        color: 'white'
+//        color: 'white'
+        color: Material.foreground
         anchors {
             left: avatar.right
             right: parent.right

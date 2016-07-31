@@ -3,9 +3,6 @@ import QtQuick 2.7
 Popup {
     id: back
     height: 4 * mm + label.height + input.height + acceptButton.height
-    border.color: window.secondaryTextColor
-    border.width: 0.2 * mm
-    radius: 0.8 * mm
     property string mode: 'tlog'
     property alias text: input.text
     property alias echoMode: input.echoMode

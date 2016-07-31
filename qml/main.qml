@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
+import QtGraphicalEffects 1.0
 
 import org.binque.taaasty 1.0
 import ImageCache 2.0
@@ -15,8 +16,8 @@ Q.ApplicationWindow {
     Material.primary: Material.BlueGrey
     readonly property bool darkTheme: Settings.darkTheme
     property color backgroundColor: Material.background
-    property color textColor: darkTheme ? 'white' : '#424d52'
-    property color secondaryTextColor: window.darkTheme ? '#9E9E9E' : Qt.darker('#9E9E9E')
+//    property color textColor: darkTheme ? 'white' : '#424d52'
+    property color secondaryTextColor: darkTheme ? '#9E9E9E' : Qt.darker('#9E9E9E')
     property color greenColor: '#4CAF50'
     property color redColor: '#F44336' // '#f3534b'
     property color darkGreen: Qt.darker(greenColor)
@@ -346,12 +347,12 @@ Q.ApplicationWindow {
                 stack.currentItem.pushed();
         }
         popEnter: Transition {
-//            PropertyAnimation {
-//                property: "opacity"
-//                duration: 300
-//                from: 0
-//                to: 1
-//            }
+            PropertyAnimation {
+                property: "opacity"
+                duration: 300
+                from: 0
+                to: 1
+            }
             PropertyAnimation {
                 property: "scale"
                 duration: 300
@@ -360,11 +361,11 @@ Q.ApplicationWindow {
             }
         }
         popExit: Transition {
-//            PropertyAnimation {
-//                property: "opacity"
-//                duration: 300
-//                to: 0
-//            }
+            PropertyAnimation {
+                property: "opacity"
+                duration: 300
+                to: 0
+            }
             NumberAnimation {
                 property: "x"
                 duration: 300
@@ -379,12 +380,12 @@ Q.ApplicationWindow {
             }
         }
         pushEnter: Transition {
-//            PropertyAnimation {
-//                property: "opacity"
-//                duration: 300
-//                from: 0
-//                to: 1
-//            }
+            PropertyAnimation {
+                property: "opacity"
+                duration: 300
+                from: 0
+                to: 1
+            }
             NumberAnimation {
                 property: "x"
                 duration: 300
@@ -400,12 +401,12 @@ Q.ApplicationWindow {
             }
         }
         pushExit: Transition {
-//            PropertyAnimation {
-//                property: "opacity"
-//                duration: 300
-//                from: 1
-//                to: 0
-//            }
+            PropertyAnimation {
+                property: "opacity"
+                duration: 300
+                from: 1
+                to: 0
+            }
             PropertyAnimation {
                 property: "scale"
                 duration: 300
@@ -466,6 +467,15 @@ Q.ApplicationWindow {
     }
     InputDialog {
         id: inputDialog
+        anchors.margins: 2 * mm
+    }
+    DropShadow {
+        anchors.fill: inputDialog
+        horizontalOffset: 0.6 * mm
+        verticalOffset: 0.6 * mm
+        samples: 11
+        color: "#80000000"
+        source: inputDialog
     }
     Dialog {
         id: dialog

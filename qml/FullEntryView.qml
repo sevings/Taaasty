@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 import QtGraphicalEffects 1.0
 import org.binque.taaasty 1.0
@@ -73,10 +74,9 @@ Pane {
                     }
                 }
             }
-            Text {
+            Q.Label {
                 id: nameText
                 text: comment.user.name
-                color: window.textColor
                 anchors {
                     top: parent.top
                     left: commentAvatar.right
@@ -90,7 +90,7 @@ Pane {
                 style: Text.Raised
                 styleColor: window.greenColor
             }
-            Text {
+            Q.Label {
                 id: commentDate
                 text: comment.createdAt
                 color: window.secondaryTextColor
@@ -102,10 +102,9 @@ Pane {
                 }
                 font.pointSize: window.fontSmaller
             }
-            Text {
+            Q.Label {
                 id: commentText
                 text: comment.text
-                color: window.textColor
                 anchors {
                     rightMargin: 1 * mm
                     top: nameText.bottom
@@ -229,7 +228,7 @@ Pane {
                 color: window.secondaryTextColor
                 font.pointSize: window.fontSmallest
             }
-            Text {
+            Q.Label {
                 id: fullEntryCommentsCount
                 anchors {
                     top: quoteSource.bottom
