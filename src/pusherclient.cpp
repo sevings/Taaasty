@@ -20,7 +20,7 @@
 
 
 PusherClient::PusherClient(Tasty* tasty)
-    : QObject(tasty)
+    : QObject(nullptr)
     , _pusher(new Pusher("40dbf1d864d4b366b5e6", this))
     , _tasty(tasty)
 {
@@ -45,8 +45,7 @@ void PusherClient::addChat(Conversation* chat)
 
 void PusherClient::removeChat(int id)
 {
-    if (_chats.contains(id))
-        _chats.remove(id);
+    _chats.remove(id);
 }
 
 
@@ -60,8 +59,7 @@ void PusherClient::addMessage(Message* msg)
 
 void PusherClient::removeMessage(int id)
 {
-    if (_messages.contains(id))
-        _messages.remove(id);
+    _messages.remove(id);
 }
 
 
@@ -75,8 +73,7 @@ void PusherClient::addComment(Comment* cmt)
 
 void PusherClient::removeComment(int id)
 {
-    if (_comments.contains(id))
-        _comments.remove(id);
+    _comments.remove(id);
 }
 
 
@@ -90,8 +87,7 @@ void PusherClient::addNotification(Notification* notif)
 
 void PusherClient::removeNotification(int id)
 {
-//    if (_notifications.contains(id))
-//        _notifications.remove(id);
+    _notifications.remove(id);
 }
 
 

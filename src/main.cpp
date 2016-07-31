@@ -18,6 +18,7 @@
 
 #include "tasty.h"
 #include "settings.h"
+#include "pusherclient.h"
 #include "cache/cachemanager.h"
 #include "cache/cachedimage.h"
 #include "models/feedmodel.h"
@@ -146,7 +147,9 @@ int main(int argc, char *argv[])
 
     int res = app.exec();
 
+    auto pusher = tasty->pusher();
     delete tasty;
+    delete pusher;
 
 //    finishLog();
 
