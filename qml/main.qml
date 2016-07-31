@@ -129,10 +129,11 @@ ApplicationWindow {
                    }
                    )
     }
-    function pushFullEntry(entry) {
+    function pushFullEntry(entry, scroll) {
         stack.push(stack.fullEntry,
                    {
                        entry: entry,
+                       scrollToBottom: scroll === true,
                        poppable: true
                    }
                    )

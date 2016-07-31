@@ -10,6 +10,7 @@ Pane {
     readonly property Tlog tlog: entry.tlog
     property CommentsModel commentsModel: entry.comments
     property bool showProfiles: tlog.tlogId !== window.anonymousId
+    property bool scrollToBottom: false
     readonly property bool isFullEntryView: true
     Timer {
         interval: 20000
@@ -29,10 +30,14 @@ Pane {
         onUpdated: {
             window.setFooterTlog(entry.tlog);
             commentsModel.loadMore();
+            if (scrollToBottom)
+                fullEntry.positionViewAtEnd();
         }
     }
     Component.onCompleted: {
         commentsModel.loadMore();
+        if (scrollToBottom)
+            fullEntry.positionViewAtEnd();
     }
     MyListView {
         id: fullEntry

@@ -35,7 +35,7 @@ Pane {
                     if (chat.entry) {
                         if (!chat.entry.url.length)
                             chat.entry.reload();
-                        window.pushFullEntry(chat.entry);
+                        window.pushFullEntry(chat.entry, true);
                     }
                     else
                         window.pushMessages(chat);
