@@ -3,6 +3,8 @@
 #include "apirequest.h"
 #include "pusherclient.h"
 
+#include "data/Tlog.h"
+
 #include "defines.h"
 
 #include <QDateTime>
@@ -20,6 +22,7 @@ Tasty::Tasty(QNetworkAccessManager* web)
     , _entryImageWidth(_settings->maxImageWidth())
     , _commentImageWidth(_entryImageWidth)
     , _unreadChats(0)
+    , _me(nullptr)
 {
     qDebug() << "Tasty";
 
@@ -132,6 +135,21 @@ void Tasty::setImageWidth(int entry, int comment)
     _commentImageWidth = comment;
 
     emit htmlRecorrectionNeeded();
+}
+
+
+
+Tlog* Tasty::me()
+{
+    if (_me)
+        return _me;
+
+    if (!isAuthorized())
+        return nullptr;
+
+    _me = new Tlog(this);
+    _me->setId(_settings->userId());
+    return _me;
 }
 
 

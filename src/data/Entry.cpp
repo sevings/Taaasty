@@ -149,7 +149,9 @@ CommentsModel* Entry::commentsModel()
     if (_commentsModel)
         return _commentsModel;
 
-    _chat = new Conversation(this);
+    if (!_chat)
+        _chat = new Conversation(this);
+
     _commentsModel = new CommentsModel(this);
 
     return _commentsModel;

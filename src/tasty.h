@@ -9,6 +9,8 @@
 
 class ApiRequest;
 class PusherClient;
+class Tlog;
+
 
 
 class Tasty : public QObject
@@ -44,6 +46,8 @@ public:
     static void correctHtml(QString& html, bool isEntry = true);
 
     Q_INVOKABLE void setImageWidth(int entry, int comment);
+
+    Tlog* me();
 
 signals:
     void busyChanged();
@@ -85,6 +89,8 @@ private:
     int _commentImageWidth;
 
     int _unreadChats;
+
+    Tlog* _me;
 };
 
 #endif // TASTY_H

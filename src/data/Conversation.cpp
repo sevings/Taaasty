@@ -7,11 +7,14 @@
 
 #include "../apirequest.h"
 #include "../pusherclient.h"
+#include "../tasty.h"
+#include "../settings.h"
 
 #include "Entry.h"
 #include "Message.h"
 #include "User.h"
 #include "Author.h"
+#include "Tlog.h"
 #include "Comment.h"
 
 #include "../models/messagesmodel.h"
@@ -182,7 +185,6 @@ void Conversation::_init(const QJsonObject data)
      _isDisabled        = data.value("is_disabled").toBool();
      _notDisturb        = data.value("not_disturb").toBool();
      _isAnonymous       = data.value("is_anonymous").toBool();
-     _lastMessage       = new Message(data.value("last_message").toObject(), this, this);
 
      if (!_messages)
      {
@@ -236,6 +238,8 @@ void Conversation::_init(const QJsonObject data)
         _leftUsers.insert(user->id(), user);
      }
 
+     _lastMessage       = new Message(data.value("last_message").toObject(), this, this);
+
      Tasty::instance()->pusher()->addChat(this);
 
      emit lastMessageChanged();
@@ -278,6 +282,12 @@ User* Conversation::user(int id)
 {
     if (_users.contains(id))
         return _users.value(id);
+
+    if (id == _recipientId)
+        return _recipient;
+
+    if (id == Tasty::instance()->settings()->userId())
+        return Tasty::instance()->me()->author();
 
     if (!_isAnonymous)
     {
