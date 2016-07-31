@@ -1,19 +1,24 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.0 as Q
+import QtQuick.Controls.Material 2.0
+
 import org.binque.taaasty 1.0
 import ImageCache 2.0
 
-ApplicationWindow {
+Q.ApplicationWindow {
     id: window
     visible: true
     width: 540
     height: 960
+    Material.theme: darkTheme ? Material.Dark : Material.Light
+    Material.accent: Material.Green
+    Material.primary: Material.BlueGrey
     readonly property bool darkTheme: Settings.darkTheme
-    property color backgroundColor: darkTheme ? 'black' : '#eff3f7'
+    property color backgroundColor: Material.background
     property color textColor: darkTheme ? 'white' : '#424d52'
-    property color secondaryTextColor: 'darkgrey'
-    property color greenColor: '#00DF84'
-    property color redColor: '#c00f19' // '#f3534b'
+    property color secondaryTextColor: window.darkTheme ? '#9E9E9E' : Qt.darker('#9E9E9E')
+    property color greenColor: '#4CAF50'
+    property color redColor: '#F44336' // '#f3534b'
     property color darkGreen: Qt.darker(greenColor)
     property color darkRed: Qt.darker(redColor)
     property int fontBiggest: 30
@@ -31,7 +36,7 @@ ApplicationWindow {
     readonly property int anonymousId: 4409
     property CachedImage savingImage
     title: qsTr("Taaasty")
-    color: backgroundColor
+//    color: backgroundColor
     onWidthChanged: {
         Tasty.setImageWidth(window.width - 2 * mm, window.width - 11 * mm);
     }
@@ -318,14 +323,14 @@ ApplicationWindow {
             to: 0
             duration: 300
         }
-        PropertyAnimation {
-            target: stack.currentItem
-            property: "opacity"
-            to: 1
-            duration: 300
-        }
+//        PropertyAnimation {
+//            target: stack.currentItem
+//            property: "opacity"
+//            to: 1
+//            duration: 300
+//        }
     }
-    StackView {
+    Q.StackView {
         id: stack
         anchors.fill: parent
         initialItem: feed
@@ -341,12 +346,12 @@ ApplicationWindow {
                 stack.currentItem.pushed();
         }
         popEnter: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                duration: 300
-                from: 0
-                to: 1
-            }
+//            PropertyAnimation {
+//                property: "opacity"
+//                duration: 300
+//                from: 0
+//                to: 1
+//            }
             PropertyAnimation {
                 property: "scale"
                 duration: 300
@@ -355,11 +360,11 @@ ApplicationWindow {
             }
         }
         popExit: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                duration: 300
-                to: 0
-            }
+//            PropertyAnimation {
+//                property: "opacity"
+//                duration: 300
+//                to: 0
+//            }
             NumberAnimation {
                 property: "x"
                 duration: 300
@@ -374,12 +379,12 @@ ApplicationWindow {
             }
         }
         pushEnter: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                duration: 300
-                from: 0
-                to: 1
-            }
+//            PropertyAnimation {
+//                property: "opacity"
+//                duration: 300
+//                from: 0
+//                to: 1
+//            }
             NumberAnimation {
                 property: "x"
                 duration: 300
@@ -395,12 +400,12 @@ ApplicationWindow {
             }
         }
         pushExit: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                duration: 300
-                from: 1
-                to: 0
-            }
+//            PropertyAnimation {
+//                property: "opacity"
+//                duration: 300
+//                from: 1
+//                to: 0
+//            }
             PropertyAnimation {
                 property: "scale"
                 duration: 300
@@ -411,7 +416,7 @@ ApplicationWindow {
         Component {
             id: feed
             FeedView {
-                poppable: StackView.index > 0
+                poppable: Q.StackView.index > 0
             }
         }
         property Component chats:               Qt.createComponent("ChatsView.qml",         Component.Asynchronous, stack);

@@ -25,129 +25,77 @@ Rectangle {
         topMargin: 1 * mm
         bottomMargin: 1 * mm
         contentWidth: parent.width
-        property int buttonsCount: Tasty.isAuthorized ? 18 : 15
-        contentHeight: 9 * mm * buttonsCount + space.height
+        contentHeight: column.height
         Column {
             id: column
-            anchors.fill: parent
+            width: parent.width
             spacing: 1 * mm
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            MenuItem {
                 text: 'Мой тлог'
-                onClicked: { modeChanged(FeedModel.MyTlogMode) }
+                onTriggered: { modeChanged(FeedModel.MyTlogMode) }
                 visible: Tasty.isAuthorized
             }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            MenuItem {
                 text: 'Подписки'
-                onClicked: { modeChanged(FeedModel.FriendsMode) }
+                onTriggered: { modeChanged(FeedModel.FriendsMode) }
                 visible: Tasty.isAuthorized
             }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Прямой эфир'
-                onClicked: { modeChanged(FeedModel.LiveMode) }
-            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Анонимки'
-                onClicked: { modeChanged(FeedModel.AnonymousMode) }
-            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Лучшее'
-                onClicked: { modeChanged(FeedModel.BestMode) }
-            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Отличное'
-                onClicked: { modeChanged(FeedModel.ExcellentMode) }
-            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Хорошее'
-                onClicked: { modeChanged(FeedModel.WellMode) }
-            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Неплохое'
-                onClicked: { modeChanged(FeedModel.GoodMode) }
-            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'По рейтингу'
-                onClicked: { modeChanged(FeedModel.BetterThanMode) }
-            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Избранное'
-                onClicked: { modeChanged(FeedModel.FavoritesMode) }
-                visible: Tasty.isAuthorized
-            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Тлог'
-                onClicked: { tlogRequested() }
-            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Поиск'
-                onClicked: { searchRequested() }
-            }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            MenuItem {
                 text: 'Сообщения' + (Tasty.unreadChats > 0 ? ' <b>+' + Tasty.unreadChats + '</b>' : '')
-                onClicked: { chatsRequested() }
+                onTriggered: { chatsRequested() }
+                highlighted: Tasty.unreadChats > 0
                 visible: Tasty.isAuthorized
             }
-            Item {
-                id: space
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                anchors.margins: 1 * mm
-                height: 2 * mm
+            MenuSeparator { }
+            MenuItem {
+                text: 'Анонимки'
+                onTriggered: { modeChanged(FeedModel.AnonymousMode) }
             }
+            MenuItem {
+                text: 'Прямой эфир'
+                onTriggered: { modeChanged(FeedModel.LiveMode) }
+            }
+            MenuItem {
+                text: 'Лучшее'
+                onTriggered: { modeChanged(FeedModel.BestMode) }
+            }
+            MenuItem {
+                text: 'Отличное'
+                onTriggered: { modeChanged(FeedModel.ExcellentMode) }
+            }
+            MenuItem {
+                text: 'Хорошее'
+                onTriggered: { modeChanged(FeedModel.WellMode) }
+            }
+            MenuItem {
+                text: 'Неплохое'
+                onTriggered: { modeChanged(FeedModel.GoodMode) }
+            }
+            MenuItem {
+                text: 'По рейтингу'
+                onTriggered: { modeChanged(FeedModel.BetterThanMode) }
+            }
+            MenuSeparator { }
+            MenuItem {
+                text: 'Избранное'
+                onTriggered: { modeChanged(FeedModel.FavoritesMode) }
+                visible: Tasty.isAuthorized
+            }
+            MenuItem {
+                text: 'Тлог'
+                onTriggered: { tlogRequested() }
+            }
+            MenuItem {
+                text: 'Поиск'
+                onTriggered: { searchRequested() }
+            }
+            MenuSeparator { }
+//            Item {
+//                id: space
+//                anchors.margins: 1 * mm
+//                height: 2 * mm
+//                width: parent.width
+//            }
 //            ThemedButton {
 //                anchors.left: parent.left
 //                anchors.right: parent.right
@@ -166,58 +114,35 @@ Rectangle {
             //                    text: 'Settings'
             //                    onClicked: { area.settingsRequested() }
             //                }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            MenuItem {
                 text: 'Загружать изображения'
-                glowing: Settings.autoloadImages
-                onClicked: { Settings.autoloadImages = !glowing }
+                highlighted: Settings.autoloadImages
+                onTriggered: { Settings.autoloadImages = !highlighted }
             }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            MenuItem {
                 text: 'Скрывать короткие посты'
-                glowing: Settings.hideShortPosts
-                onClicked: { Settings.hideShortPosts = !glowing }
+                highlighted: Settings.hideShortPosts
+                onTriggered: { Settings.hideShortPosts = !highlighted }
             }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            MenuItem {
                 text: 'Включить НБК'
-                glowing: Settings.hideNegativeRated
-                onClicked: { Settings.hideNegativeRated = !glowing }
+                highlighted: Settings.hideNegativeRated
+                onTriggered: { Settings.hideNegativeRated = !highlighted }
             }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            MenuItem {
                 text: 'Темная тема'
-                glowing: Settings.darkTheme
-                onClicked: { Settings.darkTheme = !glowing }
+                highlighted: Settings.darkTheme
+                onTriggered: { Settings.darkTheme = !highlighted }
             }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            MenuItem {
                 text: 'Войти'
                 visible: !Tasty.isAuthorized
-                onClicked: { loginRequested() }
+                onTriggered: { loginRequested() }
             }
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            MenuSeparator { }
+            MenuItem {
                 text: 'О клиенте'
-                onClicked: { aboutRequested() }
+                onTriggered: { aboutRequested() }
             }
         }
     }

@@ -1,4 +1,6 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.0 as Q
+import QtQuick.Controls.Material 2.0
 
 Pane {
     id: dialog
@@ -14,7 +16,7 @@ Pane {
     Poppable {
         body: dialog
     }
-    Text {
+    Q.Label {
         id: mailLabel
         text: 'E-mail'
         anchors {
@@ -22,7 +24,6 @@ Pane {
             bottom: mail.top
             horizontalCenter: parent.horizontalCenter
         }
-        color: window.textColor
         font.pointSize: window.fontBigger
     }
     LineInput {
@@ -34,7 +35,7 @@ Pane {
         }
         width: parent.width / 3 * 2
     }
-    Text {
+    Q.Label {
         id: passwordLabel
         text: 'Пароль'
         anchors {
@@ -42,7 +43,6 @@ Pane {
             horizontalCenter: parent.horizontalCenter
             margins: 2 * mm
         }
-        color: window.textColor
         font.pointSize: window.fontBigger
     }
     LineInput {

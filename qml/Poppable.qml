@@ -14,32 +14,6 @@ MouseArea {
     Component.onCompleted: {
         enabled = true;
     }
-//    onPressedChanged: {
-//        if (pressed) {
-//            scalebackAnimation.stop()
-//            scaleAnimation.start()
-//        }
-//        else {
-//            scaleAnimation.stop()
-//            scalebackAnimation.start()
-//        }
-//    }
-//    NumberAnimation {
-//        id: scaleAnimation
-//        target: parent
-//        property: "scale"
-//        duration: 200
-//        to: 0.95
-//        easing.type: Easing.InOutQuad
-//    }
-//    NumberAnimation {
-//        id: scalebackAnimation
-//        target: parent
-//        property: "scale"
-//        duration: 200
-//        to: 1
-//        easing.type: Easing.InOutQuad
-//    }
     onReleased: {
         if (!propagateComposedEvents) {
             propagateComposedEvents = true
@@ -60,11 +34,16 @@ MouseArea {
                 backAnimation.start();
         }
     }
-    onPositionChanged: {
-        if (!drag.active)
-            return;
+//    onPositionChanged: {
+//        if (!drag.active)
+//            return;
 
-        body.opacity = 1 - body.x / body.width;
+//        body.opacity =
+//    }
+    Binding {
+        target: body
+        property: 'opacity'
+        value: 1 - body.x / body.width
     }
     onClicked: {
         if (body.x <= 0)
@@ -85,12 +64,12 @@ MouseArea {
             to: 0
             duration: 100
         }
-        PropertyAnimation {
-            target: body
-            property: "opacity"
-            to: 1
-            duration: 100
-        }
+//        PropertyAnimation {
+//            target: body
+//            property: "opacity"
+//            to: 1
+//            duration: 100
+//        }
     }
     ParallelAnimation {
         id: forwardAnimation
@@ -100,11 +79,11 @@ MouseArea {
             to: 40 * mm
             duration: 100
         }
-        PropertyAnimation {
-            target: body
-            property: "opacity"
-            to: 0.3
-            duration: 100
-        }
+//        PropertyAnimation {
+//            target: body
+//            property: "opacity"
+//            to: 0.3
+//            duration: 100
+//        }
     }
 }

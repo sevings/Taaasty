@@ -1,5 +1,6 @@
 import QtQuick 2.7
-import QtQuick.Templates 2.0
+import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
 
 Flickable {
     id: flickText
@@ -13,7 +14,6 @@ Flickable {
         input.insert(0, '@' + slug + ', ');
         input.forceActiveFocus();
     }
-
     function insertTags(opening, closing) {
         if (!input.focus)
             return;
@@ -39,23 +39,11 @@ Flickable {
     }
     TextArea.flickable: TextArea {
         id: input
-        color: window.textColor
         font.pointSize: window.fontNormal
         wrapMode: TextEdit.Wrap
         textFormat: Text.PlainText
         padding: 1 * mm
         implicitHeight: contentHeight + 2 * mm
         implicitWidth: 30 * mm
-//        selectByMouse: true
-        background: Rectangle {
-            gradient: Gradient {
-                GradientStop { position: 0; color: window.darkTheme ? 'black'   : '#adbac6' }
-                GradientStop { position: 1; color: window.darkTheme ? '#181818' : 'white' }
-            }
-            border.color: window.textColor
-            border.width: 0.2 * mm
-            radius: 0.8 * mm
-        }
     }
-
 }

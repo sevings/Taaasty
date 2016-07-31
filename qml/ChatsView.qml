@@ -10,7 +10,8 @@ Pane {
     }
     Splash {
         visible: !listView.visible
-        text: listView.model.hasMore ? 'Загрузка…' : 'Нет бесед'
+        running: listView.model.hasMore
+        text: 'Нет бесед'
     }
     MyListView {
         id: listView

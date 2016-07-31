@@ -1,4 +1,6 @@
 import QtQuick 2.7
+import QtQuick.Controls.Material 2.0
+import QtGraphicalEffects 1.0
 import org.binque.taaasty 1.0
 
 Pane {
@@ -249,7 +251,8 @@ Pane {
                 property int maxWidth: window.width - 2 * mm
                 property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
                 width: length < maxWidth ? length : maxWidth
-                color: entry.rating.bayesRating > 0 ? window.darkGreen : window.darkRed
+                color: entry.rating.bayesRating > 0 ? (window.darkTheme ? window.darkGreen : window.greenColor)
+                                                    : (window.darkTheme ? window.darkRed : window.redColor)
                 Behavior on width {
                     NumberAnimation {
                         duration: 300
@@ -272,7 +275,7 @@ Pane {
                 height: 6 * mm
                 width: (parent.width - 5 * mm) / 4
                 visible: entry.isFavoritable && Tasty.isAuthorized
-                glowing: entry.isFavorited
+                highlighted: entry.isFavorited
 //            enabled: !fullEntry.favorited
                 onClicked: entry.favorite()
             }
@@ -287,7 +290,7 @@ Pane {
                 height: 6 * mm
                 width: fullEntryFavButton.width
                 visible: entry.isWatchable && Tasty.isAuthorized
-                glowing: entry.isWatched
+                highlighted: entry.isWatched
 //              enabled: entry.isWatchable
                 onClicked: entry.watch()
             }
@@ -302,8 +305,8 @@ Pane {
                 height: 6 * mm
                 width: fullEntryFavButton.width
                 enabled: !entry.rating.isBayesVoted
-                glowing: entry.rating.isVotedAgainst
-                glowColor: window.darkTheme ? window.darkRed : window.redColor
+                highlighted: entry.rating.isVotedAgainst
+                Material.accent: Material.Red
                 onClicked: entry.rating.voteAgainst()
             }
             ThemedButton {
@@ -317,8 +320,9 @@ Pane {
                 text: '+' + (entry.isVotable ? ' ' + entry.rating.votes : '')
                 height: 6 * mm
                 enabled: !entry.rating.isVotedAgainst
-                glowing: ((entry.rating.isVotable === entry.rating.isVoted) )
-                         && entry.rating.isBayesVoted
+                highlighted: ((entry.rating.isVotable === entry.rating.isVoted) )
+                             && entry.rating.isBayesVoted
+                Material.accent: Material.Green
                 onClicked: entry.rating.vote()
             }
             ThemedButton {
@@ -358,12 +362,21 @@ Pane {
             }
         }
     }
+    DropShadow {
+        anchors.fill: menu
+        horizontalOffset: 0.6 * mm
+        verticalOffset: 0.6 * mm
+        samples: 11
+        color: "#80000000"
+        source: menu
+    }
     Popup {
         id: menu
         height: menuColumn.height + 2 * mm
-        border.color: window.secondaryTextColor
-        border.width: 0.2 * mm
-        radius: 0.8 * mm
+//        border.color: window.secondaryTextColor
+//        border.width: 0.2 * mm
+//        radius: 0.8 * mm
+        anchors.margins: 2 * mm
         property Comment comment: Comment { }
         function close() {
             state = "closed";
@@ -384,13 +397,9 @@ Pane {
                 bottomMargin: 1 * mm
             }
             spacing: 1 * mm
-            ThemedButton {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            MenuItem {
                 text: 'Ответить'
-                onClicked: {
+                onTriggered: {
                     addGreeting(menu.comment.user.slug);
                     menu.close();
                     fullEntry.positionViewAtEnd();

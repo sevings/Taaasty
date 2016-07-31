@@ -1,4 +1,6 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.0 as Q
+import QtQuick.Controls.Material 2.0
 
 Rectangle {
     id: popup
@@ -12,10 +14,7 @@ Rectangle {
     enabled: visible
     property bool closable: true
     signal closing
-    gradient: Gradient {
-        GradientStop { position: 0; color: window.darkTheme ? '#373737' : '#adbac6' }
-        GradientStop { position: 1; color: window.darkTheme ? '#000000' : '#42515a' }
-    }
+    color: Material.primary
     onVisibleChanged: {
         if (!closable)
             return;

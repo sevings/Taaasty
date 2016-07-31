@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtGraphicalEffects 1.0
 import ImageCache 2.0
 
 
@@ -12,7 +13,7 @@ AnimatedImage {
     property string url: ''
     property string extension: ''
     property CachedImage cachedImage: Cache.image()
-    property color backgroundColor: window.darkTheme ? '#373737' : '#b5babd'
+    property color backgroundColor: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
     property Pane popBody: Pane { }
     property bool savable: false
     signal available
@@ -59,6 +60,16 @@ AnimatedImage {
         id: back
         anchors.fill: parent
         color: image.backgroundColor
+        DropShadow {
+            anchors.fill: downloadButton
+            horizontalOffset: 0.3 * mm * (scale - 0.8) * 5
+            verticalOffset: horizontalOffset
+            samples: 7
+            color: "#80000000"
+            source: downloadButton
+            scale: downloadButton.scale
+            visible: downloadButton.visible
+        }
         Rectangle {
             id: downloadButton
             anchors {
@@ -72,7 +83,7 @@ AnimatedImage {
             height: 12 * mm
             radius: height / 2
             color: window.greenColor
-            visible: image.url && parent.width > 12 * mm && parent.height > 12 * mm
+            visible: image.url && back.width > 12 * mm && back.height > 12 * mm
             Behavior on width {
                 NumberAnimation { duration: 100 }
             }

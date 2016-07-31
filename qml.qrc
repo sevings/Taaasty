@@ -32,5 +32,7 @@
         <file>qml/CalendarView.qml</file>
         <file>qml/ChatsView.qml</file>
         <file>qml/MessagesView.qml</file>
+        <file>qml/MenuItem.qml</file>
+        <file>qml/MenuSeparator.qml</file>
     </qresource>
 </RCC>

@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQmlEngine>
+#include <QQuickStyle>
 
 #ifdef QT_DEBUG
 #   include <QDateTime>
@@ -52,10 +53,13 @@
 
 int main(int argc, char *argv[])
 {
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
     app.setApplicationName("Taaasty");
     app.setApplicationVersion("1.0");
     app.setOrganizationName("binque");
+
+    QQuickStyle::setStyle("Material");
 
 //    installLog();
 

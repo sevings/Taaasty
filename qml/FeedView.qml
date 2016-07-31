@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 Pane {
@@ -78,7 +79,8 @@ Pane {
     }
     Splash {
         visible: !listView.visible && feedModel.hasMore
-        text: feedModel.isPrivate ? 'Это закрытый ' + (tlog.author.isFlow ? 'поток' : 'тлог') : 'Загрузка…'
+        running: !feedModel.isPrivate
+        text: 'Это закрытый ' + (tlog.author.isFlow ? 'поток' : 'тлог')
     }
     MyListView {
         id: listView
@@ -348,8 +350,9 @@ Pane {
                 height: 6 * mm
                 text: 'Да!'
                 enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable
-                glowing: ((entry.rating.isVotable === entry.rating.isVoted) )
-                         && entry.rating.isBayesVoted
+                highlighted: ((entry.rating.isVotable === entry.rating.isVoted) )
+                             && entry.rating.isBayesVoted
+                Material.accent: Material.Green
                 onClicked: {
                     if (back.x > 0) {
                         mouse.accepted = false;
@@ -369,8 +372,8 @@ Pane {
                 width: parent.width / 3
                 text: 'Фу…'
                 enabled: !entry.rating.isBayesVoted
-                glowing: entry.rating.isVotedAgainst
-                glowColor: window.darkTheme ? window.darkRed : window.redColor
+                highlighted: entry.rating.isVotedAgainst
+                Material.accent: Material.Red
                 onClicked: {
                     if (back.x > 0) {
                         mouse.accepted = false;

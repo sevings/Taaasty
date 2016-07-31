@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 Pane {
@@ -164,9 +165,9 @@ Pane {
                     height: 6 * mm
                     width: (parent.width - 3 * mm) / 2
                     text: 'Фу…'
-                    enabled: glowing || parent.tlogMode == 2 //Trainer.UndefinedMode
-                    glowing: parent.tlogMode == 0 //Trainer.WaterMode
-                    glowColor: window.darkTheme ? window.darkRed : window.redColor
+                    enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
+                    highlighted: parent.tlogMode == 0 //Trainer.WaterMode
+                    Material.accent: Material.Red
                     onClicked: {
                         parent.tlogMode = 0;
                         Trainer.trainTlog(tlog.tlogId, 0);
@@ -183,8 +184,9 @@ Pane {
                     height: tlogVoteAgainstButton.height
                     width: tlogVoteAgainstButton.width
                     text: 'Да!'
-                    enabled: glowing || parent.tlogMode == 2 //Trainer.UndefinedMode
-                    glowing: parent.tlogMode == 1 //Trainer.FireMode
+                    enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
+                    highlighted: parent.tlogMode == 1 //Trainer.FireMode
+                    Material.accent: Material.Green
                     onClicked: {
                         parent.tlogMode = 1;
                         Trainer.trainTlog(tlog.tlogId, 1);
