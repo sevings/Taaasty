@@ -35,6 +35,10 @@ Pane {
             if (count < 30)
                 positionViewAtEnd();
         }
+        header: ListBusyIndicator {
+            running: listView.model.hasMore
+            footer: false
+        }
         delegate: Item {
             width: window.width
             readonly property int textHeight: messageText.y + messageText.height + 1 * mm

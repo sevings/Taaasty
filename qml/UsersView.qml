@@ -1,4 +1,6 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.0 as Q
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 Pane {
@@ -53,7 +55,6 @@ Pane {
 
             users.model = mdl;
         }
-
         delegate: Item {
             width: window.width
             height: usersAvatar.height + 2 * mm
@@ -65,7 +66,7 @@ Pane {
                     left: parent.left
                 }
                 width: parent.width
-                color: window.greenColor
+                color: Material.primary
                 visible: usersMouse.pressed || removing.running
             }
             Poppable {
@@ -102,10 +103,9 @@ Pane {
                     }
                 }
             }
-            Text {
+            Q.Label {
                 id: usersName
                 font.pointSize: window.fontBigger
-                color: window.textColor //(window.secondMode === 'bayes' && !bayes_include) ? '#808080' : window.textColor
                 text: user.name
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -135,14 +135,16 @@ Pane {
         header: Item {
             width: window.width
             height: usersTitle.paintedHeight + 2 * mm
-            Text {
+            Q.Label {
                 id: usersTitle
                 font.pointSize: window.fontBigger
-                color: window.textColor
                 text: back.title
                 anchors.centerIn: parent
                 y: 1 * mm
             }
+        }
+        footer: ListBusyIndicator {
+            running: users.model.hasMore
         }
     }
 }

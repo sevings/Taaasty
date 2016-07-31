@@ -263,11 +263,11 @@ Q.ApplicationWindow {
     Tlog {
         id: emptyTlog
     }
-    BusyBar {
-        id: bar
-        z: 100
-        busy: Tasty.busy > 0
-    }
+//    BusyBar {
+//        id: bar
+//        z: 100
+//        busy: Tasty.busy > 0
+//    }
     Splash {
         id: loadingText
     }

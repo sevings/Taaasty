@@ -183,6 +183,9 @@ void UsersModelTlog::_addItems(QJsonObject data)
     _users << users;
     endInsertRows();
 
+    if (_users.size() >= _total)
+        emit hasMoreChanged();
+
     if (!_loadAll)
         return;
 

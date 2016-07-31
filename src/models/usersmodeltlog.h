@@ -29,7 +29,6 @@ public:
     void downloadAll();
 
 signals:
-    void hasMoreChanged();
     void downloadCompleted();
 
 private slots:

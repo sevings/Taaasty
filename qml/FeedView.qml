@@ -396,5 +396,8 @@ Pane {
                 verticalAlignment: Text.AlignVCenter
             }
         }
+        footer: ListBusyIndicator {
+            running: feedModel.hasMore
+        }
     }
 }

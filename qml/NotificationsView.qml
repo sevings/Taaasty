@@ -136,5 +136,8 @@ Rectangle {
                 font.pointSize: window.fontSmaller
             }
         }
+        footer: ListBusyIndicator {
+            running: NotifsModel.hasMore
+        }
     }
 }

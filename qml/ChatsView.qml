@@ -128,5 +128,8 @@ Pane {
                 visible: chat.unreadCount > 0
             }
         }
+        footer: ListBusyIndicator {
+            running: ChatsModel.hasMore
+        }
     }
 }

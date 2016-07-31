@@ -333,11 +333,21 @@ Pane {
                     topMargin: 2 * mm
                 }
                 text: enabled || fullEntry.count > 0 ? 'Еще' : ''
-                height: visible ? (enabled ? 6 * mm : 6 * mm - 1) : 0 // changing height forces layout
+                height: commentsModel && commentsModel.hasMore
+                        ? (commentsModel.loading ? 6 * mm - 1 : 6 * mm) : 0 // changing height forces layout
                 width: parent.width / 3
-                visible: commentsModel && commentsModel.hasMore
-                enabled: commentsModel && !commentsModel.loading
+                visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
                 onClicked: commentsModel.loadMore()
+            }
+            Q.BusyIndicator {
+                id: busy
+                anchors {
+                    top: fullEntryVoteButton.bottom
+                    horizontalCenter: parent.horizontalCenter
+                    margins: 1 * mm
+                    topMargin: 2 * mm
+                }
+                running: commentsModel && commentsModel.loading
             }
         }
         footer: MessageEditor {

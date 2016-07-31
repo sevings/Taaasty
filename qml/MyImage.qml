@@ -1,4 +1,6 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.0 as Q
+import QtQuick.Controls.Material 2.0
 import QtGraphicalEffects 1.0
 import ImageCache 2.0
 
@@ -82,7 +84,7 @@ AnimatedImage {
                                                                             : 12 * mm
             height: 12 * mm
             radius: height / 2
-            color: window.greenColor
+            color: Material.primary
             visible: image.url && back.width > 12 * mm && back.height > 12 * mm
             Behavior on width {
                 NumberAnimation { duration: 100 }
@@ -110,7 +112,7 @@ AnimatedImage {
                         parent.scale = 1;
                 }
             }
-            Text {
+            Q.Label {
                 id: bytesText
                 font.pointSize: window.fontSmallest
                 text: (cachedImage.isDownloading && cachedImage.kbytesTotal > 0
@@ -126,7 +128,6 @@ AnimatedImage {
                 }
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
-                color: 'black'
             }
         }
     }

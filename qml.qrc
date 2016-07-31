@@ -34,5 +34,6 @@
         <file>qml/MessagesView.qml</file>
         <file>qml/MenuItem.qml</file>
         <file>qml/MenuSeparator.qml</file>
+        <file>qml/ListBusyIndicator.qml</file>
     </qresource>
 </RCC>
