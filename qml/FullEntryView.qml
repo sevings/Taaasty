@@ -378,6 +378,7 @@ Pane {
         samples: 11
         color: "#80000000"
         source: menu
+        cached: true
     }
     Popup {
         id: menu

@@ -71,6 +71,7 @@ AnimatedImage {
             source: downloadButton
             scale: downloadButton.scale
             visible: downloadButton.visible
+            cached: !cachedImage.isDownloading
         }
         Rectangle {
             id: downloadButton

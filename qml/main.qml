@@ -587,6 +587,7 @@ Q.ApplicationWindow {
         samples: 11
         color: "#80000000"
         source: inputDialog
+        cached: true
     }
     Dialog {
         id: dialog

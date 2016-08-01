@@ -127,18 +127,18 @@ int main(int argc, char *argv[])
     auto resources = qtActivity.callObjectMethod("getResources", "()Landroid/content/res/Resources;");
     auto displayMetrics = resources.callObjectMethod("getDisplayMetrics", "()Landroid/util/DisplayMetrics;");
     int density = displayMetrics.getField<int>("densityDpi");
+    double scale = density < 180 ? 1 :
+                   density < 270 ? 1.5 :
+                   density < 360 ? 2 : 3;
 #else
 //    auto *screen = qApp->primaryScreen();
 //    float density = screen->physicalDotsPerInch();
     float density = 267; // test
+    double scale = 1;
 #endif
 
-    engine.rootContext()->setContextProperty("mm",density / 25.4); // N900: 1 mm = 10.5 px; Q10: 12.9
+    engine.rootContext()->setContextProperty("mm", density / 25.4 / scale); // N900: 1 mm = 10.5 px; Q10: 12.9
     engine.rootContext()->setContextProperty("pt", 1);
-
-    double scale = density < 180 ? 1 :
-                   density < 270 ? 1.5 :
-                   density < 360 ? 2 : 3;
     engine.rootContext()->setContextProperty("dp", scale); // N900: 1.5; Q10: 2
 
     engine.setBaseUrl(QStringLiteral("qrc:/qml/"));
