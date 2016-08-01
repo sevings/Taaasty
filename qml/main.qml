@@ -543,6 +543,33 @@ Q.ApplicationWindow {
                     highlighted: visible && stack.currentItem.query.length > 0
                     visible: stack.currentItem.isFeedView === true
                 }
+                MenuItem {
+                    text: 'Все беседы'
+                    onTriggered: {
+                        ChatsModel.mode = 0//ChatsModel.AllChatsMode
+                        drawer.close();
+                    }
+                    highlighted: ChatsModel.mode == 0 //= ChatsModel.AllChatsMode
+                    visible: stack.currentItem.isChatsView === true
+                }
+                MenuItem {
+                    text: 'Личные'
+                    onTriggered: {
+                        ChatsModel.mode = 1//ChatsModel.PrivateChatsMode
+                        drawer.close();
+                    }
+                    highlighted: ChatsModel.mode == 1 //= ChatsModel.PrivateChatsMode
+                    visible: stack.currentItem.isChatsView === true
+                }
+                MenuItem {
+                    text: 'Комментарии'
+                    onTriggered: {
+                        ChatsModel.mode = 2//ChatsModel.EntryChatsMode
+                        drawer.close();
+                    }
+                    highlighted: ChatsModel.mode == 2 //= ChatsModel.EntryChatsMode
+                    visible: stack.currentItem.isChatsView === true
+                }
             }
         }
     }

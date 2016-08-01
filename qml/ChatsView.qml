@@ -5,6 +5,7 @@ Pane {
     id: back
     readonly property bool customTitle: true
     readonly property string title: 'Сообщения'
+    readonly property bool isChatsView: true
     Poppable {
         body: back
     }

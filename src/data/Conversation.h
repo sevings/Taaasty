@@ -68,6 +68,8 @@ public:
 
     MessageBase* lastMessage() const;
 
+    ConversationType type() const;
+
 public slots:
     void sendMessage(const QString text);
     void readAll();

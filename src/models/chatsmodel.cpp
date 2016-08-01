@@ -24,6 +24,7 @@ ChatsModel* ChatsModel::instance(QObject* parent)
 
 ChatsModel::ChatsModel(QObject* parent)
     : QAbstractListModel(parent)
+    , _mode(AllChatsMode)
     , _hasMore(true)
     , _url("v2/messenger/conversations.json?limit=10&page=%1")
     , _loading(false)
@@ -87,6 +88,46 @@ void ChatsModel::fetchMore(const QModelIndex& parent)
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_addChats(QJsonArray))));
     Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading(QObject*))));
+}
+
+
+
+void ChatsModel::setMode(ChatsModel::Mode mode)
+{
+    if (mode == _mode)
+        return;
+    
+    beginResetModel();
+
+    _mode = mode;
+    emit modeChanged();
+    
+    if (_allChats.isEmpty())
+        _allChats = _chats;
+
+    _chats.clear();
+
+    switch (_mode)
+    {
+    case AllChatsMode:
+        _chats = _allChats;
+        break;
+    case PrivateChatsMode:
+        foreach (auto chat, _allChats)
+            if (chat->type() == Conversation::PrivateConversation
+                    || chat->type() == Conversation::GroupConversation)
+                _chats << chat;
+        break;
+    case EntryChatsMode:
+        foreach (auto chat, _allChats)
+            if (chat->type() == Conversation::PublicConversation)
+                _chats << chat;
+        break;
+    default:
+        qDebug() << "Error ChatsModel::Mode" << mode;
+    }
+    
+    endResetModel();
 }
 
 
@@ -187,13 +228,14 @@ void ChatsModel::_addChats(QJsonArray data)
 {
     qDebug() << "ChatsModel::_addChats";
 
+    _loading = false;
+    _request = nullptr;
+
     if (data.isEmpty())
     {
         _hasMore = false;
         emit hasMoreChanged();
         
-        _loading = false;
-        _request = nullptr;
         return;
     }
 
@@ -207,20 +249,28 @@ void ChatsModel::_addChats(QJsonArray data)
             continue;
         }
 
-        chats << chat;
         _ids << chat->id();
+        _allChats << chat;
+
+        if (_mode == AllChatsMode
+                || (_mode == PrivateChatsMode && chat->type() != Conversation::PublicConversation)
+                || (_mode == EntryChatsMode && chat->type() == Conversation::PublicConversation))
+            chats << chat;
     }
 
+    if (chats.isEmpty())
+    {
+        fetchMore(QModelIndex());
+        return;
+    }
+    
     beginInsertRows(QModelIndex(), _chats.size(), _chats.size() + chats.size() - 1);
     
     _chats << chats;
 
     endInsertRows();
     
-    _loading = false;
-    _request = nullptr;
-
-    if (_chats.size() < 10)
+    if (_chats.size() < 10) // TODO: what is this?
         emit hasMoreChanged();
 }
 

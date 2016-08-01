@@ -17,9 +17,18 @@ class ChatsModel : public QAbstractListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool hasMore READ hasMore NOTIFY hasMoreChanged)
+    Q_PROPERTY(Mode mode    READ mode WRITE setMode NOTIFY modeChanged)
+    Q_PROPERTY(bool hasMore READ hasMore            NOTIFY hasMoreChanged)
 
 public:
+    enum Mode {
+        AllChatsMode     = 0,
+        PrivateChatsMode = 1,
+        EntryChatsMode   = 2
+    };
+
+    Q_ENUMS(Mode)
+    
     static ChatsModel* instance(QObject* parent = nullptr);
 
     ChatsModel(QObject* parent = nullptr);
@@ -31,12 +40,16 @@ public:
 
     Q_INVOKABLE bool hasMore() const { return _hasMore; }
 
+    Q_INVOKABLE void setMode(const Mode mode);
+    Q_INVOKABLE Mode mode() const {return _mode; }
+
 public slots:    
     void loadUnread();
     void reset();
 
 signals:
     void hasMoreChanged();
+    void modeChanged();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
@@ -50,8 +63,10 @@ private slots:
 private:
     void _bubbleChat(int id);
 
+    QList<Conversation*> _allChats;
     QList<Conversation*> _chats;
     QSet<int>            _ids;
+    Mode                 _mode;
 
     bool    _hasMore;
     

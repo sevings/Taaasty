@@ -269,6 +269,11 @@ void Conversation::_markRead(const QJsonObject data)
     emit unreadCountChanged();
 }
 
+Conversation::ConversationType Conversation::type() const
+{
+    return _type;
+}
+
 
 
 MessagesModel* Conversation::messages() const
