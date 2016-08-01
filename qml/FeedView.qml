@@ -5,6 +5,11 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     property int mode: Tasty.isAuthorized ? FeedModel.FriendsMode : FeedModel.LiveMode
+    readonly property bool bestMode: back.mode === FeedModel.BestMode
+                                     || back.mode === FeedModel.ExcellentMode
+                                     || back.mode === FeedModel.WellMode
+                                     || back.mode === FeedModel.GoodMode
+                                     || back.mode === FeedModel.BetterThanMode
     property int tlogId: 0
     property string slug: ''
     property int minRating: 0

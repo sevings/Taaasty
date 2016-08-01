@@ -59,22 +59,6 @@ Rectangle {
                 text: 'Лучшее'
                 onTriggered: { modeChanged(FeedModel.BestMode) }
             }
-            MenuItem {
-                text: 'Отличное'
-                onTriggered: { modeChanged(FeedModel.ExcellentMode) }
-            }
-            MenuItem {
-                text: 'Хорошее'
-                onTriggered: { modeChanged(FeedModel.WellMode) }
-            }
-            MenuItem {
-                text: 'Неплохое'
-                onTriggered: { modeChanged(FeedModel.GoodMode) }
-            }
-            MenuItem {
-                text: 'По рейтингу'
-                onTriggered: { modeChanged(FeedModel.BetterThanMode) }
-            }
             MenuSeparator { }
             MenuItem {
                 text: 'Избранное'
@@ -84,10 +68,6 @@ Rectangle {
             MenuItem {
                 text: 'Тлог'
                 onTriggered: { tlogRequested() }
-            }
-            MenuItem {
-                text: 'Поиск'
-                onTriggered: { searchRequested() }
             }
             MenuSeparator { }
 //            Item {

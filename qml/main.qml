@@ -260,6 +260,15 @@ Q.ApplicationWindow {
         hideLineInput();
         setFooterFromStack();
     }
+    function setFeedMode(mode) {
+        if (mode !== FeedModel.BetterThanMode)
+            stack.currentItem.setMode(mode);
+        else
+            showLineInput('rating');
+
+        setFooterFromStack();
+    }
+
     Tlog {
         id: emptyTlog
     }
@@ -276,13 +285,7 @@ Q.ApplicationWindow {
         visible: stack.depth === 1 && stack.currentItem && stack.currentItem.x > 0
         onModeChanged: {
             backAnimation.start();
-
-            if (mode !== FeedModel.BetterThanMode)
-                stack.currentItem.setMode(mode);
-            else
-                showLineInput('rating');
-
-            setFooterFromStack();
+            setFeedMode(mode);
         }
         onTlogRequested: {
             backAnimation.start();
@@ -461,6 +464,87 @@ Q.ApplicationWindow {
         id: notifsView
         anchors.left: parent.left
         anchors.right: parent.right
+    }
+    Q.Drawer {
+        id: drawer
+        edge: Qt.RightEdge
+        height: window.height
+        width: 40 * mm
+        Flickable {
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: parent.left
+                right: parent.right
+            }
+            height: contentHeight > parent.height ? parent.height : contentHeight
+            flickableDirection: Flickable.VerticalFlick
+            topMargin: 1 * mm
+            bottomMargin: 1 * mm
+            contentWidth: parent.width
+            contentHeight: column.height
+            Column {
+                id: column
+                width: parent.width
+                spacing: 1 * mm
+                MenuItem {
+                    text: 'Лучшее'
+                    onTriggered: {
+                        window.setFeedMode(FeedModel.BestMode);
+                        drawer.close();
+                    }
+                    highlighted: stack.currentItem.mode === FeedModel.BestMode
+                    visible: stack.currentItem.bestMode === true
+                }
+                MenuItem {
+                    text: 'Отличное'
+                    onTriggered: {
+                        window.setFeedMode(FeedModel.ExcellentMode);
+                        drawer.close();
+                    }
+                    highlighted: stack.currentItem.mode === FeedModel.ExcellentMode
+                    visible: stack.currentItem.bestMode === true
+                }
+                MenuItem {
+                    text: 'Хорошее'
+                    onTriggered: {
+                        window.setFeedMode(FeedModel.WellMode);
+                        drawer.close();
+                    }
+                    highlighted: stack.currentItem.mode === FeedModel.WellMode
+                    visible: stack.currentItem.bestMode === true
+                }
+                MenuItem {
+                    text: 'Неплохое'
+                    onTriggered: {
+                        window.setFeedMode(FeedModel.GoodMode);
+                        drawer.close();
+                    }
+                    highlighted: stack.currentItem.mode === FeedModel.GoodMode
+                    visible: stack.currentItem.bestMode === true
+                }
+                MenuItem {
+                    text: 'По рейтингу'
+                    onTriggered: {
+                        window.setFeedMode(FeedModel.BetterThanMode);
+                        drawer.close();
+                    }
+                    highlighted: stack.currentItem.mode === FeedModel.BetterThanMode
+                    visible: stack.currentItem.bestMode === true
+                }
+                MenuSeparator {
+                    visible: stack.currentItem.bestMode === true
+                }
+                MenuItem {
+                    text: 'Поиск'
+                    onTriggered: {
+                        window.showLineInput('query');
+                        drawer.close();
+                    }
+                    highlighted: visible && stack.currentItem.query.length > 0
+                    visible: stack.currentItem.isFeedView === true
+                }
+            }
+        }
     }
     Footer {
         id: footer
