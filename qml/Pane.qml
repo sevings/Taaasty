@@ -14,7 +14,7 @@ Item {
     DropShadow {
         anchors.fill: pane
         horizontalOffset: - 0.5 * mm
-        samples: 11
+        samples: 1
         color: "#80000000"
         source: pane
         cached: true

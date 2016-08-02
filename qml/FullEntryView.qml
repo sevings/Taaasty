@@ -375,7 +375,7 @@ Pane {
         anchors.fill: menu
         horizontalOffset: 0.6 * mm
         verticalOffset: 0.6 * mm
-        samples: 11
+        samples: 1
         color: "#80000000"
         source: menu
         cached: true

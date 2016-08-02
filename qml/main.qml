@@ -584,7 +584,7 @@ Q.ApplicationWindow {
         anchors.fill: inputDialog
         horizontalOffset: 0.6 * mm
         verticalOffset: 0.6 * mm
-        samples: 11
+        samples: 1
         color: "#80000000"
         source: inputDialog
         cached: true

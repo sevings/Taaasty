@@ -66,7 +66,7 @@ AnimatedImage {
             anchors.fill: downloadButton
             horizontalOffset: 0.3 * mm * (scale - 0.8) * 5
             verticalOffset: horizontalOffset
-            samples: 7
+            samples: 1
             color: "#80000000"
             source: downloadButton
             scale: downloadButton.scale
