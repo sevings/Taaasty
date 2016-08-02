@@ -153,28 +153,24 @@ void MessagesModel::_addMessages(const QJsonObject data)
     _loading = false;
     emit loadingChanged();
         
-    auto msgs = data.value("messages").toArray();
-    if (msgs.isEmpty())
+    auto feed = data.value("messages").toArray();
+    if (feed.isEmpty())
     {
         _setTotalCount(_messages.size());
         emit hasMoreChanged();
         return;
     }
 
+    auto msgs = _messagesList(feed);
+    if (msgs.isEmpty())
+        return;    
+    
     beginInsertRows(QModelIndex(), 0, msgs.size() - 1);
 
     _setTotalCount(data.value("total_count").toInt());
 
-    _messages.reserve(_messages.size() + msgs.size());
-
-    for (int i = 0; i < msgs.size(); i++)
-    {
-        auto msg = new Message(msgs.at(i).toObject(), _chat, this);
-        _messages.insert(i, msg);
-
-        Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
-    }
-
+    _messages = msgs + _messages;
+    
     endInsertRows();
 
     if (_messages.size() <= msgs.size())
@@ -191,24 +187,20 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
     _loading = false;
     emit loadingChanged();
 
-    auto msgs = data.value("messages").toArray();
-    if (msgs.isEmpty())
+    auto feed = data.value("messages").toArray();
+    if (feed.isEmpty())
         return;
 
+    auto msgs = _messagesList(feed);
+    if (msgs.isEmpty())
+        return;    
+    
     beginInsertRows(QModelIndex(), _messages.size(), _messages.size() + msgs.size() - 1);
 
     _setTotalCount(data.value("total_count").toInt());
 
-    _messages.reserve(_messages.size() + msgs.size());
-
-    for (int i = 0; i < msgs.size(); i++)
-    {
-        auto msg = new Message(msgs.at(i).toObject(), _chat, this);
-        _messages << msg;
-
-        Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
-    }
-
+    _messages << msgs;
+    
     endInsertRows();
 
     emit lastMessageChanged();
@@ -223,19 +215,18 @@ void MessagesModel::_addMessage(const QJsonObject data)
 {
     auto msg = new Message(data, _chat, this);
 
-// last ten messages must be enough
-     for (int i = _messages.size() - 1; i >= _messages.size() - 10 && i >= 0; i--)
-         if (_messages.at(i)->id() == msg->id())
-         {
-             delete msg;
-             return;
-         }
+     if (_ids.contains(msg->id()))
+     {
+         delete msg;
+         return;
+     }
 
     _setTotalCount(_totalCount + 1);
 
     beginInsertRows(QModelIndex(), _messages.size(), _messages.size());
 
     _messages << msg;
+    _ids << msg->id();
 
     Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
 
@@ -258,13 +249,15 @@ void MessagesModel::_addMessage(const int chatId, const QJsonObject data)
 
 void MessagesModel::_removeMessage(QObject* msg)
 {
-    auto i = _messages.indexOf(static_cast<Message*>(msg));
+    auto message = static_cast<Message*>(msg);
+    auto i = _messages.indexOf(message);
     if (i < 0)
         return;
 
     beginRemoveRows(QModelIndex(), i, i);
 
     _messages.removeAt(i);
+    _ids.remove(message->id());
 
     endRemoveRows();
 
@@ -295,3 +288,24 @@ void MessagesModel::_setTotalCount(int tc)
     _totalCount = tc;
     emit totalCountChanged(_totalCount);
 }
+
+
+
+QList<Message*> MessagesModel::_messagesList(QJsonArray feed)
+{
+    QList<Message*> msgs;
+    for (int i = 0; i < feed.size(); i++)
+    {
+        auto msg = new Message(feed.at(i).toObject(), _chat, this);
+        if (_ids.contains(msg->id()))
+            continue;
+        
+        _ids << msg->id();
+        msgs.insert(i, msg);
+
+        Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
+    }
+    
+    return msgs;
+}
+    

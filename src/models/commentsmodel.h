@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QSet>
 
 class ApiRequest;
 class Comment;
@@ -56,13 +58,17 @@ private slots:
     void _setNotLoading(QObject* request);
 
 private:
-    void _setTotalCount(int tc);
+    void            _setTotalCount(int tc);
+    QList<Comment*> _commentsList(QJsonArray feed);
 
     QList<Comment*> _comments;
-    int _entryId;
-    bool _loading;
-    int _totalCount;
-    const QString _url;
+    QSet<int>       _ids;
+    
+    int             _entryId;
+    bool            _loading;
+    int             _totalCount;
+    
+    const QString   _url;
 
     ApiRequest* _request;
 };

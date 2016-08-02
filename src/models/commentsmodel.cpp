@@ -1,7 +1,6 @@
 #include "commentsmodel.h"
 
 #include <QDateTime>
-#include <QJsonArray>
 #include <QDebug>
 
 #include "../defines.h"
@@ -125,6 +124,9 @@ QHash<int, QByteArray> CommentsModel::roleNames() const
 
 void CommentsModel::_addComments(const QJsonObject data)
 {
+    _loading = false;
+    emit loadingChanged();
+
     auto feed = data.value("comments").toArray();
     if (feed.isEmpty())
     {
@@ -135,20 +137,16 @@ void CommentsModel::_addComments(const QJsonObject data)
         return;
     }
 
-    beginInsertRows(QModelIndex(), 0, feed.size() - 1);
+    auto cmts = _commentsList(feed);
+    if (cmts.isEmpty())
+        return;
+    
+    beginInsertRows(QModelIndex(), 0, cmts.size() - 1);
 
     _setTotalCount(data.value("total_count").toInt());
 
-    _comments.reserve(_comments.size() + feed.size());
-
-    for (int i = 0; i < feed.size(); i++)
-    {
-        auto cmt = new Comment(feed.at(i).toObject(), this);
-        _comments.insert(i, cmt);
-
-        Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
-    }
-
+    _comments = cmts + _comments;
+    
     endInsertRows();
 
     if (_comments.size() <= feed.size())
@@ -156,9 +154,6 @@ void CommentsModel::_addComments(const QJsonObject data)
 
     if (_comments.size() >= _totalCount)
         emit hasMoreChanged();
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 
@@ -172,20 +167,16 @@ void CommentsModel::_addLastComments(const QJsonObject data)
     if (feed.isEmpty())
         return;
 
+    auto cmts = _commentsList(feed);
+    if (cmts.isEmpty())
+        return;
+    
     _setTotalCount(data.value("total_count").toInt());
 
-    beginInsertRows(QModelIndex(), _comments.size(), _comments.size() + feed.size() - 1);
+    beginInsertRows(QModelIndex(), _comments.size(), _comments.size() + cmts.size() - 1);
 
-    _comments.reserve(_comments.size() + feed.size());
-
-    for (int i = 0; i < feed.size(); i++)
-    {
-        auto cmt = new Comment(feed.at(i).toObject(), this);
-        _comments << cmt;
-
-        Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
-    }
-
+    _comments << cmts; 
+    
     endInsertRows();
 
     emit lastCommentChanged();
@@ -200,19 +191,18 @@ void CommentsModel::_addComment(const QJsonObject data)
 {
     auto cmt = new Comment(data, this);
 
-    // last ten comments must be enough
-    for (int i = _comments.size() - 1; i >= _comments.size() - 10 && i >= 0; i--)
-        if (_comments.at(i)->_id == cmt->id())
-        {
-            delete cmt;
-            return;
-        }
+    if (_ids.contains(cmt->id()))
+    {
+        delete cmt;
+        return;
+    }
 
     _setTotalCount(_totalCount + 1);
 
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
 
     _comments << cmt;
+    _ids << cmt->id();
 
     Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
 
@@ -228,17 +218,16 @@ void CommentsModel::_addComment(const int entryId, const Notification* notif)
     if (entryId != _entryId)
         return;
 
-    // last ten comments must be enough
-    for (int i = _comments.size() - 1; i >= _comments.size() - 10 && i >= 0; i--)
-        if (_comments.at(i)->_id == notif->entityId())
-            return;
-
+    if (_ids.contains(notif->entityId()))
+        return;
+    
     _setTotalCount(_totalCount + 1);
 
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
 
     auto cmt = new Comment(notif, this);
     _comments << cmt;
+    _ids << cmt->id();
 
     Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
 
@@ -251,13 +240,16 @@ void CommentsModel::_addComment(const int entryId, const Notification* notif)
 
 void CommentsModel::_removeComment(QObject* cmt)
 {
-    auto i = _comments.indexOf(static_cast<Comment*>(cmt));
+    auto comment = static_cast<Comment*>(cmt);
+    
+    auto i = _comments.indexOf(comment);
     if (i < 0)
         return;
 
     beginRemoveRows(QModelIndex(), i, i);
 
     _comments.removeAt(i);
+    _ids.remove(comment->id());
 
     endRemoveRows();
 
@@ -287,4 +279,24 @@ void CommentsModel::_setTotalCount(int tc)
 
     _totalCount = tc;
     emit totalCountChanged(_totalCount);
+}
+
+
+
+QList<Comment*> CommentsModel::_commentsList(QJsonArray feed)
+{
+    QList<Comment*> cmts;
+    for (int i = 0; i < feed.size(); i++)
+    {
+        auto cmt = new Comment(feed.at(i).toObject(), this);
+        if (_ids.contains(cmt->id()))
+            continue;
+        
+        _ids << cmt->id();
+        cmts.insert(i, cmt);
+
+        Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
+    }
+    
+    return cmts;
 }

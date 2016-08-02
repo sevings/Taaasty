@@ -184,6 +184,8 @@ void Conversation::_init(const QJsonObject data)
      _recipientId       = data.value("recipient_id").toInt();
      _isDisabled        = data.value("is_disabled").toBool();
      _notDisturb        = data.value("not_disturb").toBool();
+     _canTalk           = data.value("can_talk").toBool();
+     _canDelete         = data.value("can_delete").toBool();
      _isAnonymous       = data.value("is_anonymous").toBool();
 
      if (!_messages)

@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QSet>
 
 class ApiRequest;
 class Conversation;
@@ -54,14 +56,18 @@ private slots:
     void _setNotLoading(QObject* request);
 
 private:
-    void _setTotalCount(int tc);
+    void            _setTotalCount(int tc);
+    QList<Message*> _messagesList(QJsonArray feed);
 
     QList<Message*> _messages;
+    QSet<int>       _ids;
     Conversation*   _chat;
-    int _chatId;
-    bool _loading;
-    int _totalCount;
-    const QString _url;
+    
+    int             _chatId;
+    bool            _loading;
+    int             _totalCount;
+    
+    const QString   _url;
 
     ApiRequest* _request;
 

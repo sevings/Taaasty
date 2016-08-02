@@ -28,6 +28,8 @@ class Conversation: public QObject
     Q_PROPERTY(int              recipientId     MEMBER _recipientId     NOTIFY updated)
     Q_PROPERTY(bool             isDisabled      MEMBER _isDisabled      NOTIFY updated)
     Q_PROPERTY(bool             notDisturb      MEMBER _notDisturb      NOTIFY updated)
+    Q_PROPERTY(bool             canTalk         MEMBER _canTalk         NOTIFY updated)
+    Q_PROPERTY(bool             canDelete       MEMBER _canDelete       NOTIFY updated)
     Q_PROPERTY(bool             isAnonymous     MEMBER _isAnonymous     NOTIFY updated)
     Q_PROPERTY(QString          topic           MEMBER _topic           NOTIFY updated)
     Q_PROPERTY(Entry*           entry           MEMBER _entry           NOTIFY updated)
@@ -99,6 +101,8 @@ private:
     int                 _recipientId;
     bool                _isDisabled;
     bool                _notDisturb;
+    bool                _canTalk;
+    bool                _canDelete;
     bool                _isAnonymous;
     QString             _topic;
     Entry*              _entry;
