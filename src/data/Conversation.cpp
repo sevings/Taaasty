@@ -286,9 +286,12 @@ bool Conversation::isInvolved() const
     if (_type == PrivateConversation)
         return true;
 
-    auto id = Tasty::instance()->settings()->userId();
-    return _users.contains(id)
-            && !_leftUsers.contains(id) && !_deletedUsers.contains(id);
+    if (_userId <= 0)
+        return false;
+
+    return _users.contains(_userId)
+            && !_leftUsers.contains(_userId)
+            && !_deletedUsers.contains(_userId);
 }
 
 
@@ -439,7 +442,10 @@ void Conversation::_emitLeft(const QJsonObject data)
     
     emit left(_id);
 
-    auto user = Tasty::instance()->me()->author();
+    auto user = _users.value(_userId);
+    if (!user)
+        user = Tasty::instance()->me()->author();
+
     _leftUsers.insert(user->id(), user);
     emit isInvolvedChanged();
 
