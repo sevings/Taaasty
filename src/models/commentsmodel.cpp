@@ -16,14 +16,17 @@
 
 CommentsModel::CommentsModel(Entry *entry)
     : QAbstractListModel(entry)
+    , _entryId(0)
     , _loading(false)
+    , _totalCount(0)
     , _url("v1/comments.json?entry_id=%1&limit=20&order=desc")
 {
     if (!entry)
         return;
 
     _entryId = entry->entryId();
-    _totalCount = entry->commentsCount();
+
+    _setTotalCount(entry->commentsCount());
 
     Q_TEST(connect(entry, SIGNAL(commentAdded(QJsonObject)), this, SLOT(_addComment(QJsonObject))));
 
@@ -152,7 +155,7 @@ void CommentsModel::_addComments(const QJsonObject data)
     if (_comments.size() <= feed.size())
         emit lastCommentChanged();
 
-    if (_comments.size() >= _totalCount)
+//    if (_comments.size() >= _totalCount)
         emit hasMoreChanged();
 }
 
@@ -181,7 +184,7 @@ void CommentsModel::_addLastComments(const QJsonObject data)
 
     emit lastCommentChanged();
 
-    if (_comments.size() >= _totalCount)
+//    if (_comments.size() >= _totalCount)
         emit hasMoreChanged();
 }
 
@@ -290,7 +293,10 @@ QList<Comment*> CommentsModel::_commentsList(QJsonArray feed)
     {
         auto cmt = new Comment(feed.at(i).toObject(), this);
         if (_ids.contains(cmt->id()))
+        {
+            delete cmt;
             continue;
+        }
         
         _ids << cmt->id();
         cmts.insert(i, cmt);

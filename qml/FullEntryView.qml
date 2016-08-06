@@ -32,13 +32,13 @@ Pane {
         target: entry
         onUpdated: {
             window.setFooterTlog(entry.tlog);
-            commentsModel.loadMore();
+            commentsModel.check();
             if (scrollToBottom)
                 fullEntry.positionViewAtEnd();
         }
     }
     Component.onCompleted: {
-        commentsModel.loadMore();
+        commentsModel.check();
         if (scrollToBottom)
             fullEntry.positionViewAtEnd();
     }
@@ -336,7 +336,7 @@ Pane {
                 height: commentsModel && commentsModel.hasMore
                         ? (commentsModel.loading ? 6 * mm - 1 : 6 * mm) : 0 // changing height forces layout
                 width: parent.width / 3
-                visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
+                visible: commentsModel && commentsModel.hasMore //&& !commentsModel.loading
                 onClicked: commentsModel.loadMore()
             }
             Q.BusyIndicator {
