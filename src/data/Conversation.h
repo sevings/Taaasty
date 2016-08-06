@@ -38,6 +38,7 @@ class Conversation: public QObject
     Q_PROPERTY(Author*          recipient       MEMBER _recipient       NOTIFY updated)
     Q_PROPERTY(MessagesModel*   messages        MEMBER _messages        NOTIFY updated)
     Q_PROPERTY(MessageBase*     lastMessage     READ lastMessage        NOTIFY lastMessageChanged)
+    Q_PROPERTY(bool             isInvolved      READ isInvolved         NOTIFY isInvolvedChanged)
     
 public:
     enum ConversationType {
@@ -72,9 +73,13 @@ public:
 
     ConversationType type() const;
 
+    bool isInvolved() const;
+
 public slots:
     void sendMessage(const QString text);
     void readAll();
+    void leave();
+    void remove();
 
 signals:
     void updated();
@@ -85,11 +90,14 @@ signals:
     void allMessagesRead(const QJsonObject data);
     void typed(int userId);
     void lastMessageChanged();
+    void left(int id);
+    void isInvolvedChanged();
 
 private slots:
     void _init(const QJsonObject data);
     void _setNotLoading();
     void _markRead(const QJsonObject data);
+    void _emitLeft(const QJsonObject data);
 
 private:
     int                 _id;

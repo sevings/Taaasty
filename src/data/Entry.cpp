@@ -125,7 +125,6 @@ Entry::Entry(const QJsonObject data, Conversation* chat)
     _init(data);
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
-//    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)),   this, SLOT(_setCommentsCount(int))));
 }
 
 
@@ -153,6 +152,8 @@ CommentsModel* Entry::commentsModel()
         _chat = new Conversation(this);
 
     _commentsModel = new CommentsModel(this);
+
+    Q_TEST(connect(_commentsModel,    SIGNAL(totalCountChanged(int)),   this, SLOT(_setCommentsCount(int))));
 
     return _commentsModel;
 }
@@ -371,6 +372,8 @@ void Entry::_setNotLoading()
         emit updatingError(); // TODO: emit it only after setId()
 }
 
+
+
 int Entry::commentsCount() const
 {
     return _commentsCount;
@@ -380,12 +383,8 @@ int Entry::commentsCount() const
 
 Conversation* Entry::chat()
 {
-//    if (_chat)
-//        return _chat;
-
-//    _chat = new Conversation(this);
-
-//    Q_TEST(connect(_chat->messages(), SIGNAL(totalCountChanged(int)), this, SLOT(_setCommentsCount(int))));
+    if (!_chat)
+        _chat = new Conversation(this);
 
     return _chat;
 }

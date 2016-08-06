@@ -570,6 +570,25 @@ Q.ApplicationWindow {
                     highlighted: ChatsModel.mode == 2 //= ChatsModel.EntryChatsMode
                     visible: stack.currentItem.isChatsView === true
                 }
+                MenuItem {
+                    text: ((stack.currentItem.isFullEntryView === true
+                            && stack.currentItem.entry.chat.type === Chat.PrivateConversation)
+                           || (stack.currentItem.isMessagesView === true
+                               && stack.currentItem.chat.type === Chat.PrivateConversation))
+                          ? 'Удалить переписку' : 'Покинуть беседу'
+                    onTriggered: {
+                        if (stack.currentItem.isFullEntryView)
+                            stack.currentItem.entry.chat.remove();
+                        else
+                            stack.currentItem.chat.remove();
+
+                        drawer.close();
+                    }
+                    visible: (stack.currentItem.isFullEntryView === true
+                              && stack.currentItem.entry.chat.isInvolved)
+                             || (stack.currentItem.isMessagesView === true
+                                 && stack.currentItem.chat.isInvolved)
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ Pane {
     }
     readonly property bool customTitle: chat.type === Chat.GroupConversation
     readonly property string title: chat.topic
+    readonly property bool isMessagesView: true
     Component.onCompleted: {
         chat.messages.check();
         listView.positionViewAtEnd();

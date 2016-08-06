@@ -244,9 +244,10 @@ void Conversation::_init(const QJsonObject data)
 
      Tasty::instance()->pusher()->addChat(this);
 
+     emit isInvolvedChanged();
+     emit unreadCountChanged();
      emit lastMessageChanged();
      emit updated();
-     emit unreadCountChanged();
 }
 
 
@@ -267,13 +268,27 @@ void Conversation::_markRead(const QJsonObject data)
         return;
     }
 
-    _unreadCount = _unreceivedCount;
+    _unreadCount = 0;
     emit unreadCountChanged();
 }
+
+
 
 Conversation::ConversationType Conversation::type() const
 {
     return _type;
+}
+
+
+
+bool Conversation::isInvolved() const
+{
+    if (_type == PrivateConversation)
+        return true;
+
+    auto id = Tasty::instance()->settings()->userId();
+    return _users.contains(id)
+            && !_leftUsers.contains(id) && !_deletedUsers.contains(id);
 }
 
 
@@ -378,4 +393,55 @@ void Conversation::readAll()
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(allMessagesRead(const QJsonObject))));
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)),       this, SLOT(_markRead(QJsonObject))));
+}
+
+
+
+void Conversation::leave()
+{
+    if (_loading || !isInvolved())
+        return;
+    
+    _loading = true;
+    
+    auto url = QString("v2/messenger/conversations/by_id/%1/leave.json").arg(_id);
+    auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation);
+
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
+}
+
+
+
+void Conversation::remove()
+{
+    if (_loading || !isInvolved())
+        return;
+
+    _loading = true;
+
+    auto url = QString("v2/messenger/conversations/by_id/%1.json").arg(_id);
+    auto request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
+
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
+}
+
+
+
+void Conversation::_emitLeft(const QJsonObject data)
+{
+    _loading = false;
+    
+    if (data.value("status").toString() != "success")
+    {
+        qDebug() << "error leave chat" << _id;
+        return;
+    }
+    
+    emit left(_id);
+
+    auto user = Tasty::instance()->me()->author();
+    _leftUsers.insert(user->id(), user);
+    emit isInvolvedChanged();
+
+    emit Tasty::instance()->info("Беседа удалена");
 }

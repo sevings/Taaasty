@@ -59,6 +59,7 @@ private slots:
     void _addUnread(QJsonArray data);
     void _addChats(QJsonArray data);
     void _setNotLoading(QObject* request);
+    void _removeChat(int id);
 
 private:
     void _bubbleChat(int id);

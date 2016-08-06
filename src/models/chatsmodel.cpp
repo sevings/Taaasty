@@ -182,8 +182,9 @@ void ChatsModel::_addChat(const QJsonObject data)
 
     auto chat = new Conversation(data, this);
     _chats << chat;
-
     _ids << chat->id();
+
+    Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));
 
     endInsertRows();
 }
@@ -212,6 +213,8 @@ void ChatsModel::_addUnread(QJsonArray data)
 
         chats << chat;
         _ids << chat->id();
+
+        Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));
     }
 
     beginInsertRows(QModelIndex(), 0, chats.size() - 1);
@@ -252,6 +255,8 @@ void ChatsModel::_addChats(QJsonArray data)
         _ids << chat->id();
         _allChats << chat;
 
+        Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));
+
         if (_mode == AllChatsMode
                 || (_mode == PrivateChatsMode && chat->type() != Conversation::PublicConversation)
                 || (_mode == EntryChatsMode && chat->type() == Conversation::PublicConversation))
@@ -283,6 +288,37 @@ void ChatsModel::_setNotLoading(QObject* request)
         _loading = false;
         _request = nullptr;
     }
+}
+
+
+
+void ChatsModel::_removeChat(int id)
+{
+    if (!_ids.contains(id))
+        return;
+
+    _ids.remove(id);
+
+    int i;
+    for (i = 0; i < _allChats.size(); i++)
+        if (_allChats.at(i)->id() == id)
+            break;
+
+    if (i < _allChats.size())
+        _allChats.removeAt(i);
+
+    for (i = 0; i < _chats.size(); i++)
+        if (_chats.at(i)->id() == id)
+            break;
+        
+    if (i >= _chats.size())
+        return;
+    
+    beginRemoveRows(QModelIndex(), i, i);
+    
+    _chats.removeAt(i);
+    
+    endRemoveRows();
 }
 
 

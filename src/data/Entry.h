@@ -76,7 +76,7 @@ class Entry: public EntryBase
 //    Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      NOTIFY updated)
     Q_PROPERTY(int         wordCount      MEMBER _wordCount         NOTIFY updated)
 
-//    Q_PROPERTY(Conversation* chat         READ chat                 NOTIFY updated)
+    Q_PROPERTY(Conversation*  chat        READ chat                 NOTIFY updated)
     Q_PROPERTY(CommentsModel* comments    READ commentsModel        NOTIFY updated)
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel READ attachedImagesModel NOTIFY updated)
 

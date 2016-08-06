@@ -272,32 +272,32 @@ Pane {
                 }
                 text: '*'
                 height: 6 * mm
-                width: (parent.width - 5 * mm) / 4
+                width: (parent.width - 5 * mm) / 3
                 visible: entry.isFavoritable && Tasty.isAuthorized
                 highlighted: entry.isFavorited
 //            enabled: !fullEntry.favorited
                 onClicked: entry.favorite()
             }
-            ThemedButton {
-                id: fullEntryWatchButton
-                anchors {
-                    top: br.bottom
-                    left: fullEntryFavButton.right
-                    margins: 1 * mm
-                }
-                text: 'V'
-                height: 6 * mm
-                width: fullEntryFavButton.width
-                visible: entry.isWatchable && Tasty.isAuthorized
-                highlighted: entry.isWatched
-//              enabled: entry.isWatchable
-                onClicked: entry.watch()
-            }
+//            ThemedButton {
+//                id: fullEntryWatchButton
+//                anchors {
+//                    top: br.bottom
+//                    left: fullEntryFavButton.right
+//                    margins: 1 * mm
+//                }
+//                text: 'V'
+//                height: 6 * mm
+//                width: fullEntryFavButton.width
+//                visible: entry.isWatchable && Tasty.isAuthorized
+//                highlighted: entry.isWatched
+////              enabled: entry.isWatchable
+//                onClicked: entry.watch()
+//            }
             ThemedButton {
                 id: fullEntryVoteAgainstButton
                 anchors {
                     top: br.bottom
-                    left: fullEntryWatchButton.right
+                    left: fullEntryFavButton.right
                     margins: 1 * mm
                 }
                 text: '-'
