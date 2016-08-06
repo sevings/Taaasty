@@ -10,6 +10,7 @@
 
 class Conversation;
 class ApiRequest;
+class Entry;
 
 
 
@@ -42,6 +43,8 @@ public:
 
     Q_INVOKABLE void setMode(const Mode mode);
     Q_INVOKABLE Mode mode() const {return _mode; }
+
+    void addChat(Entry* entry);
 
 public slots:    
     void loadUnread();

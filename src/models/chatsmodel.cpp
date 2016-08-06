@@ -11,6 +11,7 @@
 #include "../pusherclient.h"
 #include "../data/Conversation.h"
 #include "../data/Author.h"
+#include "../data/Entry.h"
 
 
 
@@ -89,6 +90,31 @@ void ChatsModel::fetchMore(const QModelIndex& parent)
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_addChats(QJsonArray))));
     Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading(QObject*))));
+}
+
+
+
+void ChatsModel::addChat(Entry* entry)
+{
+    auto chat = entry->chat();
+    if (_ids.contains(chat->id()))
+    {
+        _bubbleChat(chat->id());
+        return;
+    }
+
+    chat->setParent(this);
+    entry->setParent(chat);
+
+    beginInsertRows(QModelIndex(), 0, 0);
+
+    _allChats.prepend(chat);
+    _chats.prepend(chat);
+    _ids << chat->id();
+
+    Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));
+
+    endInsertRows();
 }
 
 
@@ -182,7 +208,8 @@ void ChatsModel::_addChat(const QJsonObject data)
     beginInsertRows(QModelIndex(), 0, 0);
 
     auto chat = new Conversation(data, this);
-    _chats << chat;
+    _allChats.prepend(chat);
+    _chats.prepend(chat);
     _ids << chat->id();
 
     Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));

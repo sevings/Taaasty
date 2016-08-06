@@ -16,6 +16,7 @@
 #include "../models/commentsmodel.h"
 #include "../models/messagesmodel.h"
 #include "../models/attachedimagesmodel.h"
+#include "../models/chatsmodel.h"
 
 
 
@@ -203,6 +204,8 @@ void Entry::addComment(const QString text)
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(commentAdded(const QJsonObject))));
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_setWatched())));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
+
+    ChatsModel::instance()->addChat(this);
 }
 
 
