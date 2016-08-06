@@ -1,7 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 import org.binque.taaasty 1.0
 
 Pane {
@@ -371,15 +371,15 @@ Pane {
             }
         }
     }
-    DropShadow {
-        anchors.fill: menu
-        horizontalOffset: 0.6 * mm
-        verticalOffset: 0.6 * mm
-        samples: 1
-        color: "#80000000"
-        source: menu
-        cached: true
-    }
+//    DropShadow {
+//        anchors.fill: menu
+//        horizontalOffset: 0.6 * mm
+//        verticalOffset: 0.6 * mm
+//        samples: 1
+//        color: "#80000000"
+//        source: menu
+//        cached: true
+//    }
     Popup {
         id: menu
         height: menuColumn.height + 2 * mm

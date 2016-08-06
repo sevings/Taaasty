@@ -1,6 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 
 Item {
     property bool poppable
@@ -11,13 +11,13 @@ Item {
         anchors.fill: parent
         padding: 0
     }
-    DropShadow {
-        anchors.fill: pane
-        horizontalOffset: - 0.5 * mm
-        samples: 1
-        color: "#80000000"
-        source: pane
-        cached: true
-        visible: parent.x > 0
-    }
+//    DropShadow {
+//        anchors.fill: pane
+//        horizontalOffset: - 0.5 * mm
+//        samples: 1
+//        color: "#80000000"
+//        source: pane
+//        cached: true
+//        visible: parent.x > 0
+//    }
 }
