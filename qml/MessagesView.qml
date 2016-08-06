@@ -137,6 +137,8 @@ Pane {
             onSent: {
                 chat.sendMessage(messageEditor.message)
             }
+            visible: chat.canTalk
+            height: visible ? implicitHeight : - 1 * mm
             Connections {
                 target: chat
                 onMessageSent: {
