@@ -123,6 +123,8 @@ void PusherClient::_subscribeToPrivate(const QJsonObject data)
 
 void PusherClient::_handlePrivatePusherEvent(const QString event, const QString data)
 {
+    qDebug() << "Pusher event:" << event;
+
     QJsonParseError jpe;
     auto json = QJsonDocument::fromJson(data.toUtf8(), &jpe).object();
     if (jpe.error != QJsonParseError::NoError)

@@ -102,12 +102,7 @@ void Conversation::setId(int id)
 
     _id = id;
 
-    auto request = new ApiRequest(QString("/v2/messenger/conversations/by_id/%1.json").arg(_id), true);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
-
-    _loading = true;
-    emit loadingChanged();
+    update();
 }
 
 
@@ -194,8 +189,8 @@ void Conversation::_init(const QJsonObject data)
 
          Q_TEST(connect(_messages, SIGNAL(lastMessageChanged()), this, SIGNAL(lastMessageChanged())));
      }
-     else
-         _messages->reset();
+//     else
+//         _messages->reset();
 
      if (!_entry && data.contains("entry"))
      {
@@ -363,6 +358,21 @@ int Conversation::totalCount() const
 
 
 
+void Conversation::update()
+{
+    if (_id <= 0)
+        return;
+
+    auto request = new ApiRequest(QString("/v2/messenger/conversations/by_id/%1.json").arg(_id), true);
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
+
+    _loading = true;
+    emit loadingChanged();
+}
+
+
+
 void Conversation::sendMessage(const QString text)
 {
     if (_loading || _id <= 0)
@@ -450,4 +460,9 @@ void Conversation::_emitLeft(const QJsonObject data)
     emit isInvolvedChanged();
 
     emit Tasty::instance()->info("Беседа удалена");
+}
+
+int Conversation::unreadCount() const
+{
+    return _unreadCount;
 }

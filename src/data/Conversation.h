@@ -75,7 +75,10 @@ public:
 
     bool isInvolved() const;
 
+    int unreadCount() const;
+
 public slots:
+    void update();
     void sendMessage(const QString text);
     void readAll();
     void leave();
