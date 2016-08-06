@@ -571,6 +571,16 @@ Q.ApplicationWindow {
                     visible: stack.currentItem.isChatsView === true
                 }
                 MenuItem {
+                    text: 'Ссылка'
+                    onTriggered: {
+                        var url = stack.currentItem.entry.url;
+                        Qt.openUrlExternally(url);
+                        drawer.close();
+                    }
+                    visible: stack.currentItem.isFullEntryView === true
+                             && stack.currentItem.entry.url.length > 0
+                }
+                MenuItem {
                     text: ((stack.currentItem.isFullEntryView === true
                             && stack.currentItem.entry.chat.type === Chat.PrivateConversation)
                            || (stack.currentItem.isMessagesView === true
