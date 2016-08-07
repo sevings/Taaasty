@@ -1,12 +1,11 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 
-Q.Button {
-    id: button
+Q.CheckBox {
+    id: box
     anchors.margins: 1 * mm
     implicitHeight: 8 * mm
-    implicitWidth: 20 * mm
+    implicitWidth: parent.width
     font.pointSize: window.fontNormal
     padding: 2 * mm
-
 }

@@ -35,5 +35,7 @@
         <file>qml/MenuItem.qml</file>
         <file>qml/MenuSeparator.qml</file>
         <file>qml/ListBusyIndicator.qml</file>
+        <file>qml/SettingsPage.qml</file>
+        <file>qml/ThemedCheckBox.qml</file>
     </qresource>
 </RCC>

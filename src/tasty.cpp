@@ -180,14 +180,16 @@ void Tasty::getMe()
 
 void Tasty::_readAccessToken(const QJsonObject data)
 {
-    auto apiKey = data.value("api_key").toObject();
+    auto apiKey      = data.value("api_key").toObject();
     auto accessToken = apiKey.value("access_token").toString();
-    auto expiresAt = apiKey.value("expires_at").toString();
-    auto userId = apiKey.value("user_id").toInt();
+    auto expiresAt   = apiKey.value("expires_at").toString();
+    auto userId      = apiKey.value("user_id").toInt();
+    auto login       = data.value("name").toString();
 
     _settings->setAccessToken(accessToken);
     _settings->setExpiresAt(expiresAt);
     _settings->setUserId(userId);
+    _settings->setLogin(login);
 
     emit authorized();
 }

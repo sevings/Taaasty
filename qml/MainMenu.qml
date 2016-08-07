@@ -48,10 +48,6 @@ Rectangle {
             }
             MenuSeparator { }
             MenuItem {
-                text: 'Анонимки'
-                onTriggered: { modeChanged(FeedModel.AnonymousMode) }
-            }
-            MenuItem {
                 text: 'Прямой эфир'
                 onTriggered: { modeChanged(FeedModel.LiveMode) }
             }
@@ -59,23 +55,21 @@ Rectangle {
                 text: 'Лучшее'
                 onTriggered: { modeChanged(FeedModel.BestMode) }
             }
-            MenuSeparator { }
             MenuItem {
-                text: 'Избранное'
-                onTriggered: { modeChanged(FeedModel.FavoritesMode) }
-                visible: Tasty.isAuthorized
+                text: 'Анонимки'
+                onTriggered: { modeChanged(FeedModel.AnonymousMode) }
             }
             MenuItem {
                 text: 'Тлог'
                 onTriggered: { tlogRequested() }
             }
             MenuSeparator { }
-//            Item {
-//                id: space
-//                anchors.margins: 1 * mm
-//                height: 2 * mm
-//                width: parent.width
-//            }
+            MenuItem {
+                text: 'Избранное'
+                onTriggered: { modeChanged(FeedModel.FavoritesMode) }
+                visible: Tasty.isAuthorized
+            }
+//            MenuSeparator { }
 //            ThemedButton {
 //                anchors.left: parent.left
 //                anchors.right: parent.right
@@ -88,41 +82,15 @@ Rectangle {
 //                text: 'Интересные'
 //                onClicked: { fireTlogsRequested() }
 //            }
-            //                ThemedButton {
-            //                    anchors.left: parent.left
-            //                    anchors.right: parent.right
-            //                    text: 'Settings'
-            //                    onClicked: { area.settingsRequested() }
-            //                }
+            MenuSeparator { }
             MenuItem {
-                text: 'Загружать изображения'
-                highlighted: Settings.autoloadImages
-                onTriggered: { Settings.autoloadImages = !highlighted }
-            }
-            MenuItem {
-                text: 'Скрывать короткие посты'
-                highlighted: Settings.hideShortPosts
-                onTriggered: { Settings.hideShortPosts = !highlighted }
-            }
-            MenuItem {
-                text: 'Включить НБК'
-                highlighted: Settings.hideNegativeRated
-                onTriggered: { Settings.hideNegativeRated = !highlighted }
-            }
-            MenuItem {
-                text: 'Темная тема'
-                highlighted: Settings.darkTheme
-                onTriggered: { Settings.darkTheme = !highlighted }
+                text: 'Настройки'
+                onTriggered: { settingsRequested(); }
             }
             MenuItem {
                 text: 'Войти'
                 visible: !Tasty.isAuthorized
                 onTriggered: { loginRequested() }
-            }
-            MenuSeparator { }
-            MenuItem {
-                text: 'О клиенте'
-                onTriggered: { aboutRequested() }
             }
         }
     }

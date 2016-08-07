@@ -233,6 +233,12 @@ Q.ApplicationWindow {
                        poppable: true
                    })
     }
+    function pushSettings() {
+        stack.push(stack.settings,
+                   {
+                       poppable: true
+                   })
+    }
     function popFromStack() {
         stack.pop();
     }
@@ -309,6 +315,10 @@ Q.ApplicationWindow {
         onFireTlogsRequested: {
             backAnimation.start();
             window.pushUsers(UsersModel.FireMode);
+        }
+        onSettingsRequested: {
+            backAnimation.start();
+            window.pushSettings();
         }
         onLoginRequested: {
             backAnimation.start();
@@ -433,6 +443,7 @@ Q.ApplicationWindow {
         property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack);
         property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack);
         property Component about:               Qt.createComponent("About.qml",             Component.Asynchronous, stack);
+        property Component settings:            Qt.createComponent("SettingsPage.qml",      Component.Asynchronous, stack);
         Connections {
             target: Tasty
             onAuthorizationNeeded: {

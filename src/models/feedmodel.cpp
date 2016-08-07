@@ -396,7 +396,7 @@ void FeedModel::_reloadRatings()
     if (entries.isEmpty())
         return;
 
-    QString url("ratings.json?ids=");
+    QString url("v1/ratings.json?ids=");
     url.reserve(entries.size() * 9 + 20);
     for (int i = 0; i < entries.size() - 1; i++)
         url += QString("%1,").arg(entries.at(i)->entryId());
