@@ -507,19 +507,19 @@ Q.ApplicationWindow {
                 MenuItem {
                     text: 'Хорошее'
                     onTriggered: {
-                        window.setFeedMode(FeedModel.WellMode);
+                        window.setFeedMode(FeedModel.GoodMode);
                         drawer.close();
                     }
-                    highlighted: stack.currentItem.mode === FeedModel.WellMode
+                    highlighted: stack.currentItem.mode === FeedModel.GoodMode
                     visible: stack.currentItem.bestMode === true
                 }
                 MenuItem {
                     text: 'Неплохое'
                     onTriggered: {
-                        window.setFeedMode(FeedModel.GoodMode);
+                        window.setFeedMode(FeedModel.WellMode);
                         drawer.close();
                     }
-                    highlighted: stack.currentItem.mode === FeedModel.GoodMode
+                    highlighted: stack.currentItem.mode === FeedModel.WellMode
                     visible: stack.currentItem.bestMode === true
                 }
                 MenuItem {
