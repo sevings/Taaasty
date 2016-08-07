@@ -179,8 +179,7 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query)
     _lastEntry = 0;
     _loading = false;
 
-    if (_request)
-        delete _request;
+    delete _request;
     _request = nullptr;
 
     if (_allEntries.isEmpty())
@@ -392,6 +391,12 @@ void FeedModel::_setNotLoading(QObject* request)
 
 void FeedModel::_reloadRatings()
 {
+    if (_mode == FriendsMode)
+    {
+        reset();
+        return;
+    }
+
     auto entries = _allEntries.isEmpty() ? _entries : _allEntries;
     if (entries.isEmpty())
         return;
