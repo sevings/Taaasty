@@ -18,6 +18,7 @@ CommentsModel::CommentsModel(Entry *entry)
     : QAbstractListModel(entry)
     , _entryId(0)
     , _loading(false)
+    , _checking(false)
     , _totalCount(0)
     , _url("v1/comments.json?entry_id=%1&limit=20&order=desc")
 {
@@ -70,11 +71,10 @@ void CommentsModel::setEntryId(const int id)
 
 void CommentsModel::check()
 {
-    if (_loading || !_entryId)
+    if (_checking || !_entryId)
         return;
 
-    _loading = true;
-    emit loadingChanged();
+    _checking = true;
 
     QString url = _url.arg(_entryId);
     if (!_comments.isEmpty())
@@ -163,8 +163,7 @@ void CommentsModel::_addComments(const QJsonObject data)
 
 void CommentsModel::_addLastComments(const QJsonObject data)
 {
-    _loading = false;
-    emit loadingChanged();
+    _checking = false;
 
     auto feed = data.value("comments").toArray();
     if (feed.isEmpty())
@@ -269,6 +268,7 @@ void CommentsModel::_setNotLoading(QObject* request)
     if (request == _request)
     {
         _loading = false;
+        _checking = false;
         _request = nullptr;
     }
 }

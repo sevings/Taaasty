@@ -11,6 +11,7 @@ Pane {
         slug: profileView.slug
     }
     property Author author: tlog.author
+    readonly property bool isProfileView: true
     Splash {
         visible: !column.visible
     }
@@ -202,16 +203,6 @@ Pane {
                 text: author.isFlow ? 'Читать' : author.publicEntriesCount
                 onClicked: window.pushTlog(author.id)
                 enabled: !author.isPrivacy || tlog.myRelationship === Tlog.Friend || tlog.myRelationship === Tlog.Me
-            }
-            ThemedButton {
-                id: calendarButton
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                text: 'Обзор постов'
-                onClicked: window.pushCalendar(author.id)
-                enabled: readButton.enabled
             }
             ThemedButton {
                 anchors {

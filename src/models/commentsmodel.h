@@ -66,6 +66,7 @@ private:
     
     int             _entryId;
     bool            _loading;
+    bool            _checking;
     int             _totalCount;
     
     const QString   _url;

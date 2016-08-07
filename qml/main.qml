@@ -508,6 +508,8 @@ Q.ApplicationWindow {
                 id: column
                 width: parent.width
                 spacing: 1 * mm
+
+                // BEST SECTION
                 MenuItem {
                     text: 'Лучшее'
                     onTriggered: {
@@ -556,6 +558,8 @@ Q.ApplicationWindow {
                 MenuSeparator {
                     visible: stack.currentItem.bestMode === true
                 }
+
+                // FEED SECTION
                 MenuItem {
                     text: 'Поиск'
                     onTriggered: {
@@ -565,6 +569,8 @@ Q.ApplicationWindow {
                     highlighted: visible && stack.currentItem.query.length > 0
                     visible: stack.currentItem.isFeedView === true
                 }
+
+                // CHATS SECTION
                 MenuItem {
                     text: 'Все беседы'
                     onTriggered: {
@@ -592,6 +598,8 @@ Q.ApplicationWindow {
                     highlighted: ChatsModel.mode == 2 //= ChatsModel.EntryChatsMode
                     visible: stack.currentItem.isChatsView === true
                 }
+
+                // ENTRY SECTION
                 MenuItem {
                     text: stack.currentItem.entry && stack.currentItem.entry.isFavorited
                           ? 'Удалить из избранного' : 'Добавить в избранное'
@@ -631,6 +639,8 @@ Q.ApplicationWindow {
                              || (stack.currentItem.isMessagesView === true
                                  && stack.currentItem.chat.isInvolved)
                 }
+
+                // FLOWS SECTION
                 MenuItem {
                     text: 'Все потоки'
                     onTriggered: {
@@ -648,6 +658,20 @@ Q.ApplicationWindow {
                     }
                     highlighted: stack.currentItem.mode === FlowsModel.MyFlowsMode
                     visible: stack.currentItem.isFlowsView === true
+                }
+
+                // PROFILE SECTION
+                MenuItem {
+                    text: 'Обзор постов'
+                    onTriggered: {
+                        window.pushCalendar(stack.currentItem.author.id);
+                        drawer.close();
+                    }
+                    highlighted: stack.currentItem.mode === FlowsModel.AllFlowsMode
+                    visible: stack.currentItem.isProfileView === true
+                             && (!stack.currentItem.author.isPrivacy
+                                 || stack.currentItem.tlog.myRelationship === Tlog.Friend
+                                 || stack.currentItem.tlog.myRelationship === Tlog.Me)
                 }
             }
         }

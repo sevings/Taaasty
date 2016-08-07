@@ -146,12 +146,13 @@ Entry::Entry(const QJsonObject data, QObject *parent)
 
 CommentsModel* Entry::commentsModel()
 {
-    if (_commentsModel)
+    if (_commentsModel && _commentsModel->entryId() == _id)
         return _commentsModel;
 
     if (!_chat)
         _chat = new Conversation(this);
 
+    delete _commentsModel;
     _commentsModel = new CommentsModel(this);
 
     Q_TEST(connect(_commentsModel,    SIGNAL(totalCountChanged(int)),   this, SLOT(_setCommentsCount(int))));
