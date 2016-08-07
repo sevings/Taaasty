@@ -94,31 +94,6 @@ void ChatsModel::fetchMore(const QModelIndex& parent)
 
 
 
-void ChatsModel::addChat(Entry* entry)
-{
-    auto chat = entry->chat();
-    if (_ids.contains(chat->id()))
-    {
-        _bubbleChat(chat->id());
-        return;
-    }
-
-    chat->setParent(this);
-    entry->setParent(chat);
-
-    beginInsertRows(QModelIndex(), 0, 0);
-
-    _allChats.prepend(chat);
-    _chats.prepend(chat);
-    _ids << chat->id();
-
-    Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));
-
-    endInsertRows();
-}
-
-
-
 void ChatsModel::setMode(ChatsModel::Mode mode)
 {
     if (mode == _mode)
@@ -155,6 +130,31 @@ void ChatsModel::setMode(ChatsModel::Mode mode)
     }
     
     endResetModel();
+}
+
+
+
+void ChatsModel::addChat(Entry* entry)
+{
+    auto chat = entry->chat();
+    if (_ids.contains(chat->id()))
+    {
+        _bubbleChat(chat->id());
+        return;
+    }
+
+    chat->setParent(this);
+    entry->setParent(chat);
+
+    beginInsertRows(QModelIndex(), 0, 0);
+
+    _allChats.prepend(chat);
+    _chats.prepend(chat);
+    _ids << chat->id();
+
+    Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));
+
+    endInsertRows();
 }
 
 

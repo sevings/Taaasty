@@ -88,13 +88,35 @@ void FlowsModel::setMode(const FlowsModel::Mode mode)
     {
     case AllFlowsMode:
         _url = "v1/flows.json?page=%1&limit=20";
+        Q_TEST(disconnect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(reset())));
         break;
     case MyFlowsMode:
         _url = "v1/flows/my.json?page=%1&limit=20";
+        Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(reset())));
         break;
     default:
         qDebug() << "Flows mode:" << _mode;
     }
+
+    qDeleteAll(_flows);
+    _flows.clear();
+
+    _page = 1;
+    _hasMore = true;
+    emit hasMoreChanged();
+
+    _loading = false;
+    delete _request;
+    _request = nullptr;
+
+    endResetModel();
+}
+
+
+
+void FlowsModel::reset()
+{
+    beginResetModel();
 
     qDeleteAll(_flows);
     _flows.clear();

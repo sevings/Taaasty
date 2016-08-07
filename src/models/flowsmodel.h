@@ -39,6 +39,9 @@ public:
 signals:
     void hasMoreChanged();
 
+public slots:
+    void reset();
+
 protected:
     QHash<int, QByteArray> roleNames() const override;
 

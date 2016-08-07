@@ -35,16 +35,18 @@ Rectangle {
                 text: 'Мой тлог'
                 onTriggered: { modeChanged(FeedModel.MyTlogMode) }
                 visible: Tasty.isAuthorized
+                highlighted: stack.currentItem.mode === FeedModel.MyTlogMode
             }
             MenuItem {
                 text: 'Подписки'
                 onTriggered: { modeChanged(FeedModel.FriendsMode) }
                 visible: Tasty.isAuthorized
+                highlighted: stack.currentItem.mode === FeedModel.FriendsMode
             }
             MenuItem {
                 text: 'Сообщения' + (Tasty.unreadChats > 0 ? ' <b>+' + Tasty.unreadChats + '</b>' : '')
                 onTriggered: { chatsRequested() }
-                highlighted: Tasty.unreadChats > 0
+//                highlighted: Tasty.unreadChats > 0
                 visible: Tasty.isAuthorized
             }
             MenuSeparator {
@@ -53,14 +55,17 @@ Rectangle {
             MenuItem {
                 text: 'Прямой эфир'
                 onTriggered: { modeChanged(FeedModel.LiveMode) }
+                highlighted: stack.currentItem.mode === FeedModel.LiveMode
             }
             MenuItem {
                 text: 'Лучшее'
                 onTriggered: { modeChanged(FeedModel.BestMode) }
+                highlighted: stack.currentItem.bestMode === true
             }
             MenuItem {
                 text: 'Анонимки'
                 onTriggered: { modeChanged(FeedModel.AnonymousMode) }
+                highlighted: stack.currentItem.mode === FeedModel.AnonymousMode
             }
             MenuItem {
                 text: 'Потоки'
@@ -69,12 +74,14 @@ Rectangle {
             MenuItem {
                 text: 'Тлог'
                 onTriggered: { tlogRequested() }
+                highlighted: stack.currentItem.mode === FeedModel.TlogMode
             }
             MenuSeparator { }
             MenuItem {
                 text: 'Избранное'
                 onTriggered: { modeChanged(FeedModel.FavoritesMode) }
                 visible: Tasty.isAuthorized
+                highlighted: stack.currentItem.mode === FeedModel.FavoritesMode
             }
 //            MenuSeparator { }
 //            ThemedButton {
