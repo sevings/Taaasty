@@ -593,7 +593,17 @@ Q.ApplicationWindow {
                     visible: stack.currentItem.isChatsView === true
                 }
                 MenuItem {
-                    text: 'Ссылка'
+                    text: stack.currentItem.entry && stack.currentItem.entry.isFavorited
+                          ? 'Удалить из избранного' : 'Добавить в избранное'
+                    onTriggered: {
+                        stack.currentItem.entry.favorite();
+                        drawer.close();
+                    }
+                    visible: stack.currentItem.isFullEntryView === true
+                             && stack.currentItem.entry.isFavoritable
+                }
+                MenuItem {
+                    text: 'Открыть в браузере'
                     onTriggered: {
                         var url = stack.currentItem.entry.url;
                         Qt.openUrlExternally(url);

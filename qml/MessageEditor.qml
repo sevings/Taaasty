@@ -8,9 +8,11 @@ Item {
     }
     implicitHeight: input.height + 2 * mm
     property alias message: input.text
+    property bool uploading: false
     signal sent
     function clear() {
         input.clear();
+        uploading = false;
     }
     function addGreeting(slug) {
         input.addGreeting(slug);
@@ -32,8 +34,9 @@ Item {
         }
         width: parent.width / 5
         text: '+'
-        enabled: input.text
+        enabled: !editor.uploading && input.text
         onClicked: {
+            editor.uploading = true;
             editor.sent();
         }
     }

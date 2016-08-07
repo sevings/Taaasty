@@ -121,8 +121,8 @@ Pane {
             id: fullEntryContent
             width: window.width
             height: 10 * mm + fullTitle.height + fullContent.height + quoteSource.height
-                    + fullEntryFavButton.height + fullEntryDate.height
-                    + loadMoreButton.height
+                    + fullEntryVoteButton.height + fullEntryDate.height
+                    + (busy.running ? busy.height : loadMoreButton.height)
                     + fullEntryImages.height + mediaLink.height
             Poppable {
                 body: back
@@ -264,45 +264,15 @@ Pane {
                 }
             }
             ThemedButton {
-                id: fullEntryFavButton
+                id: fullEntryVoteAgainstButton
                 anchors {
                     top: br.bottom
                     left: parent.left
                     margins: 1 * mm
                 }
-                text: '*'
-                height: 6 * mm
-                width: (parent.width - 5 * mm) / 3
-                visible: entry.isFavoritable && Tasty.isAuthorized
-                highlighted: entry.isFavorited
-//            enabled: !fullEntry.favorited
-                onClicked: entry.favorite()
-            }
-//            ThemedButton {
-//                id: fullEntryWatchButton
-//                anchors {
-//                    top: br.bottom
-//                    left: fullEntryFavButton.right
-//                    margins: 1 * mm
-//                }
-//                text: 'V'
-//                height: 6 * mm
-//                width: fullEntryFavButton.width
-//                visible: entry.isWatchable && Tasty.isAuthorized
-//                highlighted: entry.isWatched
-////              enabled: entry.isWatchable
-//                onClicked: entry.watch()
-//            }
-            ThemedButton {
-                id: fullEntryVoteAgainstButton
-                anchors {
-                    top: br.bottom
-                    left: fullEntryFavButton.right
-                    margins: 1 * mm
-                }
                 text: '-'
                 height: 6 * mm
-                width: fullEntryFavButton.width
+                width: parent.width / 3
                 enabled: !entry.rating.isBayesVoted
                 highlighted: entry.rating.isVotedAgainst
                 Material.accent: Material.Red
@@ -312,17 +282,29 @@ Pane {
                 id: fullEntryVoteButton
                 anchors {
                     top: br.bottom
-                    left: fullEntryVoteAgainstButton.right
                     right: parent.right
                     margins: 1 * mm
                 }
-                text: '+' + (entry.isVotable ? ' ' + entry.rating.votes : '')
+                text: '+'
                 height: 6 * mm
+                width: parent.width / 3
                 enabled: !entry.rating.isVotedAgainst
                 highlighted: ((entry.rating.isVotable === entry.rating.isVoted) )
                              && entry.rating.isBayesVoted
                 Material.accent: Material.Green
                 onClicked: entry.rating.vote()
+            }
+            ThemedText {
+                id: fullEntryRating
+                anchors {
+                    top: br.bottom
+                    left: fullEntryVoteAgainstButton.right
+                    right: fullEntryVoteButton.left
+                }
+                text: entry.isVotable ? '+ ' + entry.rating.votes : ''
+                height: fullEntryVoteButton.height
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
             }
             ThemedButton {
                 id: loadMoreButton
@@ -333,10 +315,9 @@ Pane {
                     topMargin: 2 * mm
                 }
                 text: enabled || fullEntry.count > 0 ? 'Еще' : ''
-                height: commentsModel && commentsModel.hasMore
-                        ? (commentsModel.loading ? 6 * mm - 1 : 6 * mm) : 0 // changing height forces layout
+                height: visible ? 6 * mm : 0 // changing height forces layout
                 width: parent.width / 3
-                visible: commentsModel && commentsModel.hasMore //&& !commentsModel.loading
+                visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
                 onClicked: commentsModel.loadMore()
             }
             Q.BusyIndicator {
