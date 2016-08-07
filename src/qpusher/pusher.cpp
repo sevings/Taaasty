@@ -132,14 +132,12 @@ void Pusher::connect()
 
 void Pusher::disconnect()
 {
-    qDebug() << "Disonnecting";
+    qDebug() << "Disconnecting";
 
     _socket->close();
 
-    auto channels = _channels.values();
-    while (!channels.isEmpty())
+    foreach (auto ch, _channels)
     {
-        auto ch = channels.takeFirst();
         ch->_clear();
         ch->deleteLater();
     }
