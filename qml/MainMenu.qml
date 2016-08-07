@@ -11,6 +11,7 @@ Rectangle {
     width: 40 * mm
     color: window.backgroundColor
     signal modeChanged(int mode)
+    signal flowsRequested
     signal tlogRequested
     signal chatsRequested
     signal searchRequested
@@ -46,7 +47,9 @@ Rectangle {
                 highlighted: Tasty.unreadChats > 0
                 visible: Tasty.isAuthorized
             }
-            MenuSeparator { }
+            MenuSeparator {
+                visible: Tasty.isAuthorized
+            }
             MenuItem {
                 text: 'Прямой эфир'
                 onTriggered: { modeChanged(FeedModel.LiveMode) }
@@ -58,6 +61,10 @@ Rectangle {
             MenuItem {
                 text: 'Анонимки'
                 onTriggered: { modeChanged(FeedModel.AnonymousMode) }
+            }
+            MenuItem {
+                text: 'Потоки'
+                onTriggered: { flowsRequested(); }
             }
             MenuItem {
                 text: 'Тлог'

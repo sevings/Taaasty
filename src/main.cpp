@@ -31,6 +31,7 @@
 #include "models/notificationsmodel.h"
 #include "models/chatsmodel.h"
 #include "models/messagesmodel.h"
+#include "models/flowsmodel.h"
 #include "nbc/bayes.h"
 #include "nbc/trainer.h"
 
@@ -46,6 +47,7 @@
 #include "data/Rating.h"
 #include "data/Tlog.h"
 #include "data/User.h"
+#include "data/Flow.h"
 
 #include "messageoutput.h"
 
@@ -74,6 +76,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<UsersModelTlog>     ("org.binque.taaasty", 1, 0, "UsersModelTlog");
 //    qmlRegisterType<UsersModelBayes>    ("org.binque.taaasty", 1, 0, "UsersModelBayes");
     qmlRegisterType<MessagesModel>      ("org.binque.taaasty", 1, 0, "MessagesModel");
+    qmlRegisterType<FlowsModel>         ("org.binque.taaasty", 1, 0, "FlowsModel");
 
     qmlRegisterUncreatableType<UsersModel>("org.binque.taaasty", 1, 0, "UsersModel", "Use subclasses instead");
 
@@ -90,6 +93,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Message>        ("org.binque.taaasty", 1, 0, "Message");
     qmlRegisterType<MessageBase>    ("org.binque.taaasty", 1, 0, "MessageBase");
     qmlRegisterType<Conversation>   ("org.binque.taaasty", 1, 0, "Chat");
+    qmlRegisterType<Flow>           ("org.binque.taaasty", 1, 0, "Flow");
 
     qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");
 

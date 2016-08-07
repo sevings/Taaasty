@@ -201,9 +201,10 @@ void Entry::addComment(const QString text)
     auto request = new ApiRequest("v1/comments.json", true,
                                   QNetworkAccessManager::PostOperation, data);
 
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(commentAdded(const QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_setWatched())));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this,   SIGNAL(commentAdded(const QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this,   SLOT(_setWatched())));
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), chat(), SLOT(readAll())));
+    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this,   SLOT(_setNotLoading())));
 
     ChatsModel::instance()->addChat(this);
 }

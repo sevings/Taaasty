@@ -239,6 +239,12 @@ Q.ApplicationWindow {
                        poppable: true
                    })
     }
+    function pushFlows() {
+        stack.push(stack.flows,
+                   {
+                       poppable: true
+                   })
+    }
     function popFromStack() {
         stack.pop();
     }
@@ -300,6 +306,10 @@ Q.ApplicationWindow {
         onChatsRequested: {
             backAnimation.start();
             window.pushChats();
+        }
+        onFlowsRequested: {
+            backAnimation.start();
+            window.pushFlows();
         }
         onSearchRequested: {
             backAnimation.start();
@@ -444,6 +454,7 @@ Q.ApplicationWindow {
         property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack);
         property Component about:               Qt.createComponent("About.qml",             Component.Asynchronous, stack);
         property Component settings:            Qt.createComponent("SettingsPage.qml",      Component.Asynchronous, stack);
+        property Component flows:               Qt.createComponent("FlowsView.qml",         Component.Asynchronous, stack);
         Connections {
             target: Tasty
             onAuthorizationNeeded: {
@@ -609,6 +620,24 @@ Q.ApplicationWindow {
                               && stack.currentItem.entry.chat.isInvolved)
                              || (stack.currentItem.isMessagesView === true
                                  && stack.currentItem.chat.isInvolved)
+                }
+                MenuItem {
+                    text: 'Все потоки'
+                    onTriggered: {
+                        stack.currentItem.mode = 0; //= FlowsModel.AllFlowsMode
+                        drawer.close();
+                    }
+                    highlighted: stack.currentItem.mode === FlowsModel.AllFlowsMode
+                    visible: stack.currentItem.isFlowsView === true
+                }
+                MenuItem {
+                    text: 'Мои потоки'
+                    onTriggered: {
+                        stack.currentItem.mode = 1; //= FlowsModel.MyFlowsMode
+                        drawer.close();
+                    }
+                    highlighted: stack.currentItem.mode === FlowsModel.MyFlowsMode
+                    visible: stack.currentItem.isFlowsView === true
                 }
             }
         }
