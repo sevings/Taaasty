@@ -30,6 +30,12 @@ Pane {
                 nbcBox.checked    = Settings.hideNegativeRated;
                 darkBox.checked   = Settings.darkTheme;
             }
+            ThemedText {
+                text: 'Настройки'
+                width: parent.width
+                font.pointSize: window.fontBigger
+                horizontalAlignment: Text.AlignHCenter
+            }
             ThemedCheckBox {
                 id: imagesBox
                 text: 'Загружать изображения'
