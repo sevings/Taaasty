@@ -34,28 +34,6 @@ Comment::Comment(const QJsonObject data, QObject *parent)
 
 
 
-Comment::Comment(const Notification* data, QObject* parent)
-    : MessageBase(parent)
-{
-    _id             = data->_entityId;
-    _user           = data->_sender;
-    _text           = data->_text;
-    _createdAt      = Tasty::parseDate(data->_createdAt);
-    _isEditable     = false;
-    _isReportable   = false;
-    _isDeletable    = false;
-
-    Tasty::instance()->pusher()->addComment(this);
-
-    auto entryId = data->_parentId;
-    auto url = QString("v1/comments.json?entry_id=%1&from_comment_id=%2&limit=1").arg(entryId).arg(_id - 1);
-    auto request = new ApiRequest(url);
-
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_update(const QJsonObject))));
-}
-
-
-
 Comment::~Comment()
 {
     Tasty::instance()->pusher()->removeComment(_id);

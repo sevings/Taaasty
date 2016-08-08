@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QJsonObject>
-//#include <QTimer>
 
 class Notification;
 
@@ -38,17 +37,14 @@ public:
 signals:
     void hasMoreChanged();
     void unreadChanged();
-    void commentAdded(const int entryId, const Notification* notif);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-//    void _check();
-    void _readSuccess();
+    // void _readSuccess();
 
     void _addItems(QJsonObject data);
-//    void _addNewest(QJsonObject data);
     void _addPush(QJsonObject data);
 
     void _reloadAll();
@@ -60,7 +56,6 @@ private:
     QString _url;
     bool _loading;
     int _totalCount;
-//    QTimer _timer;
 
 #ifdef Q_OS_ANDROID
     AndroidNotifier* _androidNotifier;

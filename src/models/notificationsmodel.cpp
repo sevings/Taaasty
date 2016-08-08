@@ -27,11 +27,6 @@ NotificationsModel::NotificationsModel(QObject* parent)
 {
     qDebug() << "NotificationsModel";
 
-//    _timer.setInterval(60000);
-//    _timer.setSingleShot(false);
-//    _timer.start();
-
-//    Q_TEST(connect(&_timer, SIGNAL(timeout()),                           this, SLOT(_check())));
     Q_TEST(connect(Tasty::instance(),           SIGNAL(authorized()),              this, SLOT(_reloadAll())));
     Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(notification(QJsonObject)), this, SLOT(_addPush(QJsonObject))));
 }
@@ -89,8 +84,6 @@ bool NotificationsModel::canFetchMore(const QModelIndex& parent) const
 
 void NotificationsModel::fetchMore(const QModelIndex& parent)
 {
-//    qDebug() << "fetch more";
-
     if (_loading || parent.isValid() || _notifs.size() >= _totalCount
             || !Tasty::instance()->isAuthorized())
         return;
@@ -126,7 +119,8 @@ void NotificationsModel::markAsRead()
     QString data = QString("last_id=%1").arg(_notifs.first()->_id);
     
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
-    Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_readSuccess())));
+    Q_UNUSED(request);
+    // Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_readSuccess())));
 //    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SIGNAL(unreadChanged())));
 }
 
@@ -141,40 +135,19 @@ QHash<int, QByteArray> NotificationsModel::roleNames() const
 
 
 
-//void NotificationsModel::_check()
-//{
-//    if (_loading || !Tasty::instance()->isAuthorized())
-//        return;
+// void NotificationsModel::_readSuccess()
+// {
+    // for (int i = 0; i < _notifs.size(); i++)
+        // if (!_notifs.at(i)->_read)
+        // {
+            // _notifs.at(i)->_read = true;
+            // emit _notifs.at(i)->read();
+        // }
+        // else
+            // break;
 
-//    _loading = true;
-
-//    QString url = _url;
-//    if (!_notifs.isEmpty())
-//    {
-//        auto firstId = _notifs.first()->_id;
-//        url += QString("&from_notification_id=%1").arg(firstId);
-//    }
-    
-//    auto request = new ApiRequest(url, true);
-//    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject))));
-//    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
-//}
-
-
-
-void NotificationsModel::_readSuccess()
-{
-    for (int i = 0; i < _notifs.size(); i++)
-        if (!_notifs.at(i)->_read)
-        {
-            _notifs.at(i)->_read = true;
-            emit _notifs.at(i)->read();
-        }
-        else
-            break;
-
-    emit unreadChanged();
-}
+    // emit unreadChanged();
+// }
 
 
 
@@ -201,12 +174,6 @@ void NotificationsModel::_addItems(QJsonObject data)
     {
         auto notification = new Notification(notif.toObject(), this);
         _notifs.insert(size, notification);
-
-//#ifdef Q_OS_ANDROID
-//        auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
-//                .arg(notification->actionText()).arg(notification->text());
-//        _androidNotifier->setNotification(text);
-//#endif
     }
 
     endInsertRows();
@@ -216,61 +183,27 @@ void NotificationsModel::_addItems(QJsonObject data)
 
     _loading = false;
 
-    if (_notifs.size() <= list.size())
+    if (_notifs.size() == list.size())
+    {
+        Q_TEST(connect(_notifs.first(), SIGNAL(read()), this, SIGNAL(unreadChanged())));
         emit unreadChanged();
+    }
 }
-
-
-
-//void NotificationsModel::_addNewest(QJsonObject data)
-//{
-////    qDebug() << "adding entries";
-
-//    auto list = data.value("notifications").toArray();
-//    if (list.isEmpty())
-//    {
-//        _loading = false;
-//        return;
-//    }
-    
-//    _totalCount = data.value("total_count").toInt();
-
-//    beginInsertRows(QModelIndex(), 0, list.size() - 1);
-
-//    foreach(auto notif, list)
-//    {
-//        auto notification = new Notification(notif.toObject(), this);
-//        _notifs.prepend(notification);
-
-//#ifdef Q_OS_ANDROID
-//    if (!notification->_read)
-//    {
-//        auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
-//                .arg(notification->actionText()).arg(notification->text());
-//        _androidNotifier->setNotification(text);
-//    }
-//#endif
-
-//        if (!notification->_read && notification->_action == "new_comment")
-//            emit commentAdded(notification->_parentId, notification);
-//    }
-        
-//    endInsertRows();
-
-//    _loading = false;
-
-//    emit unreadChanged();
-//}
 
 
 
 void NotificationsModel::_addPush(QJsonObject data)
 {
     beginInsertRows(QModelIndex(), 0, 0);
+    
+    if (!_notifs.isEmpty())
+        Q_TEST(disconnect(_notifs.first(), SIGNAL(read()), this, SIGNAL(unreadChanged())));
 
     auto notification = new Notification(data, this);
     _notifs.prepend(notification);
 
+    Q_TEST(connect(notification, SIGNAL(read()), this, SIGNAL(unreadChanged())));
+    
 #ifdef Q_OS_ANDROID
     if (!notification->_read)
     {
@@ -279,9 +212,6 @@ void NotificationsModel::_addPush(QJsonObject data)
         _androidNotifier->setNotification(text);
     }
 #endif
-
-    if (!notification->_read && notification->_action == "new_comment")
-        emit commentAdded(notification->_parentId, notification);
 
     endInsertRows();
 
@@ -297,7 +227,6 @@ void NotificationsModel::_reloadAll()
     _loading = false;
     _totalCount = 1;
     qDeleteAll(_notifs);
-    _notifs.clear();
 
     endResetModel();
 

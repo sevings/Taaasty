@@ -12,7 +12,6 @@ class Notification: public QObject
     Q_OBJECT
     
     friend class NotificationsModel;
-    friend class Comment;
     friend class PusherClient;
     
     Q_PROPERTY(int     id         MEMBER _id         CONSTANT)
@@ -46,6 +45,8 @@ signals:
     void read();
     
 private:
+    void _updateRead(const QJsonObject data);
+
     int     _id;
     QString _createdAt;
     User*   _sender;

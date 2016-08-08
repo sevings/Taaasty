@@ -398,7 +398,7 @@ void ChatsModel::_bubbleChat(int id)
     _chats.at(i)->update();
 
     auto unread = Tasty::instance()->unreadChats();
-    if (i < unread)
+    if (i <= unread)
         return;
 
     if (!beginMoveRows(QModelIndex(), i, i, QModelIndex(), unread))

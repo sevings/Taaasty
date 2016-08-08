@@ -29,8 +29,6 @@ CommentsModel::CommentsModel(Entry *entry)
 
     _setTotalCount(entry->commentsCount());
 
-    Q_TEST(connect(entry, SIGNAL(commentAdded(QJsonObject)), this, SLOT(_addComment(QJsonObject))));
-
     if (entry->chat())
         Q_TEST(connect(entry->chat(), SIGNAL(messageReceived(QJsonObject)), this, SLOT(check())));
 }
@@ -203,31 +201,6 @@ void CommentsModel::_addComment(const QJsonObject data)
 
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
 
-    _comments << cmt;
-    _ids << cmt->id();
-
-    Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
-
-    endInsertRows();
-
-    emit lastCommentChanged();
-}
-
-
-
-void CommentsModel::_addComment(const int entryId, const Notification* notif)
-{
-    if (entryId != _entryId)
-        return;
-
-    if (_ids.contains(notif->entityId()))
-        return;
-    
-    _setTotalCount(_totalCount + 1);
-
-    beginInsertRows(QModelIndex(), _comments.size(), _comments.size());
-
-    auto cmt = new Comment(notif, this);
     _comments << cmt;
     _ids << cmt->id();
 

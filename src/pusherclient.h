@@ -21,7 +21,8 @@ public:
     explicit PusherClient(Tasty* tasty = nullptr);
 
     void addChat(Conversation* chat);
-    void removeChat(int id);
+    void removeChat(Conversation* chat);
+    Conversation* chat(int entryId) const;
 
     void addMessage(Message* msg);
     void removeMessage(int id);
@@ -54,6 +55,7 @@ private:
     Tasty* _tasty;
 
     QHash<int, Conversation*>   _chats;
+    QHash<int, Conversation*>   _chatsByEntry;
     QHash<int, Message*>        _messages;
     QHash<int, Comment*>        _comments;
     QHash<int, Notification*>   _notifications;

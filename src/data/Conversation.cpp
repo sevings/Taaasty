@@ -39,6 +39,7 @@ Conversation::Conversation(QObject* parent)
     , _recipient(nullptr)
     , _messages(nullptr)
     , _loading(false)
+    , _reading(false)
 {
     
 }
@@ -61,6 +62,7 @@ Conversation::Conversation(Entry* entry)
     , _recipient(nullptr)
     , _messages(new MessagesModel(this))
     , _loading(false)
+    , _reading(false)
 {
     setEntryId(entry->entryId());
 
@@ -75,6 +77,7 @@ Conversation::Conversation(const QJsonObject data, QObject *parent)
     , _recipient(nullptr)
     , _messages(nullptr)
     , _loading(false)
+    , _reading(false)
 {
     _init(data);
 }
@@ -83,7 +86,7 @@ Conversation::Conversation(const QJsonObject data, QObject *parent)
 
 Conversation::~Conversation()
 {
-    Tasty::instance()->pusher()->removeChat(_id);
+    Tasty::instance()->pusher()->removeChat(this);
 }
 
 
@@ -263,6 +266,7 @@ void Conversation::_markRead(const QJsonObject data)
         return;
     }
 
+    _reading = false;
     _unreadCount = 0;
     emit unreadCountChanged();
 }
@@ -398,14 +402,16 @@ void Conversation::sendMessage(const QString text)
 
 void Conversation::readAll()
 {
-    if (_unreadCount <= 0 || _id <= 0)
+    if (_reading || _unreadCount <= 0 || _id <= 0)// || !isInvolved())
         return;
+
+    _reading = true;
 
     auto url = QString("v2/messenger/conversations/by_id/%1/messages/read_all.json").arg(_id);
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation);
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(allMessagesRead(const QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)),       this, SLOT(_markRead(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)),       this, SLOT(_markRead(QJsonObject)))); //! \todo _setNotReading()
 }
 
 
@@ -460,6 +466,11 @@ void Conversation::_emitLeft(const QJsonObject data)
     emit isInvolvedChanged();
 
     emit Tasty::instance()->info("Беседа удалена");
+}
+
+Entry* Conversation::entry() const
+{
+    return _entry;
 }
 
 int Conversation::unreadCount() const

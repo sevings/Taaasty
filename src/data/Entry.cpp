@@ -13,6 +13,7 @@
 
 #include "../tasty.h"
 #include "../apirequest.h"
+#include "../pusherclient.h"
 #include "../models/commentsmodel.h"
 #include "../models/messagesmodel.h"
 #include "../models/attachedimagesmodel.h"
@@ -149,8 +150,7 @@ CommentsModel* Entry::commentsModel()
     if (_commentsModel && _commentsModel->entryId() == _id)
         return _commentsModel;
 
-    if (!_chat)
-        _chat = new Conversation(this);
+    chat();
 
     delete _commentsModel;
     _commentsModel = new CommentsModel(this);
@@ -388,9 +388,14 @@ int Entry::commentsCount() const
 
 Conversation* Entry::chat()
 {
-    if (!_chat)
-        _chat = new Conversation(this);
-
+    if (_chat)
+        return _chat;
+    
+    _chat = Tasty::instance()->pusher()->chat(_id);
+    if (_chat)
+        return _chat;
+    
+    _chat = new Conversation(this);
     return _chat;
 }
 

@@ -77,6 +77,8 @@ public:
 
     int unreadCount() const;
 
+    Entry* entry() const;
+
 public slots:
     void update();
     void sendMessage(const QString text);
@@ -125,4 +127,5 @@ private:
     Message*            _lastMessage;
 
     bool _loading;
+    bool _reading;
 };

@@ -17,7 +17,7 @@ Pane {
     readonly property bool isFullEntryView: true
     Timer {
         interval: 20000
-        running: back.visible && !entry.isWatched
+        running: back.visible && !entry.chat.isInvolved
         repeat: true
         onTriggered: commentsModel.check()
     }
@@ -55,6 +55,9 @@ Pane {
         delegate: Item {
             width: window.width
             height: 4 * mm + commentText.contentHeight + nameText.contentHeight
+            Component.onCompleted: {
+                entry.chat.readAll();
+            }
             Poppable {
                 body: back
                 onClicked: {

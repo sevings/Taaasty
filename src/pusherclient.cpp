@@ -10,6 +10,7 @@
 #include "data/Message.h"
 #include "data/Comment.h"
 #include "data/Notification.h"
+#include "data/Entry.h"
 
 #include "defines.h"
 
@@ -39,13 +40,28 @@ PusherClient::PusherClient(Tasty* tasty)
 void PusherClient::addChat(Conversation* chat)
 {
     _chats.insert(chat->id(), chat);
+    
+    auto entry = chat->entry();
+    if (entry)
+        _chatsByEntry.insert(entry->entryId(), chat);
 }
 
 
 
-void PusherClient::removeChat(int id)
+void PusherClient::removeChat(Conversation* chat)
 {
-    _chats.remove(id);
+    _chats.remove(chat->id());
+    
+    auto entry = chat->entry();
+    if (entry)
+        _chatsByEntry.remove(entry->entryId());
+}
+
+
+
+Conversation* PusherClient::chat(int entryId) const 
+{
+    return _chatsByEntry.value(entryId);
 }
 
 

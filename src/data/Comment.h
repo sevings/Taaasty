@@ -23,7 +23,6 @@ class Comment: public MessageBase
 public:
     Comment(QObject* parent = nullptr);
     Comment(const QJsonObject data, QObject* parent = nullptr);
-    Comment(const Notification* data, QObject* parent = nullptr);
     ~Comment();
 
 public slots:
