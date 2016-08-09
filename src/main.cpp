@@ -55,7 +55,7 @@
 
 int main(int argc, char *argv[])
 {
-//    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
     app.setApplicationName("Taaasty");
     app.setApplicationVersion("1.0");
@@ -127,10 +127,11 @@ int main(int argc, char *argv[])
 #ifdef Q_OS_ANDROID
     //  BUG with dpi on some androids: https://bugreports.qt-project.org/browse/QTBUG-35701
     //  Workaround:
-    auto qtActivity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
-    auto resources = qtActivity.callObjectMethod("getResources", "()Landroid/content/res/Resources;");
-    auto displayMetrics = resources.callObjectMethod("getDisplayMetrics", "()Landroid/util/DisplayMetrics;");
-    int density = displayMetrics.getField<int>("densityDpi");
+//    auto qtActivity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
+//    auto resources = qtActivity.callObjectMethod("getResources", "()Landroid/content/res/Resources;");
+//    auto displayMetrics = resources.callObjectMethod("getDisplayMetrics", "()Landroid/util/DisplayMetrics;");
+//    int density = displayMetrics.getField<int>("densityDpi");
+    int density = 92;
 #else
 //    auto *screen = qApp->primaryScreen();
 //    float density = screen->physicalDotsPerInch();

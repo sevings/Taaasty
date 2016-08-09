@@ -391,9 +391,9 @@ Conversation* Entry::chat()
     if (_chat)
         return _chat;
     
-    _chat = Tasty::instance()->pusher()->chat(_id);
-    if (_chat)
-        return _chat;
+//    _chat = Tasty::instance()->pusher()->chat(_id);
+//    if (_chat)
+//        return _chat;
     
     _chat = new Conversation(this);
     return _chat;
