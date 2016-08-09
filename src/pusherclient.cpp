@@ -214,7 +214,14 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
 
     if (event == "update_notifications")
     {
-// Data: "{\"notifications\":[{\"id\":9006398,\"read_at\":\"2016-07-19T21:25:21.000+03:00\"}]}"
+        auto notifs = json.value("notifications").toArray();
+        foreach (auto notifData, notifs)
+        {
+            auto notifId = notifData.toObject().value("id").toInt();
+            if (_notifications.contains(notifId))
+                _notifications.value(notifId)->_updateRead(notifData.toObject());
+        }
+
         return;
     }
 

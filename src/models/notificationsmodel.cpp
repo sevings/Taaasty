@@ -227,6 +227,7 @@ void NotificationsModel::_reloadAll()
     _loading = false;
     _totalCount = 1;
     qDeleteAll(_notifs);
+    _notifs.clear();
 
     endResetModel();
 

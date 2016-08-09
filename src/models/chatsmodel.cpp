@@ -178,8 +178,9 @@ void ChatsModel::reset()
 {
     beginResetModel();
     
-    qDeleteAll(_chats);
-    _chats.clear();
+    qDeleteAll(_allChats);
+    _allChats.clear();
+    _chats.clear();        
     _ids.clear();
 
     _hasMore = true;
@@ -397,7 +398,11 @@ void ChatsModel::_bubbleChat(int id)
 
     _chats.at(i)->update();
 
-    auto unread = Tasty::instance()->unreadChats();
+    int unread = 0;
+    for (; unread < _chats.size(); unread++)
+        if (_chats.at(unread)->unreadCount() <= 0)
+            break;
+
     if (i <= unread)
         return;
 
@@ -405,7 +410,7 @@ void ChatsModel::_bubbleChat(int id)
         return;
 
     auto chat = _chats.takeAt(i);
-    _chats.insert(unread - 1, chat);
+    _chats.insert(unread, chat);
 
     endMoveRows();
 }

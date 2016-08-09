@@ -335,6 +335,11 @@ void Entry::_changeFavorited(const QJsonObject data)
 
     _isFavorited = !_isFavorited;
     emit favoritedChanged();
+
+    if (_isFavorited)
+        emit Tasty::instance()->info("Запись добавлена в избранное");
+    else
+        emit Tasty::instance()->info("Запись удалена из избранного");
 }
 
 

@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 //    auto resources = qtActivity.callObjectMethod("getResources", "()Landroid/content/res/Resources;");
 //    auto displayMetrics = resources.callObjectMethod("getDisplayMetrics", "()Landroid/util/DisplayMetrics;");
 //    int density = displayMetrics.getField<int>("densityDpi");
-    int density = 92;
+    int density = 192;
 #else
 //    auto *screen = qApp->primaryScreen();
 //    float density = screen->physicalDotsPerInch();
