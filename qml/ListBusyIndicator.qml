@@ -9,6 +9,8 @@ Item {
     visible: running
     Q.BusyIndicator {
         id: busy
+        height: 5 * mm
+        width: 5 * mm
         anchors {
             top: footer ? parent.top : undefined
             bottom: footer ? undefined : parent.bottom

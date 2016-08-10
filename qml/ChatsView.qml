@@ -1,4 +1,6 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.0 as Q
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 Pane {
@@ -122,11 +124,16 @@ Pane {
                     right: parent.right
                     margins: 2 * mm
                 }
-                width: 1.5 * mm
+                width: 3 * mm
                 height: width
                 radius: height / 2
-                color: window.greenColor
+                color: Material.primary
                 visible: chat.unreadCount > 0
+                Q.Label {
+                    anchors.centerIn: parent
+                    text: chat.unreadCount
+                    font.pointSize: window.fontSmallest
+                }
             }
         }
         footer: ListBusyIndicator {

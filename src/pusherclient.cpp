@@ -225,7 +225,6 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
         return;
     }
 
-    qDebug() << "Pusher event:" << event;
     qDebug() << "Data:" << data;
 }
 
