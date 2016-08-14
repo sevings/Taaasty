@@ -237,16 +237,23 @@ void ChatsModel::_addUnread(QJsonArray data)
         auto chat = new Conversation(item.toObject(), this);
         if (_ids.contains(chat->id()))
         {
-            bubbleIds << chat->id();
+            if (_mode == AllChatsMode
+                    || (_mode == PrivateChatsMode && chat->type() != Conversation::PublicConversation)
+                    || (_mode == EntryChatsMode && chat->type() == Conversation::PublicConversation))
+                bubbleIds << chat->id();
             delete chat;
             continue;
         }
 
-        chats << chat;
         _allChats << chat;
         _ids << chat->id();
 
         Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));
+
+        if (_mode == AllChatsMode
+                || (_mode == PrivateChatsMode && chat->type() != Conversation::PublicConversation)
+                || (_mode == EntryChatsMode && chat->type() == Conversation::PublicConversation))
+            chats << chat;
     }
 
     foreach (auto id, bubbleIds)
