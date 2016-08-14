@@ -20,7 +20,7 @@ CommentsModel::CommentsModel(Entry *entry)
     , _loading(false)
     , _checking(false)
     , _totalCount(0)
-    , _url("v1/comments.json?entry_id=%1&limit=20&order=desc")
+    , _url("v1/comments.json?entry_id=%1&limit=20")
 {
     if (!entry)
         return;
@@ -76,7 +76,7 @@ void CommentsModel::check()
 
     QString url = _url.arg(_entryId);
     if (!_comments.isEmpty())
-        url += QString("&from_comment_id=%1").arg(_comments.last()->_id);
+        url += QString("&order=desc&from_comment_id=%1").arg(_comments.last()->_id);
 
     _request = new ApiRequest(url);
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addLastComments(QJsonObject))));
@@ -105,7 +105,7 @@ void CommentsModel::loadMore()
 
     QString url = _url.arg(_entryId);
     if (!_comments.isEmpty())
-        url += QString("&to_comment_id=%1").arg(_comments.first()->_id);
+        url += QString("&order=desc&to_comment_id=%1").arg(_comments.first()->_id);
 
     _request = new ApiRequest(url);
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addComments(QJsonObject))));

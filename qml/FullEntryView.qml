@@ -15,18 +15,6 @@ Pane {
     property bool showProfiles: tlog.tlogId !== window.anonymousId
     property bool scrollToBottom: false
     readonly property bool isFullEntryView: true
-    Timer {
-        interval: 20000
-        running: back.visible && !entry.chat.isInvolved
-        repeat: true
-        onTriggered: commentsModel.check()
-    }
-    Poppable {
-        body: back
-    }
-    Splash {
-        visible: !fullEntry.visible
-    }
     signal addGreeting(string slug)
     Connections {
         target: entry
@@ -38,9 +26,22 @@ Pane {
         }
     }
     Component.onCompleted: {
-        commentsModel.check();
+        commentsModel.loadMore();
         if (scrollToBottom)
             fullEntry.positionViewAtEnd();
+    }
+    onVisibleChanged: commentsModel.check();
+    Timer {
+        interval: 20000
+        running: back.visible && !entry.chat.isInvolved
+        repeat: true
+        onTriggered: commentsModel.check()
+    }
+    Poppable {
+        body: back
+    }
+    Splash {
+        visible: !fullEntry.visible
     }
     MyListView {
         id: fullEntry
