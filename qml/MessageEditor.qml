@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.0 as Q
 
 Item {
     id: editor
@@ -6,7 +7,7 @@ Item {
         left: parent.left
         right: parent.right
     }
-    implicitHeight: input.height + 2 * mm
+    implicitHeight: 16 * mm
     property alias message: input.text
     property bool uploading: false
     signal sent
@@ -24,7 +25,14 @@ Item {
             left: parent.left
             right: button.left
         }
-        height: 12 * mm
+        height: 14 * mm
+        Q.BusyIndicator {
+            id: busy
+            height: 5 * mm
+            width: 5 * mm
+            anchors.centerIn: parent
+            running: uploading
+        }
     }
     ThemedButton {
         id: button

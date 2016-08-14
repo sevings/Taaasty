@@ -22,17 +22,6 @@ Flickable {
         input.cursorPosition += opening.length;
         if (closing)
             input.insert(input.cursorPosition, closing);
-//        var oldText = input.text.toString();
-//        var cursor = input.cursorPosition;
-//        var positionY = flickText.contentY;
-
-//        var before = oldText.substring(0, cursor);
-//        var after = oldText.substring(cursor);
-//        var newText = before + opening + (closing !== undefined ? closing : '') + after;
-//        input.text = newText;
-
-//        flickText.contentY = positionY;
-//        input.cursorPosition = cursor + opening.length;
     }
     function clear() {
         input.text = '';
