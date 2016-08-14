@@ -212,6 +212,23 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
         return;
     }
 
+    if (event.endsWith("delete_user_messages"))
+    {
+        auto chatId = json.value("conversation_id").toInt();
+        if (!_chats.contains(chatId))
+            return;
+
+        auto messages = json.value("messages").toArray();
+        foreach (auto msgData, messages)
+        {
+            auto msgId = msgData.toObject().value("id").toInt();
+            if (_messages.contains(msgId))
+                _messages.value(msgId)->_markRemoved(msgData.toObject());
+        }
+
+        return;
+    }
+
     if (event == "update_notifications")
     {
         auto notifs = json.value("notifications").toArray();

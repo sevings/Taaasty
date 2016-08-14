@@ -133,3 +133,16 @@ void Message::_updateRead(const QJsonObject data)
         emit readChanged();
     }
 }
+
+
+
+void Message::_markRemoved(const QJsonObject data)
+{
+    if (data.value("id").toInt() != _id)
+        return;
+
+    _text = data.value("content").toString();
+//    _type = data.value("type").toString();
+
+    emit textUpdated();
+}
