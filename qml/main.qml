@@ -311,10 +311,6 @@ Q.ApplicationWindow {
             backAnimation.start();
             window.pushFlows();
         }
-        onSearchRequested: {
-            backAnimation.start();
-            showLineInput('query');
-        }
         onVisibleChanged: {
             window.hideFooter();
         }
@@ -575,6 +571,7 @@ Q.ApplicationWindow {
                     text: 'Все беседы'
                     onTriggered: {
                         ChatsModel.mode = 0//ChatsModel.AllChatsMode
+                        window.setFooterFromStack();
                         drawer.close();
                     }
                     highlighted: ChatsModel.mode == 0 //= ChatsModel.AllChatsMode
@@ -584,6 +581,7 @@ Q.ApplicationWindow {
                     text: 'Личные'
                     onTriggered: {
                         ChatsModel.mode = 1//ChatsModel.PrivateChatsMode
+                        window.setFooterFromStack();
                         drawer.close();
                     }
                     highlighted: ChatsModel.mode == 1 //= ChatsModel.PrivateChatsMode
@@ -593,6 +591,7 @@ Q.ApplicationWindow {
                     text: 'Комментарии'
                     onTriggered: {
                         ChatsModel.mode = 2//ChatsModel.EntryChatsMode
+                        window.setFooterFromStack();
                         drawer.close();
                     }
                     highlighted: ChatsModel.mode == 2 //= ChatsModel.EntryChatsMode
@@ -645,6 +644,7 @@ Q.ApplicationWindow {
                     text: 'Все потоки'
                     onTriggered: {
                         stack.currentItem.mode = 0; //= FlowsModel.AllFlowsMode
+                        window.setFooterFromStack();
                         drawer.close();
                     }
                     highlighted: stack.currentItem.mode === FlowsModel.AllFlowsMode
@@ -654,6 +654,7 @@ Q.ApplicationWindow {
                     text: 'Мои потоки'
                     onTriggered: {
                         stack.currentItem.mode = 1; //= FlowsModel.MyFlowsMode
+                        window.setFooterFromStack();
                         drawer.close();
                     }
                     highlighted: stack.currentItem.mode === FlowsModel.MyFlowsMode

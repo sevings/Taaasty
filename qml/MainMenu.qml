@@ -14,7 +14,6 @@ Rectangle {
     signal flowsRequested
     signal tlogRequested
     signal chatsRequested
-    signal searchRequested
     signal settingsRequested
     signal waterTlogsRequested
     signal fireTlogsRequested
