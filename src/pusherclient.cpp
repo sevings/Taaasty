@@ -31,8 +31,8 @@ PusherClient::PusherClient(Tasty* tasty)
     if (tasty->isAuthorized())
         _addPrivateChannel();
 
-    Q_TEST(connect(tasty, SIGNAL(authorized()),         this,    SLOT(_resubscribeToPrivate())));
-    Q_TEST(connect(tasty, SIGNAL(networkAccessible()),  _pusher, SLOT(connect())));
+    Q_TEST(QObject::connect(tasty, SIGNAL(authorized()),         this, SLOT(_resubscribeToPrivate())));
+    Q_TEST(QObject::connect(tasty, SIGNAL(networkAccessible()),  this, SLOT(connect())));
 }
 
 
@@ -50,7 +50,7 @@ void PusherClient::addChat(Conversation* chat)
 
 void PusherClient::removeChat(Conversation* chat)
 {
-    _chats.remove(chat->id());
+    _chats.remove(chat->id(), chat);
     
     auto entry = chat->entry();
     if (entry)
@@ -108,13 +108,21 @@ void PusherClient::removeNotification(int id)
 
 
 
+void PusherClient::connect()
+{
+    if (!_pusher->isConnected())
+        _pusher->connect();
+}
+
+
+
 void PusherClient::_getPusherAuth()
 {
     auto socket = _pusher->socketId();
     auto data = QString("socket_id=%1&channel_name=%2").arg(socket).arg(_privateChannel);
 
     auto request = new ApiRequest("v1/messenger/auth.json", true, QNetworkAccessManager::PostOperation, data);
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_subscribeToPrivate(QJsonObject)));
+    Q_TEST(QObject::connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_subscribeToPrivate(QJsonObject))));
 }
 
 
@@ -170,18 +178,16 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
     {
         auto chatId = json.value("conversation_id").toInt();
         auto userId = json.value("user_id").toInt();
-        if (_chats.contains(chatId))
-            emit _chats.value(chatId)->typed(userId);
+        foreach (auto chat, _chats.values(chatId))
+            emit chat->typed(userId);
         return;
     }
 
     if (event.endsWith("update_conversation"))
     {
         auto chatId = json.value("id").toInt();
-        if (_chats.contains(chatId))
-            _chats.value(chatId)->_init(json);
-//        else
-//            emit unreadChat();
+        foreach (auto chat, _chats.values(chatId))
+            chat->_init(json);
         return;
     }
 
@@ -189,7 +195,8 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
     {
         auto chatId = json.value("conversation_id").toInt();
         if (_chats.contains(chatId))
-            emit _chats.value(chatId)->messageReceived(json);
+            foreach (auto chat, _chats.values(chatId))
+                emit chat->messageReceived(json);
         else
             emit unreadChat();
         return;
@@ -252,6 +259,6 @@ void PusherClient::_addPrivateChannel()
     _privateChannel = QString("private-%1-messaging").arg(_tasty->settings()->userId());
     auto ch = _pusher->subscribe(_privateChannel, false);
 
-    Q_TEST(connect(ch, SIGNAL(authNeeded()),           this, SLOT(_getPusherAuth())));
-    Q_TEST(connect(ch, SIGNAL(event(QString,QString)), this, SLOT(_handlePrivatePusherEvent(QString,QString))));
+    Q_TEST(QObject::connect(ch, SIGNAL(authNeeded()),           this, SLOT(_getPusherAuth())));
+    Q_TEST(QObject::connect(ch, SIGNAL(event(QString,QString)), this, SLOT(_handlePrivatePusherEvent(QString,QString))));
 }

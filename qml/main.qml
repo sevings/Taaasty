@@ -51,7 +51,8 @@ Q.ApplicationWindow {
             close.accepted = false;
         }
         else if (stack.depth > 1) {
-            stack.pop();
+            if (!stack.currentItem.isTrainingProgress)
+                stack.pop();
             close.accepted = false;
         }
     }

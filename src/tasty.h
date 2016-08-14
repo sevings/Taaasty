@@ -17,7 +17,6 @@ class Tasty : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int  busy         READ busy         NOTIFY busyChanged)
     Q_PROPERTY(bool isAuthorized READ isAuthorized NOTIFY authorized)
     Q_PROPERTY(int  unreadChats  READ unreadChats  NOTIFY unreadChatsChanged)
 
@@ -30,11 +29,6 @@ public:
     Settings*               settings() const { return _settings; }
     QNetworkAccessManager*  manager() const { return _manager; }
     PusherClient*           pusher() const { return _pusher; }
-
-    void incBusy();
-    void decBusy();
-
-    Q_INVOKABLE int busy() const { return _busy; }
 
     Q_INVOKABLE bool isAuthorized() const;
 
@@ -50,8 +44,6 @@ public:
     Tlog* me();
 
 signals:
-    void busyChanged();
-
     void authorizationNeeded();
     void authorized();
 
@@ -67,6 +59,7 @@ signals:
 
 public slots:
     void authorize(const QString login, const QString password);
+    void reconnectToPusher();
 
 private slots:
     void _readAccessToken(const QJsonObject data);
@@ -80,7 +73,6 @@ private:
     QNetworkAccessManager* _manager;
     PusherClient* _pusher;
 
-    int _busy;
     int _entryImageWidth;
     int _commentImageWidth;
 

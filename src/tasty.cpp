@@ -18,7 +18,6 @@ Tasty::Tasty(QNetworkAccessManager* web)
     , _settings(new Settings(this))
     , _manager(web ? web : new QNetworkAccessManager(this))
     , _pusher(new PusherClient(this))
-    , _busy(0)
     , _entryImageWidth(_settings->maxImageWidth())
     , _commentImageWidth(_entryImageWidth)
     , _unreadChats(0)
@@ -47,25 +46,6 @@ Tasty* Tasty::instance(QNetworkAccessManager* web)
 {
     static auto tasty = new Tasty(web);
     return tasty;
-}
-
-
-
-void Tasty::incBusy()
-{
-    _busy++;
-    emit busyChanged();
-}
-
-
-
-void Tasty::decBusy()
-{
-    if (_busy > 0)
-    {
-        _busy--;
-        emit busyChanged();
-    }
 }
 
 
@@ -166,6 +146,13 @@ void Tasty::authorize(const QString login, const QString password)
                                   QNetworkAccessManager::PostOperation, data);
 
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readAccessToken(const QJsonObject)));
+}
+
+
+
+void Tasty::reconnectToPusher()
+{
+    _pusher->connect();
 }
 
 

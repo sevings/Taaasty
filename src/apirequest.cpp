@@ -39,8 +39,6 @@ ApiRequest::ApiRequest(const QString url,
     _request.setRawHeader(QByteArray("X-User-Token"), accessToken.toUtf8());
     _request.setRawHeader(QByteArray("Connection"), QByteArray("close"));
 
-    tasty->incBusy();
-
     Q_TEST(connect(this, SIGNAL(error(int,QString)), tasty, SIGNAL(error(int,QString))));
 
     _start();
@@ -51,8 +49,6 @@ ApiRequest::ApiRequest(const QString url,
 ApiRequest::~ApiRequest()
 {
     delete _reply;
-
-    Tasty::instance()->decBusy();
 }
 
 

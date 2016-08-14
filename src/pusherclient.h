@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QJsonObject>
-#include <QHash>
+#include <QMultiHash>
 
 class Pusher;
 class Tasty;
@@ -39,6 +39,7 @@ signals:
     void unreadChats(int count);
 
 public slots:
+    void connect();
 
 private slots:
     void _getPusherAuth();
@@ -54,7 +55,7 @@ private:
 
     Tasty* _tasty;
 
-    QHash<int, Conversation*>   _chats;
+    QMultiHash<int, Conversation*>   _chats;
     QHash<int, Conversation*>   _chatsByEntry;
     QHash<int, Message*>        _messages;
     QHash<int, Comment*>        _comments;
