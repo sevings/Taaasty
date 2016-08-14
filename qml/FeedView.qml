@@ -352,7 +352,7 @@ Pane {
                     right: parent.right
                 }
                 width: parent.width / 3
-                height: 6 * mm
+//                height: 6 * mm
                 text: 'Да!'
                 enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable
                 highlighted: ((entry.rating.isVotable === entry.rating.isVoted) )
@@ -373,7 +373,7 @@ Pane {
                     top: comments.bottom
                     left: parent.left
                 }
-                height: entryVoteButton.height
+//                height: entryVoteButton.height
                 width: parent.width / 3
                 text: 'Фу…'
                 enabled: !entry.rating.isBayesVoted

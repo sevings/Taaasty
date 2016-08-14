@@ -1,7 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
-//import QtGraphicalEffects 1.0
 import ImageCache 2.0
 
 
@@ -62,17 +61,6 @@ AnimatedImage {
         id: back
         anchors.fill: parent
         color: image.backgroundColor
-//        DropShadow {
-//            anchors.fill: downloadButton
-//            horizontalOffset: 0.3 * mm * (scale - 0.8) * 5
-//            verticalOffset: horizontalOffset
-//            samples: 1
-//            color: "#80000000"
-//            source: downloadButton
-//            scale: downloadButton.scale
-//            visible: downloadButton.visible
-//            cached: !cachedImage.isDownloading
-//        }
         Rectangle {
             id: downloadButton
             anchors {

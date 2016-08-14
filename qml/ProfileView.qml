@@ -31,10 +31,7 @@ Pane {
         }
         Column {
             id: column
-            anchors {
-                left: parent.left
-                right: parent.right
-            }
+            width: window.width
             spacing: 1 * mm
             visible: !tlog.loading
             MyImage {
@@ -163,7 +160,7 @@ Pane {
                         left: parent.left
                         topMargin: 0
                     }
-                    height: 6 * mm
+//                    height: 6 * mm
                     width: (parent.width - 3 * mm) / 2
                     text: 'Фу…'
                     enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
@@ -182,7 +179,7 @@ Pane {
                         right: parent.right
                         topMargin: 0
                     }
-                    height: tlogVoteAgainstButton.height
+//                    height: tlogVoteAgainstButton.height
                     width: tlogVoteAgainstButton.width
                     text: 'Да!'
                     enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode

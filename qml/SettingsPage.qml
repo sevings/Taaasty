@@ -18,11 +18,16 @@ Pane {
         flickableDirection: Flickable.VerticalFlick
         topMargin: 1 * mm
         bottomMargin: 1 * mm
+        leftMargin: 1 * mm
+        rightMargin: 1 * mm
         contentWidth: parent.width
         contentHeight: column.height
+        Poppable {
+            body: back
+        }
         Column {
             id: column
-            width: parent.width
+            width: parent.width - 2 * mm
             spacing: 1 * mm
             Component.onCompleted: {
                 imagesBox.checked = Settings.autoloadImages;

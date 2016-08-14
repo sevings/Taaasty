@@ -76,7 +76,9 @@ Rectangle {
                 onTriggered: { tlogRequested() }
                 highlighted: stack.currentItem.mode === FeedModel.TlogMode
             }
-            MenuSeparator { }
+            MenuSeparator {
+                visible: Tasty.isAuthorized
+            }
             MenuItem {
                 text: 'Избранное'
                 onTriggered: { modeChanged(FeedModel.FavoritesMode) }

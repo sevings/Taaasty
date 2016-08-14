@@ -8,10 +8,7 @@ Pane {
         contentHeight: item.height
         Item {
             id: item
-            anchors {
-                left: parent.left
-                right: parent.right
-            }
+            width: window.width
             height: aboutText.contentHeight > window.height
                     ? aboutText.contentHeight : window.height
             Poppable {

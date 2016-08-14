@@ -274,7 +274,7 @@ Pane {
                     margins: 1 * mm
                 }
                 text: '-'
-                height: 6 * mm
+//                height: 6 * mm
                 width: parent.width / 3
                 enabled: !entry.rating.isBayesVoted
                 highlighted: entry.rating.isVotedAgainst
@@ -289,7 +289,7 @@ Pane {
                     margins: 1 * mm
                 }
                 text: '+'
-                height: 6 * mm
+//                height: 6 * mm
                 width: parent.width / 3
                 enabled: !entry.rating.isVotedAgainst
                 highlighted: ((entry.rating.isVotable === entry.rating.isVoted) )
@@ -318,7 +318,7 @@ Pane {
                     topMargin: 2 * mm
                 }
                 text: enabled || fullEntry.count > 0 ? 'Еще' : ''
-                height: visible ? 6 * mm : 0 // changing height forces layout
+                height: visible ? implicitHeight : 0 // changing height forces layout
                 width: parent.width / 3
                 visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
                 onClicked: commentsModel.loadMore()

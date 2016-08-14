@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
+import QtQuick.Controls.Material.impl 2.0
 
 Rectangle {
     id: popup
@@ -32,6 +33,10 @@ Rectangle {
 
         closing();
         event.accepted = true;
+    }
+    layer.enabled: visible && closable
+    layer.effect: ElevationEffect {
+        elevation: 24
     }
     state: "closed"
     states: [

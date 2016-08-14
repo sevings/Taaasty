@@ -42,6 +42,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
+import QtQuick.Controls.Material.impl 2.0
 
 MouseArea {
     id: area
@@ -74,6 +75,10 @@ MouseArea {
         border.width: 0.2 * mm
         border.color: area.info ? window.greenColor : window.redColor
         opacity: 0
+        layer.enabled: visible
+        layer.effect: ElevationEffect {
+            elevation: 24
+        }
         Behavior on opacity {
             NumberAnimation { duration: 300 }
         }

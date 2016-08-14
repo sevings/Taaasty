@@ -9,12 +9,6 @@
 #   include <QDebug>
 #endif
 
-#if defined(Q_OS_ANDROID)
-#   include <QtAndroidExtras/QAndroidJniObject>
-#else
-#   include <QScreen>
-#endif
-
 #include "defines.h"
 
 #include "tasty.h"
@@ -125,18 +119,9 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("Trainer", trainer);
 
 #ifdef Q_OS_ANDROID
-    //  BUG with dpi on some androids: https://bugreports.qt-project.org/browse/QTBUG-35701
-    //  Workaround:
-//    auto qtActivity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
-//    auto resources = qtActivity.callObjectMethod("getResources", "()Landroid/content/res/Resources;");
-//    auto displayMetrics = resources.callObjectMethod("getDisplayMetrics", "()Landroid/util/DisplayMetrics;");
-//    int density = displayMetrics.getField<int>("densityDpi");
-    int density = 192;
+    int density = 160; // todo: why 160?
 #else
-//    auto *screen = qApp->primaryScreen();
-//    float density = screen->physicalDotsPerInch();
     float density = 267; // test
-//    double scale = 1;
 #endif
 
     double scale = density < 180 ? 1 :

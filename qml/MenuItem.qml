@@ -3,7 +3,7 @@ import QtQuick.Controls 2.0 as Q
 
 Q.MenuItem {
     width: parent.width
-    height: 8 * mm
+//    height: 8 * mm
     font.pointSize: window.fontNormal
-    leftPadding: 5 * mm
+//    leftPadding: 5 * mm
 }

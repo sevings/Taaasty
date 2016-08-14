@@ -1,23 +1,16 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
-//import QtGraphicalEffects 1.0
+import QtQuick.Controls.Material 2.0
+import QtQuick.Controls.Material.impl 2.0
 
-Item {
+Q.Pane {
+    id: pane
+    padding: 0
     property bool poppable
     signal popped
     onPopped: window.popFromStack()
-    Q.Pane {
-        id: pane
-        anchors.fill: parent
-        padding: 0
+    layer.enabled: x > 0 && opacity === 1
+    layer.effect: ElevationEffect {
+        elevation: 24
     }
-//    DropShadow {
-//        anchors.fill: pane
-//        horizontalOffset: - 0.5 * mm
-//        samples: 1
-//        color: "#80000000"
-//        source: pane
-//        cached: true
-//        visible: parent.x > 0
-//    }
 }
