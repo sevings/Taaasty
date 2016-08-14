@@ -311,7 +311,12 @@ User* Conversation::user(int id)
         return _recipient;
 
     if (id == Tasty::instance()->settings()->userId())
-        return Tasty::instance()->me()->author();
+    {
+        auto user = new User(this);
+        *user = *Tasty::instance()->me()->author();
+        _users.insert(user->id(), user);
+        return user;
+    }
 
     if (!_isAnonymous)
     {
@@ -460,7 +465,10 @@ void Conversation::_emitLeft(const QJsonObject data)
 
     auto user = _users.value(_userId);
     if (!user)
-        user = Tasty::instance()->me()->author();
+    {
+        user = new User(this);
+        *user = *Tasty::instance()->me()->author();
+    }
 
     _leftUsers.insert(user->id(), user);
     emit isInvolvedChanged();

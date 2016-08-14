@@ -170,14 +170,6 @@ void Tasty::authorize(const QString login, const QString password)
 
 
 
-void Tasty::getMe()
-{
-    auto request = new ApiRequest("v1/users/me.json", true);
-    connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readMe(const QJsonObject)));
-}
-
-
-
 void Tasty::_readAccessToken(const QJsonObject data)
 {
     auto apiKey      = data.value("api_key").toObject();
@@ -191,6 +183,9 @@ void Tasty::_readAccessToken(const QJsonObject data)
     _settings->setUserId(userId);
     _settings->setLogin(login);
 
+    if (_me)
+        _me->setId(userId);
+
     emit authorized();
 }
 
@@ -202,13 +197,6 @@ void Tasty::_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility ac
         emit error(0, "Сеть недоступна");
     else if (accessible == QNetworkAccessManager::Accessible)
         emit networkAccessible();
-}
-
-
-
-void Tasty::_readMe(const QJsonObject data)
-{
-    qDebug() << data.value("title").toString();
 }
 
 

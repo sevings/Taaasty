@@ -9,7 +9,7 @@
 User::User(QObject* parent)
     : QObject(parent)
     , _id(0)
-    , _loading(false)
+    , _request(nullptr)
 {
 
 }
@@ -18,7 +18,7 @@ User::User(QObject* parent)
 
 User::User(const QJsonObject data, QObject *parent)
     : QObject(parent)
-    , _loading(false)
+    , _request(nullptr)
 {
     _init(data);
 }
@@ -39,10 +39,9 @@ void User::setId(int id)
 
     _id = id;
 
-    auto request = new ApiRequest(QString("v1/tlog/%1.json").arg(_id));
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject)));
-
-    _loading = true;
+    _request = new ApiRequest(QString("v1/tlog/%1.json").arg(_id));
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading(QObject*))));
 }
 
 
@@ -57,6 +56,36 @@ QString User::name() const
 QString User::slug() const
 {
     return _slug;
+}
+
+
+
+User& User::operator=(const User& other)
+{
+    if (&other == this)
+        return *this;
+
+    _id         = other._id;
+    _tlogUrl    = other._tlogUrl;
+    _name       = other._name;
+    _slug       = other._slug;
+
+    _originalPic     = other._originalPic    ;
+    _largePic        = other._largePic       ;
+    _thumb128        = other._thumb128       ;
+    _thumb64         = other._thumb64        ;
+    _symbol          = other._symbol         ;
+    _backgroundColor = other._backgroundColor;
+    _nameColor       = other._nameColor      ;
+
+    _request = other._request;
+    if (_request)
+    {
+        Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
+        Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading(QObject*))));
+    }
+
+    return *this;
 }
 
 
@@ -88,6 +117,8 @@ void User::_init(const QJsonObject data)
     _nameColor       = colors.value("name").toString();
 
     emit updated();
+
+    _request = nullptr;
 }
 
 
@@ -96,4 +127,12 @@ void User::_initFromTlog(const QJsonObject data)
 {
     auto author = data.value("author").toObject();
     _init(author);
+}
+
+
+
+void User::_setNotLoading(QObject* request)
+{
+    if (_request == request)
+        _request = nullptr;
 }

@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QJsonObject>
 
+class ApiRequest;
+
 
 
 class User: public QObject
@@ -32,12 +34,15 @@ public:
     QString name() const;
     QString slug() const;
 
+    User& operator=(const User& other);
+
 signals:
     void updated();
 
 protected slots:
     void _init(const QJsonObject data);
     void _initFromTlog(const QJsonObject data);
+    void _setNotLoading(QObject* request);
 
 private:
     int     _id;
@@ -53,5 +58,5 @@ private:
     QString _backgroundColor;
     QString _nameColor;
 
-    bool _loading;
+    ApiRequest* _request;
 };

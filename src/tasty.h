@@ -68,14 +68,10 @@ signals:
 public slots:
     void authorize(const QString login, const QString password);
 
-    void getMe();
-
 private slots:
     void _readAccessToken(const QJsonObject data);
 
     void _showNetAccessibility(QNetworkAccessManager::NetworkAccessibility accessible);
-
-    void _readMe(const QJsonObject data);
 
     void _setUnreadChats(int count);
 
