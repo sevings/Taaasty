@@ -37,6 +37,7 @@ class Conversation: public QObject
 //    Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
     Q_PROPERTY(Author*          recipient       MEMBER _recipient       NOTIFY updated)
     Q_PROPERTY(MessagesModel*   messages        MEMBER _messages        NOTIFY updated)
+    Q_PROPERTY(bool  isMyLastMessageUnread   READ isMyLastMessageUnread NOTIFY updated)
     Q_PROPERTY(MessageBase*     lastMessage     READ lastMessage        NOTIFY lastMessageChanged)
     Q_PROPERTY(bool             isInvolved      READ isInvolved         NOTIFY isInvolvedChanged)
     
@@ -74,6 +75,8 @@ public:
     ConversationType type() const;
 
     bool isInvolved() const;
+
+    bool isMyLastMessageUnread() const;
 
     int unreadCount() const;
 

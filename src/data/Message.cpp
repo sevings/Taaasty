@@ -18,7 +18,6 @@ Message::Message(QObject* parent)
     , _userId(0)
     , _recipientId(0)
     , _conversationId(0)
-    , _read(false)
     , _chat(nullptr)
 {
     _user = new User(this);
@@ -145,4 +144,9 @@ void Message::_markRemoved(const QJsonObject data)
 //    _type = data.value("type").toString();
 
     emit textUpdated();
+}
+
+int Message::userId() const
+{
+    return _userId;
 }

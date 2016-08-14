@@ -18,7 +18,6 @@ class Message: public MessageBase
     Q_PROPERTY(int      userId          MEMBER _userId         NOTIFY updated)
     Q_PROPERTY(int      recipientId     MEMBER _recipientId    NOTIFY updated)
     Q_PROPERTY(int      conversationId  MEMBER _conversationId NOTIFY updated)
-    Q_PROPERTY(bool     isRead          MEMBER _read           NOTIFY readChanged)
     
 public:
     Message(QObject* parent = nullptr);
@@ -27,12 +26,13 @@ public:
 
     int id() const;
     
+    int userId() const;
+
 public slots:
     void read();
 
 signals:
     void updated();
-    void readChanged();
 
 private slots:
     void _init(const QJsonObject data);
@@ -46,7 +46,6 @@ private:
     int     _userId;
     int     _recipientId;
     int     _conversationId;
-    bool    _read;
 
     Conversation* _chat;
     // _attachments;

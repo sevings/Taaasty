@@ -295,6 +295,13 @@ bool Conversation::isInvolved() const
 
 
 
+bool Conversation::isMyLastMessageUnread() const
+{
+    return _lastMessage->userId() == _userId && !_lastMessage->isRead();
+}
+
+
+
 MessagesModel* Conversation::messages() const
 {
     return _messages;

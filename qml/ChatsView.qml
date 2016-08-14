@@ -124,12 +124,13 @@ Pane {
                     right: parent.right
                     margins: 2 * mm
                 }
-                width: 3 * mm
+                width: chat.unreadCount > 0 ? 3 * mm : 1.5 * mm
                 height: width
                 radius: height / 2
                 color: Material.primary
-                visible: chat.unreadCount > 0
+                visible: chat.unreadCount > 0 || chat.isMyLastMessageUnread
                 Q.Label {
+                    visible: chat.unreadCount > 0
                     anchors.centerIn: parent
                     text: chat.unreadCount
                     font.pointSize: window.fontSmallest
