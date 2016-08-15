@@ -7,6 +7,7 @@
 #include "../settings.h"
 #include "../pusherclient.h"
 #include "../models/chatsmodel.h"
+#include "../models/attachedimagesmodel.h"
 
 #include "User.h"
 #include "Conversation.h"
@@ -19,6 +20,7 @@ Message::Message(QObject* parent)
     , _recipientId(0)
     , _conversationId(0)
     , _chat(nullptr)
+    , _attachedImagesModel(nullptr)
 {
     _user = new User(this);
 }
@@ -28,6 +30,7 @@ Message::Message(QObject* parent)
 Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
     : MessageBase(parent)
     , _chat(chat)
+    , _attachedImagesModel(nullptr)
 {
     _init(data);
 
@@ -77,12 +80,15 @@ void Message::_init(const QJsonObject data)
     _createdAt      = Tasty::parseDate(data.value("created_at").toString());
     _text           = data.value("content_html").toString().replace("&amp;", "&"); // TODO: SystemMessage
 
-//    if (_isAnonymous)
-//        _author     = new Author(data.value("author").toObject(), this);
-//    else
-        _user       = _chat->user(_userId);
-    // _attachments    = data.value("attachments").toArray();
+    _user = _chat->user(_userId);
     
+    auto imageAttach = data.value("attachments").toArray();
+    delete _attachedImagesModel;
+    if (imageAttach.isEmpty())
+        _attachedImagesModel = nullptr;
+    else
+        _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
+        
     _correctHtml();
 
     Tasty::instance()->pusher()->addMessage(this);

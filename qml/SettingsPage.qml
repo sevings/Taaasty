@@ -16,10 +16,6 @@ Pane {
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
         flickableDirection: Flickable.VerticalFlick
-        topMargin: 1 * mm
-        bottomMargin: 1 * mm
-        leftMargin: 1 * mm
-        rightMargin: 1 * mm
         contentWidth: parent.width
         contentHeight: column.height
         Poppable {
@@ -27,8 +23,9 @@ Pane {
         }
         Column {
             id: column
-            width: parent.width - 2 * mm
+            width: window.width
             spacing: 1 * mm
+            padding: 1 * mm
             Component.onCompleted: {
                 imagesBox.checked = Settings.autoloadImages;
                 shortBox.checked  = Settings.hideShortPosts;
@@ -37,7 +34,7 @@ Pane {
             }
             ThemedText {
                 text: 'Настройки'
-                width: parent.width
+                width: parent.width - parent.padding * 2
                 font.pointSize: window.fontBigger
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -61,9 +58,11 @@ Pane {
                 text: 'Темная тема'
                 onCheckedChanged: { Settings.darkTheme = checked; }
             }
-            MenuSeparator { }
+            MenuSeparator {
+                width: implicitWidth - parent.padding * 2
+            }
             ThemedText {
-                width: parent.width
+                width: parent.width - parent.padding * 2
                 horizontalAlignment: Text.AlignHCenter
                 text: Tasty.isAuthorized ? 'Вы вошли как <i>' + Settings.login + '</i>' : 'Вы не вошли'
             }
@@ -73,7 +72,9 @@ Pane {
                 text: Tasty.isAuthorized ? 'Сменить тлог' : 'Войти'
                 onClicked: window.pushLoginDialog()
             }
-            MenuSeparator { }
+            MenuSeparator {
+                width: implicitWidth - parent.padding * 2
+            }
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 40 * mm

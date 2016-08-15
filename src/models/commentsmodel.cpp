@@ -29,6 +29,8 @@ CommentsModel::CommentsModel(Entry *entry)
 
     _setTotalCount(entry->commentsCount());
 
+    Q_TEST(connect(entry, SIGNAL(commentAdded(const QJsonObject)), this, SLOT(_addComment(const QJsonObject))));
+        
     if (entry->chat())
         Q_TEST(connect(entry->chat(), SIGNAL(messageReceived(QJsonObject)), this, SLOT(check())));
 }

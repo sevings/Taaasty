@@ -43,7 +43,7 @@ Pane {
         delegate: Item {
             width: window.width
             readonly property int textHeight: messageText.y + messageText.height + 1 * mm
-            height: textHeight + 5 * mm
+            height: messageImages.y + messageImages.height
             Poppable {
                 body: back
             }
@@ -130,6 +130,33 @@ Pane {
                 text: message.text
                 textFormat: Text.RichText
                 onLinkActivated: window.openLink(link)
+                height: message.text.length > 0 ? contentHeight : 0
+            }
+            ListView {
+                id: messageImages
+                anchors {
+                    top: messageText.bottom
+                    left: parent.left
+                    right: parent.right
+                    margins: 1 * mm
+                    leftMargin: messageText.anchors.leftMargin
+                    rightMargin: messageText.anchors.rightMargin
+                }
+                interactive: false
+                spacing: 1 * mm
+                property AttachedImagesModel imagesModel: message.attachedImagesModel
+                height: imagesModel ? (imagesModel.listRatio() * messageText.width
+                        + (imagesModel.rowCount() - 1) * mm) : 0
+                model: imagesModel
+                delegate: MyImage {
+                    id: picture
+                    width: messageText.width
+                    height: image.height / image.width * width
+                    url: image.url
+                    extension: image.type
+                    savable: true
+                    popBody: back
+                }
             }
         }
         footer: MessageEditor {

@@ -50,6 +50,7 @@ private:
     QUrl        _url;
     QString     _socketId;
     QWebSocket* _socket;
+    bool        _imReconnect;
 
     QHash<QString, Channel*> _channels;
 

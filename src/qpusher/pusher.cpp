@@ -14,6 +14,7 @@
 Pusher::Pusher(const QString appKey, QObject *parent)
     : QObject(parent)
     , _socket(new QWebSocket)
+    , _imReconnect(false)
     , _pingTimer(new QTimer(this))
     , _pongTimer(new QTimer(this))
     , _reconnectTimer(new QTimer(this))
@@ -37,9 +38,9 @@ Pusher::Pusher(const QString appKey, QObject *parent)
     QObject::connect(_socket, &QWebSocket::pong,                _pongTimer, &QTimer::stop);
     QObject::connect(_socket, &QWebSocket::disconnected,        _pingTimer, &QTimer::stop);
 
-    QObject::connect(_pingTimer, SIGNAL(timeout()),             _socket, SLOT(ping()));
+    QObject::connect(_pingTimer, SIGNAL(timeout()),             _socket,    SLOT(ping()));
     QObject::connect(_pingTimer, SIGNAL(timeout()),             _pongTimer, SLOT(start()));
-    QObject::connect(_pongTimer, SIGNAL(timeout()),             _socket, SLOT(close()));
+    QObject::connect(_pongTimer, SIGNAL(timeout()),             _socket,    SLOT(close()));
 
     QObject::connect(_reconnectTimer, &QTimer::timeout,         this, &Pusher::connect);
 
@@ -136,11 +137,7 @@ void Pusher::disconnect()
 
     _socket->close();
 
-    foreach (auto ch, _channels)
-    {
-        ch->_clear();
-        ch->deleteLater();
-    }
+    qDeleteAll(_channels);
     _channels.clear();
 }
 
@@ -149,8 +146,6 @@ void Pusher::disconnect()
 void Pusher::_handleEvent(const QString& message)
 {
     _pingTimer->start();
-
-//    qDebug() << "Received:" << message;
 
     QJsonParseError jsonError;
     auto doc = QJsonDocument::fromJson(message.toUtf8(), &jsonError);
@@ -262,7 +257,7 @@ void Pusher::_handleEvent(const QString& message)
         auto code = json.value("code").toInt();
         auto message = json.value("message").toString();
 
-        qDebug() << "Pusher error" << code << message;
+        qDebug() << "Pusher error:" << code << message;
 
         emit errorEvent(code, message);
 
@@ -275,7 +270,7 @@ void Pusher::_handleEvent(const QString& message)
             qDebug() << "Next attempt in" << _reconnectTimer->interval() << "ms";
         }
         else if (code >= 4200 && code < 4300)
-            connect();
+            _imReconnect = true;
 
         return;
     }
@@ -288,12 +283,20 @@ void Pusher::_handleEvent(const QString& message)
 
 void Pusher::_emitDisconnected()
 {
+    foreach (auto ch, _channels)
+        ch->_clear();
+    
     auto code = _socket->closeCode();
     auto reason = _socket->closeReason();
 
     qDebug() << "Disconnected:" << code << reason;
 
     emit disconnected(code, reason);
+    
+    if (_imReconnect)
+        connect();
+    
+    _imReconnect = false;
 }
 
 
@@ -317,9 +320,6 @@ bool Pusher::_send(const QJsonObject json)
         return false;
 
     auto data = QJsonDocument(json).toJson(QJsonDocument::Compact);
-
-//    qDebug() << "Send:" << data;
-
     _socket->sendTextMessage(data);
 
     return true;

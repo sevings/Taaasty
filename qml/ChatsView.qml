@@ -125,7 +125,7 @@ Pane {
                     right: parent.right
                     margins: 2 * mm
                 }
-                width: chat.unreadCount > 0 ? 3 * mm : 1.5 * mm
+                width: chat.unreadCount > 0 ? 4 * mm : 1.5 * mm
                 height: width
                 radius: height / 2
                 color: Material.primary

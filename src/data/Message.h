@@ -6,6 +6,7 @@
 #include "messagebase.h"
 
 class Conversation;
+class AttachedImagesModel;
 
 
 
@@ -18,6 +19,8 @@ class Message: public MessageBase
     Q_PROPERTY(int      userId          MEMBER _userId         NOTIFY updated)
     Q_PROPERTY(int      recipientId     MEMBER _recipientId    NOTIFY updated)
     Q_PROPERTY(int      conversationId  MEMBER _conversationId NOTIFY updated)
+    
+    Q_PROPERTY(AttachedImagesModel* attachedImagesModel MEMBER _attachedImagesModel NOTIFY updated)
     
 public:
     Message(QObject* parent = nullptr);
@@ -48,5 +51,6 @@ private:
     int     _conversationId;
 
     Conversation* _chat;
-    // _attachments;
+    
+    AttachedImagesModel* _attachedImagesModel;
 };

@@ -1,7 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
-//import QtGraphicalEffects 1.0
 import org.binque.taaasty 1.0
 
 Pane {
@@ -16,29 +15,29 @@ Pane {
     property bool scrollToBottom: false
     readonly property bool isFullEntryView: true
     signal addGreeting(string slug)
+    function checkComments() {
+        if (fullEntry.count > 0 || !commentsModel.hasMore)
+            commentsModel.check();
+        else
+            commentsModel.loadMore();
+    }
     Connections {
         target: entry
         onUpdated: {
+            checkComments();
             window.setFooterTlog(entry.tlog);
-            commentsModel.check();
             if (scrollToBottom)
                 fullEntry.positionViewAtEnd();
         }
     }
     Component.onCompleted: {
-        if (fullEntry.count > 0)
-            commentsModel.check();
-        else
-            commentsModel.loadMore();
-
+        checkComments();
         if (scrollToBottom)
             fullEntry.positionViewAtEnd();
     }
     onVisibleChanged: {
-        if (fullEntry.count > 0)
-            commentsModel.check();
-        else
-            commentsModel.loadMore();
+        if (visible)
+            checkComments();
     }
     Timer {
         interval: 20000
@@ -152,14 +151,10 @@ Pane {
                 spacing: 1 * mm
                 property AttachedImagesModel imagesModel: entry.attachedImagesModel
                 height: imagesModel ? (imagesModel.listRatio() * window.width
-                        + (imagesModel.rowCount() - 1) * 10) : 0
+                        + (imagesModel.rowCount() - 1) * mm) : 0
                 model: imagesModel
                 delegate: MyImage {
                     id: picture
-                    anchors {
-                        topMargin: 1 * mm
-                        bottomMargin: 1 * mm
-                    }
                     width: window.width
                     height: image.height / image.width * width
                     url: image.url

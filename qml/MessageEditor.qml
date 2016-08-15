@@ -26,13 +26,6 @@ Item {
             right: button.left
         }
         height: 14 * mm
-        Q.BusyIndicator {
-            id: busy
-            height: 5 * mm
-            width: 5 * mm
-            anchors.centerIn: parent
-            running: uploading
-        }
     }
     ThemedButton {
         id: button
@@ -47,5 +40,12 @@ Item {
             editor.uploading = true;
             editor.sent();
         }
+    }
+    Q.BusyIndicator {
+        id: busy
+        height: 7 * mm
+        width: height
+        anchors.centerIn: parent
+        running: uploading
     }
 }

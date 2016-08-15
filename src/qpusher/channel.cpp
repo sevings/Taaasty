@@ -118,6 +118,7 @@ bool Channel::_sendUnsubscription()
 }
 
 
+
 void Channel::_clear()
 {
     _presenceMemberIds.clear();

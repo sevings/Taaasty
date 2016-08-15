@@ -4,6 +4,7 @@
 #include <QJsonObject>
 
 class Media;
+class Message;
 
 
 

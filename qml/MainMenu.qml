@@ -10,15 +10,13 @@ Rectangle {
     }
     width: 40 * mm
     color: window.backgroundColor
-    signal modeChanged(int mode)
-    signal flowsRequested
-    signal tlogRequested
-    signal chatsRequested
-    signal settingsRequested
-    signal waterTlogsRequested
-    signal fireTlogsRequested
-    signal loginRequested
-    signal aboutRequested
+    function changeMode(mode) {
+        backAnimation.start();
+        window.setFeedMode(mode);
+    }
+    onVisibleChanged: {
+        window.hideFooter();
+    }
     Flickable {
         anchors.fill: parent
         flickableDirection: Flickable.VerticalFlick
@@ -32,20 +30,22 @@ Rectangle {
             spacing: 1 * mm
             MenuItem {
                 text: 'Мой тлог'
-                onTriggered: { modeChanged(FeedModel.MyTlogMode) }
+                onTriggered: { changeMode(FeedModel.MyTlogMode) }
                 visible: Tasty.isAuthorized
                 highlighted: stack.currentItem.mode === FeedModel.MyTlogMode
             }
             MenuItem {
                 text: 'Подписки'
-                onTriggered: { modeChanged(FeedModel.FriendsMode) }
+                onTriggered: { changeMode(FeedModel.FriendsMode) }
                 visible: Tasty.isAuthorized
                 highlighted: stack.currentItem.mode === FeedModel.FriendsMode
             }
             MenuItem {
                 text: 'Сообщения' + (Tasty.unreadChats > 0 ? ' <b>+' + Tasty.unreadChats + '</b>' : '')
-                onTriggered: { chatsRequested() }
-//                highlighted: Tasty.unreadChats > 0
+                onTriggered: { 
+                    backAnimation.start();
+                    window.pushChats();
+                }
                 visible: Tasty.isAuthorized
             }
             MenuSeparator {
@@ -53,26 +53,32 @@ Rectangle {
             }
             MenuItem {
                 text: 'Прямой эфир'
-                onTriggered: { modeChanged(FeedModel.LiveMode) }
+                onTriggered: { changeMode(FeedModel.LiveMode) }
                 highlighted: stack.currentItem.mode === FeedModel.LiveMode
             }
             MenuItem {
                 text: 'Лучшее'
-                onTriggered: { modeChanged(FeedModel.BestMode) }
+                onTriggered: { changeMode(FeedModel.BestMode) }
                 highlighted: stack.currentItem.bestMode === true
             }
             MenuItem {
                 text: 'Анонимки'
-                onTriggered: { modeChanged(FeedModel.AnonymousMode) }
+                onTriggered: { changeMode(FeedModel.AnonymousMode) }
                 highlighted: stack.currentItem.mode === FeedModel.AnonymousMode
             }
             MenuItem {
                 text: 'Потоки'
-                onTriggered: { flowsRequested(); }
+                onTriggered: { 
+                    backAnimation.start();
+                    window.pushFlows();
+                }
             }
             MenuItem {
                 text: 'Тлог'
-                onTriggered: { tlogRequested() }
+                onTriggered: { 
+                    backAnimation.start();
+                    window.showLineInput('tlog');
+                }
                 highlighted: stack.currentItem.mode === FeedModel.TlogMode
             }
             MenuSeparator {
@@ -80,7 +86,7 @@ Rectangle {
             }
             MenuItem {
                 text: 'Избранное'
-                onTriggered: { modeChanged(FeedModel.FavoritesMode) }
+                onTriggered: { changeMode(FeedModel.FavoritesMode) }
                 visible: Tasty.isAuthorized
                 highlighted: stack.currentItem.mode === FeedModel.FavoritesMode
             }
@@ -89,23 +95,35 @@ Rectangle {
 //                anchors.left: parent.left
 //                anchors.right: parent.right
 //                text: 'Неинтересные'
-//                onClicked: { waterTlogsRequested() }
+//                onClicked: { 
+//                    backAnimation.start();
+//                    window.pushUsers(UsersModel.WaterMode);
+//                }
 //            }
 //            ThemedButton {
 //                anchors.left: parent.left
 //                anchors.right: parent.right
 //                text: 'Интересные'
-//                onClicked: { fireTlogsRequested() }
+//                onClicked: { 
+//                    backAnimation.start();
+//                    window.pushUsers(UsersModel.FireMode);
+//                }
 //            }
             MenuSeparator { }
             MenuItem {
                 text: 'Настройки'
-                onTriggered: { settingsRequested(); }
+                onTriggered: { 
+                    backAnimation.start();
+                    window.pushSettings();
+                }
             }
             MenuItem {
                 text: 'Войти'
                 visible: !Tasty.isAuthorized
-                onTriggered: { loginRequested() }
+                onTriggered: { 
+                    backAnimation.start();
+                    window.pushLoginDialog();
+                }
             }
         }
     }

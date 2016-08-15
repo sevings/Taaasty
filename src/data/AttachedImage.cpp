@@ -3,6 +3,7 @@
 #include "../defines.h"
 
 #include "Media.h"
+#include "Message.h"
 
 
 
@@ -19,7 +20,7 @@ AttachedImage::AttachedImage(QObject* parent)
 AttachedImage::AttachedImage(const QJsonObject data, QObject *parent)
     : QObject(parent)
 {
-    auto image = data.value("image").toObject();
+    auto image = data.contains("image") ? data.value("image").toObject() : data;
     _url = image.value("url").toString();
 
     auto type = data.value("content_type").toString();

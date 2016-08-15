@@ -37,5 +37,6 @@
         <file>qml/SettingsPage.qml</file>
         <file>qml/ThemedCheckBox.qml</file>
         <file>qml/FlowsView.qml</file>
+        <file>qml/PageMenu.qml</file>
     </qresource>
 </RCC>
