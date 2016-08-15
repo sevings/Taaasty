@@ -402,7 +402,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: feedModel.hasMore
+            running: feedModel.loading
         }
     }
 }

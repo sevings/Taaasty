@@ -18,6 +18,7 @@ class NotificationsModel : public QAbstractListModel
 
     Q_PROPERTY(bool hasMore READ hasMore NOTIFY hasMoreChanged)
     Q_PROPERTY(bool unread  READ unread  NOTIFY unreadChanged)
+    Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 
 public:
     NotificationsModel(QObject* parent = nullptr);
@@ -34,8 +35,11 @@ public:
     Q_INVOKABLE bool unread() const;
     Q_INVOKABLE void markAsRead();
 
+    bool loading() const;
+
 signals:
     void hasMoreChanged();
+    void loadingChanged();
     void unreadChanged();
 
 protected:

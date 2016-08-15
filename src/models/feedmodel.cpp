@@ -78,6 +78,7 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     qDebug() << "FeedModel::fetchMore";
 
     _loading = true;
+    emit loadingChanged();
 
     QString url = _url;
     if (_mode == TlogMode)
@@ -178,6 +179,7 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query)
     _hasMore = true;
     _lastEntry = 0;
     _loading = false;
+    emit loadingChanged();
 
     delete _request;
     _request = nullptr;
@@ -217,6 +219,20 @@ bool FeedModel::hideNegative() const
 {
     return hideMode()
             && Tasty::instance()->settings()->hideNegativeRated();
+}
+
+
+
+bool FeedModel::hasMore() const
+{
+    return _hasMore;
+}
+
+
+
+bool FeedModel::loading() const
+{
+    return _loading;
 }
 
 
@@ -289,13 +305,15 @@ void FeedModel::_addItems(QJsonObject data)
 {
     qDebug() << "FeedModel::_addItems";
 
+    _request = nullptr;
+    _loading = false;
+    emit loadingChanged();
+
     auto feed = data.value("entries").toArray();
     if (feed.isEmpty())
     {
         _hasMore = false;
         emit hasMoreChanged();
-        _loading = false;
-        _request = nullptr;
         return;
     }
 
@@ -322,9 +340,6 @@ void FeedModel::_addItems(QJsonObject data)
         loadMore = _addSome(all);
     else
         _addAll(all);
-
-    _loading = false;
-    _request = nullptr;
 
     if (loadMore)
         fetchMore(QModelIndex());
@@ -380,11 +395,16 @@ void FeedModel::_setPrivate(int errorCode)
 
 void FeedModel::_setNotLoading(QObject* request)
 {
-    if (request == _request)
+    if (request != _request)
+        return;
+
+    if (_loading)
     {
         _loading = false;
-        _request = nullptr;
+        emit loadingChanged();
     }
+
+    _request = nullptr;
 }
 
 

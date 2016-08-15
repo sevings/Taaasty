@@ -27,3 +27,8 @@ QHash<int, QByteArray> UsersModel::roleNames() const
     return roles;
 }
 
+bool UsersModel::loading() const
+{
+    return _loading;
+}
+

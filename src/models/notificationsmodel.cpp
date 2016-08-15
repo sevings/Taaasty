@@ -89,6 +89,7 @@ void NotificationsModel::fetchMore(const QModelIndex& parent)
         return;
 
     _loading = true;
+    emit loadingChanged();
 
     QString url = _url;
     if (!_notifs.isEmpty())
@@ -155,13 +156,15 @@ void NotificationsModel::_addItems(QJsonObject data)
 {
 //    qDebug() << "adding entries";
 
+    _loading = false;
+    emit loadingChanged();
+
     int size = _notifs.size();
     auto list = data.value("notifications").toArray();
     if (list.isEmpty())
     {
         _totalCount = size;
         emit hasMoreChanged();
-        _loading = false;
         return;
     }
 
@@ -180,8 +183,6 @@ void NotificationsModel::_addItems(QJsonObject data)
 
     if (_notifs.size() >= _totalCount)
         emit hasMoreChanged();
-
-    _loading = false;
 
     if (_notifs.size() == list.size())
     {
@@ -225,6 +226,8 @@ void NotificationsModel::_reloadAll()
     beginResetModel();
 
     _loading = false;
+    emit loadingChanged();
+
     _totalCount = 1;
     qDeleteAll(_notifs);
     _notifs.clear();
@@ -239,4 +242,12 @@ void NotificationsModel::_reloadAll()
 void NotificationsModel::_setNotLoading()
 {
     _loading = false;
+    emit loadingChanged();
+}
+
+
+
+bool NotificationsModel::loading() const
+{
+    return _loading;
 }

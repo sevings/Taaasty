@@ -137,7 +137,7 @@ Rectangle {
             }
         }
         footer: ListBusyIndicator {
-            running: NotifsModel.hasMore
+            running: NotifsModel.loading
         }
     }
 }

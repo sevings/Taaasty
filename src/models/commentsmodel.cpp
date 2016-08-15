@@ -133,8 +133,6 @@ void CommentsModel::_addComments(const QJsonObject data)
     {
         _setTotalCount(_comments.size());
         emit hasMoreChanged();
-        _loading = false;
-        emit loadingChanged();
         return;
     }
 
@@ -238,12 +236,17 @@ void CommentsModel::_removeComment(QObject* cmt)
 
 void CommentsModel::_setNotLoading(QObject* request)
 {
-    if (request == _request)
+    if (request != _request)
+        return;
+
+    if (_loading)
     {
         _loading = false;
-        _checking = false;
-        _request = nullptr;
+        emit loadingChanged();
     }
+
+    _checking = false;
+    _request = nullptr;
 }
 
 

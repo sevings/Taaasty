@@ -20,6 +20,7 @@ class ChatsModel : public QAbstractListModel
 
     Q_PROPERTY(Mode mode    READ mode WRITE setMode NOTIFY modeChanged)
     Q_PROPERTY(bool hasMore READ hasMore            NOTIFY hasMoreChanged)
+    Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 
 public:
     enum Mode {
@@ -46,12 +47,15 @@ public:
 
     void addChat(Entry* entry);
 
-public slots:    
+    bool loading() const;
+
+public slots:
     void loadUnread();
     void reset();
 
 signals:
     void hasMoreChanged();
+    void loadingChanged();
     void modeChanged();
 
 protected:

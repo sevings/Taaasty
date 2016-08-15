@@ -26,11 +26,20 @@ Pane {
         }
     }
     Component.onCompleted: {
-        commentsModel.loadMore();
+        if (fullEntry.count > 0)
+            commentsModel.check();
+        else
+            commentsModel.loadMore();
+
         if (scrollToBottom)
             fullEntry.positionViewAtEnd();
     }
-    onVisibleChanged: commentsModel.check();
+    onVisibleChanged: {
+        if (fullEntry.count > 0)
+            commentsModel.check();
+        else
+            commentsModel.loadMore();
+    }
     Timer {
         interval: 20000
         running: back.visible && !entry.chat.isInvolved

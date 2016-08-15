@@ -68,6 +68,7 @@ void FlowsModel::fetchMore(const QModelIndex& parent)
     qDebug() << "FlowsModel::fetchMore";
 
     _loading = true;
+    emit loadingChanged();
 
     QString url = _url.arg(_page++);
     _request = new ApiRequest(url);
@@ -106,6 +107,8 @@ void FlowsModel::setMode(const FlowsModel::Mode mode)
     emit hasMoreChanged();
 
     _loading = false;
+    emit loadingChanged();
+
     delete _request;
     _request = nullptr;
 
@@ -126,6 +129,8 @@ void FlowsModel::reset()
     emit hasMoreChanged();
 
     _loading = false;
+    emit loadingChanged();
+
     delete _request;
     _request = nullptr;
 
@@ -147,8 +152,9 @@ void FlowsModel::_addItems(QJsonObject data)
 {
     qDebug() << "FlowsModel::_addItems";
 
-    _loading = false;
     _request = nullptr;
+    _loading = false;
+    emit loadingChanged();
 
     auto hasMore = data.value("has_more").toBool();
     if (hasMore != _hasMore)
@@ -173,9 +179,28 @@ void FlowsModel::_addItems(QJsonObject data)
 
 void FlowsModel::_setNotLoading(QObject* request)
 {
-    if (request == _request)
+    if (request != _request)
+        return;
+
+    if (_loading)
     {
         _loading = false;
-        _request = nullptr;
+        emit loadingChanged();
     }
+
+    _request = nullptr;
+}
+
+
+
+bool FlowsModel::hasMore() const
+{
+    return _hasMore;
+}
+
+
+
+bool FlowsModel::loading() const
+{
+    return _loading;
 }

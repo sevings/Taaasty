@@ -16,6 +16,7 @@ class UsersModel : public QAbstractListModel
 
     Q_PROPERTY(Mode mode READ mode WRITE setMode)
     Q_PROPERTY(bool hasMore READ hasMore NOTIFY hasMoreChanged)
+    Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 
 public:
     enum Mode {
@@ -37,8 +38,11 @@ public:
     Q_INVOKABLE virtual void setMode(const Mode mode) { _mode = mode; }
     Q_INVOKABLE Mode mode() const {return _mode; }
 
+    bool loading() const;
+
 signals:
     void hasMoreChanged();
+    void loadingChanged();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;

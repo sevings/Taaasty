@@ -106,7 +106,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: flowsModel.hasMore
+            running: flowsModel.loading
         }
     }
 }

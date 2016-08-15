@@ -37,7 +37,7 @@ Pane {
                 positionViewAtEnd();
         }
         header: ListBusyIndicator {
-            running: listView.model.hasMore
+            running: listView.model.loading
             footer: false
         }
         delegate: Item {

@@ -70,6 +70,7 @@ void UsersModelTlog::fetchMore(const QModelIndex& parent)
         return;
 
     _loading = true;
+    emit loadingChanged();
 
     QString url = _url;
     if (_lastPosition)
@@ -124,8 +125,10 @@ void UsersModelTlog::setTlog(const int tlog)
 
     _tlog = tlog;
     _total = 1;
-    _loading = false;
     _lastPosition = 0;
+
+    _loading = false;
+    emit loadingChanged();
 
     setMode(_mode);
 
@@ -150,12 +153,14 @@ void UsersModelTlog::_addItems(QJsonObject data)
 {
     _total = data.value("total_count").toInt();
 
+    _loading = false;
+    emit loadingChanged();
+
     auto list = data.value("relationships").toArray();
     if (list.isEmpty())
     {
         _total = _users.size();
         emit hasMoreChanged();
-        _loading = false;
 
         if (_loadAll)
         {
@@ -176,8 +181,6 @@ void UsersModelTlog::_addItems(QJsonObject data)
         auto user = new User(userData, this);
         users << user;
     }
-
-    _loading = false;
 
     beginInsertRows(QModelIndex(), _users.size(), _users.size() + list.size() - 1);
     _users << users;

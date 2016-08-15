@@ -17,7 +17,8 @@ class MessagesModel : public QAbstractListModel
     Q_OBJECT
 
     Q_PROPERTY(int chatId           READ chatId)
-    Q_PROPERTY(bool hasMore         READ hasMore     NOTIFY hasMoreChanged)
+    Q_PROPERTY(bool hasMore         READ hasMore    NOTIFY hasMoreChanged)
+    Q_PROPERTY(bool loading         READ loading    NOTIFY loadingChanged)
 
 public:
     explicit MessagesModel(Conversation* chat = nullptr);

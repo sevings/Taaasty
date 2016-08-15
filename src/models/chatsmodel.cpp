@@ -84,6 +84,7 @@ void ChatsModel::fetchMore(const QModelIndex& parent)
     qDebug() << "ChatsModel::fetchMore";
 
     _loading = true;
+    emit loadingChanged();
 
     QString url = _url.arg(_page++);
     _request = new ApiRequest(url, true);
@@ -164,6 +165,7 @@ void ChatsModel::loadUnread()
     qDebug() << "ChatsModel::loadUnread";
 
     _loading = true;
+    emit loadingChanged();
 
     QString url("v2/messenger/conversations.json?unread=true");
     _request = new ApiRequest(url, true);
@@ -225,6 +227,7 @@ void ChatsModel::_addUnread(QJsonArray data)
     qDebug() << "ChatsModel::_addUnread";
 
     _loading = false;
+    emit loadingChanged();
     _request = nullptr;
 
     if (data.isEmpty())
@@ -277,6 +280,7 @@ void ChatsModel::_addChats(QJsonArray data)
     qDebug() << "ChatsModel::_addChats";
 
     _loading = false;
+    emit loadingChanged();
     _request = nullptr;
 
     if (data.isEmpty())
@@ -328,11 +332,16 @@ void ChatsModel::_addChats(QJsonArray data)
 
 void ChatsModel::_setNotLoading(QObject* request)
 {
-    if (request == _request)
+    if (request != _request)
+        return;
+
+    if (_loading)
     {
         _loading = false;
-        _request = nullptr;
+        emit loadingChanged();
     }
+
+    _request = nullptr;
 }
 
 
@@ -420,4 +429,9 @@ void ChatsModel::_bubbleChat(int id)
     _chats.insert(unread, chat);
 
     endMoveRows();
+}
+
+bool ChatsModel::loading() const
+{
+    return _loading;
 }

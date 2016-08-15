@@ -14,8 +14,9 @@ class FlowsModel : public QAbstractListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(Mode mode READ mode WRITE setMode)
-    Q_PROPERTY(bool hasMore MEMBER _hasMore NOTIFY hasMoreChanged)
+    Q_PROPERTY(Mode mode    READ mode       WRITE setMode)
+    Q_PROPERTY(bool hasMore READ hasMore    NOTIFY hasMoreChanged)
+    Q_PROPERTY(bool loading READ loading    NOTIFY loadingChanged)
 
 public:
     enum Mode
@@ -36,8 +37,12 @@ public:
     Q_INVOKABLE void setMode(const Mode mode);
     Q_INVOKABLE Mode mode() const {return _mode; }
 
+    bool loading() const;
+    bool hasMore() const;
+
 signals:
     void hasMoreChanged();
+    void loadingChanged();
 
 public slots:
     void reset();

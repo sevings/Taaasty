@@ -15,13 +15,14 @@ class FeedModel : public QAbstractListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(Mode mode READ mode WRITE setMode)
-    Q_PROPERTY(int  tlog READ tlog WRITE setTlog)
-    Q_PROPERTY(QString slug READ slug WRITE setSlug)
-    Q_PROPERTY(bool hasMore MEMBER _hasMore NOTIFY hasMoreChanged)
-    Q_PROPERTY(bool isPrivate READ isPrivate NOTIFY isPrivateChanged)
-    Q_PROPERTY(int minRating READ minRating WRITE setMinRating)
-    Q_PROPERTY(QString query READ query WRITE setQuery NOTIFY queryChanged)
+    Q_PROPERTY(Mode     mode        READ mode       WRITE setMode)
+    Q_PROPERTY(int      tlog        READ tlog       WRITE setTlog)
+    Q_PROPERTY(QString slug         READ slug       WRITE setSlug)
+    Q_PROPERTY(bool     hasMore     READ hasMore                    NOTIFY hasMoreChanged)
+    Q_PROPERTY(bool     loading     READ loading                    NOTIFY loadingChanged)
+    Q_PROPERTY(bool     isPrivate   READ isPrivate                  NOTIFY isPrivateChanged)
+    Q_PROPERTY(int      minRating   READ minRating  WRITE setMinRating)
+    Q_PROPERTY(QString  query       READ query      WRITE setQuery  NOTIFY queryChanged)
 
 public:
     enum Mode {
@@ -80,12 +81,16 @@ public:
     bool hideMode() const;
     bool hideShort() const;
     bool hideNegative() const;
+    bool loading() const;
+    bool hasMore() const;
 
     void postText(const QString title, const QString content, Privacy privacy = Public);
     void postAnonymous(const QString title, const QString content);
 
+
 signals:
     void hasMoreChanged();
+    void loadingChanged();
     void isPrivateChanged();
     void queryChanged();
     void entryCreated(Entry* entry);

@@ -139,7 +139,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: ChatsModel.hasMore
+            running: ChatsModel.loading
         }
     }
 }
