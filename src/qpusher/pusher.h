@@ -38,6 +38,7 @@ signals:
 public slots:
     void connect();
     void disconnect();
+    void reconnect();
 
 private slots:
     void _handleEvent(const QString& message);

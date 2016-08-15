@@ -7,6 +7,10 @@
 #include <QTimer>
 #include <QDebug>
 
+#ifdef QT_DEBUG
+#include <QTime>
+#endif
+
 #include "channel.h"
 
 
@@ -44,10 +48,26 @@ Pusher::Pusher(const QString appKey, QObject *parent)
 
     QObject::connect(_reconnectTimer, &QTimer::timeout,         this, &Pusher::connect);
 
+#ifdef QT_DEBUG
     QObject::connect(_socket, static_cast<void(QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error),
         [=](QAbstractSocket::SocketError error)
     {
         qDebug() << "Socket error:" << error;
+    });
+
+    QObject::connect(_pingTimer, &QTimer::timeout, [=]()
+    {
+        qDebug() << "pinging pusher at" << QTime::currentTime().toString();
+    });
+
+    QObject::connect(_socket, &QWebSocket::pong, [=]()
+    {
+        qDebug() << "pong from pusher at" << QTime::currentTime().toString();
+    });
+
+    QObject::connect(_pongTimer, &QTimer::timeout, [=]()
+    {
+        qDebug() << "pusher has not ponged before" << QTime::currentTime().toString();
     });
 
     QObject::connect(_socket, &QWebSocket::sslErrors,
@@ -56,6 +76,7 @@ Pusher::Pusher(const QString appKey, QObject *parent)
         foreach (auto error, errors)
             qDebug() << "Socket SSL error:" << error;
     });
+#endif
 
     connect();
 }
@@ -143,6 +164,23 @@ void Pusher::disconnect()
 
 
 
+void Pusher::reconnect()
+{
+    if (!isConnected())
+    {
+        connect();
+        return;
+    }
+
+    qDebug() << "Reconnecting";
+
+    _imReconnect = true;
+
+    _socket->close();
+}
+
+
+
 void Pusher::_handleEvent(const QString& message)
 {
     _pingTimer->start();
@@ -186,7 +224,10 @@ void Pusher::_handleEvent(const QString& message)
     {
         _socketId = json.value("socket_id").toString();
 
+#ifdef QT_DEBUG
+        qDebug() << "connected to pusher at" << QTime::currentTime().toString();
         qDebug() << "socket id:" << _socketId;
+#endif
 
         auto activityTimeout = json.value("activity_timeout").toInt();
         if (activityTimeout > 0)

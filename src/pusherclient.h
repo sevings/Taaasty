@@ -40,6 +40,7 @@ signals:
 
 public slots:
     void connect();
+    void reconnect();
 
 private slots:
     void _getPusherAuth();

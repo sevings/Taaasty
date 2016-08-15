@@ -116,6 +116,13 @@ void PusherClient::connect()
 
 
 
+void PusherClient::reconnect()
+{
+    _pusher->reconnect();
+}
+
+
+
 void PusherClient::_getPusherAuth()
 {
     auto socket = _pusher->socketId();
