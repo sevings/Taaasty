@@ -1,7 +1,7 @@
 import QtQuick 2.7
 import org.binque.taaasty 1.0
 
-Rectangle {
+Item {
     id: menu
     anchors {
         top: parent.top
@@ -9,7 +9,6 @@ Rectangle {
         left: parent.left
     }
     width: 40 * mm
-    color: window.backgroundColor
     function changeMode(mode) {
         backAnimation.start();
         window.setFeedMode(mode);
