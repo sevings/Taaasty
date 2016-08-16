@@ -184,10 +184,10 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query)
     delete _request;
     _request = nullptr;
 
-    if (_allEntries.isEmpty())
-        qDeleteAll(_entries);
-    else
-        qDeleteAll(_allEntries);
+    auto entries = _allEntries.isEmpty() ? _entries : _allEntries;
+    foreach (auto e, entries)
+        if (e->parent() == this)
+            delete e;
 
     _entries.clear();
     _allEntries.clear();
