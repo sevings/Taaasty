@@ -5,6 +5,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    pauseAnimations: x > 0 || listView.movingVertically
     readonly property bool customTitle: true
     readonly property string title: 'Сообщения'
     readonly property bool isChatsView: true
@@ -13,7 +14,7 @@ Pane {
         body: back
     }
     Splash {
-        visible: !listView.visible
+        visible: !listView.visible && !pauseAnimations
         running: listView.model.hasMore
         text: 'Нет бесед'
     }
@@ -53,6 +54,7 @@ Pane {
                     margins: 1 * mm
                 }
                 user: chat.entry ? chat.entry.author : chat.recipient
+                paused: pauseAnimations
                 Poppable {
                     body: back
                     onClicked:
@@ -103,6 +105,7 @@ Pane {
                 height: 4 * mm
                 visible: !chat.isAnonymous && chat.lastMessage.userId !== chat.recipientId
                          && (chat.entry ? chat.lastMessage.userId !== chat.entry.author.id : true)
+                paused: pauseAnimations
             }
             ThemedText {
                 id: lastMessage
@@ -139,7 +142,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: ChatsModel.loading
+            running: ChatsModel.loading && !pauseAnimations
         }
     }
 }

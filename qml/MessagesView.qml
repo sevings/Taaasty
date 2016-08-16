@@ -3,6 +3,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    pauseAnimations: x > 0 || listView.movingVertically
     property Chat chat: Chat { }
     property Tlog tlog: Tlog {
         tlogId: chat.recipientId
@@ -18,7 +19,7 @@ Pane {
         body: back
     }
     Splash {
-        visible: !listView.visible
+        visible: !listView.visible && !pauseAnimations
         running: listView.model.hasMore
         text: 'Нет сообщений'
     }
@@ -37,7 +38,7 @@ Pane {
                 positionViewAtEnd();
         }
         header: ListBusyIndicator {
-            running: listView.model.loading
+            running: listView.model.loading && !pauseAnimations
             footer: false
         }
         delegate: Item {
@@ -156,6 +157,7 @@ Pane {
                     extension: image.type
                     savable: true
                     popBody: back
+                    paused: pauseAnimations
                 }
             }
         }

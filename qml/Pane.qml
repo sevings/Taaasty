@@ -9,6 +9,7 @@ Q.Pane {
     property bool poppable
     signal popped
     onPopped: window.popFromStack()
+    property bool pauseAnimations: false
     layer.enabled: true// x > 0 && opacity === 1
     layer.effect: ElevationEffect {
         elevation: 24

@@ -4,6 +4,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    pauseAnimations: x > 0 || listView.movingVertically
     property int mode: Tasty.isAuthorized ? FeedModel.FriendsMode : FeedModel.LiveMode
     readonly property bool bestMode: back.mode === FeedModel.BestMode
                                      || back.mode === FeedModel.ExcellentMode
@@ -83,7 +84,7 @@ Pane {
         }
     }
     Splash {
-        visible: !listView.visible && feedModel.hasMore
+        visible: !listView.visible && feedModel.hasMore && !pauseAnimations
         running: !feedModel.isPrivate
         text: 'Это закрытый ' + (tlog.author.isFlow ? 'поток' : 'тлог')
     }
@@ -170,6 +171,7 @@ Pane {
                     margins: 1 * mm
                 }
                 user: entry.author
+                paused: pauseAnimations
                 Poppable {
                     body: back
                     onClicked:
@@ -228,6 +230,7 @@ Pane {
                 extension: visible ? image.type : ''
                 savable: true
                 popBody: back
+                paused: pauseAnimations
                 ThemedText {
                     anchors {
                         bottom: parent.bottom
@@ -254,6 +257,7 @@ Pane {
                     bottomMargin: 1 * mm
                 }
                 media: entry.media
+                paused: pauseAnimations
             }
             ThemedText {
                 id: entryTitle
@@ -402,7 +406,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: feedModel.loading
+            running: feedModel.loading && !pauseAnimations
         }
     }
 }

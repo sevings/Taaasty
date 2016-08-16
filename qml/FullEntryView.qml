@@ -5,6 +5,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    pauseAnimations: x > 0 || fullEntry.movingVertically
     property int entryId
     property TlogEntry entry: TlogEntry {
         entryId: back.entryId
@@ -49,7 +50,7 @@ Pane {
         body: back
     }
     Splash {
-        visible: !fullEntry.visible
+        visible: !fullEntry.visible && !pauseAnimations
     }
     MyListView {
         id: fullEntry
@@ -77,6 +78,7 @@ Pane {
                 id: commentAvatar
                 anchors.margins: 1 * mm
                 user: comment.user
+                paused: pauseAnimations
                 Poppable {
                     body: back
                     onClicked: {
@@ -161,6 +163,7 @@ Pane {
                     extension: image.type
                     savable: true
                     popBody: back
+                    paused: pauseAnimations
                 }
             }
             MediaLink {
@@ -173,6 +176,7 @@ Pane {
                     bottomMargin: 1 * mm
                 }
                 media: entry.media
+                paused: pauseAnimations
                 Poppable {
                     body: back
                     onClicked: {
@@ -336,7 +340,7 @@ Pane {
                     margins: 1 * mm
                     topMargin: 2 * mm
                 }
-                running: commentsModel && commentsModel.loading
+                running: commentsModel && commentsModel.loading && !pauseAnimations
             }
         }
         footer: MessageEditor {

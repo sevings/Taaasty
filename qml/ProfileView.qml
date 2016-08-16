@@ -4,6 +4,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: profileView
+    pauseAnimations: x > 0 || flickable.movingVertically
     property int tlogId
     property string slug: ''
     property Tlog tlog: Tlog {
@@ -13,7 +14,7 @@ Pane {
     property Author author: tlog.author
     readonly property bool isProfileView: true
     Splash {
-        visible: !column.visible
+        visible: !column.visible && !pauseAnimations
     }
     Component.onCompleted: {
         if (tlog.tlogId && tlog.slug)
@@ -46,6 +47,7 @@ Pane {
                 url: author.largePic
                 savable: true
                 popBody: profileView
+                paused: pauseAnimations
             }
             ThemedText {
                 id: name

@@ -5,6 +5,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    pauseAnimations: x > 0 || users.movingVertically
     property string title: ''
     readonly property bool customTitle: bayesMode
     readonly property bool bayesMode: mode === UsersModel.FireMode || mode === UsersModel.WaterMode
@@ -29,7 +30,7 @@ Pane {
         body: back
     }
     Splash {
-        visible: !users.visible
+        visible: !users.visible && !pauseAnimations
         running: users.model.hasMore
         text: 'Список пуст'
     }
@@ -87,6 +88,7 @@ Pane {
                     margins: 1 * mm
                 }
                 user: model.user
+                paused: pauseAnimations
                 Poppable {
                     body: back
                     onClicked: {
@@ -144,7 +146,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: users.model.loading
+            running: users.model.loading && !pauseAnimations
         }
     }
 }

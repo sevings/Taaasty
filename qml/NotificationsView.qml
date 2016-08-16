@@ -11,6 +11,7 @@ Rectangle {
     y: window.height
     z: 5
     visible: y < window.height
+    readonly property bool pauseAnimations: x > 0 || notifsView.movingVertically
     state: "closed"
     states: [
         State {
@@ -84,6 +85,7 @@ Rectangle {
                 id: notifAvatar
                 anchors.margins: 1 * mm
                 user: notification.sender
+                paused: pauseAnimations
                 MouseArea {
                     anchors.fill: parent
                     enabled: notification.parentType !== 'AnonymousEntry'
@@ -137,7 +139,7 @@ Rectangle {
             }
         }
         footer: ListBusyIndicator {
-            running: NotifsModel.loading
+            running: NotifsModel.loading && !pauseAnimations
         }
     }
 }

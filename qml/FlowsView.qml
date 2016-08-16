@@ -4,6 +4,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    pauseAnimations: x > 0 || listView.movingVertically
     property int mode: Tasty.isAuthorized ? FlowsModel.MyFlowsMode : FlowsModel.AllFlowsMode
     readonly property string title: { // for footer
         switch (back.mode) {
@@ -30,7 +31,7 @@ Pane {
         }
     }
     Splash {
-        visible: !listView.visible && flowsModel.hasMore
+        visible: !listView.visible && flowsModel.hasMore && !pauseAnimations
         running: !flowsModel.isPrivate
     }
     MyListView {
@@ -71,6 +72,7 @@ Pane {
                 width: window.width
                 height: width * 10 / 16
                 fillMode: Image.PreserveAspectCrop
+                paused: pauseAnimations
             }
             ThemedText {
                 id: flowName
@@ -106,7 +108,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: flowsModel.loading
+            running: flowsModel.loading && !pauseAnimations
         }
     }
 }
