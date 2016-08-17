@@ -75,6 +75,8 @@ Pane {
                 height: width * 10 / 16
                 paused: pauseAnimations
                 clip: true
+                popBody: back
+                acceptClick: false
             }
             ThemedText {
                 id: flowName
