@@ -19,7 +19,6 @@ ColumnLayout {
         font.pointSize: window.fontBigger
         wrapMode: Text.Wrap
         text: parent.running ? 'Загрузка…' : parent.text
-        color: window.secondaryTextColor
     }
 }
 

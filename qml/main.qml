@@ -281,17 +281,17 @@ Q.ApplicationWindow {
 
         setFooterFromStack();
     }
-
+    Text {
+        id: loadingText
+        anchors.centerIn: parent
+        color: window.secondaryTextColor
+        horizontalAlignment: Text.AlignHCenter
+        font.pointSize: window.fontBigger
+        wrapMode: Text.Wrap
+        text: 'Загрузка…'
+    }
     Tlog {
         id: emptyTlog
-    }
-//    BusyBar {
-//        id: bar
-//        z: 100
-//        busy: Tasty.busy > 0
-//    }
-    Splash {
-        id: loadingText
     }
     MainMenu {
         id: menu
@@ -305,12 +305,6 @@ Q.ApplicationWindow {
             to: 0
             duration: 300
         }
-//        PropertyAnimation {
-//            target: stack.currentItem
-//            property: "opacity"
-//            to: 1
-//            duration: 300
-//        }
     }
     Q.StackView {
         id: stack
