@@ -33,6 +33,7 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
         model: chat.messages
+        interactive: back.x == 0
         onCountChanged: {
             if (count < 30)
                 positionViewAtEnd();

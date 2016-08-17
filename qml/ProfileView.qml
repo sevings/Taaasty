@@ -27,6 +27,7 @@ Pane {
         bottomMargin: 1 * mm
         contentWidth: parent.width
         contentHeight: column.height
+        interactive: profileView.x == 0
         Poppable {
             body: profileView
         }

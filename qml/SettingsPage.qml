@@ -18,6 +18,7 @@ Pane {
         flickableDirection: Flickable.VerticalFlick
         contentWidth: parent.width
         contentHeight: column.height
+        interactive: back.x == 0
         Poppable {
             body: back
         }

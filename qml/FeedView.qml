@@ -97,6 +97,7 @@ Pane {
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
+        interactive: back.x == 0
         Connections {
             target: back
             onPushed: {

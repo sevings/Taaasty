@@ -62,6 +62,7 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: !entry.loading
         model: commentsModel
+        interactive: back.x == 0
         delegate: Item {
             width: window.width
             height: 4 * mm + commentText.contentHeight + nameText.contentHeight
