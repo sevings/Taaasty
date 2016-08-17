@@ -320,8 +320,8 @@ User* Conversation::user(int id)
     if (id == Tasty::instance()->settings()->userId())
     {
         auto user = new User(this);
-        *user = *Tasty::instance()->me()->author();
-        _users.insert(user->id(), user);
+        *user = *Tasty::instance()->me();
+        _users.insert(id, user);
         return user;
     }
 
@@ -474,7 +474,7 @@ void Conversation::_emitLeft(const QJsonObject data)
     if (!user)
     {
         user = new User(this);
-        *user = *Tasty::instance()->me()->author();
+        *user = *Tasty::instance()->me();
     }
 
     _leftUsers.insert(user->id(), user);

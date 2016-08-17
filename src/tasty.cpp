@@ -3,7 +3,7 @@
 #include "apirequest.h"
 #include "pusherclient.h"
 
-#include "data/Tlog.h"
+#include "data/User.h"
 
 #include "defines.h"
 
@@ -119,7 +119,7 @@ void Tasty::setImageWidth(int entry, int comment)
 
 
 
-Tlog* Tasty::me()
+User* Tasty::me()
 {
     if (_me)
         return _me;
@@ -127,7 +127,7 @@ Tlog* Tasty::me()
     if (!isAuthorized())
         return nullptr;
 
-    _me = new Tlog(this);
+    _me = new User(this);
     _me->setId(_settings->userId());
     return _me;
 }

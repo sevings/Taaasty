@@ -83,7 +83,7 @@ Pane {
                     right: parent.right
                 }
                 text: chat.lastMessage.createdAt
-                font.pointSize: window.fontSmaller
+                font.pointSize: window.fontSmallest
                 color: window.secondaryTextColor
                 elide: Text.AlignRight
                 wrapMode: Text.NoWrap
@@ -116,7 +116,7 @@ Pane {
                 text: chat.lastMessage.text
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
-//                textFormat: Text.RichText
+                textFormat: Text.PlainText
             }
             Rectangle {
                 id: unreadMessages

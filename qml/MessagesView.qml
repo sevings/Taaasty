@@ -53,7 +53,7 @@ Pane {
                 if (!message.isRead)
                     message.read();
 
-                if (index === 10)
+                if (index < 10)
                     listView.model.loadMore();
             }
 //            SmallAvatar {

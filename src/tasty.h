@@ -9,7 +9,7 @@
 
 class ApiRequest;
 class PusherClient;
-class Tlog;
+class User;
 
 
 
@@ -41,7 +41,7 @@ public:
 
     Q_INVOKABLE void setImageWidth(int entry, int comment);
 
-    Tlog* me();
+    User* me();
 
 signals:
     void authorizationNeeded();
@@ -78,7 +78,7 @@ private:
 
     int _unreadChats;
 
-    Tlog* _me;
+    User* _me;
 };
 
 #endif // TASTY_H
