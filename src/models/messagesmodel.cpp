@@ -150,20 +150,23 @@ QHash<int, QByteArray> MessagesModel::roleNames() const
 
 void MessagesModel::_addMessages(const QJsonObject data)
 {
-    _loading = false;
-    emit loadingChanged();
-        
     auto feed = data.value("messages").toArray();
     if (feed.isEmpty())
     {
         _setTotalCount(_messages.size());
         emit hasMoreChanged();
+        _loading = false;
+        emit loadingChanged();
         return;
     }
 
     auto msgs = _messagesList(feed);
     if (msgs.isEmpty())
+    {
+        _loading = false;
+        emit loadingChanged();
         return;    
+    }
     
     beginInsertRows(QModelIndex(), 0, msgs.size() - 1);
 
@@ -178,22 +181,30 @@ void MessagesModel::_addMessages(const QJsonObject data)
 
     if (_messages.size() >= _totalCount)
         emit hasMoreChanged();
+
+    _loading = false;
+    emit loadingChanged();
 }
 
 
 
 void MessagesModel::_addLastMessages(const QJsonObject data)
 {
-    _loading = false;
-    emit loadingChanged();
-
     auto feed = data.value("messages").toArray();
     if (feed.isEmpty())
+    {
+        _loading = false;
+        emit loadingChanged();
         return;
+    }
 
     auto msgs = _messagesList(feed);
     if (msgs.isEmpty())
+    {
+        _loading = false;
+        emit loadingChanged();
         return;    
+    }
     
     beginInsertRows(QModelIndex(), _messages.size(), _messages.size() + msgs.size() - 1);
 
@@ -207,6 +218,9 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
 
     if (_messages.size() >= _totalCount)
         emit hasMoreChanged();
+
+    _loading = false;
+    emit loadingChanged();
 }
 
 

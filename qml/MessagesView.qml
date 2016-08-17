@@ -39,6 +39,7 @@ Pane {
         }
         header: ListBusyIndicator {
             running: listView.model.loading && !pauseAnimations
+            visible: listView.model.hasMore
             footer: false
         }
         delegate: Item {

@@ -334,6 +334,7 @@ Pane {
                     topMargin: 2 * mm
                 }
                 running: commentsModel && commentsModel.loading && !pauseAnimations
+                visible: commentsModel && commentsModel.hasMore
             }
         }
         footer: MessageEditor {

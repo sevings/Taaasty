@@ -119,6 +119,7 @@ Pane {
         }
         footer: ListBusyIndicator {
             running: flowsModel.loading && !pauseAnimations
+            visible: flowsModel.hasMore
         }
     }
 }

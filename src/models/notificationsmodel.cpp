@@ -154,15 +154,12 @@ QHash<int, QByteArray> NotificationsModel::roleNames() const
 
 void NotificationsModel::_addItems(QJsonObject data)
 {
-//    qDebug() << "adding entries";
-
-    _loading = false;
-    emit loadingChanged();
-
     int size = _notifs.size();
     auto list = data.value("notifications").toArray();
     if (list.isEmpty())
     {
+        _loading = false;
+        emit loadingChanged();
         _totalCount = size;
         emit hasMoreChanged();
         return;
@@ -189,6 +186,9 @@ void NotificationsModel::_addItems(QJsonObject data)
         Q_TEST(connect(_notifs.first(), SIGNAL(read()), this, SIGNAL(unreadChanged())));
         emit unreadChanged();
     }
+
+    _loading = false;
+    emit loadingChanged();
 }
 
 

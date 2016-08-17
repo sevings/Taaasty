@@ -153,9 +153,6 @@ void UsersModelTlog::_addItems(QJsonObject data)
 {
     _total = data.value("total_count").toInt();
 
-    _loading = false;
-    emit loadingChanged();
-
     auto list = data.value("relationships").toArray();
     if (list.isEmpty())
     {
@@ -167,6 +164,9 @@ void UsersModelTlog::_addItems(QJsonObject data)
             _loadAll = false;
             emit downloadCompleted();
         }
+
+        _loading = false;
+        emit loadingChanged();
 
         return;
     }
@@ -189,8 +189,13 @@ void UsersModelTlog::_addItems(QJsonObject data)
     if (_users.size() >= _total)
         emit hasMoreChanged();
 
+    _loading = false;
+
     if (!_loadAll)
+    {
+        emit loadingChanged();
         return;
+    }
 
     if (_users.size() < _total)
         fetchMore(QModelIndex());
@@ -198,5 +203,7 @@ void UsersModelTlog::_addItems(QJsonObject data)
     {
         _loadAll = false;
         emit downloadCompleted();
+
+        emit loadingChanged();
     }
 }

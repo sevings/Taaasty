@@ -226,12 +226,14 @@ void ChatsModel::_addUnread(QJsonArray data)
 {
     qDebug() << "ChatsModel::_addUnread";
 
-    _loading = false;
-    emit loadingChanged();
     _request = nullptr;
 
     if (data.isEmpty())
+    {
+        _loading = false;
+        emit loadingChanged();
         return;
+    }
 
     QList<int> bubbleIds;
     QList<Conversation*> chats;
@@ -263,7 +265,11 @@ void ChatsModel::_addUnread(QJsonArray data)
         _bubbleChat(id);
 
     if (chats.isEmpty())
+    {
+        _loading = false;
+        emit loadingChanged();
         return;
+    }
 
     beginInsertRows(QModelIndex(), 0, chats.size() - 1);
 
@@ -271,6 +277,9 @@ void ChatsModel::_addUnread(QJsonArray data)
         _chats.insert(i, chats.at(i));
 
     endInsertRows();
+
+    _loading = false;
+    emit loadingChanged();
 }
 
 
@@ -279,15 +288,15 @@ void ChatsModel::_addChats(QJsonArray data)
 {
     qDebug() << "ChatsModel::_addChats";
 
-    _loading = false;
-    emit loadingChanged();
     _request = nullptr;
 
     if (data.isEmpty())
     {
         _hasMore = false;
         emit hasMoreChanged();
-        
+
+        _loading = false;
+        emit loadingChanged();
         return;
     }
 
@@ -314,6 +323,7 @@ void ChatsModel::_addChats(QJsonArray data)
 
     if (chats.isEmpty())
     {
+        _loading = false;
         fetchMore(QModelIndex());
         return;
     }
@@ -326,6 +336,9 @@ void ChatsModel::_addChats(QJsonArray data)
     
     if (_chats.size() < 10) // TODO: what is this?
         emit hasMoreChanged();
+
+    _loading = false;
+    emit loadingChanged();
 }
 
 

@@ -153,8 +153,6 @@ void FlowsModel::_addItems(QJsonObject data)
     qDebug() << "FlowsModel::_addItems";
 
     _request = nullptr;
-    _loading = false;
-    emit loadingChanged();
 
     auto hasMore = data.value("has_more").toBool();
     if (hasMore != _hasMore)
@@ -165,7 +163,11 @@ void FlowsModel::_addItems(QJsonObject data)
 
     auto flows = data.value("items").toArray();
     if (flows.isEmpty())
+    {
+        _loading = false;
+        emit loadingChanged();
         return;
+    }
 
     beginInsertRows(QModelIndex(), _flows.size(), _flows.size() + flows.size() - 1);
 
@@ -173,6 +175,9 @@ void FlowsModel::_addItems(QJsonObject data)
         _flows << new Flow(flowData.toObject().value("flow").toObject(), this);
 
     endInsertRows();
+
+    _loading = false;
+    emit loadingChanged();
 }
 
 

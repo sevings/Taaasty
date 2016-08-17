@@ -307,14 +307,14 @@ void FeedModel::_addItems(QJsonObject data)
     qDebug() << "FeedModel::_addItems";
 
     _request = nullptr;
-    _loading = false;
-    emit loadingChanged();
 
     auto feed = data.value("entries").toArray();
     if (feed.isEmpty())
     {
         _hasMore = false;
         emit hasMoreChanged();
+        _loading = false;
+        emit loadingChanged();
         return;
     }
 
@@ -342,8 +342,12 @@ void FeedModel::_addItems(QJsonObject data)
     else
         _addAll(all);
 
+    _loading = false;
+
     if (loadMore)
         fetchMore(QModelIndex());
+    else
+        emit loadingChanged();
 }
 
 

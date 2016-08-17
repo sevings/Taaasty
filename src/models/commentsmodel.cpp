@@ -127,12 +127,11 @@ QHash<int, QByteArray> CommentsModel::roleNames() const
 
 void CommentsModel::_addComments(const QJsonObject data)
 {
-    _loading = false;
-    emit loadingChanged();
-
     auto feed = data.value("comments").toArray();
     if (feed.isEmpty())
     {
+        _loading = false;
+        emit loadingChanged();
         _setTotalCount(_comments.size());
         emit hasMoreChanged();
         return;
@@ -140,7 +139,11 @@ void CommentsModel::_addComments(const QJsonObject data)
 
     auto cmts = _commentsList(feed);
     if (cmts.isEmpty())
+    {
+        _loading = false;
+        emit loadingChanged();
         return;
+    }
     
     beginInsertRows(QModelIndex(), 0, cmts.size() - 1);
 
@@ -155,6 +158,9 @@ void CommentsModel::_addComments(const QJsonObject data)
 
 //    if (_comments.size() >= _totalCount)
         emit hasMoreChanged();
+
+    _loading = false;
+    emit loadingChanged();
 }
 
 

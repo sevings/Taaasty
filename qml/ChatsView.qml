@@ -140,6 +140,7 @@ Pane {
         }
         footer: ListBusyIndicator {
             running: ChatsModel.loading && !pauseAnimations
+            visible: ChatsModel.hasMore
         }
     }
 }

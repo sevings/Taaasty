@@ -7,7 +7,7 @@ Item {
     height: visible ? footer ? busy.height + 2 * mm 
                              : busy.height : 0
     width: window.width
-    visible: running
+//    visible: running
     Q.BusyIndicator {
         id: busy
         height: 7 * mm

@@ -144,6 +144,7 @@ Pane {
         }
         footer: ListBusyIndicator {
             running: users.model.loading && !pauseAnimations
+            visible: users.model.hasMore
         }
     }
 }
