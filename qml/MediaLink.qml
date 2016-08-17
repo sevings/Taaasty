@@ -3,9 +3,7 @@ import org.binque.taaasty 1.0
 
 MyImage {
     id: link
-    property Media media: Media {
-
-    }
+    property Media media
     width: window.width
     height: media ? media.thumbnail.height / media.thumbnail.width * width : -anchors.topMargin
     url: media ? media.thumbnail.url : ''

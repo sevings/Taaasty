@@ -3,7 +3,6 @@ import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 import ImageCache 2.0
 
-
 AnimatedImage {
     id: image
     asynchronous: true
@@ -53,12 +52,11 @@ AnimatedImage {
     }
     Poppable {
         body: popBody
+        propagateComposedEvents: !acceptClick
         onClicked: {
-           if (!acceptClick)
-               return;
-
-            mouse.accepted = true;
-            image.clicked();
+            mouse.accepted = acceptClick;
+            if (acceptClick)
+                image.clicked();
         }
         onPressAndHold: {
             if (image.savable && !back.visible)

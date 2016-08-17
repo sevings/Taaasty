@@ -254,6 +254,7 @@ Pane {
                 }
                 media: entry.media
                 paused: pauseAnimations
+                acceptClick: false
             }
             ThemedText {
                 id: entryTitle

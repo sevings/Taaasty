@@ -174,14 +174,10 @@ Pane {
                 }
                 media: entry.media
                 paused: pauseAnimations
-                Poppable {
-                    body: back
-                    onClicked: {
-                        if (!mediaLink.source.toString() && mediaLink.url)
-                            mouse.accepted = false;
-                        else
-                            mediaLink.play();
-                    }
+                acceptClick: mediaLink.url
+                popBody: back
+                onClicked: {
+                    mediaLink.play();
                 }
             }
             ThemedText {
