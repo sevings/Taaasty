@@ -11,12 +11,13 @@ class CachedImage : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString      source              READ source                         NOTIFY available)
+    Q_PROPERTY(QUrl         source              READ source                         NOTIFY available)
     Q_PROPERTY(int          kbytesReceived      READ received                       NOTIFY receivedChanged)
     Q_PROPERTY(int          kbytesTotal         READ total                          NOTIFY totalChanged)
     Q_PROPERTY(bool         isDownloading       READ isDownloading                  NOTIFY downloadingChanged)
     Q_PROPERTY(bool         available           READ isAvailable                    NOTIFY available)
     Q_PROPERTY(QString      extension           READ extension   WRITE setExtension NOTIFY extensionChanged)
+    Q_PROPERTY(ImageFormat  format              READ format                         NOTIFY extensionChanged)
     Q_PROPERTY(QString      fileName            READ fileName)
 
 public:
@@ -25,7 +26,7 @@ public:
 
     explicit CachedImage(CacheManager* parent = nullptr, QString url = QString());
 
-    Q_INVOKABLE QString source() const;
+    Q_INVOKABLE QUrl    source() const;
 
     Q_INVOKABLE int     received() const    { return _kbytesReceived; }
     Q_INVOKABLE int     total() const       { return _kbytesTotal; }
@@ -37,6 +38,8 @@ public:
     Q_INVOKABLE void    setExtension(QString format);
 
     Q_INVOKABLE QString fileName() const;
+
+    ImageFormat format() const;
 
 public slots:
     void getInfo();

@@ -64,30 +64,36 @@ Pane {
             }
             MyImage {
                 id: flowPicture
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottomMargin: 1 * mm
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                    bottomMargin: 1 * mm
+                }
                 url: flow.picUrl
                 width: window.width
                 height: width * 10 / 16
-                fillMode: Image.PreserveAspectCrop
                 paused: pauseAnimations
+                clip: true
             }
             ThemedText {
                 id: flowName
                 text: flow.name
-                anchors.top: flowPicture.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    top: flowPicture.bottom
+                    left: parent.left
+                    right: parent.right
+                }
             }
             ThemedText {
                 id: flowTitle
                 text: flow.title
                 font.pointSize: window.fontSmaller
-                anchors.top: flowName.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors {
+                    top: flowName.bottom
+                    left: parent.left
+                    right: parent.right
+                }
                 height: text.length === 0 ? -1 * mm : paintedHeight
             }
             ThemedText {
@@ -95,16 +101,20 @@ Pane {
                 text: flow.followersCount
                 color: window.secondaryTextColor
                 font.pointSize: window.fontSmallest
-                anchors.top: flowTitle.bottom
-                anchors.right: parent.right
+                anchors {
+                    top: flowTitle.bottom
+                    right: parent.right
+                }
             }
             ThemedText {
                 id: flowPosts
                 text: flow.entriesCount
                 color: window.secondaryTextColor
                 font.pointSize: window.fontSmallest
-                anchors.top: flowTitle.bottom
-                anchors.left: parent.left
+                anchors {
+                    top: flowTitle.bottom
+                    left: parent.left
+                }
             }
         }
         footer: ListBusyIndicator {

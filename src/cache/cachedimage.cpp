@@ -52,9 +52,9 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
 
 
 
-QString CachedImage::source() const
+QUrl CachedImage::source() const
 {
-    return QUrl::fromLocalFile(_path()).toString();
+    return QUrl::fromLocalFile(_path());
 }
 
 
@@ -297,6 +297,13 @@ void CachedImage::_printErrors(const QList<QSslError>& errors)
         qDebug() << e.errorString();
 
     (_headReply ? _headReply : _reply)->ignoreSslErrors();
+}
+
+
+
+CachedImage::ImageFormat CachedImage::format() const
+{
+    return _format;
 }
 
 
