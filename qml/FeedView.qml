@@ -209,10 +209,8 @@ Pane {
                 elide: Text.AlignRight
                 wrapMode: Text.NoWrap
             }
-            MyImage {
+            Loader {
                 id: firstImage
-                property AttachedImage image: entry.attachedImagesModel.first()
-                visible: image
                 anchors {
                     top: entryAvatar.bottom
                     left: parent.left
@@ -220,41 +218,51 @@ Pane {
                     topMargin: 1 * mm
                     bottomMargin: 1 * mm
                 }
-                height: visible ? (image.height / image.width * width) : 0
-                url: visible ? image.url : ''
-                extension: visible ? image.type : ''
-                savable: true
-                popBody: back
-                paused: pauseAnimations
-                acceptClick: false
-                ThemedText {
-                    anchors {
-                        bottom: parent.bottom
-                        left: parent.left
-                        right: parent.right
-                        margins: 0.5 * mm
+                property AttachedImage image: entry.attachedImagesModel.first()
+                active: image
+                height: active ? (image.height / image.width * width) : 0
+                onLoaded: item.image = image
+                sourceComponent: MyImage {
+                    property AttachedImage image
+                    url: image ? image.url : ''
+                    extension: image ? image.type : ''
+                    savable: true
+                    popBody: back
+                    paused: pauseAnimations
+                    acceptClick: false
+                    ThemedText {
+                        anchors {
+                            bottom: parent.bottom
+                            left: parent.left
+                            right: parent.right
+                            margins: 0.5 * mm
+                        }
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pointSize: window.fontSmaller
+                        style: Text.Outline
+                        styleColor: window.backgroundColor
+                        property int total: entry.attachedImagesModel.rowCount()
+                        text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
+                        visible: total > 1
                     }
-                    horizontalAlignment: Text.AlignHCenter
-                    font.pointSize: window.fontSmaller
-                    style: Text.Outline
-                    styleColor: window.backgroundColor
-                    property int total: entry.attachedImagesModel.rowCount()
-                    text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
-                    visible: total > 1
                 }
             }
-            MediaLink {
+            Loader {
                 id: mediaLink
-                visible: entry.media
+                property Media media: entry.media
+                active: media
+                height: media ? media.thumbnail.height / media.thumbnail.width * width : -anchors.topMargin
                 anchors {
                     top: firstImage.bottom
                     left: parent.left
                     right: parent.right
                     bottomMargin: 1 * mm
                 }
-                media: entry.media
-                paused: pauseAnimations
-                acceptClick: false
+                onLoaded: item.media = media
+                sourceComponent: MediaLink {
+                    paused: pauseAnimations
+                    acceptClick: false
+                }
             }
             ThemedText {
                 id: entryTitle
