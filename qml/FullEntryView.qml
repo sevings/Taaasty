@@ -79,13 +79,10 @@ Pane {
                 anchors.margins: 1 * mm
                 user: comment.user
                 paused: pauseAnimations
-                Poppable {
-                    body: back
-                    onClicked: {
-                        mouse.accepted = true;
-                        if (back.showProfiles)
-                            window.pushProfileById(comment.user.id);
-                    }
+                popBody: back
+                onClicked: {
+                    if (back.showProfiles)
+                        window.pushProfileById(comment.user.id);
                 }
             }
             Q.Label {

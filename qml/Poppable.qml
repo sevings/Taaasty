@@ -7,7 +7,7 @@ MouseArea {
     drag.target: body
     drag.axis: Drag.XAxis
     drag.minimumX: 0
-    drag.maximumX: body.width * 0.9
+    drag.maximumX: body ? body.width * 0.9 : 0
     drag.threshold: 2 * mm
     property bool shiftable: true
     enabled: false
@@ -18,6 +18,9 @@ MouseArea {
         if (!propagateComposedEvents) {
             propagateComposedEvents = true
         }
+
+        if (!body)
+            return;
 
         if (body.poppable)
         {
@@ -34,12 +37,10 @@ MouseArea {
                 backAnimation.start();
         }
     }
-//    Binding {
-//        target: body
-//        property: 'opacity'
-//        value: 1 - body.x / body.width
-//    }
     onClicked: {
+        if (!body)
+            return;
+
         if (body.x <= 0)
             mouse.accepted = false;
         else {
@@ -58,12 +59,6 @@ MouseArea {
             to: 0
             duration: 100
         }
-//        PropertyAnimation {
-//            target: body
-//            property: "opacity"
-//            to: 1
-//            duration: 100
-//        }
     }
     ParallelAnimation {
         id: forwardAnimation
@@ -73,11 +68,5 @@ MouseArea {
             to: 40 * mm
             duration: 100
         }
-//        PropertyAnimation {
-//            target: body
-//            property: "opacity"
-//            to: 0.3
-//            duration: 100
-//        }
     }
 }

@@ -14,4 +14,17 @@ Q.Pane {
     layer.effect: ElevationEffect {
         elevation: 24
     }
+    property Flickable innerFlick
+    Connections {
+        target: innerFlick
+        onMovementStarted: {
+            pauseAnimations = pane.x > 0 || innerFlick.movingVertically
+        }
+        onMovementEnded: {
+            pauseAnimations = pane.x > 0 || innerFlick.movingVertically
+        }
+    }
+    onXChanged: {
+        pauseAnimations = pane.x > 0 || (innerFlick && innerFlick.movingVertically)
+    }
 }

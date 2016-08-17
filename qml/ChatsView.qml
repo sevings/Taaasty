@@ -55,16 +55,12 @@ Pane {
                 }
                 user: chat.entry ? chat.entry.author : chat.recipient
                 paused: pauseAnimations
-                Poppable {
-                    body: back
-                    onClicked:
-                    {
-                        if (chat.isAnonymous || (!chat.recipient && !chat.entry))
-                            return;
+                popBody: back
+                onClicked: {
+                    if (chat.isAnonymous || (!chat.recipient && !chat.entry))
+                        return;
 
-                        window.pushProfileById(chatAvatar.user.id);
-                        mouse.accepted = true;
-                    }
+                    window.pushProfileById(chatAvatar.user.id);
                 }
             }
             ThemedText {
@@ -106,6 +102,7 @@ Pane {
                 visible: !chat.isAnonymous && chat.lastMessage.userId !== chat.recipientId
                          && (chat.entry ? chat.lastMessage.userId !== chat.entry.author.id : true)
                 paused: pauseAnimations
+                popBody: back
             }
             ThemedText {
                 id: lastMessage

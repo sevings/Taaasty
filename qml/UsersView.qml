@@ -89,20 +89,17 @@ Pane {
                 }
                 user: model.user
                 paused: pauseAnimations
-                Poppable {
-                    body: back
-                    onClicked: {
-                        mouse.accepted = true;
-                        if (bayesMode)
-                        {
-                            if (removing.running)
-                                removing.stop();
-                            else
-                                removing.start();
-                        }
+                popBody: back
+                onClicked: {
+                    if (bayesMode)
+                    {
+                        if (removing.running)
+                            removing.stop();
                         else
-                            window.pushProfileById(user.id);
+                            removing.start();
                     }
+                    else
+                        window.pushProfileById(user.id);
                 }
             }
             Q.Label {

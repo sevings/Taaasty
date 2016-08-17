@@ -4,7 +4,8 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    pauseAnimations: x > 0 || listView.movingVertically
+//    pauseAnimations: x > 0 || listView.movingVertically
+    innerFlick: listView
     property int mode: Tasty.isAuthorized ? FeedModel.FriendsMode : FeedModel.LiveMode
     readonly property bool bestMode: back.mode === FeedModel.BestMode
                                      || back.mode === FeedModel.ExcellentMode
@@ -172,20 +173,15 @@ Pane {
                 }
                 user: entry.author
                 paused: pauseAnimations
-                Poppable {
-                    body: back
-                    onClicked:
-                    {
-                        if (back.x > 0 || mode === FeedModel.AnonymousMode) {
-                            mouse.accepted = false;
-                            return;
-                        }
-
-                        mouse.accepted = true;
-
-//                        saveCurrentIndex();
-                        window.pushProfile(entry.tlog, entry.author);
+                popBody: back
+                onClicked: {
+                    if (back.x > 0 || mode === FeedModel.AnonymousMode) {
+                        mouse.accepted = false;
+                        return;
                     }
+
+//                    saveCurrentIndex();
+                    window.pushProfile(entry.tlog, entry.author);
                 }
             }
             ThemedText {
@@ -231,6 +227,7 @@ Pane {
                 savable: true
                 popBody: back
                 paused: pauseAnimations
+                acceptClick: false
                 ThemedText {
                     anchors {
                         bottom: parent.bottom

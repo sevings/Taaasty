@@ -86,16 +86,12 @@ Rectangle {
                 anchors.margins: 1 * mm
                 user: notification.sender
                 paused: pauseAnimations
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: notification.parentType !== 'AnonymousEntry'
-                    onClicked: {
-                        if (back.y > 0)
-                            return;
+                onClicked: {
+                    if (back.y > 0 || notification.parentType === 'AnonymousEntry')
+                        return;
 
-                        window.hideNotifs();
-                        window.pushProfileById(notification.sender.id);
-                    }
+                    window.hideNotifs();
+                    window.pushProfileById(notification.sender.id);
                 }
             }
             Q.Label {

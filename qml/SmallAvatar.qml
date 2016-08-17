@@ -10,7 +10,7 @@ MyImage {
     }
     width: 8 * mm
     height: 8 * mm
-    property User user: User { }
+    property User user
     property string symbol: user && user.name ? user.name[0].toUpperCase() : '?'
     property string defaultSource: ''
     url: user && (dp < 2 ? user.thumb64 : user.thumb128) || defaultSource

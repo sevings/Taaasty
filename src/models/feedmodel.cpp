@@ -16,6 +16,7 @@
 FeedModel::FeedModel(QObject* parent)
     : QAbstractListModel(parent)
     , _tlog(0)
+    , _mode(InvalidMode)
     , _hasMore(true)
     , _loading(false)
     , _lastEntry(0)
@@ -30,8 +31,6 @@ FeedModel::FeedModel(QObject* parent)
     Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideNegativeRatedChanged()), this, SLOT(_changeHideSome())));
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(_reloadRatings())));
-
-    setMode(Tasty::instance()->isAuthorized() ? FriendsMode : LiveMode);
 }
 
 
@@ -62,7 +61,7 @@ QVariant FeedModel::data(const QModelIndex &index, int role) const
 
 bool FeedModel::canFetchMore(const QModelIndex& parent) const
 {
-    if (parent.isValid())
+    if (_mode == InvalidMode || parent.isValid())
         return false;
 
     return _hasMore;
@@ -72,7 +71,9 @@ bool FeedModel::canFetchMore(const QModelIndex& parent) const
 
 void FeedModel::fetchMore(const QModelIndex& parent)
 {
-    if (!_hasMore || _loading || parent.isValid() || (_mode == TlogMode && _tlog <= 0 && _slug.isEmpty()))
+    if (!_hasMore || _loading || parent.isValid()
+            || (_mode == TlogMode && _tlog <= 0 && _slug.isEmpty())
+            || _mode == InvalidMode)
         return;
 
     qDebug() << "FeedModel::fetchMore";

@@ -15,9 +15,11 @@ AnimatedImage {
     property string extension: ''
     property CachedImage cachedImage: Cache.image()
     property color backgroundColor: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
-    property Pane popBody: Pane { }
+    property Pane popBody
     property bool savable: false
+    property bool acceptClick: true
     signal available
+    signal clicked
     function showImage() {
         image.source = cachedImage.source;
         back.visible = false;
@@ -51,10 +53,17 @@ AnimatedImage {
     }
     Poppable {
         body: popBody
-        visible: image.savable && !back.visible
-        propagateComposedEvents: true
+        propagateComposedEvents: false
+        onClicked: {
+           if (!acceptClick)
+               return;
+
+            mouse.accepted = true;
+            image.clicked();
+        }
         onPressAndHold: {
-            window.saveImage(cachedImage);
+            if (image.savable && !back.visible)
+                window.saveImage(cachedImage);
         }
     }
     Rectangle {
