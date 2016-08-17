@@ -4,7 +4,6 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-//    pauseAnimations: x > 0 || listView.movingVertically
     innerFlick: listView
     property int mode: Tasty.isAuthorized ? FeedModel.FriendsMode : FeedModel.LiveMode
     readonly property bool bestMode: back.mode === FeedModel.BestMode

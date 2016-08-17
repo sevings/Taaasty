@@ -4,7 +4,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    pauseAnimations: x > 0 || listView.movingVertically
+    innerFlick: listView
     property int mode: Tasty.isAuthorized ? FlowsModel.MyFlowsMode : FlowsModel.AllFlowsMode
     readonly property string title: { // for footer
         switch (back.mode) {

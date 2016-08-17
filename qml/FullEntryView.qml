@@ -5,7 +5,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    pauseAnimations: x > 0 || fullEntry.movingVertically
+    innerFlick: fullEntry
     property int entryId
     property TlogEntry entry: TlogEntry {
         entryId: back.entryId

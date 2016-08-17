@@ -10,7 +10,6 @@ Popup {
     property Tlog tlog
     SmallAvatar {
         id: avatar
-        anchors.left: parent.left
         user: footer.tlog.author
         defaultSource: 'http://taaasty.com/favicons/favicon-64x64.png'
     }

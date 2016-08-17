@@ -3,7 +3,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    pauseAnimations: x > 0 || listView.movingVertically
+    innerFlick: listView
     property Chat chat: Chat { }
     property Tlog tlog: Tlog {
         tlogId: chat.recipientId

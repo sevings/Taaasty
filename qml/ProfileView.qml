@@ -4,7 +4,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: profileView
-    pauseAnimations: x > 0 || flickable.movingVertically
+    innerFlick: flickable
     property int tlogId
     property string slug: ''
     property Tlog tlog: Tlog {

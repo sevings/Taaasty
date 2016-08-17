@@ -5,7 +5,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    pauseAnimations: x > 0 || users.movingVertically
+    innerFlick: users
     property string title: ''
     readonly property bool customTitle: bayesMode
     readonly property bool bayesMode: mode === UsersModel.FireMode || mode === UsersModel.WaterMode

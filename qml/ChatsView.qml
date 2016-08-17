@@ -5,7 +5,7 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    pauseAnimations: x > 0 || listView.movingVertically
+    innerFlick: listView
     readonly property bool customTitle: true
     readonly property string title: 'Сообщения'
     readonly property bool isChatsView: true

@@ -53,7 +53,6 @@ AnimatedImage {
     }
     Poppable {
         body: popBody
-        propagateComposedEvents: false
         onClicked: {
            if (!acceptClick)
                return;
