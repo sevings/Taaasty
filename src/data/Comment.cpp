@@ -76,6 +76,7 @@ void Comment::_init(const QJsonObject data)
     _isDeletable    = data.value("can_delete").toBool();
 
     _correctHtml();
+    _setTruncatedText();
 
     emit baseUpdated();
     emit updated();

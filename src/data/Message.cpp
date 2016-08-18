@@ -90,6 +90,7 @@ void Message::_init(const QJsonObject data)
         _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
         
     _correctHtml();
+    _setTruncatedText();
 
     Tasty::instance()->pusher()->addMessage(this);
 
@@ -148,6 +149,7 @@ void Message::_markRemoved(const QJsonObject data)
 
     _text = data.value("content").toString();
 //    _type = data.value("type").toString();
+    _setTruncatedText();
 
     emit textUpdated();
 }

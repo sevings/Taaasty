@@ -114,7 +114,7 @@ Pane {
                 }
                 font.pointSize: window.fontSmallest
                 color: window.secondaryTextColor
-                text: chat.lastMessage.text
+                text: chat.lastMessage.truncatedText
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 textFormat: Text.PlainText

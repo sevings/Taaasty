@@ -14,6 +14,7 @@ class MessageBase : public QObject
     Q_PROPERTY(int      id              MEMBER _id             NOTIFY baseUpdated)
     Q_PROPERTY(QString  createdAt       MEMBER _createdAt      NOTIFY baseUpdated)
     Q_PROPERTY(QString  text            MEMBER _text           NOTIFY textUpdated)
+    Q_PROPERTY(QString  truncatedText   MEMBER _truncatedText  NOTIFY textUpdated)
     Q_PROPERTY(User*    user            MEMBER _user           NOTIFY baseUpdated)
     Q_PROPERTY(bool     isRead          MEMBER _read           NOTIFY readChanged)
 
@@ -30,9 +31,12 @@ signals:
     void readChanged();
 
 protected:
+    void _setTruncatedText();
+
     int     _id;
     QString _createdAt;
     QString _text;
+    QString _truncatedText;
     User*   _user;
     bool    _read;
 };

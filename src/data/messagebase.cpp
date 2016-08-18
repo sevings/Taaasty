@@ -1,5 +1,9 @@
 #include "messagebase.h"
 
+#include <QRegularExpression>
+
+
+
 MessageBase::MessageBase(QObject* parent)
     : QObject(parent)
     , _id(0)
@@ -21,4 +25,13 @@ int MessageBase::id() const
 bool MessageBase::isRead() const
 {
     return _read;
+}
+
+
+
+void MessageBase::_setTruncatedText()
+{
+    _truncatedText = _text;
+    _truncatedText.remove(QRegularExpression("<[^>]*>"))
+            .replace('\n', ' ').truncate(100);
 }
