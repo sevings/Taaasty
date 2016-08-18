@@ -20,7 +20,7 @@ CommentsModel::CommentsModel(Entry *entry)
     , _loading(false)
     , _checking(false)
     , _totalCount(0)
-    , _url("v1/comments.json?entry_id=%1&limit=70")
+    , _url("v1/comments.json?entry_id=%1&limit=1000")
 {
     if (!entry)
         return;
