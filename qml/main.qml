@@ -56,6 +56,15 @@ Q.ApplicationWindow {
             close.accepted = false;
         }
     }
+    Text {
+        id: loadingText
+        anchors.centerIn: parent
+        color: window.secondaryTextColor
+        horizontalAlignment: Text.AlignHCenter
+        font.pointSize: window.fontBigger
+        wrapMode: Text.Wrap
+        text: 'Загрузка…'
+    }
     function showNotifs() {
         notifsView.state = "opened";
     }
@@ -280,15 +289,6 @@ Q.ApplicationWindow {
             showLineInput('rating');
 
         setFooterFromStack();
-    }
-    Text {
-        id: loadingText
-        anchors.centerIn: parent
-        color: window.secondaryTextColor
-        horizontalAlignment: Text.AlignHCenter
-        font.pointSize: window.fontBigger
-        wrapMode: Text.Wrap
-        text: 'Загрузка…'
     }
     Tlog {
         id: emptyTlog

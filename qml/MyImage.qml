@@ -28,14 +28,14 @@ Loader {
     }
     onLoaded: {
         item.source = cachedImage.source
-        if (cachedImage.format == CachedImage.GifFormat)
-            item.paused = Qt.binding(function() { return image.paused; })
     }
     property CachedImage cachedImage: Cache.image()
     function showImage() {
         back.visible = false;
         image.sourceComponent = cachedImage.format == CachedImage.GifFormat
                 ? animatedImage : staticImage
+        if (image.status === Loader.Ready)
+            item.source = cachedImage.source;
         image.available()
     }
     function hideImage() {
@@ -66,6 +66,9 @@ Loader {
             smooth: true
             asynchronous: true
             fillMode: Image.PreserveAspectCrop
+            Component.onCompleted: {
+                paused = Qt.binding(function() { return image.paused; })
+            }
         }
     }
     Component {
