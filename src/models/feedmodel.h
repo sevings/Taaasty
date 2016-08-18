@@ -87,6 +87,7 @@ public:
     void postText(const QString title, const QString content, Privacy privacy = Public);
     void postAnonymous(const QString title, const QString content);
 
+    Q_INVOKABLE void setSinceEntryId(int id);
 
 signals:
     void hasMoreChanged();

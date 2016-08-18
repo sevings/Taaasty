@@ -293,6 +293,14 @@ void FeedModel::postAnonymous(const QString title, const QString content)
 
 
 
+void FeedModel::setSinceEntryId(int id)
+{
+    if (id > 0)
+        _lastEntry = id + 1;
+}
+
+
+
 QHash<int, QByteArray> FeedModel::roleNames() const
 {
     QHash<int, QByteArray> roles;

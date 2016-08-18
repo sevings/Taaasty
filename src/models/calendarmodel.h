@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QJsonObject>
+#include <QHash>
 
 class CalendarEntry;
 class Entry;
@@ -25,6 +26,8 @@ public:
     int lastEntryId() const;
 
     CalendarEntry* at(int row) const;
+
+    Q_INVOKABLE int firstMonthEntry(QString month) const;
     
 signals:
     void loaded();
@@ -36,7 +39,8 @@ private slots:
     void _setCalendar(QJsonObject data);
 
 private:
-    QList<CalendarEntry*> _calendar;
+    QList<CalendarEntry*>           _calendar;
+    QHash<QString, CalendarEntry*>  _firstMonthEntries;
 };
 
 #endif // CALENDARMODEL_H

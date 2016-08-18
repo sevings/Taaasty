@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 Pane {
@@ -40,6 +41,33 @@ Pane {
             onLoaded: {
                 if (!listView.visible)
                     splash.text = 'Нет записей'
+            }
+        }
+        section.property: 'entry.month'
+        section.criteria: ViewSection.FullString
+        section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
+        section.delegate: Rectangle {
+            color: Material.primary
+            width: window.width
+            height: 5 * mm + monthText.contentHeight
+            Poppable {
+                body: back
+                onClicked: {
+                    mouse.accepted = true;
+                    var sinceId = calendarModel.firstMonthEntry(section);
+                    window.pushTlog(back.tlogId, sinceId)
+                }
+            }
+            ThemedText {
+                id: monthText
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    left: parent.left
+                    right: parent.right
+                }
+                horizontalAlignment: Text.AlignHCenter
+                text: section
+                font.pointSize: window.fontBigger
             }
         }
         delegate: Item {

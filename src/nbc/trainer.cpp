@@ -369,7 +369,7 @@ void Trainer::_saveDb()
 
 void Trainer::_addEntriesToLoad()
 {
-    for (int i = _curTlog->rowCount() - 1; i >= 0; i--)
+    for (int i = 0; i < _curTlog->rowCount(); i++)
     {
         auto entry = _curTlog->at(i);
         auto id = entry->id();

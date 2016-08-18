@@ -12,6 +12,7 @@ Pane {
                                      || back.mode === FeedModel.GoodMode
                                      || back.mode === FeedModel.BetterThanMode
     property int tlogId: 0
+    property int sinceId: 0
     property string slug: ''
     property int minRating: 0
     property string query: ''
@@ -47,7 +48,7 @@ Pane {
     }
     readonly property bool customTitle: mode !== FeedModel.TlogMode// && mode !== FeedModel.MyTlogMode
     readonly property bool isFeedView: true
-    signal pushed
+//    signal pushed
     function setMode(m, t, s) {
         query = '';
 
@@ -98,13 +99,17 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
         interactive: back.x == 0
-        Connections {
-            target: back
-            onPushed: {
+//        Connections {
+//            target: back
+//            onPushed: {
 //                console.log('pushed', listView.currentIndex)
 //                if (listView.currentIndex >= 0)
 //                    listView.positionViewAtIndex(listView.currentIndex, ListView.Contain)
-            }
+//            }
+//        }
+        Component.onCompleted: {
+            if (back.tlogId && back.sinceId)
+                feedModel.setSinceEntryId(back.sinceId);
         }
         model: FeedModel {
             id: feedModel

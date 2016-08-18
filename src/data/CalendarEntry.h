@@ -12,10 +12,9 @@ class CalendarEntry: public QObject
 {
     Q_OBJECT
 
-    friend class CalendarModel;
-
     Q_PROPERTY(int     id             MEMBER _id             CONSTANT)
     Q_PROPERTY(QString createdAt      MEMBER _createdAt      CONSTANT)
+    Q_PROPERTY(QString month          MEMBER _month          CONSTANT)
     Q_PROPERTY(QString url            MEMBER _url            CONSTANT)
     Q_PROPERTY(bool    isPrivate      MEMBER _isPrivate      CONSTANT)
     Q_PROPERTY(QString type           MEMBER _type           CONSTANT)
@@ -30,11 +29,13 @@ public:
     Entry* full();
     EntryBase* base();
 
-    int id() const;
+    int     id() const;
+    QString month() const;
 
 private:
     int     _id;
     QString _createdAt;
+    QString _month;
     QString _url;
     bool    _isPrivate;
     QString _type;

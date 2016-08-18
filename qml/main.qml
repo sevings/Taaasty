@@ -190,7 +190,7 @@ Q.ApplicationWindow {
                    }
                    )
     }
-    function pushTlog(tlogId) {
+    function pushTlog(tlogId, sinceId) {
         if (stack.currentItem.isFeedView
                 && stack.currentItem.mode === FeedModel.TlogMode
                 && stack.currentItem.tlogId === tlogId)
@@ -200,6 +200,7 @@ Q.ApplicationWindow {
                    {
                        mode: FeedModel.TlogMode,
                        tlogId: tlogId,
+                       sinceId: sinceId || 0,
                        poppable: true
                    }
                    )
@@ -318,8 +319,8 @@ Q.ApplicationWindow {
 
             window.hideFooter();
 
-            if (stack.currentItem.isFeedView)
-                stack.currentItem.pushed();
+//            if (stack.currentItem.isFeedView)
+//                stack.currentItem.pushed();
         }
         popEnter: Transition {
             PropertyAnimation {

@@ -55,6 +55,7 @@ void CalendarModel::setTlog(const int tlog)
 
     qDeleteAll(_calendar);
     _calendar.clear();
+    _firstMonthEntries.clear();
 
     endResetModel();
 }
@@ -80,6 +81,17 @@ CalendarEntry* CalendarModel::at(int row) const
 
 
 
+int CalendarModel::firstMonthEntry(QString month) const
+{
+    auto e = _firstMonthEntries.value(month);
+    if (e)
+        return e->id();
+    else
+        return 0;
+}
+
+
+
 QHash<int, QByteArray> CalendarModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
@@ -94,10 +106,10 @@ void CalendarModel::_setCalendar(QJsonObject data)
     beginResetModel();
 
     auto periods = data.value("periods").toArray();
-    for (int i = 0; i < periods.size(); i++)
+    for (int i = periods.size() - 1; i >= 0; i--)
     {
         auto markers = periods.at(i).toObject().value("markers").toArray();
-        for (int j = markers.size(); j >= 0; j--)
+        for (int j = 0; j < markers.size(); j++)
         {
             auto entry = new CalendarEntry(markers.at(j).toObject(), this);
             if (entry->id() <= 0)
@@ -107,6 +119,9 @@ void CalendarModel::_setCalendar(QJsonObject data)
             }
 
             _calendar << entry;
+
+            if (!_firstMonthEntries.contains(entry->month()))
+                _firstMonthEntries.insert(entry->month(), entry);
         }
     }
 
