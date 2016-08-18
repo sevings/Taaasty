@@ -65,7 +65,8 @@ Pane {
         interactive: back.x == 0
         delegate: Rectangle {
             width: window.width
-            height: 4 * mm + commentText.contentHeight + nameText.contentHeight
+            readonly property int textHeight: nameText.height + commentText.height - 1 * mm
+            height: (textHeight > commentAvatar.height ? textHeight : commentAvatar.height) + 4 * mm
             color: pop.pressed ? Material.primary : 'transparent'
             Component.onCompleted: {
                 entry.chat.readAll();
@@ -79,7 +80,10 @@ Pane {
             }
             SmallAvatar {
                 id: commentAvatar
-                anchors.margins: 1 * mm
+                anchors {
+                    margins: 1 * mm
+                    topMargin: 2 * mm
+                }
                 user: comment.user
                 paused: pauseAnimations
                 popBody: back
@@ -97,6 +101,7 @@ Pane {
                     right: commentDate.left
                     leftMargin: 1 * mm
                     rightMargin: 1 * mm
+                    topMargin: 2 * mm
                 }
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller

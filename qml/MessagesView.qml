@@ -90,7 +90,6 @@ Pane {
                 font.bold: true
                 style: Text.Raised
                 styleColor: window.greenColor
-//                visible: chat.type === Chat.GroupConversation
             }
             ThemedText {
                 id: messageDate

@@ -31,7 +31,7 @@ Pane {
         model: ChatsModel
         delegate: Rectangle {
             width: window.width
-            readonly property int textHeight: lastMessage.y + lastMessage.height - 1 * mm
+            readonly property int textHeight: lastMessage.y + lastMessage.height - 2 * mm
             height: (textHeight > chatAvatar.height ? textHeight : chatAvatar.height) + 4 * mm
             color: pop.pressed ? Material.primary : 'transparent'
             Poppable {
@@ -84,9 +84,8 @@ Pane {
             ThemedText {
                 id: date
                 anchors {
-                    top: parent.top
                     right: parent.right
-                    topMargin: 2 * mm
+                    baseline: chatNick.baseline
                 }
                 text: chat.lastMessage.createdAt
                 font.pointSize: window.fontSmallest

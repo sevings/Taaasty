@@ -144,7 +144,7 @@ void CommentsModel::_addComments(const QJsonObject data)
         emit loadingChanged();
         return;
     }
-    
+
     beginInsertRows(QModelIndex(), 0, cmts.size() - 1);
 
     _setTotalCount(data.value("total_count").toInt());
