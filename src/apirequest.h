@@ -28,7 +28,6 @@ signals:
 
 private slots:
     void _printNetworkError(QNetworkReply::NetworkError code);
-    void _restart(QNetworkAccessManager::NetworkAccessibility na);
     void _finished();
 
 private:

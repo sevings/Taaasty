@@ -128,7 +128,7 @@ void PusherClient::_getPusherAuth()
     auto socket = _pusher->socketId();
     auto data = QString("socket_id=%1&channel_name=%2").arg(socket).arg(_privateChannel);
 
-    auto request = new ApiRequest("v1/messenger/auth.json", true, QNetworkAccessManager::PostOperation, data);
+    auto request = new ApiRequest("v2/messenger/auth.json", true, QNetworkAccessManager::PostOperation, data);
     Q_TEST(QObject::connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_subscribeToPrivate(QJsonObject))));
 }
 
@@ -146,8 +146,6 @@ void PusherClient::_subscribeToPrivate(const QJsonObject data)
 {
     auto auth = data.value("auth").toString();
     _pusher->channel(_privateChannel)->subscribeToPrivate(auth);
-
-    new ApiRequest("v1/messenger/only_ready.json", true, QNetworkAccessManager::PostOperation);
 }
 
 
@@ -261,11 +259,21 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
 
 
 
+void PusherClient::_sendReady()
+{
+    auto data = QString("socket_id=%1").arg(_pusher->socketId());
+    new ApiRequest("v2/messenger/only_ready.json", true,
+                   QNetworkAccessManager::PostOperation, data);
+}
+
+
+
 void PusherClient::_addPrivateChannel()
 {
     _privateChannel = QString("private-%1-messaging").arg(_tasty->settings()->userId());
     auto ch = _pusher->subscribe(_privateChannel, false);
 
     Q_TEST(QObject::connect(ch, SIGNAL(authNeeded()),           this, SLOT(_getPusherAuth())));
+    Q_TEST(QObject::connect(ch, SIGNAL(subscribed()),           this, SLOT(_sendReady())));
     Q_TEST(QObject::connect(ch, SIGNAL(event(QString,QString)), this, SLOT(_handlePrivatePusherEvent(QString,QString))));
 }

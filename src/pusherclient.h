@@ -47,6 +47,7 @@ private slots:
     void _resubscribeToPrivate();
     void _subscribeToPrivate(const QJsonObject data);
     void _handlePrivatePusherEvent(const QString event, const QString data);
+    void _sendReady();
 
 private:
     void _addPrivateChannel();

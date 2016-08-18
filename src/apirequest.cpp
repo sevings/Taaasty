@@ -64,14 +64,6 @@ void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 
 
 
-void ApiRequest::_restart(QNetworkAccessManager::NetworkAccessibility na)
-{
-    if (na == QNetworkAccessManager::Accessible)
-        _start();
-}
-
-
-
 void ApiRequest::_finished()
 {
     deleteLater();
@@ -82,8 +74,8 @@ void ApiRequest::_finished()
     auto json = QJsonDocument::fromJson(data, &jpe);
     if (jpe.error != QJsonParseError::NoError)
     {
-        qDebug() << "parse error:" << jpe.errorString();
-        qDebug() << "json:" << data;
+//        qDebug() << "parse error:" << jpe.errorString();
+//        qDebug() << "json:" << data;
         emit success(QString::fromUtf8(data));
         return;
     }
@@ -127,7 +119,7 @@ void ApiRequest::_start()
         _reply = manager->deleteResource(_request);
         break;
     default:
-        qDebug() << "Unsopperted operation in ApiRequest";
+        qDebug() << "Unsupported operation in ApiRequest";
         deleteLater();
         return;
     }
