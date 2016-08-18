@@ -29,11 +29,13 @@ Pane {
         visible: count > 0
         interactive: back.x == 0
         model: ChatsModel
-        delegate: Item {
+        delegate: Rectangle {
             width: window.width
             readonly property int textHeight: lastMessage.y + lastMessage.height - 1 * mm
-            height: (textHeight > chatAvatar.height ? textHeight : chatAvatar.height) + 2 * mm
+            height: (textHeight > chatAvatar.height ? textHeight : chatAvatar.height) + 4 * mm
+            color: pop.pressed ? Material.primary : 'transparent'
             Poppable {
+                id: pop
                 body: back
                 onClicked: {
                     if (chat.unreadCount > 0)
@@ -53,6 +55,7 @@ Pane {
                 anchors {
                     top: parent.top
                     margins: 1 * mm
+                    topMargin: 2 * mm
                 }
                 user: chat.entry ? chat.entry.author : chat.recipient
                 paused: pauseAnimations
@@ -70,6 +73,7 @@ Pane {
                     top: parent.top
                     left: chatAvatar.right
                     right: date.left
+                    topMargin: 2 * mm
                 }
                 text: chat.topic
                 font.pointSize: window.fontSmaller
@@ -82,6 +86,7 @@ Pane {
                 anchors {
                     top: parent.top
                     right: parent.right
+                    topMargin: 2 * mm
                 }
                 text: chat.lastMessage.createdAt
                 font.pointSize: window.fontSmallest

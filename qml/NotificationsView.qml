@@ -81,6 +81,11 @@ Rectangle {
                 else
                     console.log(notification.entityType);
             }
+            Rectangle {
+                anchors.fill: parent
+                color: Material.primary
+                visible: notif.pressed
+            }
             SmallAvatar {
                 id: notifAvatar
                 anchors.margins: 1 * mm

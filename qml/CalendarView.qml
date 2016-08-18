@@ -47,10 +47,11 @@ Pane {
         section.criteria: ViewSection.FullString
         section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
         section.delegate: Rectangle {
-            color: Material.primary
+            color: sectionMouse.pressed ? 'transparent' : Material.primary
             width: window.width
             height: 5 * mm + monthText.contentHeight
             Poppable {
+                id: sectionMouse
                 body: back
                 onClicked: {
                     mouse.accepted = true;
@@ -70,14 +71,16 @@ Pane {
                 font.pointSize: window.fontBigger
             }
         }
-        delegate: Item {
+        delegate: Rectangle {
             id: entryView
             width: window.width
             height: 5 * mm + date.height + entryTitle.height + comments.height
+            color: pop.pressed ? Material.primary : 'transparent'
             function saveCurrentIndex() {
                 listView.currentIndex = listView.indexAt(entryView.x + 1, entryView.y + 1);
             }
             Poppable {
+                id: pop
                 body: back
                 onClicked: {
                     if (back.x > 0) {
@@ -95,6 +98,7 @@ Pane {
                     top: parent.top
                     left: parent.left
                     right: parent.right
+                    topMargin: 2 * mm
                 }
                 text: entry.truncatedTitle || '(без заголовка)'
                 textFormat: Text.RichText

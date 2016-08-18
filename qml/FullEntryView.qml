@@ -63,13 +63,15 @@ Pane {
         visible: !entry.loading
         model: commentsModel
         interactive: back.x == 0
-        delegate: Item {
+        delegate: Rectangle {
             width: window.width
             height: 4 * mm + commentText.contentHeight + nameText.contentHeight
+            color: pop.pressed ? Material.primary : 'transparent'
             Component.onCompleted: {
                 entry.chat.readAll();
             }
             Poppable {
+                id: pop
                 body: back
                 onClicked: {
                     menu.show(comment);
