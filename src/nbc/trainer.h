@@ -69,7 +69,7 @@ signals:
 
 public slots:
     void train();
-    void trainTlog(const int tlogId, const Mode mode);
+    void trainTlog(const int tlogId, QString name, const Mode mode);
 
 private slots:
     void _runAddingEntries();
@@ -112,6 +112,8 @@ private:
     int _trainedEntriesCount;
     int _trainingEntriesCount;
     int _loadAfter;
+
+    QString _curName;
 
     QFutureWatcher<void>      _addWatcher;
     QFutureSynchronizer<void> _sync;

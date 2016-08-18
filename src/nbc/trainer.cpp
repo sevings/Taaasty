@@ -103,8 +103,11 @@ QString Trainer::currentName() const
 {
     QReadLocker lock(&_lock);
 
-    return _curMode != UndefinedMode && _iCurTlog < _tlogs[_curMode].size()
-            ? _tlogs[_curMode].at(_iCurTlog).user->name() : "";
+    if (_curName.isEmpty())
+        if (_curMode != UndefinedMode && _iCurTlog < _tlogs[_curMode].size())
+            return _tlogs[_curMode].at(_iCurTlog).user->name();
+
+    return _curName;
 }
 
 
@@ -143,7 +146,7 @@ void Trainer::train()
 
 
 
-void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
+void Trainer::trainTlog(const int tlogId, QString name, const Trainer::Mode mode)
 {
     if (tlogId <= 0 || (mode != Trainer::WaterMode && mode != Trainer::FireMode))
         return;
@@ -156,6 +159,9 @@ void Trainer::trainTlog(const int tlogId, const Trainer::Mode mode)
 
     _trainingEntriesCount = 0;
     emit entriesCountChanged();
+
+    _curName = name;
+    emit currentNameChanged();
 
     _curTlog = new CalendarModel(this);
     Q_TEST(connect(_curTlog, SIGNAL(loaded()), this, SLOT(_runAddingEntries())));
@@ -277,6 +283,7 @@ void Trainer::_finishTraining()
     _iCurTlog = 0;
     _curTlog->deleteLater();
     _curTlog = nullptr;
+    _curName.clear();
 
     _bayes->_saveDb();
 

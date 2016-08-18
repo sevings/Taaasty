@@ -9,19 +9,24 @@ ColumnLayout {
     property string text: ''
     property bool percents: false
     property alias to: bar.to
-    property alias value: bar.value
+    property int value: 0
+    property int showValue: value
+    Behavior on showValue {
+        NumberAnimation { duration: 200 }
+    }
     Q.ProgressBar {
         id: bar
         Layout.preferredWidth: window.width
         padding: 1 * mm
+        value: control.showValue
     }
     ThemedText {
         id: label
         leftPadding: 5 * mm
         rightPadding: leftPadding
         Layout.preferredWidth: window.width
-        text: control.text + (control.value <= control.to && control.to > 0
-                              ? ' — ' + (control.percents ? Math.round(control.value / control.to * 100) + '%'
-                                                          : control.value + '/' + control.to) : '')
+        text: control.text + (control.showValue <= control.to && control.to > 0
+                              ? ' — ' + (control.percents ? Math.round(control.showValue / control.to * 100) + '%'
+                                                          : control.showValue + '/' + control.to) : '')
     }
 }

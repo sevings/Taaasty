@@ -154,7 +154,6 @@ Pane {
                 }
                 height: tlogVoteButton.height
                 property int tlogMode: Trainer.typeOfTlog(tlog.tlogId)
-//                onTlogModeChanged: console.log('tlog mode', tlogMode)
                 enabled: readButton.enabled
                 ThemedButton {
                     id: tlogVoteAgainstButton
@@ -163,7 +162,6 @@ Pane {
                         left: parent.left
                         topMargin: 0
                     }
-//                    height: 6 * mm
                     width: (parent.width - 3 * mm) / 2
                     text: 'Фу…'
                     enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
@@ -171,8 +169,7 @@ Pane {
                     Material.accent: Material.Red
                     onClicked: {
                         parent.tlogMode = 0;
-                        Trainer.trainTlog(tlog.tlogId, 0);
-//                        window.pushTrainingProgress();
+                        Trainer.trainTlog(tlog.tlogId, tlog.author.name, 0);
                     }
                 }
                 ThemedButton {
@@ -182,7 +179,6 @@ Pane {
                         right: parent.right
                         topMargin: 0
                     }
-//                    height: tlogVoteAgainstButton.height
                     width: tlogVoteAgainstButton.width
                     text: 'Да!'
                     enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
@@ -190,7 +186,7 @@ Pane {
                     Material.accent: Material.Green
                     onClicked: {
                         parent.tlogMode = 1;
-                        Trainer.trainTlog(tlog.tlogId, 1);
+                        Trainer.trainTlog(tlog.tlogId, tlog.author.name, 1);
                     }
                 }
             }
