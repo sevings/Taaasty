@@ -273,7 +273,7 @@ void Entry::_init(const QJsonObject data)
     _createdAt       = Tasty::parseDate(data.value("created_at").toString());
     _url             = data.value("entry_url").toString();
     _isVotable       = data.value("is_voteable").toBool();
-    _isFavoritable   = data.value("can_favorite").toBool();
+    _isFavoritable   = data.value("can_favorite").toBool(Tasty::instance()->isAuthorized());
     _isFavorited     = data.value("is_favorited").toBool();
     _isWatchable     = data.value("can_watch").toBool();
     _isWatched       = data.value("is_watching").toBool();
