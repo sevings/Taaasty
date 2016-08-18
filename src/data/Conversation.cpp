@@ -1,5 +1,6 @@
 #include "Conversation.h"
 
+#include <QRegularExpression>
 #include <QUuid>
 #include <QDebug>
 
@@ -213,7 +214,11 @@ void Conversation::_init(const QJsonObject data)
      else if (_recipient)
          _topic         = _recipient->name();
      else if (_entry)
+     {
          _topic         = _entry->title().isEmpty() ? _entry->text() : _entry->title();
+         _topic.remove(QRegularExpression("<[^>]*>"))
+                 .replace('\n', ' ').truncate(100);
+     }
      else
          _topic.clear();
 
