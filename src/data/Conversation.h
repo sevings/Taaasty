@@ -32,7 +32,7 @@ class Conversation: public QObject
     Q_PROPERTY(bool             canDelete       MEMBER _canDelete       NOTIFY updated)
     Q_PROPERTY(bool             isAnonymous     MEMBER _isAnonymous     NOTIFY updated)
     Q_PROPERTY(QString          topic           MEMBER _topic           NOTIFY updated)
-    Q_PROPERTY(Entry*           entry           MEMBER _entry           NOTIFY updated)
+    Q_PROPERTY(Entry*           entry           READ entry              NOTIFY updated)
 //    Q_PROPERTY(QList<User*>     users           MEMBER _users           NOTIFY updated)
 //    Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
     Q_PROPERTY(Author*          recipient       MEMBER _recipient       NOTIFY updated)
@@ -70,7 +70,7 @@ public:
 
     User* user(int id);
 
-    MessageBase* lastMessage() const;
+    MessageBase* lastMessage();
 
     ConversationType type() const;
 
@@ -80,7 +80,7 @@ public:
 
     int unreadCount() const;
 
-    Entry* entry() const;
+    Entry* entry();
 
 public slots:
     void update();
@@ -121,13 +121,15 @@ private:
     bool                _canDelete;
     bool                _isAnonymous;
     QString             _topic;
-    Entry*              _entry;
+    int                 _entryId;
     QHash<int, User*>   _users;
     QHash<int, User*>   _deletedUsers;
     QHash<int, User*>   _leftUsers;
     Author*             _recipient;
     MessagesModel*      _messages;
     Message*            _lastMessage;
+
+    QJsonObject _entryData;
 
     bool _loading;
     bool _reading;

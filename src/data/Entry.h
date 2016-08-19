@@ -88,6 +88,7 @@ public:
     Entry(QObject* parent = nullptr);
     Entry(const QJsonObject data, Conversation* chat);
     Entry(const QJsonObject data, QObject* parent = nullptr);
+    ~Entry();
 
     Q_INVOKABLE CommentsModel*       commentsModel();
     Q_INVOKABLE AttachedImagesModel* attachedImagesModel() { return _attachedImagesModel; }
@@ -134,6 +135,7 @@ private slots:
     void _setWatched();
     void _correctHtml();
     void _setNotLoading();
+    void _setChatId();
 
 private:
     QString     _createdAt;
@@ -154,10 +156,10 @@ private:
     Media*      _media;
 //    QJsonObject _imagePreview;
     int         _wordCount;
+    int         _chatId;
 
     QJsonArray _commentsData;
 
-    Conversation*        _chat;
     CommentsModel*       _commentsModel;
     AttachedImagesModel* _attachedImagesModel;
 

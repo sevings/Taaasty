@@ -36,7 +36,7 @@ Conversation::Conversation(QObject* parent)
     , _isDisabled(false)
     , _notDisturb(false)
     , _isAnonymous(false)
-    , _entry(nullptr)
+    , _entryId(0)
     , _recipient(nullptr)
     , _messages(nullptr)
     , _loading(false)
@@ -59,22 +59,20 @@ Conversation::Conversation(Entry* entry)
     , _isDisabled(false)
     , _notDisturb(false)
     , _isAnonymous(false)
-    , _entry(nullptr)
+    , _entryId(0)
     , _recipient(nullptr)
     , _messages(new MessagesModel(this))
     , _loading(false)
     , _reading(false)
 {
     setEntryId(entry->entryId());
-
-    _entry = entry;
 }
 
 
 
 Conversation::Conversation(const QJsonObject data, QObject *parent)
     : QObject(parent)
-    , _entry(nullptr)
+    , _entryId(0)
     , _recipient(nullptr)
     , _messages(nullptr)
     , _loading(false)
@@ -105,6 +103,8 @@ void Conversation::setId(int id)
         return;
 
     _id = id;
+
+    Tasty::instance()->pusher()->addChat(this);
 
     update();
 }
@@ -145,8 +145,12 @@ void Conversation::setSlug(const QString slug)
 
 void Conversation::setEntryId(int entryId)
 {
-    if (_loading || entryId <= 0 || (_entry && _entry->entryId() == entryId))
+    if (_loading || entryId <= 0 || _entryId == entryId)
         return;
+
+    _entryId = entryId;
+
+    Tasty::instance()->pusher()->addChat(this);
 
     auto data = QString("id=%1").arg(entryId);
     auto request = new ApiRequest(QString("v2/messenger/conversations/by_entry_id.json"), true, QNetworkAccessManager::PostOperation, data);
@@ -187,20 +191,28 @@ void Conversation::_init(const QJsonObject data)
      _canDelete         = data.value("can_delete").toBool(true);
      _isAnonymous       = data.value("is_anonymous").toBool();
 
+     Tasty::instance()->pusher()->addChat(this);
+
      if (!_messages)
      {
          _messages      = new MessagesModel(this);
 
          Q_TEST(connect(_messages, SIGNAL(lastMessageChanged()), this, SIGNAL(lastMessageChanged())));
      }
-//     else
-//         _messages->reset();
 
-     if (!_entry && data.contains("entry"))
+     if (data.contains("entry"))
      {
-        _entry          = new Entry(data.value("entry").toObject(), this);
+         _entryData = data.value("entry").toObject();
+         _entryId = _entryData.value("id").toInt();
+         auto entry = Tasty::instance()->pusher()->entry(_entryId);
+         if (entry)
+             entry->setParent(this);
+         else
+             entry = new Entry(_entryData, this);
 
-        Q_TEST(connect(_entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
+         Tasty::instance()->pusher()->addChat(this);
+
+         Q_TEST(connect(entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
      }
 
      if (!_recipient && data.contains("recipient"))
@@ -210,9 +222,10 @@ void Conversation::_init(const QJsonObject data)
          _topic         = data.value("topic").toString();
      else if (_recipient)
          _topic         = _recipient->name();
-     else if (_entry)
+     else if (_entryId)
      {
-         _topic         = _entry->title().isEmpty() ? _entry->text() : _entry->title();
+         auto e = entry();
+         _topic         = e->title().isEmpty() ? e->text() : e->title();
          _topic.remove(QRegularExpression("<[^>]*>"))
                  .replace('\n', ' ').truncate(100);
      }
@@ -241,8 +254,6 @@ void Conversation::_init(const QJsonObject data)
      }
 
      _lastMessage       = new Message(data.value("last_message").toObject(), this, this);
-
-     Tasty::instance()->pusher()->addChat(this);
 
      emit isInvolvedChanged();
      emit unreadCountChanged();
@@ -343,12 +354,12 @@ User* Conversation::user(int id)
 
 
 
-MessageBase* Conversation::lastMessage() const
+MessageBase* Conversation::lastMessage()
 {
     MessageBase* last = nullptr;
 
-    if (_entry)
-        last = _entry->commentsModel()->lastComment();
+    if (_entryId)
+        last = entry()->commentsModel()->lastComment();
 
     if (last)
         return last;
@@ -378,7 +389,7 @@ int Conversation::totalCount() const
 
 void Conversation::update()
 {
-    if (_id <= 0)
+    if (_id <= 0 || _loading)
         return;
 
     auto request = new ApiRequest(QString("/v2/messenger/conversations/by_id/%1.json").arg(_id), true);
@@ -485,10 +496,24 @@ void Conversation::_emitLeft(const QJsonObject data)
     emit Tasty::instance()->info("Беседа удалена");
 }
 
-Entry* Conversation::entry() const
+
+
+Entry* Conversation::entry()
 {
-    return _entry;
+    if (!_entryId)
+        return nullptr;
+
+    auto e = Tasty::instance()->pusher()->entry(_entryId);
+    if (e)
+        return e;
+
+    e = new Entry(_entryData, this);
+    _entryData = QJsonObject();
+    e->setId(_entryId);
+    return e;
 }
+
+
 
 int Conversation::unreadCount() const
 {

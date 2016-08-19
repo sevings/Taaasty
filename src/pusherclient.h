@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QJsonObject>
-#include <QMultiHash>
+#include <QHash>
 #include <QTimer>
 
 class Pusher;
@@ -12,6 +12,7 @@ class Conversation;
 class Message;
 class Comment;
 class Notification;
+class Entry;
 
 
 
@@ -23,7 +24,13 @@ public:
 
     void addChat(Conversation* chat);
     void removeChat(Conversation* chat);
-    Conversation* chat(int entryId) const;
+
+    Conversation* chat(int id) const;
+    Conversation* chatByEntry(int entryId) const;
+
+    void addEntry(Entry* entry);
+    void removeEntry(int id);
+    Entry* entry(int id) const;
 
     void addMessage(Message* msg);
     void removeMessage(int id);
@@ -60,8 +67,9 @@ private:
 
     QTimer _readyTimer;
 
-    QMultiHash<int, Conversation*>   _chats;
+    QHash<int, Conversation*>   _chats;
     QHash<int, Conversation*>   _chatsByEntry;
+    QHash<int, Entry*>          _entries;
     QHash<int, Message*>        _messages;
     QHash<int, Comment*>        _comments;
     QHash<int, Notification*>   _notifications;

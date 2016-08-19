@@ -62,7 +62,6 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void _addChat(const QJsonObject data);
     void _addUnread(QJsonArray data);
     void _addChats(QJsonArray data);
     void _setNotLoading(QObject* request);
@@ -72,8 +71,10 @@ private slots:
 private:
     void _bubbleChat(int id);
 
-    QList<Conversation*> _allChats;
-    QList<Conversation*> _chats;
+    Conversation* _chat(int id) const;
+
+    QList<int>           _allChats;
+    QList<int>           _chats;
     QSet<int>            _ids;
     Mode                 _mode;
 

@@ -7,6 +7,7 @@
 #include "../defines.h"
 
 #include "../tasty.h"
+#include "../pusherclient.h"
 #include "../settings.h"
 #include "../apirequest.h"
 
@@ -37,6 +38,13 @@ FeedModel::FeedModel(QObject* parent)
 
 
 
+FeedModel::~FeedModel()
+{
+    _clear();
+}
+
+
+
 int FeedModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
@@ -52,7 +60,10 @@ QVariant FeedModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == Qt::UserRole)
-        return QVariant::fromValue<Entry*>(_entries.at(index.row()));
+    {
+        auto id = _entries.at(index.row());
+        return QVariant::fromValue<Entry*>(_entry(id));
+    }
 
     qDebug() << "role" << role;
 
@@ -187,13 +198,7 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query)
     delete _request;
     _request = nullptr;
 
-    auto entries = _allEntries.isEmpty() ? _entries : _allEntries;
-    foreach (auto e, entries)
-        if (e->parent() == this)
-            delete e;
-
-    _entries.clear();
-    _allEntries.clear();
+    _clear();
 
     endResetModel();
 
@@ -336,7 +341,11 @@ void FeedModel::_addItems(QJsonObject data)
         auto obj = item.toObject();
         auto json = obj.contains("entry") ? obj.value("entry").toObject()
                                           : obj;
-        auto entry = new Entry(json, this);
+        auto id = json.value("id").toInt();
+        auto entry = Tasty::instance()->pusher()->entry(id);
+        if (!entry)
+            entry = new Entry(json, this);
+
         all << entry;
     }
 
@@ -371,7 +380,7 @@ void FeedModel::_addNewPost(QJsonObject data)
     auto entry = new Entry(data, this);
 
     beginInsertRows(QModelIndex(), 0, 0);
-    _entries.prepend(entry);
+    _entries.prepend(entry->entryId());
     endInsertRows();
 
     emit entryCreated(entry);
@@ -392,8 +401,8 @@ void FeedModel::_changeHideSome()
     bool n = hideNegative();
 
     foreach (auto e, _allEntries)
-        if ((!s || e->wordCount() >= 100)
-            && (!n || e->rating()->bayesRating() >= 0))
+        if ((!s || _entry(e)->wordCount() >= 100)
+            && (!n || _entry(e)->rating()->bayesRating() >= 0))
             _entries << e;
 
     endResetModel();
@@ -443,8 +452,8 @@ void FeedModel::_reloadRatings()
     QString url("v1/ratings.json?ids=");
     url.reserve(entries.size() * 9 + 20);
     for (int i = 0; i < entries.size() - 1; i++)
-        url += QString("%1,").arg(entries.at(i)->entryId());
-    url += QString::number(entries.last()->entryId());
+        url += QString("%1,").arg(entries.at(i));
+    url += QString::number(entries.last());
 
     auto request = new ApiRequest(url);
     Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
@@ -462,9 +471,9 @@ void FeedModel::_setRatings(const QJsonArray data)
     {
         auto id = rating.toObject().value("entry_id").toInt();
         foreach (auto entry, entries) //! \todo optimize
-            if (entry->entryId() == id)
+            if (entry == id)
             {
-                entry->rating()->init(rating.toObject());
+                _entry(entry)->rating()->init(rating.toObject());
                 break;
             }
     }
@@ -475,7 +484,8 @@ void FeedModel::_setRatings(const QJsonArray data)
 void FeedModel::_addAll(QList<Entry*>& all)
 {
     beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + all.size() - 1);
-    _entries << all;
+    foreach (auto e, all)
+        _entries << e->entryId();
     endInsertRows();
 }
 
@@ -486,13 +496,15 @@ bool FeedModel::_addSome(QList<Entry*>& all)
     bool s = hideShort();
     bool n = hideNegative();
 
-    _allEntries << all;
-
-    QList<Entry*> some;
+    QList<int> some;
     foreach (auto e, all)
+    {
+        _allEntries << e->entryId();
+
         if ((!s || e->wordCount() >= 100)
             && (!n || e->rating()->bayesRating() >= 0))
-            some << e;
+            some << e->entryId();
+    }
 
     if (some.isEmpty())
         return true;
@@ -502,6 +514,23 @@ bool FeedModel::_addSome(QList<Entry*>& all)
     endInsertRows();
 
     return false;
+}
+
+
+
+void FeedModel::_clear()
+{
+    auto entries = _allEntries.isEmpty() ? _entries : _allEntries;
+    foreach (auto e, entries)
+    {
+        auto entry = Tasty::instance()->pusher()->entry(e);
+        if (entry && (!entry->parent() || entry->parent() == this))
+            delete entry;
+    }
+
+    _entries.clear();
+    _allEntries.clear();
+
 }
 
 
@@ -548,4 +577,17 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
     default:
         qDebug() << "feed mode =" << mode;
     }
+}
+
+
+
+Entry*FeedModel::_entry(int id) const
+{
+    auto e = Tasty::instance()->pusher()->entry(id);
+    if (e)
+        return e;
+
+    e = new Entry();
+    e->setId(id);
+    return e;
 }

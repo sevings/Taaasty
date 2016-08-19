@@ -52,6 +52,7 @@ public:
     Q_ENUMS(Privacy)
 
     FeedModel(QObject* parent = nullptr);
+    ~FeedModel();
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -111,11 +112,14 @@ private slots:
 private:
     void _addAll(QList<Entry*>& all);
     bool _addSome(QList<Entry*>& all);
+    void _clear();
 
     void _setUrl(Mode mode);
 
-    QList<Entry*> _entries;
-    QList<Entry*> _allEntries;
+    Entry* _entry(int id) const;
+
+    QList<int> _entries;
+    QList<int> _allEntries;
     QString _url;
     int _tlog;
     QString _slug;
