@@ -3,6 +3,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QFile>
+#include <QDir>
 #include <QImage>
 #include <QBuffer>
 #include <QtConcurrent>
@@ -182,15 +183,17 @@ void CachedImage::saveToFile(const QString filename)
     if (!_available)
         return;
 
-//    auto to = QFileDialog::getSaveFileName(nullptr, "Сохранить изображение как…",
-//                                           QStandardPaths::writableLocation(QStandardPaths::PicturesLocation),
-//                                           QString("Файлы изображений (*%1%2)").arg(_extension.isEmpty() ? "" : ".").arg(_extension));
-
     if (filename.isEmpty())
         return;
 
-    auto to = QString("%1/%2%3%4")
-            .arg(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation))
+    auto pathTo = QString("%1/Taaasty/")
+            .arg(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
+
+    QDir dirTo;
+    dirTo.mkpath(pathTo);
+
+    auto to = QString("%1%2%3%4")
+            .arg(pathTo)
             .arg(filename)
             .arg(_extension.isEmpty() ? QString() : ".")
             .arg(_extension);
