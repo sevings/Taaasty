@@ -103,7 +103,8 @@ void Tlog::_init(const QJsonObject data)
     _hisRelation = _relationship(data, "his_relationship");
     _myRelation =  _relationship(data, "my_relationship");
 
-    auto authorData = data.value("author").toObject();
+    auto authorData = data.contains("author")
+            ? data.value("author").toObject() : data;
     if (_author)
         _author->_init(authorData);
     else

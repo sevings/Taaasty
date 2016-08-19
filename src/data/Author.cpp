@@ -57,6 +57,16 @@ bool Author::isDaylog() const
 
 
 
+void Author::checkStatus()
+{
+    auto url = QString("v1/online_statuses.json?user_ids=%1").arg(id());
+    auto request = new ApiRequest(url);
+
+    Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_initStatus(QJsonArray))));
+}
+
+
+
 void Author::reload()
 {
     if (id() <= 0)
@@ -66,16 +76,6 @@ void Author::reload()
     connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject)));
 
     _loading = true;
-}
-
-
-
-void Author::checkStatus()
-{
-    auto url = QString("v1/online_statuses.json?user_ids=%1").arg(id());
-    auto request = new ApiRequest(url);
-
-    Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_initStatus(QJsonArray))));
 }
 
 

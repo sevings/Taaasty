@@ -37,10 +37,9 @@ public:
     bool isPremium() const;
     bool isDaylog() const;
 
-    void reload();
-
 public slots:
     void checkStatus();
+    void reload();
 
 signals:
     void authorUpdated();

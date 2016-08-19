@@ -17,7 +17,13 @@ Pane {
         visible: !column.visible && !pauseAnimations
     }
     Component.onCompleted: {
-        if (tlog.tlogId && tlog.slug)
+        if (!tlog.slug.length)
+        {
+            tlog.reload();
+            if (tlog.tlogId !== author.id)
+                author.reload();
+        }
+        else if (tlog.tlogId && tlog.slug)
             tlog.author.checkStatus();
     }
     Flickable {
