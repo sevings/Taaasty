@@ -50,6 +50,8 @@ public slots:
     QString slug() const                { return _slug; }
     void    setSlug(const QString slug);
 
+    void reload();
+
 signals:
     void updated();
     void loadingChanged();

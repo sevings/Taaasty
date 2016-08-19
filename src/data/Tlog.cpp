@@ -38,12 +38,9 @@ void Tlog::setId(const int id)
         return;
 
     _id = id;
+    _slug.clear();
 
-    auto request = new ApiRequest(QString("v1/tlog/%1.json").arg(_id));
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
-
-    _loading = true;
-    emit loadingChanged();
+    reload();
 }
 
 
@@ -54,8 +51,25 @@ void Tlog::setSlug(const QString slug)
         return;
 
    _slug = slug;
+   _id = 0;
 
-    auto request = new ApiRequest(QString("v1/tlog/%1.json").arg(_slug));
+   reload();
+}
+
+
+
+void Tlog::reload()
+{
+    if (_slug.isEmpty() && !_id)
+            return;
+
+    auto url = QString("v1/tlog/%1.json");
+    if (_id)
+        url = url.arg(_id);
+    else
+        url = url.arg(_slug);
+
+    auto request = new ApiRequest(url);
     connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
 
     _loading = true;
