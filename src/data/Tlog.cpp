@@ -60,7 +60,7 @@ void Tlog::setSlug(const QString slug)
 
 void Tlog::reload()
 {
-    if (_slug.isEmpty() && !_id)
+    if ((_slug.isEmpty() && !_id) || _loading)
             return;
 
     auto url = QString("v1/tlog/%1.json");
