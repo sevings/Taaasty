@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QJsonArray>
 
 class Author;
 class Tlog;
@@ -63,6 +64,7 @@ class Entry: public EntryBase
     Q_PROPERTY(bool        isFavoritable  MEMBER _isFavoritable     NOTIFY updated)
     Q_PROPERTY(bool        isFavorited    MEMBER _isFavorited       NOTIFY favoritedChanged)
     Q_PROPERTY(bool        isPrivate      MEMBER _isPrivate         NOTIFY updated)
+    Q_PROPERTY(bool        isFixed        MEMBER _isFixed           NOTIFY updated)
     Q_PROPERTY(Tlog*       tlog           MEMBER _tlog              NOTIFY updated)
     Q_PROPERTY(Author*     author         MEMBER _author            NOTIFY updated)
     Q_PROPERTY(Rating*     rating         MEMBER _rating            NOTIFY updated)
@@ -102,6 +104,8 @@ public:
 
     Conversation* chat();
 
+    bool isFixed() const;
+
 public slots:
     void setId(const int id);
     void reload();
@@ -140,6 +144,7 @@ private:
     bool        _isFavoritable;
     bool        _isFavorited;
     bool        _isPrivate;
+    bool        _isFixed;
     Tlog*       _tlog;
     Rating*     _rating;
     int         _commentsCount;
@@ -149,6 +154,8 @@ private:
     Media*      _media;
 //    QJsonObject _imagePreview;
     int         _wordCount;
+
+    QJsonArray _commentsData;
 
     Conversation*        _chat;
     CommentsModel*       _commentsModel;

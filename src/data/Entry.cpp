@@ -102,6 +102,7 @@ Entry::Entry(QObject* parent)
     , _isFavoritable(false)
     , _isFavorited(false)
     , _isPrivate(false)
+    , _isFixed(false)
     , _tlog(new Tlog(this))
     , _rating(new Rating(this))
     , _commentsCount(0)
@@ -154,6 +155,8 @@ CommentsModel* Entry::commentsModel()
 
     delete _commentsModel;
     _commentsModel = new CommentsModel(this);
+    _commentsModel->init(_commentsData);
+    _commentsData = QJsonArray();
 
     Q_TEST(connect(_commentsModel,    SIGNAL(totalCountChanged(int)),   this, SLOT(_setCommentsCount(int))));
 
@@ -179,7 +182,7 @@ void Entry::setId(const int id)
 
 void Entry::reload()
 {
-    auto request = new ApiRequest(QString("v1/entries/%1.json").arg(_id));
+    auto request = new ApiRequest(QString("v1/entries/%1.json?include_comments=true").arg(_id));
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
 
@@ -278,15 +281,22 @@ void Entry::_init(const QJsonObject data)
     _isWatchable     = data.value("can_watch").toBool();
     _isWatched       = data.value("is_watching").toBool();
     _isPrivate       = data.value("is_private").toBool();
+    _isFixed         = data.value("fixed_state").toString("not_fixed") != "not_fixed"; //! \todo check other values
     _tlog            = new Tlog(data.value("tlog").toObject(), this);
     _rating          = new Rating(data.value("rating").toObject(), this);
     _commentsCount   = data.value("comments_count").toInt();
     _truncatedTitle  = data.value("title_truncated").toString();
     _truncatedText   = data.value("text_truncated").toString();
-    _source          = data.value("source").toString(); //! \todo what is this?
+    _source          = data.value("source").toString(); // quote author
     _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
                                          : nullptr; // music?
 //    _imagePreview    = data.value("preview_image").toObject();
+    _commentsData    = data.value("comments").toArray();
+    if (_commentsModel && _commentsModel->entryId() == _id)
+    {
+        _commentsModel->init(_commentsData);
+        _commentsData = QJsonArray();
+    }
 
     _correctHtml();
 
@@ -380,6 +390,11 @@ void Entry::_setNotLoading()
 
     if (!_tlog || _tlog->tlogId() <= 0)
         emit updatingError(); // TODO: emit it only after setId()
+}
+
+bool Entry::isFixed() const
+{
+    return _isFixed;
 }
 
 

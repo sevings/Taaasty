@@ -164,6 +164,17 @@ Q.Drawer {
                          || (page.isMessagesView === true
                              && page.chat.isInvolved)
             }
+            MenuSeparator {
+                visible: page.isFullEntryView === true
+            }
+            MenuItem {
+                text: 'Перезагрузить'
+                onTriggered: {
+                    page.entry.reload();
+                    drawer.close();
+                }
+                visible: page.isFullEntryView === true
+            }
 
             // FLOWS SECTION
             MenuItem {

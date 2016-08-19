@@ -25,7 +25,7 @@ class Tlog: public QObject
     Q_PROPERTY(Relationship hisRelationship     MEMBER _hisRelation         NOTIFY updated)
     Q_PROPERTY(Author*      author              MEMBER _author              NOTIFY updated)
 
-    Q_PROPERTY(bool loading                MEMBER _loading             NOTIFY loadingChanged)
+    Q_PROPERTY(bool loading                     MEMBER _loading             NOTIFY loadingChanged)
 
 public:
     enum Relationship {

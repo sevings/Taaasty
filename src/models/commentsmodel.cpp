@@ -9,7 +9,9 @@
 #include "../data/Notification.h"
 #include "../data/Conversation.h"
 #include "../data/Entry.h"
+
 #include "../apirequest.h"
+
 #include "notificationsmodel.h"
 
 
@@ -20,7 +22,9 @@ CommentsModel::CommentsModel(Entry *entry)
     , _loading(false)
     , _checking(false)
     , _totalCount(0)
-    , _url("v1/comments.json?entry_id=%1&limit=1000")
+    , _url("v1/comments.json?entry_id=%1&limit=50")
+    , _request(nullptr)
+    , _entry(entry)
 {
     if (!entry)
         return;
@@ -33,6 +37,35 @@ CommentsModel::CommentsModel(Entry *entry)
         
     if (entry->chat())
         Q_TEST(connect(entry->chat(), SIGNAL(messageReceived(QJsonObject)), this, SLOT(check())));
+}
+
+
+
+void CommentsModel::init(const QJsonArray feed)
+{
+    auto reset = _comments.size() != feed.size();
+    if (reset)
+        beginResetModel();
+
+    _comments.clear();
+    _ids.clear();
+    _loading = false;
+    _checking = false;
+
+    delete _request;
+    _request = nullptr;
+
+    auto cmts = _commentsList(feed);
+    if (!cmts.isEmpty() && cmts.first()->id() > cmts.last()->id())
+    {
+        for (auto it = cmts.rbegin(); it != cmts.rend(); ++it)
+            _comments << *it;
+    }
+    else
+        _comments = cmts;
+
+    if (reset)
+        endResetModel();
 }
 
 
@@ -71,7 +104,7 @@ void CommentsModel::setEntryId(const int id)
 
 void CommentsModel::check()
 {
-    if (_checking || !_entryId)
+    if (_checking || !_entryId || !_entry || _entry->loading())
         return;
 
     _checking = true;
@@ -99,7 +132,7 @@ Comment* CommentsModel::lastComment() const
 
 void CommentsModel::loadMore()
 {
-    if (_loading || !_entryId)// || !hasMore())
+    if (_loading || !_entryId || !_entry || _entry->loading())// || !hasMore())
         return;
 
     _loading = true;
@@ -137,6 +170,18 @@ void CommentsModel::_addComments(const QJsonObject data)
         return;
     }
 
+    _setTotalCount(data.value("total_count").toInt());
+
+    _addComments(feed);
+
+    _loading = false;
+    emit loadingChanged();
+}
+
+
+
+void CommentsModel::_addComments(const QJsonArray feed)
+{
     auto cmts = _commentsList(feed);
     if (cmts.isEmpty())
     {
@@ -147,10 +192,8 @@ void CommentsModel::_addComments(const QJsonObject data)
 
     beginInsertRows(QModelIndex(), 0, cmts.size() - 1);
 
-    _setTotalCount(data.value("total_count").toInt());
-
     _comments = cmts + _comments;
-    
+
     endInsertRows();
 
     if (_comments.size() <= feed.size())
@@ -158,9 +201,6 @@ void CommentsModel::_addComments(const QJsonObject data)
 
 //    if (_comments.size() >= _totalCount)
         emit hasMoreChanged();
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 

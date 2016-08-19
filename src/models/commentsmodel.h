@@ -24,6 +24,8 @@ class CommentsModel : public QAbstractListModel
 public:
     explicit CommentsModel(Entry* entry = nullptr);
 
+    void init(const QJsonArray feed);
+
     Q_INVOKABLE int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
@@ -51,6 +53,7 @@ protected:
 
 private slots:
     void _addComments(const QJsonObject data);
+    void _addComments(const QJsonArray feed);
     void _addLastComments(const QJsonObject data);
     void _addComment(const QJsonObject data);
     void _removeComment(QObject* cmt);
@@ -71,6 +74,7 @@ private:
     const QString   _url;
 
     ApiRequest* _request;
+    Entry*      _entry;
 };
 
 #endif // COMMENTSMODEL_H

@@ -281,8 +281,9 @@ Pane {
                 font.pointSize: entry.truncatedText.length > 0 ? window.fontBigger
                                                                : window.fontNormal
                 textFormat: Text.RichText
-                height: entry.truncatedTitle.length > 0 ? contentHeight
-                                                        : entry.truncatedText.length > 0 ? -2 * mm : 0
+                visible: entry.type !== 'quote'
+                height: visible && entry.truncatedTitle.length > 0
+                        ? contentHeight : entry.truncatedText.length > 0 ? -2 * mm : 0
             }
             ThemedText {
                 id: content

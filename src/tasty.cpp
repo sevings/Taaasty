@@ -163,7 +163,7 @@ void Tasty::_readAccessToken(const QJsonObject data)
     auto accessToken = apiKey.value("access_token").toString();
     auto expiresAt   = apiKey.value("expires_at").toString();
     auto userId      = apiKey.value("user_id").toInt();
-    auto login       = data.value("name").toString();
+    auto login       = data.value("slug").toString();
 
     _settings->setAccessToken(accessToken);
     _settings->setExpiresAt(expiresAt);
