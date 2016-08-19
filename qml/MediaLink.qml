@@ -23,5 +23,6 @@ MyImage {
         style: Text.Outline
         styleColor: window.backgroundColor
         text: media ? media.title : ''
+        z: link.z + 1
     }
 }

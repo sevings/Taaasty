@@ -268,6 +268,7 @@ Pane {
                 sourceComponent: MediaLink {
                     paused: pauseAnimations
                     acceptClick: false
+                    popBody: back
                 }
             }
             ThemedText {
