@@ -356,19 +356,20 @@ User* Conversation::user(int id)
 
 MessageBase* Conversation::lastMessage()
 {
-    MessageBase* last = nullptr;
+    MessageBase* last = _lastMessage;
 
     if (_entryId)
-        last = entry()->commentsModel()->lastComment();
+    {
+        auto lst = entry()->commentsModel()->lastComment();
+        if (lst && lst->createdDate() > last->createdDate())
+            last = lst;
+    }
 
-    if (last)
-        return last;
+    auto lst = _messages->lastMessage();
+    if (lst && lst->createdDate() > last->createdDate())
+        last = lst;
 
-    last = _messages->lastMessage();
-    if (last)
-        return last;
-
-    return _lastMessage;
+    return last;
 }
 
 

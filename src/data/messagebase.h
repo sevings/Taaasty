@@ -2,6 +2,7 @@
 #define MESSAGEBASE_H
 
 #include <QObject>
+#include <QDateTime>
 
 class User;
 
@@ -21,9 +22,9 @@ class MessageBase : public QObject
 public:
     explicit MessageBase(QObject* parent = nullptr);
 
-    int id() const;
-
-    bool isRead() const;
+    int         id() const;
+    bool        isRead() const;
+    QDateTime   createdDate() const;
 
 signals:
     void baseUpdated();
@@ -32,13 +33,15 @@ signals:
 
 protected:
     void _setTruncatedText();
+    void _setDate(const QString d);
 
-    int     _id;
-    QString _createdAt;
-    QString _text;
-    QString _truncatedText;
-    User*   _user;
-    bool    _read;
+    int         _id;
+    QString     _createdAt;
+    QDateTime   _date;
+    QString     _text;
+    QString     _truncatedText;
+    User*       _user;
+    bool        _read;
 };
 
 #endif // MESSAGEBASE_H

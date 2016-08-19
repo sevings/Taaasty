@@ -29,9 +29,23 @@ bool MessageBase::isRead() const
 
 
 
+QDateTime MessageBase::createdDate() const
+{
+    return _date;
+}
+
+
+
 void MessageBase::_setTruncatedText()
 {
     _truncatedText = _text;
     _truncatedText.remove(QRegularExpression("<[^>]*>"))
             .replace('\n', ' ').truncate(100);
+}
+
+
+
+void MessageBase::_setDate(const QString d)
+{
+    _date = QDateTime::fromString(d.left(19), "yyyy-MM-ddTHH:mm:ss");
 }

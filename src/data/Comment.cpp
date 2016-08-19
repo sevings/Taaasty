@@ -70,7 +70,9 @@ void Comment::_init(const QJsonObject data)
     _user           = new User(data.value("user").toObject(), this);
 
     _text           = data.value("comment_html").toString();
-    _createdAt      = Tasty::parseDate(data.value("created_at").toString());
+    auto d = data.value("created_at").toString();
+    _createdAt      = Tasty::parseDate(d);
+    _setDate(d);
     _isEditable     = data.value("can_edit").toBool();
     _isReportable   = data.value("can_report").toBool();
     _isDeletable    = data.value("can_delete").toBool();
