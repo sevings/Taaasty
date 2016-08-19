@@ -44,7 +44,8 @@ PusherClient::PusherClient(Tasty* tasty)
 
 void PusherClient::addChat(Conversation* chat)
 {
-    _chats.insert(chat->id(), chat);
+    if (!_chats.contains(chat->id(), chat))
+        _chats.insert(chat->id(), chat);
     
     auto entry = chat->entry();
     if (entry)

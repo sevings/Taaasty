@@ -203,11 +203,8 @@ void Conversation::_init(const QJsonObject data)
         Q_TEST(connect(_entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
      }
 
-     delete _recipient;
-     if (data.contains("recipient"))
+     if (!_recipient && data.contains("recipient"))
          _recipient     = new Author(data.value("recipient").toObject(), this);
-     else
-         _recipient     = nullptr;
 
      if (data.contains("topic"))
          _topic         = data.value("topic").toString();
