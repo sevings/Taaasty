@@ -45,8 +45,7 @@ Pane {
         }
         delegate: Item {
             width: window.width
-            readonly property int textHeight: messageText.y + messageText.height + 1 * mm
-            height: messageImages.y + messageImages.height
+            height: messageNick.height + messageText.height + messageImages.height + 4 * mm
             Poppable {
                 body: back
             }

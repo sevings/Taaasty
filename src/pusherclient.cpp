@@ -28,6 +28,11 @@ PusherClient::PusherClient(Tasty* tasty)
     if (!tasty)
         return;
 
+    _readyTimer.setInterval(300000);
+    _readyTimer.setSingleShot(false);
+
+    Q_TEST(QObject::connect(&_readyTimer, SIGNAL(timeout()), this, SLOT(_sendReady())));
+
     if (tasty->isAuthorized())
         _addPrivateChannel();
 
@@ -261,9 +266,14 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
 
 void PusherClient::_sendReady()
 {
-    auto data = QString("socket_id=%1").arg(_pusher->socketId());
-    new ApiRequest("v2/messenger/only_ready.json", true,
-                   QNetworkAccessManager::PostOperation, data);
+    if (_pusher->isConnected())
+    {
+        auto data = QString("socket_id=%1").arg(_pusher->socketId());
+        new ApiRequest("v2/messenger/only_ready.json", true,
+                       QNetworkAccessManager::PostOperation, data);
+    }
+    else
+        _pusher->connect();
 }
 
 
@@ -275,5 +285,6 @@ void PusherClient::_addPrivateChannel()
 
     Q_TEST(QObject::connect(ch, SIGNAL(authNeeded()),           this, SLOT(_getPusherAuth())));
     Q_TEST(QObject::connect(ch, SIGNAL(subscribed()),           this, SLOT(_sendReady())));
+    Q_TEST(QObject::connect(ch, SIGNAL(subscribed()),   &_readyTimer, SLOT(start())));
     Q_TEST(QObject::connect(ch, SIGNAL(event(QString,QString)), this, SLOT(_handlePrivatePusherEvent(QString,QString))));
 }

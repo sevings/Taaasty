@@ -283,7 +283,7 @@ void Entry::_init(const QJsonObject data)
     _commentsCount   = data.value("comments_count").toInt();
     _truncatedTitle  = data.value("title_truncated").toString();
     _truncatedText   = data.value("text_truncated").toString();
-    _source          = data.value("source").toString();
+    _source          = data.value("source").toString(); //! \todo what is this?
     _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
                                          : nullptr; // music?
 //    _imagePreview    = data.value("preview_image").toObject();

@@ -9,22 +9,11 @@ Q.Pane {
     property bool poppable
     signal popped
     onPopped: window.popFromStack()
-    property bool pauseAnimations: false
-    layer.enabled: true// x > 0 && opacity === 1
-    layer.effect: ElevationEffect {
-        elevation: 24
-    }
     property Flickable innerFlick
-    Connections {
-        target: innerFlick
-        onMovementStarted: {
-            pauseAnimations = pane.x > 0 || innerFlick.movingVertically
-        }
-        onMovementEnded: {
-            pauseAnimations = pane.x > 0 || innerFlick.movingVertically
-        }
-    }
-    onXChanged: {
-        pauseAnimations = pane.x > 0 || (innerFlick && innerFlick.movingVertically)
-    }
+    property bool pauseAnimations: pane.x > 0 || (innerFlick && innerFlick.movingVertically)
+//    layer.enabled: !innerFlick || !innerFlick.movingVertically
+//    layer.sourceRect: Qt.rect(0, 0, 100, window.height)
+//    layer.effect: ElevationEffect {
+//        elevation: 24
+//    }
 }

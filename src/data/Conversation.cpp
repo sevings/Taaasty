@@ -319,7 +319,7 @@ User* Conversation::user(int id)
     if (_users.contains(id))
         return _users.value(id);
 
-    if (id == _recipientId)
+    if (id == _recipientId && _recipient)
         return _recipient;
 
     if (id == Tasty::instance()->settings()->userId())

@@ -81,6 +81,7 @@ void Message::_init(const QJsonObject data)
     _text           = data.value("content_html").toString().replace("&amp;", "&"); // TODO: SystemMessage
 
     _user = _chat->user(_userId);
+    Q_ASSERT(_user);
     
     auto imageAttach = data.value("attachments").toArray();
     delete _attachedImagesModel;

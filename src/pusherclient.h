@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QMultiHash>
+#include <QTimer>
 
 class Pusher;
 class Tasty;
@@ -56,6 +57,8 @@ private:
     QString _privateChannel;
 
     Tasty* _tasty;
+
+    QTimer _readyTimer;
 
     QMultiHash<int, Conversation*>   _chats;
     QHash<int, Conversation*>   _chatsByEntry;
