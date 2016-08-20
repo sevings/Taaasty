@@ -111,15 +111,16 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     else if (_mode == BetterThanMode)
         url = url.arg(_minRating);
 
-    auto splitter = _url.endsWith(".json") ? "?" : "&";
+    auto splitter = url.endsWith(".json") ? "?" : "&";
 
     if (!_query.isEmpty())
         url += QString("%1q=%2&page=%3").arg(splitter).arg(_query).arg(_page++);
     else if (_lastEntry)
         url += QString("%1since_entry_id=%2").arg(splitter).arg(_lastEntry);
 
-//    int limit = _entries.isEmpty() && _query.isEmpty() ? 10 : 20;
-//    url += QString("&limit=%1").arg(limit);
+    splitter = url.endsWith(".json") ? "?" : "&";
+    int limit = _entries.isEmpty() && _query.isEmpty() ? 10 : 20;
+    url += QString("%1limit=%2").arg(splitter).arg(limit);
 
     _request = new ApiRequest(url);
 

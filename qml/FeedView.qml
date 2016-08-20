@@ -318,7 +318,7 @@ Pane {
                 id: comments
                 text: entry.commentsCount + ' коммент.'
                 font.pointSize: window.fontSmallest
-                color: window.secondaryTextColor
+//                color: window.secondaryTextColor
                 anchors {
                     top: quoteSource.bottom
                     right: parent.right
