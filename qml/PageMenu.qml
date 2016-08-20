@@ -124,6 +124,16 @@ Q.Drawer {
                 visible: page.isChatsView === true
             }
 
+            // MESSAGES SECTION
+            MenuItem {
+                text: 'Перейти к записи'
+                onTriggered: {
+                    window.pushFullEntry(page.chat.entry)
+                    drawer.close();
+                }
+                visible: page.isMessagesView === true && page.chat.entry
+            }
+
             // ENTRY SECTION
             MenuItem {
                 text: page.entry && page.entry.isFavorited
@@ -144,6 +154,15 @@ Q.Drawer {
                 }
                 visible: page.isFullEntryView === true
                          && page.entry.url.length > 0
+            }
+            MenuItem {
+                text: 'Перейти к беседе'
+                onTriggered: {
+                    window.pushMessages(page.entry.chat);
+                    drawer.close();
+                }
+                visible: page.isFullEntryView === true && page.entry.chat.canTalk
+                         && Tasty.isAuthorized
             }
             MenuItem {
                 text: ((page.isFullEntryView === true

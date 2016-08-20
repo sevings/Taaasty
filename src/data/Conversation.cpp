@@ -199,6 +199,8 @@ void Conversation::_init(const QJsonObject data)
 
          Q_TEST(connect(_messages, SIGNAL(lastMessageChanged()), this, SIGNAL(lastMessageChanged())));
      }
+     else
+         _messages->init(this);
 
      if (data.contains("entry"))
      {

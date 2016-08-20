@@ -23,6 +23,8 @@ class MessagesModel : public QAbstractListModel
 public:
     explicit MessagesModel(Conversation* chat = nullptr);
 
+    void init(Conversation* chat);
+
     Q_INVOKABLE int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 

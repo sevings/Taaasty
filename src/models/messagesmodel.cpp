@@ -17,18 +17,31 @@
 MessagesModel::MessagesModel(Conversation* chat)
     : QAbstractListModel(chat)
     , _chat(chat)
+    , _chatId(0)
     , _loading(false)
     , _url("v2/messenger/conversations/by_id/%1/messages.json?limit=20&order=desc")
     , _request(nullptr)
 {
-    if (!chat)
+    init(chat);
+}
+
+
+
+void MessagesModel::init(Conversation* chat)
+{
+    if (!chat || _chatId)
         return;
 
+    beginResetModel();
+
+    _chat = chat;
     _chatId = chat->id();
     _totalCount = chat->totalCount();
 
     Q_TEST(connect(chat, SIGNAL(messageSent(QJsonObject)),      this, SLOT(_addMessage(QJsonObject))));
     Q_TEST(connect(chat, SIGNAL(messageReceived(QJsonObject)),  this, SLOT(_addMessage(QJsonObject))));
+
+    endResetModel();
 }
 
 

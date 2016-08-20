@@ -65,7 +65,7 @@ class Entry: public EntryBase
     Q_PROPERTY(bool        isFavorited    MEMBER _isFavorited       NOTIFY favoritedChanged)
     Q_PROPERTY(bool        isPrivate      MEMBER _isPrivate         NOTIFY updated)
     Q_PROPERTY(bool        isFixed        MEMBER _isFixed           NOTIFY updated)
-    Q_PROPERTY(Tlog*       tlog           MEMBER _tlog              NOTIFY updated)
+    Q_PROPERTY(Tlog*       tlog           READ tlog                 NOTIFY updated)
     Q_PROPERTY(Author*     author         MEMBER _author            NOTIFY updated)
     Q_PROPERTY(Rating*     rating         MEMBER _rating            NOTIFY updated)
     Q_PROPERTY(int         commentsCount  MEMBER _commentsCount     NOTIFY commentsCountChanged)

@@ -8,7 +8,7 @@ Pane {
     property Tlog tlog: Tlog {
         tlogId: chat.recipientId
     }
-    readonly property bool customTitle: chat.type === Chat.GroupConversation
+    readonly property bool customTitle: chat.type !== Chat.PrivateConversation
     readonly property string title: chat.topic
     readonly property bool isMessagesView: true
     Component.onCompleted: {
@@ -80,7 +80,7 @@ Pane {
                     left: parent.left
 //                    right: unreadMessage.visible ? unreadMessage.left : messageDate.left
                     margins: 1 * mm
-                    leftMargin: Settings.userId === message.userId ? 10 * mm : anchors.margins
+                    leftMargin: chat.userId === message.userId ? 10 * mm : anchors.margins
                 }
                 text: message.user.name
                 font.pointSize: window.fontSmaller
@@ -96,7 +96,7 @@ Pane {
                     top: parent.top
                     right: parent.right
                     margins: 1 * mm
-                    rightMargin: Settings.userId === message.userId ? anchors.margins : 10 * mm
+                    rightMargin: chat.userId === message.userId ? anchors.margins : 10 * mm
                 }
                 text: message.createdAt
                 font.pointSize: window.fontSmaller
@@ -124,8 +124,8 @@ Pane {
                     left: parent.left
                     right: parent.right
                     margins: 1 * mm
-                    leftMargin: Settings.userId === message.userId ? 10 * mm : anchors.margins
-                    rightMargin: Settings.userId === message.userId ? anchors.margins : 10 * mm
+                    leftMargin: chat.userId === message.userId ? 10 * mm : anchors.margins
+                    rightMargin: chat.userId === message.userId ? anchors.margins : 10 * mm
                 }
                 font.pointSize: window.fontSmaller
                 text: message.text
