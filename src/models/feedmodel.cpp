@@ -3,6 +3,7 @@
 #include <QDateTime>
 #include <QJsonArray>
 #include <QDebug>
+#include <QQmlEngine>
 
 #include "../defines.h"
 
@@ -110,13 +111,15 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     else if (_mode == BetterThanMode)
         url = url.arg(_minRating);
 
-    if (!_query.isEmpty())
-        url += QString("q=%1&page=%2&").arg(_query).arg(_page++);
-    else if (_lastEntry)
-        url += QString("since_entry_id=%1&").arg(_lastEntry);
+    auto splitter = _url.endsWith(".json") ? "?" : "&";
 
-    int limit = _entries.isEmpty() && _query.isEmpty() ? 10 : 20;
-    url += QString("limit=%1").arg(limit);
+    if (!_query.isEmpty())
+        url += QString("%1q=%2&page=%3").arg(splitter).arg(_query).arg(_page++);
+    else if (_lastEntry)
+        url += QString("%1since_entry_id=%2").arg(splitter).arg(_lastEntry);
+
+//    int limit = _entries.isEmpty() && _query.isEmpty() ? 10 : 20;
+//    url += QString("&limit=%1").arg(limit);
 
     _request = new ApiRequest(url);
 
@@ -524,8 +527,13 @@ void FeedModel::_clear()
     foreach (auto e, entries)
     {
         auto entry = Tasty::instance()->pusher()->entry(e);
-        if (entry && (!entry->parent() || entry->parent() == this))
-            delete entry;
+        if (!entry)
+            continue;
+
+//        if ((!entry->parent()
+//             && QQmlEngine::objectOwnership(entry) == QQmlEngine::CppOwnership)
+//                || entry->parent() == this)
+//            delete entry;
     }
 
     _entries.clear();
@@ -540,38 +548,38 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
     switch(mode)
     {
     case MyTlogMode:
-        _url = QString("v1/tlog/%1/entries/tlogs.json?")
+        _url = QString("v1/tlog/%1/entries/tlogs.json")
                 .arg(Tasty::instance()->settings()->login());
         break;
     case FriendsMode:
-        _url = "v1/my_feeds/friends/tlogs.json?";
+        _url = "v1/my_feeds/friends/tlogs.json";
         break;
     case LiveMode:
-        _url = "v1/feeds/live/tlogs.json?";
+        _url = "v1/feeds/live/tlogs.json";
         break;
     case AnonymousMode:
-        _url = "v1/feeds/anonymous/tlogs.json?";
+        _url = "v1/feeds/anonymous/tlogs.json";
         break;
     case BestMode:
-        _url = "v1/feeds/best/tlogs.json?rating=best&";
+        _url = "v1/feeds/best/tlogs.json?rating=best";
         break;
     case ExcellentMode:
-        _url = "v1/feeds/best/tlogs.json?rating=excellent&";
+        _url = "v1/feeds/best/tlogs.json?rating=excellent";
         break;
     case WellMode:
-        _url = "v1/feeds/best/tlogs.json?rating=well&";
+        _url = "v1/feeds/best/tlogs.json?rating=well";
         break;
     case GoodMode:
-        _url = "v1/feeds/best/tlogs.json?rating=good&";
+        _url = "v1/feeds/best/tlogs.json?rating=good";
         break;
     case BetterThanMode:
-        _url = "v1/feeds/best/tlogs.json?rating=%1&";
+        _url = "v1/feeds/best/tlogs.json?rating=%1";
         break;
     case TlogMode:
-        _url = "v1/tlog/%1/entries/tlogs.json?";
+        _url = "v1/tlog/%1/entries/tlogs.json";
         break;
     case FavoritesMode:
-        _url = QString("v1/tlog/%1/favorites/tlogs.json?")
+        _url = QString("v1/tlog/%1/favorites/tlogs.json")
                 .arg(Tasty::instance()->settings()->login());
         break;
     default:

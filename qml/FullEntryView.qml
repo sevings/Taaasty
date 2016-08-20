@@ -42,7 +42,7 @@ Pane {
     }
     Timer {
         interval: 20000
-        running: back.visible && !entry.chat.isInvolved
+        running: back.visible && (!entry.chat || !entry.chat.isInvolved)
         repeat: true
         onTriggered: commentsModel.check()
     }

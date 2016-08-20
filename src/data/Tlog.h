@@ -23,7 +23,7 @@ class Tlog: public QObject
     Q_PROPERTY(QString      ignoredCount        MEMBER _ignoredCount        NOTIFY updated)
     Q_PROPERTY(Relationship myRelationship      MEMBER _myRelation          NOTIFY updated)
     Q_PROPERTY(Relationship hisRelationship     MEMBER _hisRelation         NOTIFY updated)
-    Q_PROPERTY(Author*      author              MEMBER _author              NOTIFY updated)
+    Q_PROPERTY(Author*      author              READ author                 NOTIFY updated)
 
     Q_PROPERTY(bool loading                     MEMBER _loading             NOTIFY loadingChanged)
 

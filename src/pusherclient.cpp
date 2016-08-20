@@ -45,10 +45,7 @@ PusherClient::PusherClient(Tasty* tasty)
 void PusherClient::addChat(Conversation* chat)
 {
     _chats.insert(chat->id(), chat);
-    
-    auto entry = chat->entry();
-    if (entry)
-        _chatsByEntry.insert(entry->entryId(), chat);
+    _chatsByEntry.insert(chat->entryId(), chat);
 }
 
 
@@ -56,10 +53,7 @@ void PusherClient::addChat(Conversation* chat)
 void PusherClient::removeChat(Conversation* chat)
 {
     _chats.remove(chat->id());
-    
-    auto entry = chat->entry();
-    if (entry)
-        _chatsByEntry.remove(entry->entryId());
+    _chatsByEntry.remove(chat->entryId());
 }
 
 

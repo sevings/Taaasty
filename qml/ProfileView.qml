@@ -26,6 +26,13 @@ Pane {
         else if (tlog.tlogId && tlog.slug)
             tlog.author.checkStatus();
     }
+    Connections {
+        target: tlog
+        onUpdated: {
+            if (tlog.tlogId === author.id)
+                author = tlog.author;
+        }
+    }
     Flickable {
         id: flickable
         anchors.fill: parent

@@ -106,6 +106,7 @@ public:
     Conversation* chat();
 
     bool isFixed() const;
+    int chatId() const;
 
 public slots:
     void setId(const int id);

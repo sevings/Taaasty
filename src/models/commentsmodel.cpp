@@ -43,7 +43,7 @@ CommentsModel::CommentsModel(Entry *entry)
 
 void CommentsModel::init(const QJsonArray feed)
 {
-    auto reset = !_comments.isEmpty();
+    auto reset = _comments.size() != feed.size();
     if (reset)
         beginResetModel();
 

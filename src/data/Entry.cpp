@@ -2,6 +2,7 @@
 
 #include <QRegularExpression>
 #include <QUrl>
+#include <QQmlEngine>
 
 #include "../defines.h"
 
@@ -158,8 +159,6 @@ CommentsModel* Entry::commentsModel()
     if (_commentsModel && _commentsModel->entryId() == _id)
         return _commentsModel;
 
-    chat();
-
     delete _commentsModel;
     _commentsModel = new CommentsModel(this);
     _commentsModel->init(_commentsData);
@@ -181,11 +180,12 @@ void Entry::setId(const int id)
 
     if (_chatId > 0)
     {
-        auto chat = this->chat();
-        if (chat && chat->parent() == this)
-            delete chat;
-
         _chatId = 0;
+
+//        auto chat = this->chat();
+//        if (chat && chat->parent() == this)
+//            delete chat;
+
     }
 
     reload();
@@ -427,6 +427,13 @@ bool Entry::isFixed() const
 {
     return _isFixed;
 }
+
+
+int Entry::chatId() const
+{
+    return _chatId;
+}
+
 
 
 

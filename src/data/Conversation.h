@@ -82,6 +82,8 @@ public:
 
     Entry* entry();
 
+    int entryId() const;
+
 public slots:
     void update();
     void sendMessage(const QString text);

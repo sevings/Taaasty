@@ -3,6 +3,7 @@
 #include <QDateTime>
 #include <QJsonArray>
 #include <QDebug>
+#include <QQmlEngine>
 
 #include "../defines.h"
 
@@ -186,8 +187,13 @@ void ChatsModel::reset()
     foreach (auto id, _allChats)
     {
         auto chat = Tasty::instance()->pusher()->chat(id);
-        if (chat && (!chat->parent() || chat->parent() == this))
-            delete chat;
+        if (!chat)
+            continue;
+
+//        if ((!chat->parent()
+//             && QQmlEngine::objectOwnership(chat) == QQmlEngine::CppOwnership)
+//                || chat->parent() == this)
+//            delete chat;
     }
 
     _allChats.clear();
@@ -235,8 +241,6 @@ void ChatsModel::_addUnread(QJsonArray data)
         auto id = item.toObject().value("id").toInt();
         auto chat = Tasty::instance()->pusher()->chat(id);
         if (!chat)
-//            chat->setParent(this);
-//        else
             chat = new Conversation(item.toObject(), this);
 
         if (_ids.contains(id))

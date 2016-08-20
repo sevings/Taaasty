@@ -518,6 +518,13 @@ Entry* Conversation::entry()
 
 
 
+int Conversation::entryId() const
+{
+    return _entryId;
+}
+
+
+
 int Conversation::unreadCount() const
 {
     return _unreadCount;
