@@ -47,7 +47,7 @@ Pane {
         section.criteria: ViewSection.FullString
         section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
         section.delegate: Rectangle {
-            color: sectionMouse.pressed ? 'transparent' : Material.primary
+            color: sectionMouse.pressed ? Material.accent : Material.primary
             width: window.width
             height: 5 * mm + monthText.contentHeight
             Poppable {
