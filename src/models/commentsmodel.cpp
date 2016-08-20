@@ -43,7 +43,7 @@ CommentsModel::CommentsModel(Entry *entry)
 
 void CommentsModel::init(const QJsonArray feed)
 {
-    auto reset = _comments.size() != feed.size();
+    auto reset = !_comments.isEmpty();
     if (reset)
         beginResetModel();
 
@@ -56,13 +56,14 @@ void CommentsModel::init(const QJsonArray feed)
     _request = nullptr;
 
     auto cmts = _commentsList(feed);
-    if (!cmts.isEmpty() && cmts.first()->id() > cmts.last()->id())
+    if (!cmts.isEmpty())
     {
-        for (auto it = cmts.rbegin(); it != cmts.rend(); ++it)
-            _comments << *it;
+        if (cmts.first()->createdDate() > cmts.last()->createdDate())
+            for (auto it = cmts.rbegin(); it != cmts.rend(); ++it)
+                _comments << *it;
+        else
+            _comments << cmts;
     }
-    else
-        _comments = cmts;
 
     if (reset)
         endResetModel();
