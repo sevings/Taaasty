@@ -12,8 +12,8 @@ Q.ApplicationWindow {
     width: 540
     height: 960
     Material.theme: darkTheme ? Material.Dark : Material.Light
-    Material.accent: Material.Green
-    Material.primary: Material.BlueGrey
+    Material.accent: Material.DeepOrange
+    Material.primary: Material.LightBlue
     readonly property bool darkTheme: Settings.darkTheme
     property color backgroundColor: Material.background
 //    property color textColor: darkTheme ? 'white' : '#424d52'

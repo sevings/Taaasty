@@ -38,5 +38,12 @@
         <file>qml/ThemedCheckBox.qml</file>
         <file>qml/FlowsView.qml</file>
         <file>qml/PageMenu.qml</file>
+        <file>icons/drop-solid.svg</file>
+        <file>icons/flame-solid.svg</file>
+        <file>icons/flame-outline.svg</file>
+        <file>icons/drop-outline.svg</file>
+        <file>qml/IconButton.qml</file>
+        <file>icons/comment-dark.svg</file>
+        <file>icons/comment-light.svg</file>
     </qresource>
 </RCC>

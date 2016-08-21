@@ -314,107 +314,97 @@ Pane {
                 height: entry.source.length > 0 ? contentHeight : 0
                 horizontalAlignment: Text.AlignRight
             }
-            ThemedText {
-                id: comments
-                text: entry.commentsCount + ' коммент.'
-                font.pointSize: window.fontSmallest
-//                color: window.secondaryTextColor
-                anchors {
-                    top: quoteSource.bottom
-                    right: parent.right
-                }
-            }
-            Rectangle {
-                id: br
-                anchors {
-                    left: parent.left
-                    bottom: comments.verticalCenter
-                    leftMargin: 1 * mm
-                    bottomMargin: 0.2 * mm
-                }
-                height: 0.5 * mm
-                property int maxWidth: comments.x - 2 * mm
-                property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
-                width: length < maxWidth ? length : maxWidth
-                color: entry.rating.bayesRating > 0 ? (window.darkTheme ? window.darkGreen : window.greenColor)
-                                                    : (window.darkTheme ? window.darkRed : window.redColor)
-                Behavior on width {
-                    NumberAnimation {
-                        duration: 300
-                    }
-                }
-                Behavior on color {
-                    ColorAnimation {
-                        duration: 300
-                    }
-                }
-            }
             Rectangle {
                 id: wc
                 anchors {
+                    top: quoteSource.bottom
                     left: parent.left
-                    top: comments.verticalCenter
-                    leftMargin: 1 * mm
-                    topMargin: 0.2 * mm
+                    margins: 1 * mm
                 }
                 height: 0.5 * mm
-                property int maxWidth: comments.x - 2 * mm
+                property int maxWidth: parent.width - 2 * mm
                 property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
                 width: length < maxWidth ? length : maxWidth
                 color: window.secondaryTextColor
             }
-            ThemedButton {
+            Image {
+                id: entryCommentsIcon
+                anchors {
+                    margins: 2 * mm
+                    verticalCenter: comments.verticalCenter
+                    left: parent.left
+                }
+                sourceSize.height: 36
+                source: window.darkTheme ? '../icons/comment-light.svg'
+                                         : '../icons/comment-dark.svg'
+            }
+            ThemedText {
+                id: comments
+                anchors {
+                    top: wc.bottom
+                    left: entryCommentsIcon.right
+                }
+                text: entry.commentsCount
+                height: entryVoteButton.height
+                color: window.secondaryTextColor
+                verticalAlignment: Text.AlignVCenter
+            }
+            IconButton {
                 id: entryVoteButton
                 anchors {
-                    top: comments.bottom
+                    top: wc.bottom
                     right: parent.right
                 }
-                width: parent.width / 3
-                text: 'Да!'
+                icon: ((entry.rating.isVotable === entry.rating.isVoted) )
+                      && entry.rating.isBayesVoted ? '../icons/flame-solid.svg'
+                                                   : '../icons/flame-outline.svg'
                 enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable
-                highlighted: ((entry.rating.isVotable === entry.rating.isVoted) )
-                             && entry.rating.isBayesVoted
-                Material.accent: Material.Green
                 onClicked: {
-                    if (back.x > 0) {
-                        mouse.accepted = false;
-                        return;
-                    }
-
                     entry.rating.vote();
                 }
             }
-            ThemedButton {
+            IconButton {
                 id: entryVoteAgainstButton
                 anchors {
-                    top: comments.bottom
-                    left: parent.left
+                    top: wc.bottom
+                    right: entryRating.left
                 }
-                width: parent.width / 3
-                text: 'Фу…'
+                icon: entry.rating.isVotedAgainst ? '../icons/drop-solid.svg'
+                                                  : '../icons/drop-outline.svg'
                 enabled: !entry.rating.isBayesVoted
-                highlighted: entry.rating.isVotedAgainst
-                Material.accent: Material.Red
                 onClicked: {
-                    if (back.x > 0) {
-                        mouse.accepted = false;
-                        return;
-                    }
-
                     entry.rating.voteAgainst();
                 }
             }
             ThemedText {
                 id: entryRating
                 anchors {
-                    top: comments.bottom
-                    left: entryVoteAgainstButton.right
+                    top: wc.bottom
                     right: entryVoteButton.left
                 }
                 text: entry.isVotable ? '+ ' + entry.rating.votes : ''
                 height: entryVoteButton.height
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
+                visible: entry.isVotable
+            }
+            Rectangle {
+                id: br
+                anchors {
+                    left: entryVoteAgainstButton.right
+                    right: entryVoteButton.left
+                    bottom: entry.isVotable ? entryVoteButton.bottom : undefined
+                    verticalCenter: entry.isVotable ? undefined : entryVoteButton.verticalCenter
+                }
+                height: entry.isVotable ? 0.5 * mm : width
+                radius: height / 2
+                color: entry.rating.bayesRating > 0 ? Material.accent
+                                                    : Material.primary
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 300
+                    }
+                }
             }
         }
         footer: ListBusyIndicator {

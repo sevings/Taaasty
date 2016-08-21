@@ -35,13 +35,17 @@
 ****************************************************************************/
 
 import QtQuick 2.6
-import QtQuick.Templates 2.0 as T
+import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.0
-import QtQuick.Controls.Material.impl 2.0
 
-T.Button {
+ToolButton {
     id: control
+    anchors.margins: 1 * mm
+    font.pointSize: window.fontNormal
+}
 
+/*
+T.Button {
     implicitWidth: Math.max(background ? background.implicitWidth : 0,
                             contentItem.implicitWidth + leftPadding + rightPadding)
     implicitHeight: Math.max(background ? background.implicitHeight : 0,
@@ -56,9 +60,6 @@ T.Button {
     Material.elevation: flat ? control.down || control.hovered ? 2 : 0
                              : control.down ? 8 : 2
     Material.background: flat ? "transparent" : undefined
-
-    anchors.margins: 1 * mm
-    font.pointSize: window.fontNormal
 
     //! [contentItem]
     contentItem: Text {
@@ -117,3 +118,4 @@ T.Button {
 
     //! [background]
 }
+*/

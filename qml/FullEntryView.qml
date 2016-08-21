@@ -241,83 +241,84 @@ Pane {
                 color: window.secondaryTextColor
                 font.pointSize: window.fontSmallest
             }
-            Q.Label {
-                id: fullEntryCommentsCount
+            Image {
+                id: fullEntryCommentsIcon
                 anchors {
-                    top: quoteSource.bottom
-                    right: parent.right
-                    margins: 1 * mm
-                }
-                text: entry.commentsCount + ' коммент.'
-                color: window.secondaryTextColor
-                font.pointSize: window.fontSmallest
-            }
-            Rectangle {
-                id: br
-                anchors {
-                    top: fullEntryDate.bottom
+                    margins: 2 * mm
+                    verticalCenter: comments.verticalCenter
                     left: parent.left
-                    margins: 1 * mm
                 }
-                height: 0.5 * mm
-                property int maxWidth: window.width - 2 * mm
-                property int length: Math.abs(entry.rating.bayesRating) / 100 * maxWidth
-                width: length < maxWidth ? length : maxWidth
-                color: entry.rating.bayesRating > 0 ? (window.darkTheme ? window.darkGreen : window.greenColor)
-                                                    : (window.darkTheme ? window.darkRed : window.redColor)
-                Behavior on width {
-                    NumberAnimation {
-                        duration: 300
-                    }
-                }
-                Behavior on color {
-                    ColorAnimation {
-                        duration: 300
-                    }
-                }
-            }
-            ThemedButton {
-                id: fullEntryVoteAgainstButton
-                anchors {
-                    top: br.bottom
-                    left: parent.left
-                    margins: 1 * mm
-                }
-                text: '-'
-//                height: 6 * mm
-                width: parent.width / 3
-                enabled: !entry.rating.isBayesVoted
-                highlighted: entry.rating.isVotedAgainst
-                Material.accent: Material.Red
-                onClicked: entry.rating.voteAgainst()
-            }
-            ThemedButton {
-                id: fullEntryVoteButton
-                anchors {
-                    top: br.bottom
-                    right: parent.right
-                    margins: 1 * mm
-                }
-                text: '+'
-//                height: 6 * mm
-                width: parent.width / 3
-                enabled: !entry.rating.isVotedAgainst
-                highlighted: ((entry.rating.isVotable === entry.rating.isVoted) )
-                             && entry.rating.isBayesVoted
-                Material.accent: Material.Green
-                onClicked: entry.rating.vote()
+                sourceSize.height: 36
+                source: window.darkTheme ? '../icons/comment-light.svg'
+                                         : '../icons/comment-dark.svg'
             }
             ThemedText {
-                id: fullEntryRating
+                id: comments
                 anchors {
-                    top: br.bottom
-                    left: fullEntryVoteAgainstButton.right
+                    top: fullEntryDate.bottom
+                    left: fullEntryCommentsIcon.right
+                }
+                text: entry.commentsCount
+                height: fullEntryVoteButton.height
+                color: window.secondaryTextColor
+                verticalAlignment: Text.AlignVCenter
+            }
+            IconButton {
+                id: fullEntryVoteButton
+                anchors {
+                    top: fullEntryDate.bottom
+                    right: parent.right
+                }
+                icon: ((entry.rating.isVotable === entry.rating.isVoted) )
+                      && entry.rating.isBayesVoted ? '../icons/flame-solid.svg'
+                                                   : '../icons/flame-outline.svg'
+                enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable
+                onClicked: {
+                    entry.rating.vote();
+                }
+            }
+            IconButton {
+                id: fullEntryVoteAgainstButton
+                anchors {
+                    top: fullEntryDate.bottom
+                    right: entryRating.left
+                }
+                icon: entry.rating.isVotedAgainst ? '../icons/drop-solid.svg'
+                                                  : '../icons/drop-outline.svg'
+                enabled: !entry.rating.isBayesVoted
+                onClicked: {
+                    entry.rating.voteAgainst();
+                }
+            }
+            ThemedText {
+                id: entryRating
+                anchors {
+                    top: fullEntryDate.bottom
                     right: fullEntryVoteButton.left
                 }
                 text: entry.isVotable ? '+ ' + entry.rating.votes : ''
                 height: fullEntryVoteButton.height
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
+                visible: entry.isVotable
+            }
+            Rectangle {
+                id: br
+                anchors {
+                    left: fullEntryVoteAgainstButton.right
+                    right: fullEntryVoteButton.left
+                    bottom: entry.isVotable ? fullEntryVoteButton.bottom : undefined
+                    verticalCenter: entry.isVotable ? undefined : fullEntryVoteButton.verticalCenter
+                }
+                height: entry.isVotable ? 0.5 * mm : width
+                radius: height / 2
+                color: entry.rating.bayesRating > 0 ? Material.accent
+                                                    : Material.primary
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 300
+                    }
+                }
             }
             ThemedButton {
                 id: loadMoreButton

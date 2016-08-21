@@ -168,7 +168,7 @@ Pane {
                 height: tlogVoteButton.height
                 property int tlogMode: Trainer.typeOfTlog(tlog.tlogId)
                 enabled: readButton.enabled
-                ThemedButton {
+                IconButton {
                     id: tlogVoteAgainstButton
                     anchors {
                         top: parent.top
@@ -176,16 +176,15 @@ Pane {
                         topMargin: 0
                     }
                     width: (parent.width - 3 * mm) / 2
-                    text: 'Фу…'
+                    icon: parent.tlogMode == 0 //Trainer.WaterMode
+                          ? '../icons/drop-solid.svg' : '../icons/drop-outline.svg'
                     enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
-                    highlighted: parent.tlogMode == 0 //Trainer.WaterMode
-                    Material.accent: Material.Red
                     onClicked: {
                         parent.tlogMode = 0;
                         Trainer.trainTlog(tlog.tlogId, tlog.author.name, 0);
                     }
                 }
-                ThemedButton {
+                IconButton {
                     id: tlogVoteButton
                     anchors {
                         top: parent.top
@@ -193,10 +192,9 @@ Pane {
                         topMargin: 0
                     }
                     width: tlogVoteAgainstButton.width
-                    text: 'Да!'
+                    icon: parent.tlogMode == 1 //Trainer.FireMode
+                          ? '../icons/flame-solid.svg' : '../icons/flame-outline.svg'
                     enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
-                    highlighted: parent.tlogMode == 1 //Trainer.FireMode
-                    Material.accent: Material.Green
                     onClicked: {
                         parent.tlogMode = 1;
                         Trainer.trainTlog(tlog.tlogId, tlog.author.name, 1);
