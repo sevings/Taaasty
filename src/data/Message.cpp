@@ -132,15 +132,8 @@ void Message::_updateRead(const QJsonObject data)
     if (_read || data.value("id").toInt() != _id)
         return;
 
-    auto userId = data.value("read_user_id").toInt();
-    if (userId <= 0)
-        return;
-
-    if (userId == _userId || userId == _recipientId)
-    {
-        _read = true;
-        emit readChanged();
-    }
+    _read = !data.value("read_at").isNull();
+    emit readChanged();
 }
 
 
