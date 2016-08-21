@@ -34,7 +34,9 @@ Q.Drawer {
             // PROFILES SECTION
             Item {
                 visible: page.isFullEntryView === true
+                         && page.entry.author.id > 0
                          && page.tlog.tlogId !== page.entry.author.id
+                         && page.entry.author.id !== window.anonymousId
                 height: 6 * mm
                 width: parent.width
                 SmallAvatar {
@@ -63,7 +65,8 @@ Q.Drawer {
             }
             Item {
                 id: pageProfile
-                visible: tlog
+                visible: tlog && page.tlog.tlogId > 0
+                         && page.tlog.tlogId !== window.anonymousId
                 height: 6 * mm
                 width: parent.width
                 property Tlog tlog: page.isFullEntryView

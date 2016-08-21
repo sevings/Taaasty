@@ -61,7 +61,7 @@ MouseArea {
     function show(txt, info) {
         opened();
         dialogText.text = txt;
-        page.opacity = 0.9;
+        page.opacity = 1;
         area.info = info === true;
     }
     Rectangle {

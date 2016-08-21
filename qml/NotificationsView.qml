@@ -125,7 +125,7 @@ Rectangle {
                 width: 1.5 * mm
                 height: width
                 radius: height / 2
-                color: window.greenColor
+                color: Material.primary
                 visible: !notification.read
             }
             ThemedText {

@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 Pane {
@@ -114,7 +115,7 @@ Pane {
                 width: 1.5 * mm
                 height: width
                 radius: height / 2
-                color: window.greenColor
+                color: Material.primary
                 visible: !message.isRead
             }
             ThemedText {

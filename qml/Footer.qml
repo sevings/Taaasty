@@ -60,8 +60,8 @@ Popup {
                 horizontalCenter: parent.horizontalCenter
                 verticalCenter: parent.top
             }
-            color: window.unreadNotifications ? window.greenColor : (window.darkTheme ? '#575757' : '#8d9aa6')
-            width: 1.5 * mm
+            color: window.unreadNotifications ? Material.accent : Material.background
+            width: window.unreadNotifications ? 3 * mm : 1.5 * mm
             height: width
             radius: height / 2
         }

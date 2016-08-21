@@ -400,8 +400,7 @@ Pane {
                 }
                 height: entry.isVotable ? 0.5 * mm : width
                 radius: height / 2
-                color: entry.rating.bayesRating > 0 ? Material.accent
-                                                    : Material.primary
+                color: entry.rating.bayesRating > 0 ? '#FF5722' : '#03A9F4'
                 Behavior on color {
                     ColorAnimation {
                         duration: 300
