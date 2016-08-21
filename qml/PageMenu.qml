@@ -31,6 +31,73 @@ Q.Drawer {
             width: parent.width
             spacing: 1 * mm
 
+            // PROFILES SECTION
+            Item {
+                visible: page.isFullEntryView === true
+                         && page.tlog.tlogId !== page.entry.author.id
+                height: 6 * mm
+                width: parent.width
+                SmallAvatar {
+                    id: entryAuthorAvatar
+                    anchors.leftMargin: 1 * mm
+                    width: 6 * mm
+                    height: 6 * mm
+                    user: page.isFullEntryView === true ? page.entry.author : null
+                    onClicked: {
+                        window.pushProfileById(page.entry.author.id);
+                        drawer.close();
+                    }
+                }
+                MenuItem {
+                    anchors {
+                        left: entryAuthorAvatar.right
+                        right: parent.right
+                    }
+                    height: parent.height
+                    text: page.isFullEntryView === true ? page.entry.author.name : ''
+                    onTriggered: {
+                        window.pushProfileById(page.entry.author.id);
+                        drawer.close();
+                    }
+                }
+            }
+            Item {
+                id: pageProfile
+                visible: tlog
+                height: 6 * mm
+                width: parent.width
+                property Tlog tlog: page.isFullEntryView
+                                    || (page.isFeedView && page.mode === FeedModel.TlogMode)
+                                    || (page.isMessagesView && page.chat.type === Chat.PrivateConversation)
+                                    ? page.tlog : null
+                SmallAvatar {
+                    id: tlogAvatar
+                    anchors.leftMargin: 1 * mm
+                    width: 6 * mm
+                    height: 6 * mm
+                    user: pageProfile.tlog ? pageProfile.tlog.author : null
+                    onClicked: {
+                        window.pushProfile(pageProfile.tlog, pageProfile.tlog.author);
+                        drawer.close();
+                    }
+                }
+                MenuItem {
+                    anchors {
+                        left: tlogAvatar.right
+                        right: parent.right
+                    }
+                    height: parent.height
+                    text: pageProfile.tlog ? pageProfile.tlog.author.name : ''
+                    onTriggered: {
+                        window.pushProfile(pageProfile.tlog, pageProfile.tlog.author);
+                        drawer.close();
+                    }
+                }
+            }
+            MenuSeparator {
+                visible: pageProfile.visible
+            }
+
             // BEST SECTION
             MenuItem {
                 text: 'Лучшее'
