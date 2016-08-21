@@ -179,6 +179,7 @@ Pane {
                 user: entry.author
                 paused: pauseAnimations
                 popBody: back
+                visible: mode !== FeedModel.AnonymousMode
                 onClicked: {
                     if (back.x > 0 || mode === FeedModel.AnonymousMode) {
                         mouse.accepted = false;
@@ -191,34 +192,35 @@ Pane {
             }
             ThemedText {
                 id: nick
-                text: entry.author.name
-                font.pointSize: window.fontSmaller
                 anchors {
                     top: repostText.bottom
                     left: entryAvatar.right
                     right: parent.right
                 }
+                text: entry.author.name
+                font.pointSize: window.fontSmaller
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 horizontalAlignment: Text.AlignLeft
+                visible: mode !== FeedModel.AnonymousMode
             }
             ThemedText {
                 id: date
+                anchors {
+                    top: nick.visible ? nick.bottom : repostText.bottom
+                    left: entryAvatar.visible ? entryAvatar.right : parent.left
+                    right: parent.right
+                }
                 text: entry.createdAt
                 color: window.secondaryTextColor
                 font.pointSize: window.fontSmallest
-                anchors {
-                    top: nick.bottom
-                    left: entryAvatar.right
-                    right: parent.right
-                }
                 elide: Text.AlignRight
                 wrapMode: Text.NoWrap
             }
             Loader {
                 id: firstImage
                 anchors {
-                    top: entryAvatar.bottom
+                    top: entryAvatar.visible ? entryAvatar.bottom : date.bottom
                     left: parent.left
                     right: parent.right
                     topMargin: 1 * mm
