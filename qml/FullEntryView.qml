@@ -315,7 +315,8 @@ Pane {
                 }
                 height: entry.isVotable ? 0.5 * mm : width
                 radius: height / 2
-                color: entry.rating.bayesRating > 0 ? '#FF5722' : '#03A9F4'
+                color: entry.rating.bayesRating > 5 ? '#FF5722' : entry.rating.bayesRating < -5
+                                                      ? '#03A9F4' : window.secondaryTextColor
                 Behavior on color {
                     ColorAnimation {
                         duration: 300
