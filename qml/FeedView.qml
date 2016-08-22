@@ -358,9 +358,10 @@ Pane {
                     top: wc.bottom
                     right: parent.right
                 }
-                icon: (((entry.rating.isVotable === entry.rating.isVoted) )
-                       && entry.rating.isBayesVoted ? '../icons/flame-solid-'
-                                                    : '../icons/flame-outline-')
+                icon: (((entry.rating.isVotable === entry.rating.isVoted)
+                       && (entry.rating.isBayesVoted || entry.rating.isVotedAgainst)
+                       && (entry.rating.isVotable || entry.rating.isBayesVoted))
+                       ? '../icons/flame-solid-' : '../icons/flame-outline-')
                       + (dp < 2 ? '36' : '72') + '.png'
                 enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable
                 onClicked: {
