@@ -70,6 +70,7 @@ Pane {
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 40 * mm
+                highlighted: true
                 text: Tasty.isAuthorized ? 'Сменить тлог' : 'Войти'
                 onClicked: window.pushLoginDialog()
             }
@@ -79,6 +80,7 @@ Pane {
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 40 * mm
+                highlighted: true
                 text: 'О клиенте'
                 onClicked: { window.pushAbout(); }
             }

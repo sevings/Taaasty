@@ -57,7 +57,7 @@ T.ToolButton {
         Image {
             anchors.centerIn: parent
             source: control.icon
-            sourceSize.height: 36
+            height: 36
         }
     }
     //! [contentItem]

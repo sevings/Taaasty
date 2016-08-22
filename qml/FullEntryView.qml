@@ -249,8 +249,9 @@ Pane {
                     left: parent.left
                 }
                 sourceSize.height: 36
-                source: window.darkTheme ? '../icons/comment-light.svg'
-                                         : '../icons/comment-dark.svg'
+                source: (window.darkTheme ? '../icons/comment-light-'
+                                          : '../icons/comment-dark-')
+                        + (dp < 2 ? '36' : '72') + '.png'
             }
             ThemedText {
                 id: comments
@@ -269,9 +270,10 @@ Pane {
                     top: fullEntryDate.bottom
                     right: parent.right
                 }
-                icon: ((entry.rating.isVotable === entry.rating.isVoted) )
-                      && entry.rating.isBayesVoted ? '../icons/flame-solid.svg'
-                                                   : '../icons/flame-outline.svg'
+                icon: (((entry.rating.isVotable === entry.rating.isVoted) )
+                       && entry.rating.isBayesVoted ? '../icons/flame-solid-'
+                                                    : '../icons/flame-outline-')
+                      + (dp < 2 ? '36' : '72') + '.png'
                 enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable
                 onClicked: {
                     entry.rating.vote();
@@ -283,8 +285,9 @@ Pane {
                     top: fullEntryDate.bottom
                     right: entryRating.left
                 }
-                icon: entry.rating.isVotedAgainst ? '../icons/drop-solid.svg'
-                                                  : '../icons/drop-outline.svg'
+                icon: (entry.rating.isVotedAgainst ? '../icons/drop-solid-'
+                                                   : '../icons/drop-outline-')
+                      + (dp < 2 ? '36' : '72') + '.png'
                 enabled: !entry.rating.isBayesVoted
                 onClicked: {
                     entry.rating.voteAgainst();
@@ -331,6 +334,7 @@ Pane {
                 height: visible ? implicitHeight : 0 // changing height forces layout
                 width: parent.width / 3
                 visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
+                highlighted: true
                 onClicked: commentsModel.loadMore()
             }
             Q.BusyIndicator {

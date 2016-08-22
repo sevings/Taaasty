@@ -176,8 +176,9 @@ Pane {
                         topMargin: 0
                     }
                     width: (parent.width - 3 * mm) / 2
-                    icon: parent.tlogMode == 0 //Trainer.WaterMode
-                          ? '../icons/drop-solid.svg' : '../icons/drop-outline.svg'
+                    icon: (parent.tlogMode == 0 //Trainer.WaterMode
+                          ? '../icons/drop-solid-' : '../icons/drop-outline-')
+                          + (dp < 2 ? '36' : '72') + '.png'
                     enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
                     onClicked: {
                         parent.tlogMode = 0;
@@ -192,8 +193,9 @@ Pane {
                         topMargin: 0
                     }
                     width: tlogVoteAgainstButton.width
-                    icon: parent.tlogMode == 1 //Trainer.FireMode
-                          ? '../icons/flame-solid.svg' : '../icons/flame-outline.svg'
+                    icon: (parent.tlogMode == 1 //Trainer.FireMode
+                          ? '../icons/flame-solid-' : '../icons/flame-outline-')
+                          + (dp < 2 ? '36' : '72') + '.png'
                     enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
                     onClicked: {
                         parent.tlogMode = 1;
