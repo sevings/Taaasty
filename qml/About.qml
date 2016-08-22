@@ -29,7 +29,9 @@ Pane {
                       + 'явных и подразумеваемых, в надежде, что она кому-то окажется полезной.<br>'
                       + 'Со всеми вопросами, сообщениями о проблемах, пожеланиями, '
                       + 'а также с благодарностями вы можете <a href="http://taaasty.com/~281926">обращаться к автору.</a><br><br>'
-                      + 'Icon made by Freepik from www.flaticon.com is licensed under CC BY 3.0.'
+                      + 'Icons made by <a href="http://www.flaticon.com/authors/catalin-fertu">Catalin Fertu</a> '
+                      + 'or <a href="http://www.flaticon.com/authors/freepik">Freepik</a> '
+                      + 'from www.flaticon.com is licensed under CC BY 3.0.'
             }
         }
 
