@@ -182,12 +182,17 @@ Q.Drawer {
 
             // MESSAGES SECTION
             MenuItem {
-                text: 'Перейти к записи'
+                id: chatTopic
+                text: visible ? page.chat.topic : ''
                 onTriggered: {
                     window.pushFullEntry(page.chat.entry)
                     drawer.close();
                 }
-                visible: page.isMessagesView === true && page.chat.entry
+                visible: page.isMessagesView === true
+                         && page.chat.entry && page.chat.isInvolved
+            }
+            MenuSeparator {
+                visible: chatTopic.visible
             }
 
             // ENTRY SECTION

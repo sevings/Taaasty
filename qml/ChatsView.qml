@@ -41,13 +41,7 @@ Pane {
                     if (chat.unreadCount > 0)
                         chat.readAll();
 
-                    if (chat.entry) {
-                        if (!chat.entry.url.length)
-                            chat.entry.reload();
-                        window.pushFullEntry(chat.entry, true);
-                    }
-                    else
-                        window.pushMessages(chat);
+                    window.pushMessages(chat);
                 }
             }
             SmallAvatar {
