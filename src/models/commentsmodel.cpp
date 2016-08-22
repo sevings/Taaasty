@@ -67,6 +67,9 @@ void CommentsModel::init(const QJsonArray feed)
 
     if (reset)
         endResetModel();
+
+    emit hasMoreChanged();
+    emit lastCommentChanged();
 }
 
 
