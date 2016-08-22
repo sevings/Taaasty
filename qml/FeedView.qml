@@ -85,7 +85,7 @@ Pane {
         }
     }
     Splash {
-        visible: !listView.visible && feedModel.hasMore && !pauseAnimations
+        visible: !listView.visible && feedModel.hasMore
         running: !feedModel.isPrivate
         text: 'Это закрытый ' + (tlog.author.isFlow ? 'поток' : 'тлог')
     }
@@ -177,7 +177,6 @@ Pane {
                     margins: 1 * mm
                 }
                 user: entry.author
-                paused: pauseAnimations
                 popBody: back
                 visible: mode !== FeedModel.AnonymousMode
                 onClicked: {
@@ -236,7 +235,6 @@ Pane {
                     extension: image ? image.type : ''
                     savable: true
                     popBody: back
-                    paused: pauseAnimations
                     acceptClick: false
                     ThemedText {
                         anchors {
@@ -268,7 +266,6 @@ Pane {
                 }
                 onLoaded: item.media = media
                 sourceComponent: MediaLink {
-                    paused: pauseAnimations
                     acceptClick: false
                     popBody: back
                 }
@@ -414,7 +411,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: feedModel.loading && !pauseAnimations
+            running: feedModel.loading
             visible: feedModel.hasMore
         }
     }

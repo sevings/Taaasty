@@ -11,7 +11,6 @@ Loader {
     property color backgroundColor: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
     property bool savable: false
     property bool acceptClick: true
-    property bool paused: false
     signal available
     signal clicked
     property Pane popBody
@@ -66,9 +65,6 @@ Loader {
             smooth: true
             asynchronous: true
             fillMode: Image.PreserveAspectCrop
-//            Component.onCompleted: {
-//                paused = Qt.binding(function() { return image.paused; })
-//            }
         }
     }
     Component {

@@ -50,7 +50,7 @@ Pane {
         body: back
     }
     Splash {
-        visible: !fullEntry.visible && !pauseAnimations
+        visible: !fullEntry.visible
     }
     MyListView {
         id: fullEntry
@@ -85,7 +85,6 @@ Pane {
                     topMargin: 2 * mm
                 }
                 user: comment.user
-                paused: pauseAnimations
                 popBody: back
                 onClicked: {
                     if (back.showProfiles)
@@ -168,7 +167,6 @@ Pane {
                     extension: image.type
                     savable: true
                     popBody: back
-                    paused: pauseAnimations
                 }
             }
             MediaLink {
@@ -181,7 +179,6 @@ Pane {
                     bottomMargin: 1 * mm
                 }
                 media: entry.media
-                paused: pauseAnimations
                 acceptClick: mediaLink.url
                 popBody: back
                 onClicked: {
@@ -347,7 +344,7 @@ Pane {
                     margins: 1 * mm
                     topMargin: 2 * mm
                 }
-                running: commentsModel && commentsModel.loading && !pauseAnimations
+                running: commentsModel && commentsModel.loading
                 visible: commentsModel && commentsModel.hasMore
             }
         }

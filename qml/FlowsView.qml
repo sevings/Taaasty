@@ -31,7 +31,7 @@ Pane {
         }
     }
     Splash {
-        visible: !listView.visible && flowsModel.hasMore && !pauseAnimations
+        visible: !listView.visible && flowsModel.hasMore
         running: !flowsModel.isPrivate
     }
     MyListView {
@@ -74,7 +74,6 @@ Pane {
                 url: flow.picUrl
                 width: window.width
                 height: width * 10 / 16
-                paused: pauseAnimations
                 clip: true
                 popBody: back
                 acceptClick: false
@@ -121,7 +120,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: flowsModel.loading && !pauseAnimations
+            running: flowsModel.loading
             visible: flowsModel.hasMore
         }
     }

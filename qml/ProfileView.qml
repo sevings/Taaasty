@@ -14,7 +14,7 @@ Pane {
     property Author author: tlog.author
     readonly property bool isProfileView: true
     Splash {
-        visible: !column.visible && !pauseAnimations
+        visible: !column.visible
     }
     Component.onCompleted: {
         if (!tlog.slug.length)
@@ -61,7 +61,6 @@ Pane {
                 url: author.largePic
                 savable: true
                 popBody: profileView
-                paused: pauseAnimations
             }
             ThemedText {
                 id: name

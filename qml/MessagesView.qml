@@ -20,7 +20,7 @@ Pane {
         body: back
     }
     Splash {
-        visible: !listView.visible && !pauseAnimations
+        visible: !listView.visible
         running: listView.model.hasMore
         text: 'Нет сообщений'
     }
@@ -40,7 +40,7 @@ Pane {
                 positionViewAtEnd();
         }
         header: ListBusyIndicator {
-            running: listView.model.loading && !pauseAnimations
+            running: listView.model.loading
             visible: listView.model.hasMore
             footer: false
         }
@@ -158,7 +158,6 @@ Pane {
                     extension: image.type
                     savable: true
                     popBody: back
-                    paused: pauseAnimations
                 }
             }
         }

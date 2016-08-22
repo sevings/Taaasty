@@ -14,7 +14,7 @@ Pane {
         body: back
     }
     Splash {
-        visible: !listView.visible && !pauseAnimations
+        visible: !listView.visible
         running: listView.model.hasMore
         text: 'Нет бесед'
     }
@@ -58,7 +58,6 @@ Pane {
                     topMargin: 2 * mm
                 }
                 user: chat.entry ? chat.entry.author : chat.recipient
-                paused: pauseAnimations
                 popBody: back
                 onClicked: {
                     if (chat.isAnonymous || (!chat.recipient && !chat.entry))
@@ -106,7 +105,6 @@ Pane {
                 height: 4 * mm
                 visible: !chat.isAnonymous && chat.lastMessage.userId !== chat.recipientId
                          && (chat.entry ? chat.lastMessage.userId !== chat.entry.author.id : true)
-                paused: pauseAnimations
                 popBody: back
             }
             ThemedText {
@@ -144,7 +142,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: ChatsModel.loading && !pauseAnimations
+            running: ChatsModel.loading
             visible: ChatsModel.hasMore
         }
     }

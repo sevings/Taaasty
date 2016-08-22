@@ -10,7 +10,6 @@ Q.Pane {
     signal popped
     onPopped: window.popFromStack()
     property Flickable innerFlick
-    property bool pauseAnimations: pane.x > 0 || (innerFlick && innerFlick.movingVertically)
 //    layer.enabled: !innerFlick || !innerFlick.movingVertically
 //    layer.sourceRect: Qt.rect(0, 0, 100, window.height)
 //    layer.effect: ElevationEffect {

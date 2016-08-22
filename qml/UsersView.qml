@@ -30,7 +30,7 @@ Pane {
         body: back
     }
     Splash {
-        visible: !users.visible && !pauseAnimations
+        visible: !users.visible
         running: users.model.hasMore
         text: 'Список пуст'
     }
@@ -89,7 +89,6 @@ Pane {
                     margins: 1 * mm
                 }
                 user: model.user
-                paused: pauseAnimations
                 popBody: back
                 onClicked: {
                     if (bayesMode)
@@ -144,7 +143,7 @@ Pane {
             }
         }
         footer: ListBusyIndicator {
-            running: users.model.loading && !pauseAnimations
+            running: users.model.loading
             visible: users.model.hasMore
         }
     }
