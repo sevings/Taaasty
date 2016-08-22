@@ -32,7 +32,7 @@ Pane {
             right: parent.right
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
-        visible: count > 0
+        visible: count > 0 || !model.hasMore
         model: chat.messages
         interactive: back.x == 0
         onCountChanged: {
