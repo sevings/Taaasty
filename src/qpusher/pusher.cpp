@@ -147,6 +147,7 @@ void Pusher::connect()
 {
     qDebug() << "Connecting";
 
+    _socket->close();
     _socket->open(_url);
 }
 
