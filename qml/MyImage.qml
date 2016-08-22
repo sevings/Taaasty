@@ -66,9 +66,9 @@ Loader {
             smooth: true
             asynchronous: true
             fillMode: Image.PreserveAspectCrop
-            Component.onCompleted: {
-                paused = Qt.binding(function() { return image.paused; })
-            }
+//            Component.onCompleted: {
+//                paused = Qt.binding(function() { return image.paused; })
+//            }
         }
     }
     Component {
