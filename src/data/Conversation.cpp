@@ -207,9 +207,9 @@ void Conversation::_init(const QJsonObject data)
          _entryData = data.value("entry").toObject();
          _entryId = _entryData.value("id").toInt();
          auto entry = Tasty::instance()->pusher()->entry(_entryId);
-         if (entry)
-             entry->setParent(this);
-         else
+         if (!entry)
+//             entry->setParent(this);
+//         else
              entry = new Entry(_entryData, this);
 
          Tasty::instance()->pusher()->addChat(this);

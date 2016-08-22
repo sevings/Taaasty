@@ -250,8 +250,8 @@ void ChatsModel::_addUnread(QJsonArray data)
                     || (_mode == EntryChatsMode && chat->type() == Conversation::PublicConversation))
                 bubbleIds << chat->id();
 
-            if (chat->parent() == this)
-                delete chat;
+//            if (chat->parent() == this)
+//                delete chat;
 
             continue;
         }
