@@ -61,7 +61,7 @@ Popup {
                 verticalCenter: parent.top
             }
             color: window.unreadNotifications ? Material.accent : Material.background
-            width: window.unreadNotifications ? 3 * mm : 1.5 * mm
+            width: window.unreadNotifications ? 2 * mm : 1.5 * mm
             height: width
             radius: height / 2
         }

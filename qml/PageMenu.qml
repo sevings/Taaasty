@@ -41,20 +41,13 @@ Q.Drawer {
                 width: parent.width
                 SmallAvatar {
                     id: entryAuthorAvatar
-                    anchors.leftMargin: 1 * mm
+                    anchors.leftMargin: 1.5 * mm
                     width: 6 * mm
                     height: 6 * mm
                     user: page.isFullEntryView === true ? page.entry.author : null
-                    onClicked: {
-                        window.pushProfileById(page.entry.author.id);
-                        drawer.close();
-                    }
                 }
                 MenuItem {
-                    anchors {
-                        left: entryAuthorAvatar.right
-                        right: parent.right
-                    }
+                    leftPadding: entryAuthorAvatar.width + entryAuthorAvatar.anchors.leftMargin * 2
                     height: parent.height
                     text: page.isFullEntryView === true ? page.entry.author.name : ''
                     onTriggered: {
@@ -65,8 +58,8 @@ Q.Drawer {
             }
             Item {
                 id: pageProfile
-                visible: tlog && page.tlog.tlogId > 0
-                         && page.tlog.tlogId !== window.anonymousId
+                visible: tlog && tlog.tlogId > 0
+                         && tlog.tlogId !== window.anonymousId
                 height: 6 * mm
                 width: parent.width
                 property Tlog tlog: page.isFullEntryView
@@ -75,20 +68,13 @@ Q.Drawer {
                                     ? page.tlog : null
                 SmallAvatar {
                     id: tlogAvatar
-                    anchors.leftMargin: 1 * mm
+                    anchors.leftMargin: 1.5 * mm
                     width: 6 * mm
                     height: 6 * mm
                     user: pageProfile.tlog ? pageProfile.tlog.author : null
-                    onClicked: {
-                        window.pushProfile(pageProfile.tlog, pageProfile.tlog.author);
-                        drawer.close();
-                    }
                 }
                 MenuItem {
-                    anchors {
-                        left: tlogAvatar.right
-                        right: parent.right
-                    }
+                    leftPadding: tlogAvatar.width + tlogAvatar.anchors.leftMargin * 2
                     height: parent.height
                     text: pageProfile.tlog ? pageProfile.tlog.author.name : ''
                     onTriggered: {
