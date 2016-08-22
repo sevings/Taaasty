@@ -65,11 +65,11 @@ Pane {
         visible: !entry.loading
         model: commentsModel
         interactive: back.x == 0
-        delegate: Rectangle {
+        delegate: Item {
             width: window.width
             readonly property int textHeight: nameText.height + commentText.height - 1 * mm
             height: (textHeight > commentAvatar.height ? textHeight : commentAvatar.height) + 4 * mm
-            color: pop.pressed ? Material.primary : 'transparent'
+//            color: pop.pressed ? Material.primary : 'transparent'
             Component.onCompleted: {
                 entry.chat.readAll();
             }
@@ -371,21 +371,9 @@ Pane {
             }
         }
     }
-//    DropShadow {
-//        anchors.fill: menu
-//        horizontalOffset: 0.6 * mm
-//        verticalOffset: 0.6 * mm
-//        samples: 1
-//        color: "#80000000"
-//        source: menu
-//        cached: true
-//    }
     Popup {
         id: menu
         height: menuColumn.height + 2 * mm
-//        border.color: window.secondaryTextColor
-//        border.width: 0.2 * mm
-//        radius: 0.8 * mm
         anchors.margins: 2 * mm
         property Comment comment: Comment { }
         function close() {

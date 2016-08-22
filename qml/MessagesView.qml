@@ -12,6 +12,7 @@ Pane {
     readonly property bool customTitle: chat.type !== Chat.PrivateConversation
     readonly property string title: chat.topic
     readonly property bool isMessagesView: true
+    signal addGreeting(string slug)
     Component.onCompleted: {
         chat.messages.check();
         listView.positionViewAtEnd();
@@ -49,6 +50,9 @@ Pane {
             height: messageNick.height + messageText.height + messageImages.height + 4 * mm
             Poppable {
                 body: back
+                onClicked: {
+                    menu.show(message);
+                }
             }
             Component.onCompleted: {
                 if (!message.isRead)
@@ -172,6 +176,46 @@ Pane {
                 target: chat
                 onMessageSent: {
                     messageEditor.clear();
+                }
+            }
+            Connections {
+                target: back
+                onAddGreeting: {
+                    messageEditor.addGreeting(slug);
+                }
+            }
+        }
+    }
+    Popup {
+        id: menu
+        height: menuColumn.height + 2 * mm
+        anchors.margins: 2 * mm
+        property Message message: Message { }
+        function close() {
+            state = "closed";
+        }
+        function show(msg) {
+            menu.message = msg;
+            window.hideFooter();
+            state = "opened";
+        }
+        onClosing: menu.close()
+        Column {
+            id: menuColumn
+            anchors {
+                left: parent.left
+                right: parent.right
+                top: parent.top
+                topMargin: 1 * mm
+                bottomMargin: 1 * mm
+            }
+            spacing: 1 * mm
+            MenuItem {
+                text: 'Ответить'
+                onTriggered: {
+                    addGreeting(menu.message.user.slug);
+                    menu.close();
+                    listView.positionViewAtEnd();
                 }
             }
         }

@@ -10,6 +10,10 @@ Item {
     implicitHeight: 16 * mm
     property alias message: input.text
     property bool uploading: false
+    onFocusChanged: {
+        if (focus)
+            input.focus = true;
+    }
     signal sent
     function clear() {
         input.clear();
@@ -17,6 +21,7 @@ Item {
     }
     function addGreeting(slug) {
         input.addGreeting(slug);
+        editor.focus = true;
     }
     TextEditor {
         id: input
