@@ -4,6 +4,7 @@ import QtQuick.Controls.Material 2.0
 
 Pane {
     id: dialog
+    innerFlick: flick
     readonly property bool isLoginDialog: true // how to find this in the StackView?
     function clear() {
         mail.line = '';
@@ -16,6 +17,7 @@ Pane {
         body: dialog
     }
     Flickable {
+        id: flick
         anchors {
             verticalCenter: parent.verticalCenter
             left: parent.left

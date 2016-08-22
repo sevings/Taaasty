@@ -5,10 +5,12 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    innerFlick: flick
     Poppable {
         body: back
     }
     Flickable {
+        id: flick
         anchors {
             top: parent.top
             left: parent.left

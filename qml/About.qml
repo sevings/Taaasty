@@ -2,7 +2,9 @@ import QtQuick 2.7
 
 Pane {
     id: back
+    innerFlick: flick
     Flickable {
+        id: flick
         anchors.fill: parent
         flickableDirection: Flickable.VerticalFlick
         contentHeight: item.height
