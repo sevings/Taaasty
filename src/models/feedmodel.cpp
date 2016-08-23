@@ -373,15 +373,22 @@ void FeedModel::_addItems(QJsonObject data)
         all << entry;
     }
 
-    for (int i = all.size() - 1; i >= 0; i--)
-        if (!all.at(i)->isFixed())
-        {
-            _lastEntry = all.at(i)->entryId();
-            break;
-        }
+    if (data.contains("next_since_entry_id"))
+    {
+        _lastEntry = data.value("next_since_entry_id").toInt();
+    }
+    else if (_prevDate.isEmpty())
+    {
+        for (int i = all.size() - 1; i >= 0; i--)
+            if (!all.at(i)->isFixed())
+            {
+                _lastEntry = all.at(i)->entryId();
+                break;
+            }
 
-    if (_lastEntry <= 0)
-        _lastEntry = all.last()->entryId();
+        if (_lastEntry <= 0)
+            _lastEntry = all.last()->entryId();
+    }
 
     bool loadMore = false;
     if (hideShort() || hideNegative())
