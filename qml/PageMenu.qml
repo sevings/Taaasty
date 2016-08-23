@@ -10,8 +10,9 @@ Q.Drawer {
     width: 40 * mm
     property Item page: Item { }
     property bool openable: true
+    readonly property bool autoclose: !openable || column.height < 5 * mm
     onOpened: {
-        if (!openable || column.height < 5 * mm)
+        if (autoclose)
             drawer.close();
     }
     Flickable {

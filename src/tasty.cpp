@@ -21,6 +21,7 @@ Tasty::Tasty(QNetworkAccessManager* web)
     , _entryImageWidth(_settings->maxImageWidth())
     , _commentImageWidth(_entryImageWidth)
     , _unreadChats(0)
+    , _unreadNotifications(0)
     , _me(nullptr)
 {
     qDebug() << "Tasty";
@@ -28,7 +29,8 @@ Tasty::Tasty(QNetworkAccessManager* web)
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
 
-    Q_TEST(connect(_pusher, SIGNAL(unreadChats(int)), this, SLOT(_setUnreadChats(int))));
+    Q_TEST(connect(_pusher, SIGNAL(unreadChats(int)),         this, SLOT(_setUnreadChats(int))));
+    Q_TEST(connect(_pusher, SIGNAL(unreadNotifications(int)), this, SLOT(_setUnreadNotifications(int))));
 
 //    _pusher->subscribe("live");
 }
@@ -179,6 +181,12 @@ void Tasty::_readAccessToken(const QJsonObject data)
     _settings->setUserId(userId);
     _settings->setLogin(login);
 
+    _unreadChats = 0;
+    emit unreadChatsChanged();
+
+    _unreadNotifications = 0;
+    emit unreadNotificationsChanged();
+
     if (_me)
         _me->setId(userId);
 
@@ -204,4 +212,15 @@ void Tasty::_setUnreadChats(int count)
 
     _unreadChats = count;
     emit unreadChatsChanged();
+}
+
+
+
+void Tasty::_setUnreadNotifications(int count)
+{
+    if (count == _unreadNotifications)
+        return;
+
+    _unreadNotifications = count;
+    emit unreadNotificationsChanged();
 }

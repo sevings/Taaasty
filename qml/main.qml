@@ -35,6 +35,8 @@ Q.ApplicationWindow {
     //    property bool showConvers: false
     //    property bool showDialog: false
     readonly property int anonymousId: 4409
+    readonly property alias stackSize: stack.depth
+    readonly property bool canShowPageMenu: !pageMenu.autoclose
     property CachedImage savingImage
     title: qsTr("Taaasty")
 //    color: backgroundColor
@@ -290,6 +292,9 @@ Q.ApplicationWindow {
             showLineInput('rating');
 
         setFooterFromStack();
+    }
+    function showPageMenu() {
+        pageMenu.open();
     }
     Tlog {
         id: emptyTlog

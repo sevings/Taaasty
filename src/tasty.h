@@ -17,8 +17,9 @@ class Tasty : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool isAuthorized READ isAuthorized NOTIFY authorized)
-    Q_PROPERTY(int  unreadChats  READ unreadChats  NOTIFY unreadChatsChanged)
+    Q_PROPERTY(bool isAuthorized        READ isAuthorized        NOTIFY authorized)
+    Q_PROPERTY(int  unreadChats         READ unreadChats         NOTIFY unreadChatsChanged)
+    Q_PROPERTY(int  unreadNotifications READ unreadNotifications NOTIFY unreadNotificationsChanged)
 
 public:
     explicit Tasty(QNetworkAccessManager* web = nullptr);
@@ -32,7 +33,8 @@ public:
 
     Q_INVOKABLE bool isAuthorized() const;
 
-    Q_INVOKABLE int unreadChats() const { return _unreadChats; }
+    Q_INVOKABLE int unreadChats()         const { return _unreadChats; }
+    Q_INVOKABLE int unreadNotifications() const { return _unreadNotifications; }
 
     Q_INVOKABLE static QString num2str(const int n, const QString str1,
                     const QString str234, const QString str5);
@@ -50,6 +52,7 @@ signals:
 
     void ratingChanged(QJsonObject data);
     void unreadChatsChanged();
+    void unreadNotificationsChanged();
 
     void error(const int code, const QString text);
     void info(const QString text);
@@ -68,6 +71,7 @@ private slots:
     void _showNetAccessibility(QNetworkAccessManager::NetworkAccessibility accessible);
 
     void _setUnreadChats(int count);
+    void _setUnreadNotifications(int count);
 
 private:
     Settings* _settings;
@@ -78,6 +82,7 @@ private:
     int _commentImageWidth;
 
     int _unreadChats;
+    int _unreadNotifications;
 
     User* _me;
 };

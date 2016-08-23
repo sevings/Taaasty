@@ -44,6 +44,7 @@ T.ToolButton {
     anchors.margins: 1 * mm
     implicitWidth: 10 * mm
     property url icon: ''
+    property int iconHeight: 27
 //    implicitWidth: Math.max(background ? background.implicitWidth : 0,
 //                            contentItem.implicitWidth + leftPadding + rightPadding)
     implicitHeight: Math.max(background ? background.implicitHeight : 0,
@@ -57,7 +58,7 @@ T.ToolButton {
         Image {
             anchors.centerIn: parent
             source: control.icon
-            height: 27
+            height: control.iconHeight
             fillMode: Image.PreserveAspectFit
         }
     }
