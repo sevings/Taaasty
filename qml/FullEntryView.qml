@@ -35,7 +35,7 @@ Pane {
         checkComments();
         if (scrollToBottom)
             fullEntry.positionViewAtEnd();
-        if (!entry.url.length)
+        if (!entry.createdAt.length)
             entry.reload();
     }
     onVisibleChanged: {
