@@ -333,7 +333,8 @@ Pane {
                     verticalCenter: comments.verticalCenter
                     left: parent.left
                 }
-                sourceSize.height: 36
+                height: 27
+                fillMode: Image.PreserveAspectFit
                 source: (window.darkTheme ? '../icons/comment-light-'
                                           : '../icons/comment-dark-')
                         + (dp < 2 ? '36' : '72') + '.png'

@@ -57,7 +57,7 @@ T.ToolButton {
         Image {
             anchors.centerIn: parent
             source: control.icon
-            height: 36
+            height: 27
             fillMode: Image.PreserveAspectFit
         }
     }
