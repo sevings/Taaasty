@@ -45,6 +45,7 @@ signals:
     void notification(const QJsonObject data);
     void unreadChat();
     void unreadChats(int count);
+    void unreadNotifications(int count);
 
 public slots:
     void connect();

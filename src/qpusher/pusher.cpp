@@ -145,6 +145,10 @@ void Pusher::unsubscribe(const QString channelName)
 
 void Pusher::connect()
 {
+    if (_socket->state() != QAbstractSocket::UnconnectedState
+            && _socket->state() != QAbstractSocket::ClosingState)
+        return;
+
     qDebug() << "Connecting";
 
     _socket->close();

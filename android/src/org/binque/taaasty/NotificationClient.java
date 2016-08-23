@@ -74,7 +74,7 @@ public class NotificationClient extends org.qtproject.qt5.android.bindings.QtAct
             m_builder.setContentTitle("Taaasty");
         }
 
-        m_builder.setContentText(s);
+        m_builder.setContentText(s); //! \todo set category
         m_notificationManager.notify(1, m_builder.build());
     }
 }

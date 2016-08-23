@@ -11,6 +11,19 @@ Rectangle {
     y: window.height
     z: 5
     visible: y < window.height
+    onStateChanged: {
+        if (state == "opened")
+            Tasty.reconnectToPusher();
+        else if (state == "closed")
+            NotifsModel.markAsRead();
+    }
+
+    onVisibleChanged: {
+//        if (visible)
+//
+//        else
+//
+    }
     state: "closed"
     states: [
         State {

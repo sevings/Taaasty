@@ -137,8 +137,7 @@ void PusherClient::removeNotification(int id)
 
 void PusherClient::connect()
 {
-    if (!_pusher->isConnected())
-        _pusher->connect();
+    _pusher->connect();
 }
 
 
@@ -192,11 +191,14 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
 
     if (event.endsWith("status"))
     {
-        auto count = json.value("unreadConversationsCount").toInt();
+        auto chats = json.value("unreadConversationsCount").toInt();
+        emit unreadChats(chats);
 
-        qDebug() << "Unread chats:" << count;
+        auto notifs = json.value("unreadNotificationsCount").toInt();
+        emit unreadNotifications(notifs);
 
-        emit unreadChats(count);
+//        auto active = json.value("activeConversationsCount").toInt();
+
         return;
     }
 

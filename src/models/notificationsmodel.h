@@ -46,7 +46,7 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    // void _readSuccess();
+    void _readSuccess();
 
     void _addItems(QJsonObject data);
     void _addPush(QJsonObject data);

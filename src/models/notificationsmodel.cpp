@@ -120,8 +120,7 @@ void NotificationsModel::markAsRead()
     QString data = QString("last_id=%1").arg(_notifs.first()->_id);
     
     auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
-    Q_UNUSED(request);
-    // Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_readSuccess())));
+    Q_TEST(connect(request, SIGNAL(success(QJsonArray)),  this, SLOT(_readSuccess())));
 //    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SIGNAL(unreadChanged())));
 }
 
@@ -136,19 +135,19 @@ QHash<int, QByteArray> NotificationsModel::roleNames() const
 
 
 
-// void NotificationsModel::_readSuccess()
-// {
-    // for (int i = 0; i < _notifs.size(); i++)
-        // if (!_notifs.at(i)->_read)
-        // {
-            // _notifs.at(i)->_read = true;
-            // emit _notifs.at(i)->read();
-        // }
-        // else
-            // break;
+ void NotificationsModel::_readSuccess()
+ {
+     for (int i = 0; i < _notifs.size(); i++)
+         if (!_notifs.at(i)->_read)
+         {
+             _notifs.at(i)->_read = true;
+             emit _notifs.at(i)->read();
+         }
+         else
+             break;
 
-    // emit unreadChanged();
-// }
+     emit unreadChanged();
+ }
 
 
 

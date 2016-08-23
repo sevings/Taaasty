@@ -70,7 +70,6 @@ Q.ApplicationWindow {
     }
     function hideNotifs() {
         notifsView.state = "closed";
-        NotifsModel.markAsRead();
     }
     function toggleNotifs() {
         if (notifsView.y)
