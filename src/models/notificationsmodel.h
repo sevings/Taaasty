@@ -50,15 +50,19 @@ private slots:
 
     void _addItems(QJsonObject data);
     void _addPush(QJsonObject data);
+    void _addNewest(const QJsonObject data);
 
     void _reloadAll();
+    void _check(int actual);
 
     void _setNotLoading();
+    void _setNotChecking();
 
 private:
     QList<Notification*> _notifs;
     QString _url;
     bool _loading;
+    bool _checking;
     int _totalCount;
 
 #ifdef Q_OS_ANDROID

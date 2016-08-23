@@ -405,18 +405,22 @@ void ChatsModel::_removeChat(int id)
 void ChatsModel::_checkUnread(int actual)
 {
     int found = 0;
+    QList<int> bubbleIds;
     for (int i = 0; i < _chats.size(); i++)
     {
         if (_chat(_chats.at(i))->unreadCount() <= 0)
             continue;
 
         if (i > actual)
-            _bubbleChat(_chats.at(i));
+            bubbleIds << _chats.at(i);
 
         found++;
         if (found >= actual)
             break;
     }
+
+    foreach (auto id, bubbleIds)
+        _bubbleChat(id);
 
     if (found < actual)
         loadUnread();

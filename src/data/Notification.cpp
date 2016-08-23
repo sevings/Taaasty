@@ -79,6 +79,13 @@ int Notification::id() const
 
 
 
+bool Notification::isRead() const
+{
+    return _read;
+}
+
+
+
 void Notification::_updateRead(const QJsonObject data)
 {
     if (_read || data.value("id").toInt() != _id)
@@ -86,5 +93,10 @@ void Notification::_updateRead(const QJsonObject data)
 
     _read = !data.value("read_at").isNull();
     emit read();
+}
+
+int Notification::parentId() const
+{
+    return _parentId;
 }
 

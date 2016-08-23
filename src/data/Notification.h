@@ -10,9 +10,9 @@ class User;
 class Notification: public QObject
 {
     Q_OBJECT
-    
-    friend class NotificationsModel;
+
     friend class PusherClient;
+    friend class NotificationsModel;
     
     Q_PROPERTY(int     id         MEMBER _id         CONSTANT)
     Q_PROPERTY(QString createdAt  MEMBER _createdAt  CONSTANT)
@@ -40,6 +40,9 @@ public:
     QString text() const;
 
     int id() const;
+    bool isRead() const;
+
+    int parentId() const;
 
 signals:
     void read();
