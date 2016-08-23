@@ -1,6 +1,5 @@
 #include "Conversation.h"
 
-#include <QRegularExpression>
 #include <QUuid>
 #include <QDebug>
 
@@ -228,8 +227,7 @@ void Conversation::_init(const QJsonObject data)
      {
          auto e = entry();
          _topic         = e->title().isEmpty() ? e->text() : e->title();
-         _topic.remove(QRegularExpression("<[^>]*>"))
-                 .replace('\n', ' ').truncate(100);
+         _topic = Tasty::truncateHtml(_topic);
      }
      else
          _topic.clear();

@@ -1,6 +1,6 @@
 #include "messagebase.h"
 
-#include <QRegularExpression>
+#include "../tasty.h"
 
 
 
@@ -38,9 +38,7 @@ QDateTime MessageBase::createdDate() const
 
 void MessageBase::_setTruncatedText()
 {
-    _truncatedText = _text;
-    _truncatedText.remove(QRegularExpression("<[^>]*>"))
-            .replace('\n', ' ').truncate(100);
+    _truncatedText = Tasty::truncateHtml(_text);
 }
 
 

@@ -105,6 +105,15 @@ void Tasty::correctHtml(QString& html, bool isEntry)
 
 
 
+QString Tasty::truncateHtml(QString html, int length)
+{
+    html.remove(QRegularExpression("<[^>]*>"))
+            .replace('\n', ' ').truncate(length);
+    return html;
+}
+
+
+
 void Tasty::setImageWidth(int entry, int comment)
 {
     if (entry <= 0 || entry == _entryImageWidth

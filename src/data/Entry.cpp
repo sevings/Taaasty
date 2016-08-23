@@ -301,8 +301,13 @@ void Entry::_init(const QJsonObject data)
 
     if (data.contains("title_truncated"))
         _truncatedTitle = data.value("title_truncated").toString();
+    else if (_truncatedTitle.isEmpty())
+        _truncatedTitle = Tasty::truncateHtml(_title, 100);
+
     if (data.contains("text_truncated"))
         _truncatedText  = data.value("text_truncated").toString();
+    else if (_truncatedText.isEmpty())
+        _truncatedText = Tasty::truncateHtml(_text, 300);
 
     _source          = data.value("source").toString(); // quote author
     _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
