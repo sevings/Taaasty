@@ -15,6 +15,7 @@ class CalendarEntry: public QObject
     Q_PROPERTY(int     id             MEMBER _id             CONSTANT)
     Q_PROPERTY(QString createdAt      MEMBER _createdAt      CONSTANT)
     Q_PROPERTY(QString month          MEMBER _month          CONSTANT)
+    Q_PROPERTY(QString date           MEMBER _date           CONSTANT)
     Q_PROPERTY(QString url            MEMBER _url            CONSTANT)
     Q_PROPERTY(bool    isPrivate      MEMBER _isPrivate      CONSTANT)
     Q_PROPERTY(QString type           MEMBER _type           CONSTANT)
@@ -36,6 +37,7 @@ private:
     int     _id;
     QString _createdAt;
     QString _month;
+    QString _date;
     QString _url;
     bool    _isPrivate;
     QString _type;

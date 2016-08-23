@@ -189,7 +189,7 @@ Q.ApplicationWindow {
                    }
                    )
     }
-    function pushTlog(tlogId, sinceId) {
+    function pushTlog(tlogId, sinceId, sinceDate) {
         if (stack.currentItem.isFeedView
                 && stack.currentItem.mode === FeedModel.TlogMode
                 && stack.currentItem.tlogId === tlogId)
@@ -200,6 +200,7 @@ Q.ApplicationWindow {
                        mode: FeedModel.TlogMode,
                        tlogId: tlogId,
                        sinceId: sinceId || 0,
+                       sinceDate: sinceDate || '',
                        poppable: true
                    }
                    )

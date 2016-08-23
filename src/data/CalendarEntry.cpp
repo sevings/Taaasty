@@ -36,6 +36,7 @@ CalendarEntry::CalendarEntry(const QJsonObject data, QObject *parent)
     auto month = QDate::longMonthName(date.month(), QDate::StandaloneFormat);
     _month           = QString("%1, %2").arg(date.year()).arg(month);
 
+    _date            = d.left(10);
     _url             = data.value("entry_url").toString();
     _type            = data.value("type_symbol").toString();
     _isPrivate       = data.value("is_private").toBool();

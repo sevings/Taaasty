@@ -17,7 +17,7 @@ class FeedModel : public QAbstractListModel
 
     Q_PROPERTY(Mode     mode        READ mode       WRITE setMode)
     Q_PROPERTY(int      tlog        READ tlog       WRITE setTlog)
-    Q_PROPERTY(QString slug         READ slug       WRITE setSlug)
+    Q_PROPERTY(QString  slug        READ slug       WRITE setSlug)
     Q_PROPERTY(bool     hasMore     READ hasMore                    NOTIFY hasMoreChanged)
     Q_PROPERTY(bool     loading     READ loading                    NOTIFY loadingChanged)
     Q_PROPERTY(bool     isPrivate   READ isPrivate                  NOTIFY isPrivateChanged)
@@ -89,6 +89,7 @@ public:
     void postAnonymous(const QString title, const QString content);
 
     Q_INVOKABLE void setSinceEntryId(int id);
+    Q_INVOKABLE void setSinceDate(const QString date);
 
 signals:
     void hasMoreChanged();

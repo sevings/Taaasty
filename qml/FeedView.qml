@@ -13,6 +13,7 @@ Pane {
                                      || back.mode === FeedModel.BetterThanMode
     property int tlogId: 0
     property int sinceId: 0
+    property string sinceDate: ''
     property string slug: ''
     property int minRating: 0
     property string query: ''
@@ -108,8 +109,13 @@ Pane {
 //            }
 //        }
         Component.onCompleted: {
-            if (back.tlogId && back.sinceId)
+            if (!back.tlogId)
+                return;
+
+            if (back.sinceId)
                 feedModel.setSinceEntryId(back.sinceId);
+            else if (back.sinceDate)
+                feedModel.setSinceDate(back.sinceDate);
         }
         model: FeedModel {
             id: feedModel

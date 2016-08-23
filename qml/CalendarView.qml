@@ -55,8 +55,11 @@ Pane {
                 body: back
                 onClicked: {
                     mouse.accepted = true;
-                    var sinceId = calendarModel.firstMonthEntry(section);
-                    window.pushTlog(back.tlogId, sinceId)
+                    var e = calendarModel.firstMonthEntry(section);
+                    if (back.tlog.author.isDaylog)
+                        window.pushTlog(back.tlogId, 0, e.date);
+                    else
+                        window.pushTlog(back.tlogId, e.id);
                 }
             }
             ThemedText {

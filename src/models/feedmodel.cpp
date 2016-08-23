@@ -319,6 +319,13 @@ void FeedModel::setSinceEntryId(int id)
 
 
 
+void FeedModel::setSinceDate(const QString date)
+{
+    _prevDate = date;
+}
+
+
+
 QHash<int, QByteArray> FeedModel::roleNames() const
 {
     QHash<int, QByteArray> roles;

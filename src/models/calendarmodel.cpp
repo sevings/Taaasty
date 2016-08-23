@@ -81,13 +81,10 @@ CalendarEntry* CalendarModel::at(int row) const
 
 
 
-int CalendarModel::firstMonthEntry(QString month) const
+CalendarEntry* CalendarModel::firstMonthEntry(QString month) const
 {
     auto e = _firstMonthEntries.value(month);
-    if (e)
-        return e->id();
-    else
-        return 0;
+    return e;
 }
 
 

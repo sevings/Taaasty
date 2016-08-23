@@ -27,7 +27,7 @@ public:
 
     CalendarEntry* at(int row) const;
 
-    Q_INVOKABLE int firstMonthEntry(QString month) const;
+    Q_INVOKABLE CalendarEntry* firstMonthEntry(QString month) const;
     
 signals:
     void loaded();
