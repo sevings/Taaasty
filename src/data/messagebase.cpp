@@ -47,3 +47,13 @@ void MessageBase::_setDate(const QString d)
 {
     _date = QDateTime::fromString(d.left(19), "yyyy-MM-ddTHH:mm:ss");
 }
+
+User* MessageBase::user() const
+{
+    return _user;
+}
+
+QString MessageBase::text() const
+{
+    return _text;
+}

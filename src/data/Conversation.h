@@ -84,6 +84,8 @@ public:
 
     int entryId() const;
 
+    int userId() const;
+
 public slots:
     void update();
     void sendMessage(const QString text);

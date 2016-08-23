@@ -10,6 +10,10 @@ class ApiRequest;
 class Conversation;
 class Message;
 
+#ifdef Q_OS_ANDROID
+class AndroidNotifier;
+#endif
+
 
 
 class MessagesModel : public QAbstractListModel
@@ -74,6 +78,9 @@ private:
 
     ApiRequest* _request;
 
+#ifdef Q_OS_ANDROID
+    AndroidNotifier* _androidNotifier;
+#endif
 };
 
 #endif // MESSAGESMODEL_H

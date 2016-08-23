@@ -12,6 +12,11 @@
 #include "../apirequest.h"
 #include "notificationsmodel.h"
 
+#ifdef Q_OS_ANDROID
+#   include "../androidnotifier.h"
+#   include "../data/User.h"
+#endif
+
 
 
 MessagesModel::MessagesModel(Conversation* chat)
@@ -21,6 +26,9 @@ MessagesModel::MessagesModel(Conversation* chat)
     , _loading(false)
     , _url("v2/messenger/conversations/by_id/%1/messages.json?limit=20&order=desc")
     , _request(nullptr)
+#ifdef Q_OS_ANDROID
+    , _androidNotifier(new AndroidNotifier(this))
+#endif
 {
     init(chat);
 }
@@ -260,6 +268,15 @@ void MessagesModel::_addMessage(const QJsonObject data)
     endInsertRows();
 
     emit lastMessageChanged();
+
+#ifdef Q_OS_ANDROID
+    if (!msg->isRead() && msg->userId() != _chat->userId())
+    {
+        auto text = QString("%1:\n%2").arg(msg->user()->name())
+                .arg(msg->text());
+        _androidNotifier->setNotification(text);
+    }
+#endif
 }
 
 

@@ -26,6 +26,10 @@ public:
     bool        isRead() const;
     QDateTime   createdDate() const;
 
+    QString text() const;
+
+    User* user() const;
+
 signals:
     void baseUpdated();
     void textUpdated();
