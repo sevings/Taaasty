@@ -115,12 +115,17 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 
     if (!_query.isEmpty())
         url += QString("%1q=%2&page=%3").arg(splitter).arg(_query).arg(_page++);
+    else if (!_prevDate.isEmpty())
+        url += QString("%1date=%2").arg(splitter).arg(_prevDate);
     else if (_lastEntry)
         url += QString("%1since_entry_id=%2").arg(splitter).arg(_lastEntry);
 
-    splitter = url.endsWith(".json") ? "?" : "&";
-    int limit = _entries.isEmpty() && _query.isEmpty() ? 10 : 20;
-    url += QString("%1limit=%2").arg(splitter).arg(limit);
+    if (_prevDate.isEmpty())
+    {
+        splitter = url.endsWith(".json") ? "?" : "&";
+        int limit = _entries.isEmpty() && _query.isEmpty() ? 10 : 20;
+        url += QString("%1limit=%2").arg(splitter).arg(limit);
+    }
 
     _request = new ApiRequest(url);
 
@@ -193,6 +198,8 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query)
     _page = 1;
     _query = QUrl::toPercentEncoding(query);
     emit queryChanged();
+
+    _prevDate.clear();
 
     _hasMore = true;
     _lastEntry = 0;
@@ -336,6 +343,19 @@ void FeedModel::_addItems(QJsonObject data)
         _loading = false;
         emit loadingChanged();
         return;
+    }
+
+    if (data.contains("prev_date"))
+    {
+        auto prev = data.value("prev_date");
+        if (prev.isNull())
+        {
+            _hasMore = false;
+            emit hasMoreChanged();
+            _prevDate.clear();
+        }
+        else
+            _prevDate = prev.toString();
     }
 
     QList<Entry*> all;

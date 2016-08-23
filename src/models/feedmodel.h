@@ -131,6 +131,7 @@ private:
     int _minRating;
     QString _query;
     int     _page;
+    QString _prevDate;
 
     ApiRequest* _request;
 };
