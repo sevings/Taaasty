@@ -51,24 +51,16 @@
         <file>icons/flame-outline-72.png</file>
         <file>icons/flame-solid-36.png</file>
         <file>icons/flame-solid-72.png</file>
-        <file>icons/bell-black-32.png</file>
-        <file>icons/bell-black-64.png</file>
-        <file>icons/chat-black-32.png</file>
-        <file>icons/chat-black-64.png</file>
         <file>icons/chat-white-32.png</file>
         <file>icons/chat-white-64.png</file>
-        <file>icons/left-arrow-black-32.png</file>
-        <file>icons/left-arrow-black-64.png</file>
         <file>icons/left-arrow-white-32.png</file>
         <file>icons/left-arrow-white-64.png</file>
-        <file>icons/menu-black-32.png</file>
-        <file>icons/menu-black-64.png</file>
-        <file>icons/menu-rounded-black-32.png</file>
-        <file>icons/menu-rounded-black-64.png</file>
         <file>icons/menu-rounded-white-32.png</file>
         <file>icons/menu-rounded-white-64.png</file>
         <file>icons/menu-white-32.png</file>
         <file>icons/menu-white-64.png</file>
         <file>qml/PopupFill.qml</file>
+        <file>icons/bell-white-32.png</file>
+        <file>icons/bell-white-64.png</file>
     </qresource>
 </RCC>
