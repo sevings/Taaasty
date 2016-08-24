@@ -26,7 +26,6 @@ Q.ApplicationWindow {
     property int fontNormal: 20
     property int fontSmaller: 17
     property int fontSmallest: 14
-    property bool unreadNotifications: NotifsModel.unread
     readonly property bool notifsShows: notifsView.item && notifsView.item.showing
     readonly property bool chatsShows: chatsView.item && chatsView.item.showing
     readonly property int anonymousId: 4409

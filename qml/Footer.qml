@@ -73,6 +73,19 @@ Popup {
             styleColor: 'black'
             font.pointSize: window.fontBigger
         }
+        Rectangle {
+            id: chatsNotice
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                bottom: parent.top
+                margins: 1 * mm
+            }
+            visible: Tasty.unreadChats
+            color: Material.accent
+            width: 1.5 * mm
+            height: width
+            radius: height / 2
+        }
     }
     IconButton {
         id: bell
@@ -106,6 +119,19 @@ Popup {
             styleColor: 'black'
             font.pointSize: window.fontBigger
         }
+        Rectangle {
+            id: notifNotice
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                bottom: parent.top
+                margins: 1 * mm
+            }
+            visible: Tasty.unreadNotifications
+            color: Material.accent
+            width: 1.5 * mm
+            height: width
+            radius: height / 2
+        }
     }
     IconButton {
         id: right
@@ -126,65 +152,4 @@ Popup {
             window.showPageMenu();
         }
     }
-
-/*
-    SmallAvatar {
-        id: avatar
-        user: footer.tlog.author
-        defaultSource: 'http://taaasty.com/favicons/favicon-64x64.png'
-    }
-    ThemedText {
-        id: title
-        text: footer.title || footer.tlog.author.name
-        font.pointSize: window.fontBigger
-//        color: 'white'
-        color: Material.foreground
-        anchors {
-            left: avatar.right
-            right: parent.right
-            verticalCenter: parent.verticalCenter
-        }
-        horizontalAlignment: Text.AlignLeft
-        elide: Text.ElideRight
-        wrapMode: Text.NoWrap
-    }
-    MouseArea {
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            left: parent.left
-            right: notifButton.visible ? notifButton.left : parent.right
-        }
-        onClicked: {
-            if (window.notifsShows)
-                window.hideNotifs();
-            else if (footer.tlog.tlogId > 0 && footer.tlog.tlogId !== window.anonymousId)
-                window.pushProfile(tlog, tlog.author)
-        }
-    }
-    MouseArea {
-        id: notifButton
-        anchors {
-            right: parent.right
-            top: parent.top
-            bottom: parent.bottom
-        }
-        width: parent.height * 1.5
-        visible: Tasty.isAuthorized
-        onClicked: {
-            window.toggleNotifs()
-        }
-        Rectangle {
-            id: notifNotice
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-                verticalCenter: parent.top
-            }
-            color: window.unreadNotifications ? Material.accent : Material.background
-            width: window.unreadNotifications ? 2 * mm : 1.5 * mm
-            height: width
-            radius: height / 2
-        }
-    }
-*/
 }
