@@ -37,7 +37,9 @@ Popup {
             if (window.notifsShows)
                 window.hideNotifs();
             else if (window.stackSize > 1)
-                window.popFromStack(); // else show menu
+                window.popFromStack();
+            else
+                forwardAnimation.start();
         }
     }
     IconButton {

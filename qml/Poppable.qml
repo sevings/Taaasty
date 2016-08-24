@@ -51,22 +51,4 @@ MouseArea {
     onDoubleClicked: {
         // supress second click
     }
-    ParallelAnimation {
-        id: backAnimation
-        PropertyAnimation {
-            target: body
-            property: "x"
-            to: 0
-            duration: 100
-        }
-    }
-    ParallelAnimation {
-        id: forwardAnimation
-        PropertyAnimation {
-            target: body
-            property: "x"
-            to: 40 * mm
-            duration: 100
-        }
-    }
 }

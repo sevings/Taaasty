@@ -277,7 +277,16 @@ Q.ApplicationWindow {
             target: stack.currentItem
             property: "x"
             to: 0
-            duration: 300
+            duration: 100
+        }
+    }
+    ParallelAnimation {
+        id: forwardAnimation
+        PropertyAnimation {
+            target: stack.currentItem
+            property: "x"
+            to: 40 * mm
+            duration: 100
         }
     }
     Q.StackView {
