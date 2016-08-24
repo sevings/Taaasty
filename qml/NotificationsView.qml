@@ -3,59 +3,26 @@ import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
-Rectangle {
+PopupFill {
     id: back
-    color: window.backgroundColor
-    clip: true
-    height: visible ? parent.height : 0
-    y: window.height
-    z: 5
-    visible: y < window.height
     onStateChanged: {
         if (state == "opened")
             Tasty.reconnectToPusher();
         else if (state == "closed")
             NotifsModel.markAsRead();
     }
-    state: "closed"
-    states: [
-        State {
-            name: "opened"
-            AnchorChanges {
-                target: back
-                anchors.top: parent.top
-            }
-        },
-        State {
-            name: "closed"
-            AnchorChanges {
-                target: back
-                anchors.top: parent.bottom
-            }
-        }
-    ]
-    transitions: [
-        Transition {
-            from: "opened"
-            to: "closed"
-            AnchorAnimation {
-                duration: 300
-            }
-        },
-        Transition {
-            from: "closed"
-            to: "opened"
-            AnchorAnimation {
-                duration: 300
-            }
-        }
-    ]
+    Splash {
+        visible: !notifsView.visible
+        running: notifsView.model.hasMore
+        text: 'Нет уведомлений'
+    }
     MyListView {
         id: notifsView
         anchors.fill: parent
         model: NotifsModel
         spacing: 2 * mm
         cacheBuffer: back.visible ? 2 * window.height : 0
+        visible: count > 0
         delegate: MouseArea {
             id: notif
             width: window.width
@@ -67,12 +34,12 @@ Rectangle {
                     if (!notification.entityId)
                         return;
 
-                    window.hideNotifs();
+                    back.hide();
                     window.pushFullEntryById(notification.entityId);
                 }
                 else if (notification.entityType === 'Relationship')
                 {
-                    window.hideNotifs();
+                    back.hide();
                     window.pushTlog(notification.sender.id);
                 }
                 else if (notification.entityType === 'Comment')
@@ -80,7 +47,7 @@ Rectangle {
                     if (!notification.parentId)
                         return;
 
-                    window.hideNotifs();
+                    back.hide();
                     window.pushFullEntryById(notification.parentId);
                 }
                 else
@@ -99,13 +66,13 @@ Rectangle {
                     if (back.y > 0 || notification.parentType === 'AnonymousEntry')
                         return;
 
-                    window.hideNotifs();
+                    back.hide();
                     window.pushProfileById(notification.sender.id);
                 }
             }
             Q.Label {
                 id: notifName
-                text: '<b>' + notification.sender.name + '</b> ' 
+                text: '<b>' + notification.sender.name + '</b> '
                         + notification.actionText
                 anchors {
                     top: notifAvatar.top

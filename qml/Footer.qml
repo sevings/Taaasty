@@ -4,12 +4,8 @@ import org.binque.taaasty 1.0
 
 Popup {
     id: footer
-    height: 7 * mm
+    height: 64
     closable: false
-
-    property string title
-    property Tlog tlog
-
     MouseArea {
         anchors.fill: parent
         onClicked: {
@@ -19,7 +15,6 @@ Popup {
             mouse.accepted = true;
         }
     }
-
     IconButton {
         id: left
         anchors {
@@ -30,12 +25,15 @@ Popup {
         height: parent.height
         width: parent.width / 4
         iconHeight: 32
-        icon: '../icons/' + (window.stackSize > 1 || window.notifsShows ? 'left-arrow-' : 'menu-rounded-')
-              + (window.darkTheme ? 'white-' : 'black-')
+        icon: '../icons/' + (window.stackSize > 1 || window.notifsShows || window.chatsShows
+                             ? 'left-arrow-' : 'menu-rounded-')
+              + 'white-'
               + (dp < 2 ? '32' : '64') + '.png'
         onClicked: {
             if (window.notifsShows)
                 window.hideNotifs();
+            else if (window.chatsShows)
+                window.hideChats();
             else if (window.stackSize > 1)
                 window.popFromStack();
             else
@@ -52,12 +50,13 @@ Popup {
         height: parent.height
         width: parent.width / 4
         visible: Tasty.isAuthorized
+        highlighted: window.chatsShows
         iconHeight: 32
         icon: '../icons/chat-'
-              + (window.darkTheme ? 'white-' : 'black-')
+              + 'white-'
               + (dp < 2 ? '32' : '64') + '.png'
         onClicked: {
-            console.log('chats')
+            window.toggleChats();
         }
         ThemedText {
             anchors {
@@ -82,9 +81,10 @@ Popup {
         height: parent.height
         width: parent.width / 4
         visible: Tasty.isAuthorized
+        highlighted: window.notifsShows
         iconHeight: 32
         icon: '../icons/bell-'
-              + (window.darkTheme ? 'white-' : 'black-')
+              + 'white-'
               + (dp < 2 ? '32' : '64') + '.png'
         onClicked: {
             window.toggleNotifs();
@@ -114,7 +114,7 @@ Popup {
         visible: window.canShowPageMenu
         iconHeight: 32
         icon: '../icons/menu-'
-              + (window.darkTheme ? 'white-' : 'black-')
+              + 'white-'
               + (dp < 2 ? '32' : '64') + '.png'
         onClicked: {
             window.showPageMenu();

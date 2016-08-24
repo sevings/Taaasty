@@ -3,13 +3,11 @@ import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
-Pane {
+PopupFill {
     id: back
-    innerFlick: listView
-    readonly property bool isChatsView: true
-    Component.onCompleted: Tasty.reconnectToPusher()
-    Poppable {
-        body: back
+    onStateChanged: {
+        if (state == "opened")
+            Tasty.reconnectToPusher();
     }
     Splash {
         visible: !listView.visible
@@ -18,27 +16,23 @@ Pane {
     }
     MyListView {
         id: listView
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
-        }
-        height: contentHeight > parent.height ? parent.height : contentHeight
+        anchors.fill: parent
         visible: count > 0
-        interactive: back.x == 0
         model: ChatsModel
+        spacing: 2 * mm
+        cacheBuffer: back.visible ? 2 * window.height : 0
         delegate: Rectangle {
             width: window.width
             readonly property int textHeight: lastMessage.y + lastMessage.height - 2 * mm
-            height: (textHeight > chatAvatar.height ? textHeight : chatAvatar.height) + 4 * mm
+            height: (textHeight > chatAvatar.height ? textHeight : chatAvatar.height) + 2 * mm
             color: pop.pressed ? Material.primary : 'transparent'
-            Poppable {
+            MouseArea {
                 id: pop
-                body: back
                 onClicked: {
                     if (chat.unreadCount > 0)
                         chat.readAll();
 
+                    back.hide();
                     window.pushMessages(chat);
                 }
             }
@@ -50,11 +44,11 @@ Pane {
                     topMargin: 2 * mm
                 }
                 user: chat.entry ? chat.entry.author : chat.recipient
-                popBody: back
                 onClicked: {
                     if (chat.isAnonymous || (!chat.recipient && !chat.entry))
                         return;
 
+                    back.hide();
                     window.pushProfileById(chatAvatar.user.id);
                 }
             }
@@ -97,7 +91,6 @@ Pane {
                 height: 4 * mm
                 visible: !chat.isAnonymous && chat.lastMessage.userId !== chat.recipientId
                          && (chat.entry ? chat.lastMessage.userId !== chat.entry.author.id : true)
-                popBody: back
             }
             ThemedText {
                 id: lastMessage

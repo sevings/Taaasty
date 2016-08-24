@@ -53,8 +53,6 @@
         <file>icons/flame-solid-72.png</file>
         <file>icons/bell-black-32.png</file>
         <file>icons/bell-black-64.png</file>
-        <file>icons/bell-white-32.png</file>
-        <file>icons/bell-white-64.png</file>
         <file>icons/chat-black-32.png</file>
         <file>icons/chat-black-64.png</file>
         <file>icons/chat-white-32.png</file>
@@ -71,5 +69,6 @@
         <file>icons/menu-rounded-white-64.png</file>
         <file>icons/menu-white-32.png</file>
         <file>icons/menu-white-64.png</file>
+        <file>qml/PopupFill.qml</file>
     </qresource>
 </RCC>

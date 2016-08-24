@@ -16,24 +16,19 @@ Q.ApplicationWindow {
     Material.primary: Material.BlueGrey
     readonly property bool darkTheme: Settings.darkTheme
     property color backgroundColor: Material.background
-//    property color textColor: darkTheme ? 'white' : '#424d52'
     property color secondaryTextColor: darkTheme ? '#9E9E9E' : Qt.darker('#9E9E9E')
     property color greenColor: '#4CAF50'
     property color redColor: '#F44336' // '#f3534b'
-    property color darkGreen: Qt.darker(greenColor)
-    property color darkRed: Qt.darker(redColor)
+//    property color darkGreen: Qt.darker(greenColor)
+//    property color darkRed: Qt.darker(redColor)
     property int fontBiggest: 30
     property int fontBigger: 25
     property int fontNormal: 20
     property int fontSmaller: 17
     property int fontSmallest: 14
     property bool unreadNotifications: NotifsModel.unread
-    //    property int unreadMessages: 0
-    readonly property bool notifsShows: notifsView.state === "opened"
-    //    property bool showCommentMenu: false
-    //    property bool showSlugInput: false
-    //    property bool showConvers: false
-    //    property bool showDialog: false
+    readonly property alias notifsShows: notifsView.showing
+    readonly property alias chatsShows: chatsView.showing
     readonly property int anonymousId: 4409
     readonly property alias stackSize: stack.depth
     readonly property bool canShowPageMenu: !pageMenu.autoclose
@@ -58,16 +53,26 @@ Q.ApplicationWindow {
         }
     }
     function showNotifs() {
-        notifsView.state = "opened";
+        notifsView.show();
     }
     function hideNotifs() {
-        notifsView.state = "closed";
+        notifsView.hide();
     }
     function toggleNotifs() {
-        if (notifsView.y)
-            showNotifs();
-        else
+        if (chatsShows)
+            hideChats();
+        notifsView.toggle();
+    }
+    function showChats() {
+        chatsView.show();
+    }
+    function hideChats() {
+        chatsView.hide();
+    }
+    function toggleChats() {
+        if (notifsShows)
             hideNotifs();
+        chatsView.toggle();
     }
     function showFooter() {
         footer.state = "opened";
@@ -408,8 +413,9 @@ Q.ApplicationWindow {
     }
     NotificationsView {
         id: notifsView
-        anchors.left: parent.left
-        anchors.right: parent.right
+    }
+    ChatsView {
+        id: chatsView
     }
     PageMenu {
         id: pageMenu

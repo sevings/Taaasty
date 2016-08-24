@@ -34,7 +34,8 @@ Q.Drawer {
 
             // PROFILES SECTION
             Item {
-                visible: page.isFullEntryView === true
+                visible: !window.chatsShows
+                         && page.isFullEntryView === true
                          && page.entry.author
                          && page.entry.author.id > 0
                          && page.tlog.tlogId !== page.entry.author.id
@@ -60,7 +61,8 @@ Q.Drawer {
             }
             Item {
                 id: pageProfile
-                visible: tlog && tlog.tlogId > 0
+                visible: !window.chatsShows
+                         && tlog && tlog.tlogId > 0
                          && tlog.tlogId !== window.anonymousId
                 height: 6 * mm
                 width: parent.width
@@ -97,7 +99,8 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FeedModel.BestMode
-                visible: page.bestMode === true
+                visible: !window.chatsShows
+                         && page.bestMode === true
             }
             MenuItem {
                 text: 'Отличное'
@@ -106,7 +109,8 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FeedModel.ExcellentMode
-                visible: page.bestMode === true
+                visible: !window.chatsShows
+                         && page.bestMode === true
             }
             MenuItem {
                 text: 'Хорошее'
@@ -115,7 +119,8 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FeedModel.GoodMode
-                visible: page.bestMode === true
+                visible: !window.chatsShows
+                         && page.bestMode === true
             }
             MenuItem {
                 text: 'Неплохое'
@@ -124,7 +129,8 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FeedModel.WellMode
-                visible: page.bestMode === true
+                visible: !window.chatsShows
+                         && page.bestMode === true
             }
             MenuItem {
                 text: 'По рейтингу'
@@ -133,10 +139,12 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FeedModel.BetterThanMode
-                visible: page.bestMode === true
+                visible: !window.chatsShows
+                         && page.bestMode === true
             }
             MenuSeparator {
-                visible: page.bestMode === true
+                visible: !window.chatsShows
+                         && page.bestMode === true
             }
 
             // FEED SECTION
@@ -147,7 +155,8 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: visible && page.query.length > 0
-                visible: page.isFeedView === true
+                visible: !window.chatsShows
+                         && page.isFeedView === true
             }
 
             // CHATS SECTION
@@ -158,7 +167,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: ChatsModel.mode == 0 //= ChatsModel.AllChatsMode
-                visible: page.isChatsView === true
+                visible: window.chatsShows
             }
             MenuItem {
                 text: 'Личные'
@@ -167,7 +176,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: ChatsModel.mode == 1 //= ChatsModel.PrivateChatsMode
-                visible: page.isChatsView === true
+                visible: window.chatsShows
             }
             MenuItem {
                 text: 'Комментарии'
@@ -176,7 +185,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: ChatsModel.mode == 2 //= ChatsModel.EntryChatsMode
-                visible: page.isChatsView === true
+                visible: window.chatsShows
             }
 
             // MESSAGES SECTION
@@ -187,7 +196,8 @@ Q.Drawer {
                     window.pushFullEntry(page.chat.entry)
                     drawer.close();
                 }
-                visible: page.isMessagesView === true
+                visible: !window.chatsShows
+                         && page.isMessagesView === true
                          && page.chat.entry && page.chat.isInvolved
             }
             MenuSeparator {
@@ -202,7 +212,8 @@ Q.Drawer {
                     page.entry.favorite();
                     drawer.close();
                 }
-                visible: page.isFullEntryView === true
+                visible: !window.chatsShows
+                         && page.isFullEntryView === true
                          && page.entry.isFavoritable
             }
             MenuItem {
@@ -212,7 +223,8 @@ Q.Drawer {
                     Qt.openUrlExternally(url);
                     drawer.close();
                 }
-                visible: page.isFullEntryView === true
+                visible: !window.chatsShows
+                         && page.isFullEntryView === true
                          && page.entry.url.length > 0
             }
             MenuItem {
@@ -221,7 +233,8 @@ Q.Drawer {
                     window.pushMessages(page.entry.chat);
                     drawer.close();
                 }
-                visible: page.isFullEntryView === true && page.entry.chat.canTalk
+                visible: !window.chatsShows
+                         && page.isFullEntryView === true && page.entry.chat.canTalk
                          && Tasty.isAuthorized
             }
             MenuItem {
@@ -238,13 +251,15 @@ Q.Drawer {
 
                     drawer.close();
                 }
-                visible: (page.isFullEntryView === true
+                visible: !window.chatsShows
+                         && (page.isFullEntryView === true
                           && page.entry.chat.isInvolved)
                          || (page.isMessagesView === true
                              && page.chat.isInvolved)
             }
             MenuSeparator {
-                visible: page.isFullEntryView === true
+                visible: !window.chatsShows
+                         && page.isFullEntryView === true
             }
             MenuItem {
                 text: 'Перезагрузить'
@@ -252,7 +267,8 @@ Q.Drawer {
                     page.entry.reload();
                     drawer.close();
                 }
-                visible: page.isFullEntryView === true
+                visible: !window.chatsShows
+                         && page.isFullEntryView === true
             }
 
             // FLOWS SECTION
@@ -263,7 +279,8 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FlowsModel.AllFlowsMode
-                visible: page.isFlowsView === true
+                visible: !window.chatsShows
+                         && page.isFlowsView === true
             }
             MenuItem {
                 text: 'Мои потоки'
@@ -272,7 +289,8 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FlowsModel.MyFlowsMode
-                visible: page.isFlowsView === true
+                visible: !window.chatsShows
+                         && page.isFlowsView === true
             }
 
             // PROFILE SECTION
@@ -283,7 +301,8 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FlowsModel.AllFlowsMode
-                visible: page.isProfileView === true
+                visible: !window.chatsShows
+                         && page.isProfileView === true
                          && (!page.author.isPrivacy
                              || page.tlog.myRelationship === Tlog.Friend
                              || page.tlog.myRelationship === Tlog.Me)
