@@ -67,7 +67,8 @@ Popup {
             text: '<b>+' + Tasty.unreadChats + '</b>'
             visible: Tasty.unreadChats > 0
             style: Text.Outline
-            styleColor: window.backgroundColor
+            color: 'white'
+            styleColor: 'black'
             font.pointSize: window.fontBigger
         }
     }
@@ -98,7 +99,8 @@ Popup {
             text: '<b>+' + Tasty.unreadNotifications + '</b>'
             visible: Tasty.unreadNotifications > 0
             style: Text.Outline
-            styleColor: window.backgroundColor
+            color: 'white'
+            styleColor: 'black'
             font.pointSize: window.fontBigger
         }
     }

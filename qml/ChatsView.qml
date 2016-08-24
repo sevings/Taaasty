@@ -28,6 +28,7 @@ PopupFill {
             color: pop.pressed ? Material.primary : 'transparent'
             MouseArea {
                 id: pop
+                anchors.fill: parent
                 onClicked: {
                     if (chat.unreadCount > 0)
                         chat.readAll();
@@ -123,6 +124,7 @@ PopupFill {
                     anchors.centerIn: parent
                     text: chat.unreadCount
                     font.pointSize: window.fontSmallest
+                    color: 'white'
                 }
             }
         }
