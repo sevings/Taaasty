@@ -207,7 +207,7 @@ void Entry::reload()
 
 void Entry::addComment(const QString text)
 {
-    if (_loading || _id <= 0)
+    if (_loading || _id <= 0 || !Tasty::instance()->isAuthorized())
         return;
 
     _loading = true;
@@ -451,7 +451,7 @@ int Entry::commentsCount() const
 
 Conversation* Entry::chat()
 {
-    if (_id <= 0)
+    if (_id <= 0 || !Tasty::instance()->isAuthorized())
         return nullptr;
 
     auto chat = Tasty::instance()->pusher()->chatByEntry(_id);

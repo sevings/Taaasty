@@ -235,11 +235,14 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
-                         && page.isFullEntryView === true && page.entry.chat.canTalk
+                         && page.isFullEntryView === true
+                         && page.entry.chat
+                         && page.entry.chat.canTalk
                          && Tasty.isAuthorized
             }
             MenuItem {
                 text: ((page.isFullEntryView === true
+                        && page.entry.chat
                         && page.entry.chat.type === Chat.PrivateConversation)
                        || (page.isMessagesView === true
                            && page.chat.type === Chat.PrivateConversation))
@@ -254,13 +257,16 @@ Q.Drawer {
                 }
                 visible: !window.chatsShows
                          && (page.isFullEntryView === true
-                          && page.entry.chat.isInvolved)
+                             && page.entry.chat
+                             && page.entry.chat.isInvolved)
                          || (page.isMessagesView === true
                              && page.chat.isInvolved)
+                         && Tasty.isAuthorized
             }
             MenuSeparator {
                 visible: !window.chatsShows
                          && page.isFullEntryView === true
+                         && Tasty.isAuthorized
             }
             MenuItem {
                 text: 'Перезагрузить'
