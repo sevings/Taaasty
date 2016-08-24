@@ -4,7 +4,7 @@ import org.binque.taaasty 1.0
 
 Popup {
     id: footer
-    height: 64
+    height: 6 * mm
     closable: false
     MouseArea {
         anchors.fill: parent
@@ -28,7 +28,8 @@ Popup {
         icon: '../icons/' + (window.stackSize > 1 || window.notifsShows || window.chatsShows
                              ? 'left-arrow-' : 'menu-rounded-')
               + 'white-'
-              + (dp < 2 ? '32' : '64') + '.png'
+              + '128.png'
+//              + (dp < 2 ? '32' : '64') + '.png'
         onClicked: {
             if (window.notifsShows)
                 window.hideNotifs();
@@ -54,7 +55,8 @@ Popup {
         iconHeight: 32
         icon: '../icons/chat-'
               + 'white-'
-              + (dp < 2 ? '32' : '64') + '.png'
+              + '128.png'
+//              + (dp < 2 ? '32' : '64') + '.png'
         onClicked: {
             window.toggleChats();
         }
@@ -86,7 +88,8 @@ Popup {
         iconHeight: 32
         icon: '../icons/bell-'
               + 'white-'
-              + (dp < 2 ? '32' : '64') + '.png'
+              + '128.png'
+//              + (dp < 2 ? '32' : '64') + '.png'
         onClicked: {
             window.toggleNotifs();
         }
@@ -117,7 +120,8 @@ Popup {
         iconHeight: 32
         icon: '../icons/menu-'
               + 'white-'
-              + (dp < 2 ? '32' : '64') + '.png'
+              + '128.png'
+//              + (dp < 2 ? '32' : '64') + '.png'
         onClicked: {
             window.showPageMenu();
         }

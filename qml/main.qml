@@ -46,6 +46,10 @@ Q.ApplicationWindow {
             hideNotifs();
             close.accepted = false;
         }
+        else if (chatsShows) {
+            hideChats();
+            close.accepted = false;
+        }
         else if (stack.depth > 1) {
             if (!stack.currentItem.isTrainingProgress)
                 stack.pop();
