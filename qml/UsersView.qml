@@ -40,7 +40,7 @@ Pane {
             right: parent.right
         }
         visible: count > 0
-        interactive: back.x == 0
+//        interactive: back.x == 0
         height: contentHeight > parent.height ? parent.height : contentHeight
         Component.onCompleted: {
             var qml = 'import org.binque.taaasty 1.0\n' + (bayesMode ? 'UsersModelBayes { } ' : 'UsersModelTlog { } ');

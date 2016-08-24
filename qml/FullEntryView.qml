@@ -63,7 +63,7 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: !entry.loading
         model: commentsModel
-        interactive: back.x == 0
+//        interactive: back.x == 0
         delegate: Item {
             width: window.width
             readonly property int textHeight: nameText.height + commentText.height - 1 * mm

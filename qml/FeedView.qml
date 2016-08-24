@@ -71,7 +71,7 @@ Pane {
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
-        interactive: back.x == 0
+//        interactive: back.x == 0
         Component.onCompleted: {
             if (!back.tlogId)
                 return;
@@ -144,12 +144,8 @@ Pane {
                 user: entry.author
                 popBody: back
                 visible: mode !== FeedModel.AnonymousMode
+                acceptClick: back.x <= 0 && mode !== FeedModel.AnonymousMode
                 onClicked: {
-                    if (back.x > 0 || mode === FeedModel.AnonymousMode) {
-                        mouse.accepted = false;
-                        return;
-                    }
-
                     window.pushProfile(entry.tlog, entry.author);
                 }
             }

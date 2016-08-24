@@ -39,14 +39,6 @@ Item {
                 visible: Tasty.isAuthorized
                 highlighted: stack.currentItem.mode === FeedModel.FriendsMode
             }
-            MenuItem {
-                text: 'Сообщения' + (Tasty.unreadChats > 0 ? ' <b>+' + Tasty.unreadChats + '</b>' : '')
-                onTriggered: { 
-                    backAnimation.start();
-                    window.pushChats();
-                }
-                visible: Tasty.isAuthorized
-            }
             MenuSeparator {
                 visible: Tasty.isAuthorized
             }

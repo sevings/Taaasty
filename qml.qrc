@@ -62,5 +62,6 @@
         <file>qml/PopupFill.qml</file>
         <file>icons/bell-white-32.png</file>
         <file>icons/bell-white-64.png</file>
+        <file>qml/MyFlickable.qml</file>
     </qresource>
 </RCC>

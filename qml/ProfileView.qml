@@ -33,14 +33,13 @@ Pane {
                 author = tlog.author;
         }
     }
-    Flickable {
+    MyFlickable {
         id: flickable
         anchors.fill: parent
-        flickableDirection: Flickable.VerticalFlick
         bottomMargin: 1 * mm
         contentWidth: parent.width
         contentHeight: column.height
-        interactive: profileView.x == 0
+//        interactive: profileView.x == 0
         Poppable {
             body: profileView
         }

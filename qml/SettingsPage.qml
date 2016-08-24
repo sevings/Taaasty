@@ -9,7 +9,7 @@ Pane {
     Poppable {
         body: back
     }
-    Flickable {
+    MyFlickable {
         id: flick
         anchors {
             top: parent.top
@@ -17,10 +17,9 @@ Pane {
             right: parent.right
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
-        flickableDirection: Flickable.VerticalFlick
         contentWidth: parent.width
         contentHeight: column.height
-        interactive: back.x == 0
+//        interactive: back.x == 0
         Poppable {
             body: back
         }

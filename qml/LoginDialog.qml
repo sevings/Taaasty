@@ -16,7 +16,7 @@ Pane {
     Poppable {
         body: dialog
     }
-    Flickable {
+    MyFlickable {
         id: flick
         anchors {
             verticalCenter: parent.verticalCenter
@@ -25,7 +25,6 @@ Pane {
         }
         height: contentHeight > parent.height
                 ? parent.height : contentHeight
-        flickableDirection: Flickable.VerticalFlick
         topMargin: 2 * mm
         bottomMargin: 2 * mm
         contentWidth: parent.width

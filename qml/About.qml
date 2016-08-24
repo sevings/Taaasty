@@ -3,12 +3,11 @@ import QtQuick 2.7
 Pane {
     id: back
     innerFlick: flick
-    Flickable {
+    MyFlickable {
         id: flick
         anchors.fill: parent
-        flickableDirection: Flickable.VerticalFlick
         contentHeight: item.height
-        interactive: back.x == 0
+//        interactive: back.x == 0
         Item {
             id: item
             width: window.width

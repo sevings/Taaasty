@@ -110,13 +110,6 @@ Q.ApplicationWindow {
         inputDialog.text = image.fileName;
         showLineInput('save');
     }
-    function pushChats() {
-        stack.push(stack.chats,
-                   {
-                       poppable: true
-                   }
-                   )
-    }
     function pushMessages(chat) {
         stack.push(stack.messages,
                    {
@@ -372,7 +365,6 @@ Q.ApplicationWindow {
                 poppable: Q.StackView.index > 0
             }
         }
-        property Component chats:               Qt.createComponent("ChatsView.qml",         Component.Asynchronous, stack);
         property Component messages:            Qt.createComponent("MessagesView.qml",      Component.Asynchronous, stack);
         property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack);
         property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack);
