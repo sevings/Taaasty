@@ -6,17 +6,6 @@ Pane {
     id: back
     innerFlick: listView
     property int mode: Tasty.isAuthorized ? FlowsModel.MyFlowsMode : FlowsModel.AllFlowsMode
-    readonly property string title: { // for footer
-        switch (back.mode) {
-        case FlowsModel.MyFlowsMode:
-            'Мои потоки'; break;
-        case FlowsModel.AllFlowsMode:
-            'Все потоки'; break;
-        default:
-            'Тейсти'
-        }
-    }
-    readonly property bool customTitle: true
     readonly property bool isFlowsView: true
     Poppable {
         body: back

@@ -45,7 +45,6 @@ Q.ApplicationWindow {
     }
     Component.onCompleted: {
         Tasty.setImageWidth(window.width - 2 * mm, window.width - 11 * mm);
-        loadingText.visible = false;
     }
     onClosing: {
         if (notifsShows) {
@@ -57,15 +56,6 @@ Q.ApplicationWindow {
                 stack.pop();
             close.accepted = false;
         }
-    }
-    Text {
-        id: loadingText
-        anchors.centerIn: parent
-        color: window.secondaryTextColor
-        horizontalAlignment: Text.AlignHCenter
-        font.pointSize: window.fontBigger
-        wrapMode: Text.Wrap
-        text: 'Загрузка…'
     }
     function showNotifs() {
         notifsView.state = "opened";
@@ -92,22 +82,6 @@ Q.ApplicationWindow {
     function hideLineInput() {
         inputDialog.state = "closed";
         inputDialog.clear();
-    }
-    function setFooterTlog(tlog) {
-        if (!tlog)
-            tlog = emptyTlog;
-
-        footer.tlog = tlog;
-    }
-    function setFooterFromStack() {
-        if (stack.currentItem.customTitle) {
-            footer.title = stack.currentItem.title;
-            setFooterTlog();
-        }
-        else {
-            footer.title = '';
-            setFooterTlog(stack.currentItem.tlog);
-        }
     }
     function openLink(url) {
         var matches = /taaasty.com\/(?:~|%7E)?([^\/]+)(?:\/([\d]+))?/.exec(url);
@@ -283,21 +257,15 @@ Q.ApplicationWindow {
             savingImage = Cache.image();
         }
         hideLineInput();
-        setFooterFromStack();
     }
     function setFeedMode(mode) {
         if (mode !== FeedModel.BetterThanMode)
             stack.currentItem.setMode(mode);
         else
             showLineInput('rating');
-
-        setFooterFromStack();
     }
     function showPageMenu() {
         pageMenu.open();
-    }
-    Tlog {
-        id: emptyTlog
     }
     MainMenu {
         id: menu
@@ -316,17 +284,6 @@ Q.ApplicationWindow {
         id: stack
         anchors.fill: parent
         initialItem: feed
-        onCurrentItemChanged: {
-            if (!stack.currentItem)
-                return;
-
-            setFooterFromStack();
-
-            window.hideFooter();
-
-//            if (stack.currentItem.isFeedView)
-//                stack.currentItem.pushed();
-        }
         popEnter: Transition {
             PropertyAnimation {
                 property: "opacity"

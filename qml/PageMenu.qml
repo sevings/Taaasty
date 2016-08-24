@@ -35,6 +35,7 @@ Q.Drawer {
             // PROFILES SECTION
             Item {
                 visible: page.isFullEntryView === true
+                         && page.entry.author
                          && page.entry.author.id > 0
                          && page.tlog.tlogId !== page.entry.author.id
                          && page.entry.author.id !== window.anonymousId
@@ -45,12 +46,12 @@ Q.Drawer {
                     anchors.leftMargin: 1.5 * mm
                     width: 6 * mm
                     height: 6 * mm
-                    user: page.isFullEntryView === true ? page.entry.author : null
+                    user: parent.visible ? page.entry.author : null
                 }
                 MenuItem {
                     leftPadding: entryAuthorAvatar.width + entryAuthorAvatar.anchors.leftMargin * 2
                     height: parent.height
-                    text: page.isFullEntryView === true ? page.entry.author.name : ''
+                    text: parent.visible ? page.entry.author.name : ''
                     onTriggered: {
                         window.pushProfileById(page.entry.author.id);
                         drawer.close();
@@ -154,7 +155,6 @@ Q.Drawer {
                 text: 'Все беседы'
                 onTriggered: {
                     ChatsModel.mode = 0//ChatsModel.AllChatsMode
-                    window.setFooterFromStack();
                     drawer.close();
                 }
                 highlighted: ChatsModel.mode == 0 //= ChatsModel.AllChatsMode
@@ -164,7 +164,6 @@ Q.Drawer {
                 text: 'Личные'
                 onTriggered: {
                     ChatsModel.mode = 1//ChatsModel.PrivateChatsMode
-                    window.setFooterFromStack();
                     drawer.close();
                 }
                 highlighted: ChatsModel.mode == 1 //= ChatsModel.PrivateChatsMode
@@ -174,7 +173,6 @@ Q.Drawer {
                 text: 'Комментарии'
                 onTriggered: {
                     ChatsModel.mode = 2//ChatsModel.EntryChatsMode
-                    window.setFooterFromStack();
                     drawer.close();
                 }
                 highlighted: ChatsModel.mode == 2 //= ChatsModel.EntryChatsMode
@@ -262,7 +260,6 @@ Q.Drawer {
                 text: 'Все потоки'
                 onTriggered: {
                     page.mode = 0; //= FlowsModel.AllFlowsMode
-                    window.setFooterFromStack();
                     drawer.close();
                 }
                 highlighted: page.mode === FlowsModel.AllFlowsMode
@@ -272,7 +269,6 @@ Q.Drawer {
                 text: 'Мои потоки'
                 onTriggered: {
                     page.mode = 1; //= FlowsModel.MyFlowsMode
-                    window.setFooterFromStack();
                     drawer.close();
                 }
                 highlighted: page.mode === FlowsModel.MyFlowsMode

@@ -8,7 +8,6 @@ Pane {
     property Tlog tlog: Tlog {
         tlogId: back.tlogId
     }
-    signal pushed
     Poppable {
         body: back
     }
@@ -26,13 +25,6 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
         interactive: back.x == 0
-        Connections {
-            target: back
-            onPushed: {
-                if (listView.currentIndex >= 0)
-                    listView.positionViewAtIndex(listView.currentIndex, ListView.Center)
-            }
-        }
         model: CalendarModel {
             id: calendarModel
             Component.onCompleted: {
@@ -79,9 +71,6 @@ Pane {
             width: window.width
             height: 5 * mm + date.height + entryTitle.height + comments.height
             color: pop.pressed ? Material.primary : 'transparent'
-            function saveCurrentIndex() {
-                listView.currentIndex = listView.indexAt(entryView.x + 1, entryView.y + 1);
-            }
             Poppable {
                 id: pop
                 body: back
@@ -91,7 +80,6 @@ Pane {
                         return;
                     }
 
-                    saveCurrentIndex();
                     window.pushFullEntryById(entry.id);
                 }
             }

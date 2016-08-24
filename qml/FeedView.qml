@@ -21,35 +21,7 @@ Pane {
         tlogId: back.tlogId
         slug: back.slug
     }
-    readonly property string title: { // for footer
-        switch (back.mode) {
-        case FeedModel.MyTlogMode:
-            'Мой тлог'; break;
-        case FeedModel.LiveMode:
-            'Прямой эфир'; break;
-        case FeedModel.FriendsMode:
-            'Подписки'; break;
-        case FeedModel.BestMode:
-            'Лучшее'; break;
-        case FeedModel.ExcellentMode:
-            'Отличное'; break;
-        case FeedModel.GoodMode:
-            'Хорошее'; break;
-        case FeedModel.WellMode:
-            'Неплохое'; break;
-        case FeedModel.BetterThanMode:
-            'Лучше, чем ' + minRating; break;
-        case FeedModel.AnonymousMode:
-            'Анонимки'; break;
-        case FeedModel.FavoritesMode:
-            'Избранное'; break;
-        default:
-            'Тейсти'
-        }
-    }
-    readonly property bool customTitle: mode !== FeedModel.TlogMode// && mode !== FeedModel.MyTlogMode
     readonly property bool isFeedView: true
-//    signal pushed
     function setMode(m, t, s) {
         query = '';
 
@@ -100,14 +72,6 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
         interactive: back.x == 0
-//        Connections {
-//            target: back
-//            onPushed: {
-//                console.log('pushed', listView.currentIndex)
-//                if (listView.currentIndex >= 0)
-//                    listView.positionViewAtIndex(listView.currentIndex, ListView.Contain)
-//            }
-//        }
         Component.onCompleted: {
             if (!back.tlogId)
                 return;
@@ -129,9 +93,6 @@ Pane {
             id: entryView
             width: window.width
             height: 7 * mm + entryVoteButton.y + entryVoteButton.height
-            function saveCurrentIndex() {
-//                listView.currentIndex = index;
-            }
             Poppable {
                 body: back
                 onClicked: {
@@ -141,8 +102,6 @@ Pane {
                     }
 
                     mouse.accepted = true;
-
-//                    saveCurrentIndex();
                     window.pushFullEntry(entry);
                 }
             }
@@ -191,7 +150,6 @@ Pane {
                         return;
                     }
 
-//                    saveCurrentIndex();
                     window.pushProfile(entry.tlog, entry.author);
                 }
             }

@@ -9,8 +9,6 @@ Pane {
     property Tlog tlog: Tlog {
         tlogId: chat.recipientId
     }
-    readonly property bool customTitle: chat.type !== Chat.PrivateConversation
-    readonly property string title: chat.topic
     readonly property bool isMessagesView: true
     signal addGreeting(string slug)
     Component.onCompleted: {

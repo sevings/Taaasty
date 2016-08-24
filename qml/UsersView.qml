@@ -6,8 +6,6 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     innerFlick: users
-    property string title: ''
-    readonly property bool customTitle: bayesMode
     readonly property bool bayesMode: mode === UsersModel.FireMode || mode === UsersModel.WaterMode
     property int mode: UsersModel.MyFollowingsMode
     property int tlogId

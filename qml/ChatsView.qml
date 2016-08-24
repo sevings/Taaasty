@@ -6,8 +6,6 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     innerFlick: listView
-    readonly property bool customTitle: true
-    readonly property string title: 'Сообщения'
     readonly property bool isChatsView: true
     Component.onCompleted: Tasty.reconnectToPusher()
     Poppable {

@@ -26,7 +26,6 @@ Pane {
         target: entry
         onUpdated: {
             checkComments();
-            window.setFooterTlog(entry.tlog);
             if (scrollToBottom)
                 fullEntry.positionViewAtEnd();
         }

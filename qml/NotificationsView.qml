@@ -17,13 +17,6 @@ Rectangle {
         else if (state == "closed")
             NotifsModel.markAsRead();
     }
-
-    onVisibleChanged: {
-//        if (visible)
-//
-//        else
-//
-    }
     state: "closed"
     states: [
         State {
