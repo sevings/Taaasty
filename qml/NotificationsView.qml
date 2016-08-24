@@ -26,7 +26,7 @@ PopupFill {
         delegate: MouseArea {
             id: notif
             width: window.width
-            readonly property int h: notifName.paintedHeight + notifText.paintedHeight
+            readonly property int h: notifName.paintedHeight + notifText.paintedHeight + 1 * mm
             height: (h > notifAvatar.height ? h : notifAvatar.height) + 2 * mm
             onClicked: {
                 if (notification.entityType === 'Entry')

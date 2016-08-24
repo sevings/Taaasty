@@ -81,7 +81,7 @@ Pane {
                 anchors {
                     top: parent.top
                     left: parent.left
-//                    right: unreadMessage.visible ? unreadMessage.left : messageDate.left
+                    right: unreadMessage.visible ? unreadMessage.left : messageDate.left
                     margins: 1 * mm
                     leftMargin: chat.userId === message.userId ? 10 * mm : anchors.margins
                 }

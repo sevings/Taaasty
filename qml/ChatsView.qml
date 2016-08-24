@@ -42,7 +42,6 @@ PopupFill {
                 anchors {
                     top: parent.top
                     margins: 1 * mm
-                    topMargin: 2 * mm
                 }
                 user: chat.entry ? chat.entry.author : chat.recipient
                 onClicked: {
@@ -59,7 +58,6 @@ PopupFill {
                     top: parent.top
                     left: chatAvatar.right
                     right: date.left
-                    topMargin: 2 * mm
                 }
                 text: chat.topic
                 font.pointSize: window.fontSmaller

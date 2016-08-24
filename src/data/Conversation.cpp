@@ -497,6 +497,8 @@ void Conversation::_emitLeft(const QJsonObject data)
     emit Tasty::instance()->info("Беседа удалена");
 }
 
+
+
 int Conversation::userId() const
 {
     return _userId;
