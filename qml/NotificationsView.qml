@@ -19,10 +19,10 @@ PopupFill {
     MyListView {
         id: notifsView
         anchors.fill: parent
+        visible: count > 0
         model: NotifsModel
         spacing: 2 * mm
         cacheBuffer: back.visible ? 2 * window.height : 0
-        visible: count > 0
         delegate: MouseArea {
             id: notif
             width: window.width

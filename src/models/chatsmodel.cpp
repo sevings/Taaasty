@@ -30,6 +30,7 @@ ChatsModel::ChatsModel(QObject* parent)
     , _hasMore(true)
     , _url("v2/messenger/conversations.json?limit=10&page=%1")
     , _loading(false)
+    , _checking(false)
     , _page(1)
     , _request(nullptr)
 {
@@ -90,7 +91,7 @@ void ChatsModel::fetchMore(const QModelIndex& parent)
     _loading = true;
     emit loadingChanged();
 
-    QString url = _url.arg(_page++);
+    QString url = _url.arg(_page);
     _request = new ApiRequest(url, true);
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_addChats(QJsonArray))));
@@ -166,16 +167,18 @@ void ChatsModel::addChat(Entry* entry)
 
 void ChatsModel::loadUnread()
 {
+    if (_checking)
+        return;
+
     qDebug() << "ChatsModel::loadUnread";
 
-    _loading = true;
-    emit loadingChanged();
+    _checking = true;
 
     QString url("v2/messenger/conversations.json?unread=true");
     _request = new ApiRequest(url, true);
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_addUnread(QJsonArray))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading(QObject*))));
+    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotChecking(QObject*))));
 }
 
 
@@ -226,13 +229,10 @@ void ChatsModel::_addUnread(QJsonArray data)
     qDebug() << "ChatsModel::_addUnread";
 
     _request = nullptr;
+    _checking = false;
 
     if (data.isEmpty())
-    {
-        _loading = false;
-        emit loadingChanged();
         return;
-    }
 
     QList<int> bubbleIds;
     QList<Conversation*> chats;
@@ -273,11 +273,7 @@ void ChatsModel::_addUnread(QJsonArray data)
         _bubbleChat(id);
 
     if (chats.isEmpty())
-    {
-        _loading = false;
-        emit loadingChanged();
         return;
-    }
 
     beginInsertRows(QModelIndex(), 0, chats.size() - 1);
 
@@ -285,9 +281,6 @@ void ChatsModel::_addUnread(QJsonArray data)
         _chats.insert(i, chats.at(i)->id());
 
     endInsertRows();
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 
@@ -297,6 +290,7 @@ void ChatsModel::_addChats(QJsonArray data)
     qDebug() << "ChatsModel::_addChats";
 
     _request = nullptr;
+    _page++;
 
     if (data.isEmpty())
     {
@@ -338,7 +332,7 @@ void ChatsModel::_addChats(QJsonArray data)
         fetchMore(QModelIndex());
         return;
     }
-    
+
     beginInsertRows(QModelIndex(), _chats.size(), _chats.size() + chats.size() - 1);
     
     foreach (auto chat, chats)
@@ -367,6 +361,14 @@ void ChatsModel::_setNotLoading(QObject* request)
     }
 
     _request = nullptr;
+}
+
+
+
+void ChatsModel::_setNotChecking(QObject* request)
+{
+    Q_UNUSED(request);
+    _checking = false;
 }
 
 

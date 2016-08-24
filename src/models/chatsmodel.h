@@ -65,6 +65,7 @@ private slots:
     void _addUnread(QJsonArray data);
     void _addChats(QJsonArray data);
     void _setNotLoading(QObject* request);
+    void _setNotChecking(QObject* request);
     void _removeChat(int id);
     void _checkUnread(int actual);
 
@@ -82,6 +83,7 @@ private:
     
     QString _url;
     bool    _loading;
+    bool    _checking;
     int     _page;
 
     ApiRequest* _request;
