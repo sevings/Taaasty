@@ -27,8 +27,8 @@ Q.ApplicationWindow {
     property int fontSmaller: 17
     property int fontSmallest: 14
     property bool unreadNotifications: NotifsModel.unread
-    readonly property alias notifsShows: notifsView.showing
-    readonly property alias chatsShows: chatsView.showing
+    readonly property bool notifsShows: notifsView.item && notifsView.item.showing
+    readonly property bool chatsShows: chatsView.item && chatsView.item.showing
     readonly property int anonymousId: 4409
     readonly property alias stackSize: stack.depth
     readonly property bool canShowPageMenu: !pageMenu.autoclose
@@ -53,26 +53,26 @@ Q.ApplicationWindow {
         }
     }
     function showNotifs() {
-        notifsView.show();
+        notifsView.item.show();
     }
     function hideNotifs() {
-        notifsView.hide();
+        notifsView.item.hide();
     }
     function toggleNotifs() {
         if (chatsShows)
             hideChats();
-        notifsView.toggle();
+        notifsView.item.toggle();
     }
     function showChats() {
-        chatsView.show();
+        chatsView.item.show();
     }
     function hideChats() {
-        chatsView.hide();
+        chatsView.item.hide();
     }
     function toggleChats() {
         if (notifsShows)
             hideNotifs();
-        chatsView.toggle();
+        chatsView.item.toggle();
     }
     function showFooter() {
         footer.state = "opened";
@@ -403,16 +403,22 @@ Q.ApplicationWindow {
             }
         }
     }
-    NotificationsView {
+    Loader {
         id: notifsView
+        asynchronous: true
+        anchors.fill: parent
+        source: 'NotificationsView.qml'
     }
-    ChatsView {
+    Loader {
         id: chatsView
+        asynchronous: true
+        anchors.fill: parent
+        source: 'ChatsView.qml'
     }
     PageMenu {
         id: pageMenu
         page: stack.currentItem
-        openable: !menu.visible && !notifsView.visible
+        openable: !menu.visible && !notifsShows
     }
     Footer {
         id: footer
