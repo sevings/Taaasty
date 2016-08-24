@@ -199,6 +199,9 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query)
     _query = QUrl::toPercentEncoding(query);
     emit queryChanged();
 
+    _isPrivate = false;
+    emit isPrivateChanged();
+
     _prevDate.clear();
 
     _hasMore = true;

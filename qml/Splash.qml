@@ -14,8 +14,7 @@ ColumnLayout {
     }
     Q.Label {
         id: loadingText
-        width: window.width
-        horizontalAlignment: Text.AlignHCenter
+        Layout.alignment: Qt.AlignCenter
         font.pointSize: window.fontBigger
         wrapMode: Text.Wrap
         text: parent.running ? 'Загрузка…' : parent.text
