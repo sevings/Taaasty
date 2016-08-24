@@ -29,29 +29,29 @@ PopupFill {
             readonly property int h: notifName.paintedHeight + notifText.paintedHeight + 1 * mm
             height: (h > notifAvatar.height ? h : notifAvatar.height) + 2 * mm
             onClicked: {
-                if (notification.entityType === 'Entry')
+                if (model.notification.entityType === 'Entry')
                 {
-                    if (!notification.entityId)
+                    if (!model.notification.entityId)
                         return;
 
                     back.hide();
-                    window.pushFullEntryById(notification.entityId);
+                    Q.ApplicationWindow.window.pushFullEntryById(model.notification.entityId);
                 }
-                else if (notification.entityType === 'Relationship')
+                else if (model.notification.entityType === 'Relationship')
                 {
                     back.hide();
-                    window.pushTlog(notification.sender.id);
+                    Q.ApplicationWindow.window.pushTlog(model.notification.sender.id);
                 }
-                else if (notification.entityType === 'Comment')
+                else if (model.notification.entityType === 'Comment')
                 {
-                    if (!notification.parentId)
+                    if (!model.notification.parentId)
                         return;
 
                     back.hide();
-                    window.pushFullEntryById(notification.parentId);
+                    Q.ApplicationWindow.window.pushFullEntryById(model.notification.parentId);
                 }
                 else
-                    console.log(notification.entityType);
+                    console.log(model.notification.entityType);
             }
             Rectangle {
                 anchors.fill: parent
@@ -61,19 +61,19 @@ PopupFill {
             SmallAvatar {
                 id: notifAvatar
                 anchors.margins: 1 * mm
-                user: notification.sender
+                user: model.notification.sender
                 onClicked: {
-                    if (back.y > 0 || notification.parentType === 'AnonymousEntry')
+                    if (back.y > 0 || model.notification.parentType === 'AnonymousEntry')
                         return;
 
                     back.hide();
-                    window.pushProfileById(notification.sender.id);
+                    Q.ApplicationWindow.window.pushProfileById(model.notification.sender.id);
                 }
             }
             Q.Label {
                 id: notifName
-                text: '<b>' + notification.sender.name + '</b> '
-                        + notification.actionText
+                text: '<b>' + model.notification.sender.name + '</b> '
+                        + model.notification.actionText
                 anchors {
                     top: notifAvatar.top
                     left: notifAvatar.right
@@ -97,11 +97,11 @@ PopupFill {
                 height: width
                 radius: height / 2
                 color: Material.primary
-                visible: !notification.read
+                visible: !model.notification.read
             }
             ThemedText {
                 id: notifText
-                text: notification.text
+                text: model.notification.text
                 anchors {
                     top: notifName.bottom
                     left: notifName.left

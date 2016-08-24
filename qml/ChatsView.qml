@@ -30,11 +30,11 @@ PopupFill {
                 id: pop
                 anchors.fill: parent
                 onClicked: {
-                    if (chat.unreadCount > 0)
-                        chat.readAll();
+                    if (model.chat.unreadCount > 0)
+                        model.chat.readAll();
 
                     back.hide();
-                    window.pushMessages(chat);
+                    Q.ApplicationWindow.window.pushMessages(model.chat);
                 }
             }
             SmallAvatar {
@@ -43,13 +43,13 @@ PopupFill {
                     top: parent.top
                     margins: 1 * mm
                 }
-                user: chat.entry ? chat.entry.author : chat.recipient
+                user: model.chat.entry ? model.chat.entry.author : model.chat.recipient
                 onClicked: {
-                    if (chat.isAnonymous || (!chat.recipient && !chat.entry))
+                    if (model.chat.isAnonymous || (!model.chat.recipient && !model.chat.entry))
                         return;
 
                     back.hide();
-                    window.pushProfileById(chatAvatar.user.id);
+                    Q.ApplicationWindow.window.pushProfileById(chatAvatar.user.id);
                 }
             }
             ThemedText {
@@ -59,7 +59,7 @@ PopupFill {
                     left: chatAvatar.right
                     right: date.left
                 }
-                text: chat.topic
+                text: model.chat.topic
                 font.pointSize: window.fontSmaller
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
@@ -71,7 +71,7 @@ PopupFill {
                     right: parent.right
                     baseline: chatNick.baseline
                 }
-                text: chat.lastMessage.createdAt
+                text: model.chat.lastMessage.createdAt
                 font.pointSize: window.fontSmallest
                 color: window.secondaryTextColor
                 elide: Text.AlignRight
@@ -84,12 +84,12 @@ PopupFill {
                     left: chatAvatar.right
                     margins: 1 * mm
                 }
-                user: visible ? chat.lastMessage.user
+                user: visible ? model.chat.lastMessage.user
                               : chatAvatar.user
                 width: 4 * mm
                 height: 4 * mm
-                visible: !chat.isAnonymous && chat.lastMessage.userId !== chat.recipientId
-                         && (chat.entry ? chat.lastMessage.userId !== chat.entry.author.id : true)
+                visible: !model.chat.isAnonymous && model.chat.lastMessage.userId !== model.chat.recipientId
+                         && (model.chat.entry ? model.chat.lastMessage.userId !== model.chat.entry.author.id : true)
             }
             ThemedText {
                 id: lastMessage
@@ -100,7 +100,7 @@ PopupFill {
                 }
                 font.pointSize: window.fontSmallest
                 color: window.secondaryTextColor
-                text: chat.lastMessage.truncatedText
+                text: model.chat.lastMessage.truncatedText
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 textFormat: Text.PlainText
@@ -112,15 +112,15 @@ PopupFill {
                     right: parent.right
                     margins: 2 * mm
                 }
-                width: chat.unreadCount > 0 ? 4 * mm : 1.5 * mm
+                width: model.chat.unreadCount > 0 ? 4 * mm : 1.5 * mm
                 height: width
                 radius: height / 2
                 color: Material.primary
-                visible: chat.unreadCount > 0 || chat.isMyLastMessageUnread
+                visible: model.chat.unreadCount > 0 || model.chat.isMyLastMessageUnread
                 Q.Label {
-                    visible: chat.unreadCount > 0
+                    visible: model.chat.unreadCount > 0
                     anchors.centerIn: parent
-                    text: chat.unreadCount
+                    text: model.chat.unreadCount
                     font.pointSize: window.fontSmallest
                     color: 'white'
                 }

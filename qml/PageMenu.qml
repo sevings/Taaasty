@@ -36,6 +36,7 @@ Q.Drawer {
             Item {
                 visible: !window.chatsShows
                          && page.isFullEntryView === true
+                         && page.entry
                          && page.entry.author
                          && page.entry.author.id > 0
                          && page.tlog.tlogId !== page.entry.author.id
