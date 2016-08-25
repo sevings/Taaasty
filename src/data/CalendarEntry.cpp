@@ -2,8 +2,6 @@
 
 #include <QDate>
 
-#include "../defines.h"
-
 #include "Entry.h"
 #include "../tasty.h"
 
@@ -15,7 +13,6 @@ CalendarEntry::CalendarEntry(QObject* parent)
     , _isPrivate(false)
     , _commentsCount(0)
     , _isFlow(false)
-    , _entry(nullptr)
     , _base(nullptr)
 {
 
@@ -47,12 +44,12 @@ CalendarEntry::CalendarEntry(const QJsonObject data, QObject *parent)
 
 
 
-Entry* CalendarEntry::full()
+EntryPtr CalendarEntry::full()
 {
     if (_entry)
         return _entry;
 
-    _entry = new Entry(QJsonObject(), this);
+    _entry = EntryPtr::create((QObject*)nullptr);
     _entry->setId(_id);
     return _entry;
 }

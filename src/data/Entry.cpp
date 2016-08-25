@@ -4,8 +4,6 @@
 #include <QUrl>
 #include <QQmlEngine>
 
-#include "../defines.h"
-
 #include "Tlog.h"
 #include "Rating.h"
 #include "Author.h"
@@ -109,38 +107,23 @@ Entry::Entry(QObject* parent)
     , _commentsCount(0)
     , _media(new Media(this))
     , _wordCount(0)
-    , _commentsModel(new CommentsModel(this))
+    , _commentsModel(nullptr)
     , _attachedImagesModel(new AttachedImagesModel(this))
     , _loading(false)
 {
-
+    Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
 }
 
 
 
-Entry::Entry(const QJsonObject data, Conversation* chat)
-    : EntryBase(chat)
+Entry::Entry(Conversation* chat)
+    : EntryBase()
     , _commentsModel(nullptr)
     , _attachedImagesModel(nullptr)
     , _loading(false)
 {
     if (chat)
         _chatId = chat->id();
-
-    _init(data);
-
-    Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
-}
-
-
-
-Entry::Entry(const QJsonObject data, QObject *parent)
-    : EntryBase(parent)
-    , _commentsModel(nullptr)
-    , _attachedImagesModel(nullptr)
-    , _loading(false)
-{
-    _init(data);
 
     Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
 }
@@ -171,22 +154,78 @@ CommentsModel* Entry::commentsModel()
 
 
 
+void Entry::init(const QJsonObject data)
+{
+    _initBase(data);
+
+    _createdAt       = Tasty::parseDate(data.value("created_at").toString());
+    _url             = data.value("entry_url").toString();
+    _isVotable       = data.value("is_voteable").toBool();
+    _isFavoritable   = data.value("can_favorite").toBool(Tasty::instance()->isAuthorized());
+    _isFavorited     = data.value("is_favorited").toBool();
+    _isWatchable     = data.value("can_watch").toBool();
+    _isWatched       = data.value("is_watching").toBool();
+    _isPrivate       = data.value("is_private").toBool();
+    _isFixed         = data.value("fixed_state").toString("not_fixed") != "not_fixed"; //! \todo check other values
+    _tlog            = new Tlog(data.value("tlog").toObject(), this);
+    _rating          = new Rating(data.value("rating").toObject(), this);
+    _commentsCount   = data.value("comments_count").toInt();
+
+    if (data.contains("title_truncated"))
+        _truncatedTitle = data.value("title_truncated").toString();
+    else if (_truncatedTitle.isEmpty())
+        _truncatedTitle = Tasty::truncateHtml(_title, 100);
+
+    if (data.contains("text_truncated"))
+        _truncatedText  = data.value("text_truncated").toString();
+    else if (_truncatedText.isEmpty())
+        _truncatedText = Tasty::truncateHtml(_text, 300);
+
+    _source          = data.value("source").toString(); // quote author
+    _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
+                                         : nullptr; // music?
+//    _imagePreview    = data.value("preview_image").toObject();
+
+    QRegularExpression wordRe("\\s[^\\s]+\\s");
+    QRegularExpression tagRe("<[^>]*>");
+//    QRegularExpression wordRe("\\b\\w+\\b");
+    auto content = _title + _text;
+    _wordCount   = content.remove(tagRe).count(wordRe);
+
+    _correctHtml();
+
+    Tasty::instance()->pusher()->addEntry(sharedFromThis());
+
+    _commentsData    = data.value("comments").toArray();
+    if (_commentsModel && _commentsModel->entryId() == _id)
+    {
+        _commentsModel->init(_commentsData);
+        _commentsData = QJsonArray();
+    }
+
+    auto imageAttach = data.value("image_attachments").toArray();
+    delete _attachedImagesModel;
+    _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
+
+    _rating->reCalcBayes();
+
+    emit updated();
+    emit commentsCountChanged();
+
+    _loading = false;
+    emit loadingChanged();
+}
+
+
+
 void Entry::setId(const int id)
 {
     if (id <= 0)
         return;
 
     _id = id;
-
-    if (_chatId > 0)
-    {
-        _chatId = 0;
-
-//        auto chat = this->chat();
-//        if (chat && chat->parent() == this)
-//            delete chat;
-
-    }
+    _chatId = 0;
+    _chat.clear();
 
     reload();
 }
@@ -196,7 +235,7 @@ void Entry::setId(const int id)
 void Entry::reload()
 {
     auto request = new ApiRequest(QString("v1/entries/%1.json?include_comments=true").arg(_id));
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
 
     _loading = true;
@@ -223,7 +262,7 @@ void Entry::addComment(const QString text)
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), chat(), SLOT(readAll())));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this,   SLOT(_setNotLoading())));
 
-    ChatsModel::instance()->addChat(this);
+    ChatsModel::instance()->addChat(sharedFromThis());
 }
 
 
@@ -278,70 +317,6 @@ void Entry::favorite()
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeFavorited(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
-}
-
-
-
-void Entry::_init(const QJsonObject data)
-{
-    _initBase(data);
-
-    _createdAt       = Tasty::parseDate(data.value("created_at").toString());
-    _url             = data.value("entry_url").toString();
-    _isVotable       = data.value("is_voteable").toBool();
-    _isFavoritable   = data.value("can_favorite").toBool(Tasty::instance()->isAuthorized());
-    _isFavorited     = data.value("is_favorited").toBool();
-    _isWatchable     = data.value("can_watch").toBool();
-    _isWatched       = data.value("is_watching").toBool();
-    _isPrivate       = data.value("is_private").toBool();
-    _isFixed         = data.value("fixed_state").toString("not_fixed") != "not_fixed"; //! \todo check other values
-    _tlog            = new Tlog(data.value("tlog").toObject(), this);
-    _rating          = new Rating(data.value("rating").toObject(), this);
-    _commentsCount   = data.value("comments_count").toInt();
-
-    if (data.contains("title_truncated"))
-        _truncatedTitle = data.value("title_truncated").toString();
-    else if (_truncatedTitle.isEmpty())
-        _truncatedTitle = Tasty::truncateHtml(_title, 100);
-
-    if (data.contains("text_truncated"))
-        _truncatedText  = data.value("text_truncated").toString();
-    else if (_truncatedText.isEmpty())
-        _truncatedText = Tasty::truncateHtml(_text, 300);
-
-    _source          = data.value("source").toString(); // quote author
-    _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
-                                         : nullptr; // music?
-//    _imagePreview    = data.value("preview_image").toObject();
-
-    QRegularExpression wordRe("\\s[^\\s]+\\s");
-    QRegularExpression tagRe("<[^>]*>");
-//    QRegularExpression wordRe("\\b\\w+\\b");
-    auto content = _title + _text;
-    _wordCount   = content.remove(tagRe).count(wordRe);
-
-    _correctHtml();
-
-    Tasty::instance()->pusher()->addEntry(this);
-
-    _commentsData    = data.value("comments").toArray();
-    if (_commentsModel && _commentsModel->entryId() == _id)
-    {
-        _commentsModel->init(_commentsData);
-        _commentsData = QJsonArray();
-    }
-
-    auto imageAttach = data.value("image_attachments").toArray();
-    delete _attachedImagesModel;
-    _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
-
-    _rating->reCalcBayes();
-
-    emit updated();
-    emit commentsCountChanged();
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 
@@ -451,18 +426,22 @@ int Entry::commentsCount() const
 
 Conversation* Entry::chat()
 {
+    if (_chat)
+        return _chat.data();
+
     if (_id <= 0 || !Tasty::instance()->isAuthorized())
         return nullptr;
 
-    auto chat = Tasty::instance()->pusher()->chatByEntry(_id);
-    if (chat)
-        return chat;
+    _chat = Tasty::instance()->pusher()->chatByEntry(_id);
+    if (_chat)
+        return _chat.data();
 
-    chat = new Conversation(this);
+    _chat = ChatPtr::create(this);
+    _chat->setEntryId(_id);
 
-    Q_TEST(connect(chat, SIGNAL(updated()), this, SLOT(_setChatId())));
+    Q_TEST(connect(_chat.data(), SIGNAL(updated()), this, SLOT(_setChatId())));
 
-    return chat;
+    return _chat.data();
 }
 
 

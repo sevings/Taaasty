@@ -10,7 +10,6 @@
 #include "../tasty.h"
 #include "../apirequest.h"
 #include "../pusherclient.h"
-#include "../data/Conversation.h"
 #include "../data/Author.h"
 #include "../data/Entry.h"
 
@@ -36,7 +35,7 @@ ChatsModel::ChatsModel(QObject* parent)
 {
     qDebug() << "ChatsModel";
 
-    Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()),                 this, SLOT(reset())));
+    Q_TEST(connect(Tasty::instance(),           SIGNAL(authorized()),       this, SLOT(reset())));
     Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(unreadChat()),       this, SLOT(loadUnread())));
     Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(unreadChats(int)),   this, SLOT(_checkUnread(int))));
 }
@@ -59,10 +58,7 @@ QVariant ChatsModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == Qt::UserRole)
-    {
-        auto id = _chats.at(index.row());
-        return QVariant::fromValue<Conversation*>(_chat(id));
-    }
+        return QVariant::fromValue<Conversation*>(_chats.at(index.row()).data());
 
     qDebug() << "role" << role;
 
@@ -121,15 +117,15 @@ void ChatsModel::setMode(ChatsModel::Mode mode)
         _chats = _allChats;
         break;
     case PrivateChatsMode:
-        foreach (auto id, _allChats)
-            if (_chat(id)->type() == Conversation::PrivateConversation
-                    || _chat(id)->type() == Conversation::GroupConversation)
-                _chats << id;
+        foreach (auto chat, _allChats)
+            if (chat->type() == Conversation::PrivateConversation
+                    || chat->type() == Conversation::GroupConversation)
+                _chats << chat;
         break;
     case EntryChatsMode:
-        foreach (auto id, _allChats)
-            if (_chat(id)->type() == Conversation::PublicConversation)
-                _chats << id;
+        foreach (auto chat, _allChats)
+            if (chat->type() == Conversation::PublicConversation)
+                _chats << chat;
         break;
     default:
         qDebug() << "Error ChatsModel::Mode" << mode;
@@ -140,25 +136,22 @@ void ChatsModel::setMode(ChatsModel::Mode mode)
 
 
 
-void ChatsModel::addChat(Entry* entry)
+void ChatsModel::addChat(EntryPtr entry)
 {
-    auto chat = entry->chat();
+    auto chat = entry->chat()->sharedFromThis();
     if (_ids.contains(chat->id()))
     {
         _bubbleChat(chat->id());
         return;
     }
 
-    chat->setParent(this);
-    entry->setParent(chat);
-
     beginInsertRows(QModelIndex(), 0, 0);
 
-    _allChats.prepend(chat->id());
-    _chats.prepend(chat->id());
+    _allChats.prepend(chat);
+    _chats.prepend(chat);
     _ids << chat->id();
 
-    Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));
+    Q_TEST(connect(chat.data(), SIGNAL(left(int)), this, SLOT(_removeChat(int))));
 
     endInsertRows();
 }
@@ -186,18 +179,6 @@ void ChatsModel::loadUnread()
 void ChatsModel::reset()
 {
     beginResetModel();
-    
-    foreach (auto id, _allChats)
-    {
-        auto chat = Tasty::instance()->pusher()->chat(id);
-        if (!chat)
-            continue;
-
-//        if ((!chat->parent()
-//             && QQmlEngine::objectOwnership(chat) == QQmlEngine::CppOwnership)
-//                || chat->parent() == this)
-//            delete chat;
-    }
 
     _allChats.clear();
     _chats.clear();        
@@ -235,13 +216,16 @@ void ChatsModel::_addUnread(QJsonArray data)
         return;
 
     QList<int> bubbleIds;
-    QList<Conversation*> chats;
+    QList<ChatPtr> chats;
     foreach(auto item, data)
     {
         auto id = item.toObject().value("id").toInt();
         auto chat = Tasty::instance()->pusher()->chat(id);
         if (!chat)
-            chat = new Conversation(item.toObject(), this);
+        {
+            chat = ChatPtr::create((QObject*)nullptr);
+            chat->init(item.toObject());
+        }
 
         if (_ids.contains(id))
         {
@@ -250,18 +234,13 @@ void ChatsModel::_addUnread(QJsonArray data)
                     || (_mode == EntryChatsMode && chat->type() == Conversation::PublicConversation))
                 bubbleIds << chat->id();
 
-//            if (chat->parent() == this)
-//                delete chat;
-
             continue;
         }
 
-        chat->setParent(this);
-
-        _allChats << chat->id();
+        _allChats << chat;
         _ids << chat->id();
 
-        Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));
+        Q_TEST(connect(chat.data(), SIGNAL(left(int)), this, SLOT(_removeChat(int))));
 
         if (_mode == AllChatsMode
                 || (_mode == PrivateChatsMode && chat->type() != Conversation::PublicConversation)
@@ -278,7 +257,7 @@ void ChatsModel::_addUnread(QJsonArray data)
     beginInsertRows(QModelIndex(), 0, chats.size() - 1);
 
     for (int i = 0; i < chats.size(); i++)
-        _chats.insert(i, chats.at(i)->id());
+        _chats.insert(i, chats.at(i));
 
     endInsertRows();
 }
@@ -302,7 +281,7 @@ void ChatsModel::_addChats(QJsonArray data)
         return;
     }
 
-    QList<Conversation*> chats;
+    QList<ChatPtr> chats;
     foreach(auto item, data)
     {
         auto id = item.toObject().value("id").toInt();
@@ -310,15 +289,16 @@ void ChatsModel::_addChats(QJsonArray data)
             continue;
 
         auto chat = Tasty::instance()->pusher()->chat(id);
-        if (chat)
-            chat->setParent(this);
-        else
-            chat = new Conversation(item.toObject(), this);
+        if (!chat)
+        {
+            chat = ChatPtr::create((QObject*)nullptr);
+            chat->init(item.toObject());
+        }
 
         _ids << chat->id();
-        _allChats << chat->id();
+        _allChats << chat;
 
-        Q_TEST(connect(chat, SIGNAL(left(int)), this, SLOT(_removeChat(int))));
+        Q_TEST(connect(chat.data(), SIGNAL(left(int)), this, SLOT(_removeChat(int))));
 
         if (_mode == AllChatsMode
                 || (_mode == PrivateChatsMode && chat->type() != Conversation::PublicConversation)
@@ -334,13 +314,10 @@ void ChatsModel::_addChats(QJsonArray data)
     }
 
     beginInsertRows(QModelIndex(), _chats.size(), _chats.size() + chats.size() - 1);
-    
-    foreach (auto chat, chats)
-        _chats << chat->id();
-
+    _chats << chats;
     endInsertRows();
     
-    if (_chats.size() < 10) // TODO: what is this?
+    if (_chats.size() < 10) //! \todo what is this?
         emit hasMoreChanged();
 
     _loading = false;
@@ -382,14 +359,14 @@ void ChatsModel::_removeChat(int id)
 
     int i;
     for (i = 0; i < _allChats.size(); i++)
-        if (_allChats.at(i) == id)
+        if (_allChats.at(i)->id() == id)
         {
             _allChats.removeAt(i);
             break;
         }
 
     for (i = 0; i < _chats.size(); i++)
-        if (_chats.at(i) == id)
+        if (_chats.at(i)->id() == id)
             break;
         
     if (i >= _chats.size())
@@ -397,7 +374,7 @@ void ChatsModel::_removeChat(int id)
     
     beginRemoveRows(QModelIndex(), i, i);
     
-    _chats.removeAt(i); //! \todo delete?
+    _chats.removeAt(i);
     
     endRemoveRows();
 }
@@ -410,11 +387,11 @@ void ChatsModel::_checkUnread(int actual)
     QList<int> bubbleIds;
     for (int i = 0; i < _chats.size(); i++)
     {
-        if (_chat(_chats.at(i))->unreadCount() <= 0)
+        if (_chats.at(i)->unreadCount() <= 0)
             continue;
 
         if (i > actual)
-            bubbleIds << _chats.at(i);
+            bubbleIds << _chats.at(i)->id();
 
         found++;
         if (found >= actual)
@@ -437,17 +414,17 @@ void ChatsModel::_bubbleChat(int id)
 
     int i = 0;
     for (; i < _chats.size(); i++)
-        if (id == _chats.at(i))
+        if (id == _chats.at(i)->id())
             break;
 
     if (i >= _chats.size())
         return;
 
-    _chat(_chats.at(i))->update(); //! \todo why?
+    _chats.at(i)->update(); //! \todo why?
 
     int unread = 0;
     for (; unread < _chats.size(); unread++)
-        if (_chat(_chats.at(unread))->unreadCount() <= 0) //! \todo newly created
+        if (_chats.at(unread)->unreadCount() <= 0) //! \todo newly created
             break;
 
     if (i <= unread)
@@ -460,19 +437,6 @@ void ChatsModel::_bubbleChat(int id)
     _chats.insert(unread, chat);
 
     endMoveRows();
-}
-
-
-
-Conversation* ChatsModel::_chat(int id) const
-{
-    auto chat = Tasty::instance()->pusher()->chat(id);
-    if (chat)
-        return chat;
-
-    chat = new Conversation;
-    chat->setId(id);
-    return chat;
 }
 
 

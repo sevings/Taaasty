@@ -6,11 +6,9 @@
 #include "qpusher/pusher.h"
 #include "qpusher/channel.h"
 
-#include "data/Conversation.h"
 #include "data/Message.h"
 #include "data/Comment.h"
 #include "data/Notification.h"
-#include "data/Entry.h"
 
 #include "defines.h"
 
@@ -42,39 +40,44 @@ PusherClient::PusherClient(Tasty* tasty)
 
 
 
-void PusherClient::addChat(Conversation* chat)
+void PusherClient::addChat(ChatPtr chat)
 {
-    _chats.insert(chat->id(), chat);
-    _chatsByEntry.insert(chat->entryId(), chat);
+    _chats.insert(chat->id(), chat.toWeakRef());
+
+    if (chat->entryId())
+        _chatsByEntry.insert(chat->entryId(), chat.toWeakRef());
 }
 
 
 
 void PusherClient::removeChat(Conversation* chat)
 {
+    if (!chat)
+        return;
+
     _chats.remove(chat->id());
     _chatsByEntry.remove(chat->entryId());
 }
 
 
 
-Conversation*PusherClient::chat(int id) const
+ChatPtr PusherClient::chat(int id) const
 {
-    return _chats.value(id);
+    return _chats.value(id).toStrongRef();
 }
 
 
 
-Conversation* PusherClient::chatByEntry(int entryId) const
+ChatPtr PusherClient::chatByEntry(int entryId) const
 {
-    return _chatsByEntry.value(entryId);
+    return _chatsByEntry.value(entryId).toStrongRef();
 }
 
 
 
-void PusherClient::addEntry(Entry* entry)
+void PusherClient::addEntry(EntryPtr entry)
 {
-    _entries.insert(entry->entryId(), entry);
+    _entries.insert(entry->entryId(), entry.toWeakRef());
 }
 
 
@@ -86,9 +89,9 @@ void PusherClient::removeEntry(int id)
 
 
 
-Entry*PusherClient::entry(int id) const
+EntryPtr PusherClient::entry(int id) const
 {
-    return _entries.value(id);
+    return _entries.value(id).toStrongRef();
 }
 
 
@@ -212,25 +215,27 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
     {
         auto chatId = json.value("conversation_id").toInt();
         auto userId = json.value("user_id").toInt();
-        foreach (auto chat, _chats.values(chatId))
-            emit chat->typed(userId);
+        auto chat = _chats.value(chatId);
+        if (chat)
+            emit chat.data()->typed(userId);
         return;
     }
 
     if (event.endsWith("update_conversation"))
     {
         auto chatId = json.value("id").toInt();
-        foreach (auto chat, _chats.values(chatId))
-            chat->_init(json);
+        auto chat = _chats.value(chatId);
+        if (chat)
+            chat.data()->init(json);
         return;
     }
 
     if (event.endsWith("push_message"))
     {
         auto chatId = json.value("conversation_id").toInt();
-        if (_chats.contains(chatId))
-            foreach (auto chat, _chats.values(chatId))
-                emit chat->messageReceived(json);
+        auto chat = _chats.value(chatId);
+        if (chat)
+            emit chat.data()->messageReceived(json);
         else
             emit unreadChat();
         return;
@@ -246,8 +251,9 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
         foreach (auto msgData, messages)
         {
             auto msgId = msgData.toObject().value("id").toInt();
-            if (_messages.contains(msgId))
-                _messages.value(msgId)->_updateRead(msgData.toObject());
+            auto msg = _messages.value(msgId);
+            if (msg)
+                msg->_updateRead(msgData.toObject());
         }
 
         return;
@@ -263,8 +269,9 @@ void PusherClient::_handlePrivatePusherEvent(const QString event, const QString 
         foreach (auto msgData, messages)
         {
             auto msgId = msgData.toObject().value("id").toInt();
-            if (_messages.contains(msgId))
-                _messages.value(msgId)->_markRemoved(msgData.toObject());
+            auto msg = _messages.value(msgId);
+            if (msg)
+                msg->_markRemoved(msgData.toObject());
         }
 
         return;

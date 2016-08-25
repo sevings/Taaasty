@@ -8,9 +8,10 @@
 #include <QSet>
 #include <QHash>
 
-class Conversation;
+#include "../data/Conversation.h"
+
 class ApiRequest;
-class Entry;
+//class Entry;
 
 
 
@@ -45,7 +46,7 @@ public:
     Q_INVOKABLE void setMode(const Mode mode);
     Q_INVOKABLE Mode mode() const {return _mode; }
 
-    void addChat(Entry* entry);
+    void addChat(EntryPtr entry);
 
     bool loading() const;
 
@@ -72,10 +73,8 @@ private slots:
 private:
     void _bubbleChat(int id);
 
-    Conversation* _chat(int id) const;
-
-    QList<int>           _allChats;
-    QList<int>           _chats;
+    QList<ChatPtr>       _allChats;
+    QList<ChatPtr>       _chats;
     QSet<int>            _ids;
     Mode                 _mode;
 

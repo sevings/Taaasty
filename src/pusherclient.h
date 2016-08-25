@@ -5,14 +5,16 @@
 #include <QJsonObject>
 #include <QHash>
 #include <QTimer>
+#include <QWeakPointer>
+
+#include "data/Entry.h"
+#include "data/Conversation.h"
 
 class Pusher;
 class Tasty;
-class Conversation;
 class Message;
 class Comment;
 class Notification;
-class Entry;
 
 
 
@@ -22,15 +24,15 @@ class PusherClient : public QObject
 public:
     explicit PusherClient(Tasty* tasty = nullptr);
 
-    void addChat(Conversation* chat);
+    void addChat(ChatPtr chat);
     void removeChat(Conversation* chat);
 
-    Conversation* chat(int id) const;
-    Conversation* chatByEntry(int entryId) const;
+    ChatPtr chat(int id) const;
+    ChatPtr chatByEntry(int entryId) const;
 
-    void addEntry(Entry* entry);
+    void addEntry(EntryPtr entry);
     void removeEntry(int id);
-    Entry* entry(int id) const;
+    EntryPtr entry(int id) const;
 
     void addMessage(Message* msg);
     void removeMessage(int id);
@@ -68,12 +70,12 @@ private:
 
     QTimer _readyTimer;
 
-    QHash<int, Conversation*>   _chats;
-    QHash<int, Conversation*>   _chatsByEntry;
-    QHash<int, Entry*>          _entries;
-    QHash<int, Message*>        _messages;
-    QHash<int, Comment*>        _comments;
-    QHash<int, Notification*>   _notifications;
+    QHash<int, QWeakPointer<Conversation>>  _chats;
+    QHash<int, QWeakPointer<Conversation>>  _chatsByEntry;
+    QHash<int, QWeakPointer<Entry>>         _entries;
+    QHash<int, Message*>                    _messages;
+    QHash<int, Comment*>                    _comments;
+    QHash<int, Notification*>               _notifications;
 };
 
 #endif // PUSHERCLIENT_H

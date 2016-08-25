@@ -3,12 +3,14 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QEnableSharedFromThis>
+
+#include "../defines.h"
 
 class Author;
 class Tlog;
 class Rating;
 class Media;
-class Conversation;
 class CommentsModel;
 class AttachedImagesModel;
 class MessagesModel;
@@ -50,7 +52,7 @@ protected:
 
 
 
-class Entry: public EntryBase
+class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
 {
     Q_OBJECT
 
@@ -86,8 +88,7 @@ class Entry: public EntryBase
 
 public:
     Entry(QObject* parent = nullptr);
-    Entry(const QJsonObject data, Conversation* chat);
-    Entry(const QJsonObject data, QObject* parent = nullptr);
+    Entry(Conversation* chat);
     ~Entry();
 
     Q_INVOKABLE CommentsModel*       commentsModel();
@@ -109,6 +110,8 @@ public:
     int chatId() const;
 
 public slots:
+    void init(const QJsonObject data);
+
     void setId(const int id);
     void reload();
 
@@ -129,7 +132,6 @@ signals:
     void loadingChanged();
 
 private slots:
-    void _init(const QJsonObject data);
     void _changeWatched(const QJsonObject data);
     void _changeFavorited(const QJsonObject data);
     void _setCommentsCount(int tc);
@@ -163,6 +165,7 @@ private:
 
     CommentsModel*       _commentsModel;
     AttachedImagesModel* _attachedImagesModel;
+    ChatPtr              _chat;
 
     bool        _loading;
 };

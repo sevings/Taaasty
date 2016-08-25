@@ -3,8 +3,6 @@
 #include <QUuid>
 #include <QDebug>
 
-#include "../defines.h"
-
 #include "../apirequest.h"
 #include "../pusherclient.h"
 #include "../tasty.h"
@@ -46,42 +44,6 @@ Conversation::Conversation(QObject* parent)
 
 
 
-Conversation::Conversation(Entry* entry)
-    : QObject(entry)
-    , _id(0)
-    , _type(UninitializedConversation)
-    , _unreadCount(0)
-    , _unreceivedCount(0)
-    , _totalCount(0)
-    , _userId(0)
-    , _recipientId(0)
-    , _isDisabled(false)
-    , _notDisturb(false)
-    , _isAnonymous(false)
-    , _entryId(0)
-    , _recipient(nullptr)
-    , _messages(new MessagesModel(this))
-    , _loading(false)
-    , _reading(false)
-{
-    setEntryId(entry->entryId());
-}
-
-
-
-Conversation::Conversation(const QJsonObject data, QObject *parent)
-    : QObject(parent)
-    , _entryId(0)
-    , _recipient(nullptr)
-    , _messages(nullptr)
-    , _loading(false)
-    , _reading(false)
-{
-    _init(data);
-}
-
-
-
 Conversation::~Conversation()
 {
     Tasty::instance()->pusher()->removeChat(this);
@@ -103,7 +65,7 @@ void Conversation::setId(int id)
 
     _id = id;
 
-    Tasty::instance()->pusher()->addChat(this);
+    Tasty::instance()->pusher()->addChat(sharedFromThis());
 
     update();
 }
@@ -118,7 +80,7 @@ void Conversation::setUserId(int id)
     _userId = id;
 
     auto request = new ApiRequest(QString("v2/messenger/conversations/by_user_id/%1.json").arg(_userId), true, QNetworkAccessManager::PostOperation);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
 
     _loading = true;
@@ -133,7 +95,7 @@ void Conversation::setSlug(const QString slug)
         return;
 
     auto request = new ApiRequest(QString("v2/messenger/conversations/by_slug/%1.json").arg(slug), true, QNetworkAccessManager::PostOperation);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
 
     _loading = true;
@@ -148,117 +110,17 @@ void Conversation::setEntryId(int entryId)
         return;
 
     _entryId = entryId;
+    _entry.clear();
 
-    Tasty::instance()->pusher()->addChat(this);
+    Tasty::instance()->pusher()->addChat(sharedFromThis());
 
     auto data = QString("id=%1").arg(entryId);
     auto request = new ApiRequest(QString("v2/messenger/conversations/by_entry_id.json"), true, QNetworkAccessManager::PostOperation, data);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
 
     _loading = true;
     emit loadingChanged();
-}
-
-
-
-void Conversation::_init(const QJsonObject data)
-{
-     _id                = data.value("id").toInt();
-     
-     auto type = data.value("type").toString();
-     if (type == "PublicConversation")
-         _type = PublicConversation;
-     else if (type == "PrivateConversation")
-         _type = PrivateConversation;
-     else if (type == "GroupConversation")
-         _type = GroupConversation;
-     else
-     {
-         qDebug() << "Unsupported conversation type:" << type;
-         _type = UninitializedConversation;
-     }
-     
-     _unreadCount       = data.value("unread_messages_count").toInt();
-     _unreceivedCount   = data.value("unreceived_messages_count").toInt();
-     _totalCount        = data.value("messages_count").toInt();
-     _userId            = data.value("user_id").toInt();
-     _recipientId       = data.value("recipient_id").toInt();
-     _isDisabled        = data.value("is_disabled").toBool();
-     _notDisturb        = data.value("not_disturb").toBool();
-     _canTalk           = data.value("can_talk").toBool(true);
-     _canDelete         = data.value("can_delete").toBool(true);
-     _isAnonymous       = data.value("is_anonymous").toBool();
-
-     Tasty::instance()->pusher()->addChat(this);
-
-     if (!_messages)
-     {
-         _messages      = new MessagesModel(this);
-
-         Q_TEST(connect(_messages, SIGNAL(lastMessageChanged()), this, SIGNAL(lastMessageChanged())));
-     }
-     else
-         _messages->init(this);
-
-     if (data.contains("entry"))
-     {
-         _entryData = data.value("entry").toObject();
-         _entryId = _entryData.value("id").toInt();
-         auto entry = Tasty::instance()->pusher()->entry(_entryId);
-         if (!entry)
-//             entry->setParent(this);
-//         else
-             entry = new Entry(_entryData, this);
-
-         Tasty::instance()->pusher()->addChat(this);
-
-         Q_TEST(connect(entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
-     }
-
-     if (!_recipient && data.contains("recipient"))
-         _recipient     = new Author(data.value("recipient").toObject(), this);
-
-     if (data.contains("topic"))
-         _topic         = data.value("topic").toString();
-     else if (_recipient)
-         _topic         = _recipient->name();
-     else if (_entryId)
-     {
-         auto e = entry();
-         _topic         = e->title().isEmpty() ? e->text() : e->title();
-         _topic = Tasty::truncateHtml(_topic);
-     }
-     else
-         _topic.clear();
-
-     auto users = data.value("users").toArray();
-     foreach(auto userData, users)
-     {
-        auto user = new User(userData.toObject(), this); // TODO: isOnline
-        _users.insert(user->id(), user);
-     }
-             
-     users = data.value("users_deleted").toArray();
-     foreach(auto userData, users)
-     {
-        auto user = new User(userData.toObject(), this);
-        _deletedUsers.insert(user->id(), user);
-     }
-
-     users = data.value("users_left").toArray();
-     foreach(auto userData, users)
-     {
-        auto user = new User(userData.toObject(), this);
-        _leftUsers.insert(user->id(), user);
-     }
-
-     _lastMessage       = new Message(data.value("last_message").toObject(), this, this);
-
-     emit isInvolvedChanged();
-     emit unreadCountChanged();
-     emit lastMessageChanged();
-     emit updated();
 }
 
 
@@ -315,8 +177,15 @@ bool Conversation::isMyLastMessageUnread() const
 
 
 
-MessagesModel* Conversation::messages() const
+MessagesModel* Conversation::messages()
 {
+    if (!_messages)
+    {
+        _messages = new MessagesModel(this);
+
+        Q_TEST(connect(_messages, SIGNAL(lastMessageChanged()), this, SIGNAL(lastMessageChanged())));
+    }
+
     return _messages;
 }
 
@@ -365,7 +234,7 @@ MessageBase* Conversation::lastMessage()
             last = lst;
     }
 
-    auto lst = _messages->lastMessage();
+    auto lst = messages()->lastMessage();
     if (lst && lst->createdDate() > last->createdDate())
         last = lst;
 
@@ -388,13 +257,108 @@ int Conversation::totalCount() const
 
 
 
+void Conversation::init(const QJsonObject data)
+{
+     _id                = data.value("id").toInt();
+
+     auto type = data.value("type").toString();
+     if (type == "PublicConversation")
+         _type = PublicConversation;
+     else if (type == "PrivateConversation")
+         _type = PrivateConversation;
+     else if (type == "GroupConversation")
+         _type = GroupConversation;
+     else
+     {
+         qDebug() << "Unsupported conversation type:" << type;
+         _type = UninitializedConversation;
+     }
+
+     _unreadCount       = data.value("unread_messages_count").toInt();
+     _unreceivedCount   = data.value("unreceived_messages_count").toInt();
+     _totalCount        = data.value("messages_count").toInt();
+     _userId            = data.value("user_id").toInt();
+     _recipientId       = data.value("recipient_id").toInt();
+     _isDisabled        = data.value("is_disabled").toBool();
+     _notDisturb        = data.value("not_disturb").toBool();
+     _canTalk           = data.value("can_talk").toBool(true);
+     _canDelete         = data.value("can_delete").toBool(true);
+     _isAnonymous       = data.value("is_anonymous").toBool();
+
+     Tasty::instance()->pusher()->addChat(sharedFromThis());
+
+     messages()->init(this);
+
+     if (!_entry && data.contains("entry"))
+     {
+         auto entryData = data.value("entry").toObject();
+         _entryId = entryData.value("id").toInt();
+         _entry = Tasty::instance()->pusher()->entry(_entryId);
+         if (!_entry)
+         {
+             _entry = EntryPtr::create(this);
+             _entry->init(entryData);
+         }
+
+         Tasty::instance()->pusher()->addChat(sharedFromThis());
+
+         Q_TEST(connect(_entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
+     }
+
+     if (!_recipient && data.contains("recipient"))
+         _recipient     = new Author(data.value("recipient").toObject(), this);
+
+     if (data.contains("topic"))
+         _topic         = data.value("topic").toString();
+     else if (_recipient)
+         _topic         = _recipient->name();
+     else if (_entryId)
+     {
+         auto e = entry();
+         _topic         = e->title().isEmpty() ? e->text() : e->title();
+         _topic = Tasty::truncateHtml(_topic);
+     }
+     else
+         _topic.clear();
+
+     auto users = data.value("users").toArray();
+     foreach(auto userData, users)
+     {
+        auto user = new User(userData.toObject(), this); // TODO: isOnline
+        _users.insert(user->id(), user);
+     }
+
+     users = data.value("users_deleted").toArray();
+     foreach(auto userData, users)
+     {
+        auto user = new User(userData.toObject(), this);
+        _deletedUsers.insert(user->id(), user);
+     }
+
+     users = data.value("users_left").toArray();
+     foreach(auto userData, users)
+     {
+        auto user = new User(userData.toObject(), this);
+        _leftUsers.insert(user->id(), user);
+     }
+
+     _lastMessage       = new Message(data.value("last_message").toObject(), this, this);
+
+     emit isInvolvedChanged();
+     emit unreadCountChanged();
+     emit lastMessageChanged();
+     emit updated();
+}
+
+
+
 void Conversation::update()
 {
     if (_id <= 0 || _loading)
         return;
 
     auto request = new ApiRequest(QString("/v2/messenger/conversations/by_id/%1.json").arg(_id), true);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject))));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
 
     _loading = true;
@@ -508,17 +472,7 @@ int Conversation::userId() const
 
 Entry* Conversation::entry()
 {
-    if (!_entryId)
-        return nullptr;
-
-    auto e = Tasty::instance()->pusher()->entry(_entryId);
-    if (e)
-        return e;
-
-    e = new Entry(_entryData, this);
-    _entryData = QJsonObject();
-    e->setId(_entryId);
-    return e;
+    return _entry.data();
 }
 
 

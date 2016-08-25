@@ -6,7 +6,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-class Entry;
+#include "../data/Entry.h"
+
 class ApiRequest;
 
 
@@ -96,7 +97,7 @@ signals:
     void loadingChanged();
     void isPrivateChanged();
     void queryChanged();
-    void entryCreated(Entry* entry);
+    void entryCreated(EntryPtr entry);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
@@ -111,16 +112,14 @@ private slots:
     void _setRatings(const QJsonArray data);
 
 private:
-    void _addAll(QList<Entry*>& all);
-    bool _addSome(QList<Entry*>& all);
+    void _addAll(QList<EntryPtr>& all);
+    bool _addSome(QList<EntryPtr>& all);
     void _clear();
 
     void _setUrl(Mode mode);
 
-    Entry* _entry(int id) const;
-
-    QList<int> _entries;
-    QList<int> _allEntries;
+    QList<EntryPtr> _entries;
+    QList<EntryPtr> _allEntries;
     QString _url;
     int _tlog;
     QString _slug;

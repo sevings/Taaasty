@@ -3,7 +3,8 @@
 #include <QObject>
 #include <QJsonObject>
 
-class Entry;
+#include "../defines.h"
+
 class EntryBase;
 
 
@@ -27,7 +28,7 @@ public:
     CalendarEntry(QObject* parent = nullptr);
     CalendarEntry(const QJsonObject data, QObject* parent = nullptr);
 
-    Entry* full();
+    EntryPtr   full();
     EntryBase* base();
 
     int     id() const;
@@ -45,6 +46,6 @@ private:
     QString _truncatedTitle;
     bool    _isFlow;
 
-    Entry* _entry;
+    EntryPtr   _entry;
     EntryBase* _base;
 };

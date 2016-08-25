@@ -3,17 +3,19 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QHash>
+#include <QEnableSharedFromThis>
+
+#include "../defines.h"
 
 class MessageBase;
 class Message;
-class Entry;
 class User;
 class Author;
 class MessagesModel;
 
 
 
-class Conversation: public QObject
+class Conversation: public QObject, public QEnableSharedFromThis<Conversation>
 {
     Q_OBJECT
 
@@ -52,8 +54,6 @@ public:
     Q_ENUMS(ConversationType)
 
     Conversation(QObject* parent = nullptr);
-    Conversation(Entry* entry);
-    Conversation(const QJsonObject data, QObject* parent = nullptr);
     ~Conversation();
 
     int  id() const;
@@ -66,7 +66,7 @@ public:
 
     bool isAnonymous() const;
 
-    MessagesModel* messages() const;
+    MessagesModel* messages();
 
     User* user(int id);
 
@@ -87,6 +87,8 @@ public:
     int userId() const;
 
 public slots:
+    void init(const QJsonObject data);
+
     void update();
     void sendMessage(const QString text);
     void readAll();
@@ -106,7 +108,6 @@ signals:
     void isInvolvedChanged();
 
 private slots:
-    void _init(const QJsonObject data);
     void _setNotLoading();
     void _markRead(const QJsonObject data);
     void _emitLeft(const QJsonObject data);
@@ -133,7 +134,7 @@ private:
     MessagesModel*      _messages;
     Message*            _lastMessage;
 
-    QJsonObject _entryData;
+    EntryPtr _entry;
 
     bool _loading;
     bool _reading;
