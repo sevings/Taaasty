@@ -6,7 +6,6 @@
 #include <QRegularExpression>
 #include <QtMath>
 #include <QStandardPaths>
-#include <QTimer>
 
 #ifdef QT_DEBUG
 #   include <QDateTime>
@@ -26,19 +25,12 @@ Bayes::Bayes(QObject *parent)
     , _loaded(false)
     , _trainer(nullptr)
     , _stemmer(StemmerV::instance())
-    , _saveTimer(new QTimer(this))
 
 {
     qDebug() << "Bayes";
 
     _total[Water] = 0;
     _total[Fire]  = 0;
-
-    _saveTimer->setInterval(240000);
-    _saveTimer->setSingleShot(false);
-    _saveTimer->start();
-
-    Q_TEST(connect(_saveTimer, SIGNAL(timeout()), this, SLOT(_saveDb())));
 
     _loadDb();
 }
@@ -47,12 +39,12 @@ Bayes::Bayes(QObject *parent)
 
 Bayes::~Bayes()
 {
-    _saveDb();
+    saveDb();
 }
 
 
 
-Bayes *Bayes::instance(QObject *parent)
+Bayes* Bayes::instance(QObject *parent)
 {
     static auto bayes = new Bayes(parent);
     return bayes;
@@ -123,7 +115,7 @@ int Bayes::entryVoteType(const int id) const
 
 
 
-void Bayes::_saveDb()
+void Bayes::saveDb()
 {
     if (!_loaded)
         return;

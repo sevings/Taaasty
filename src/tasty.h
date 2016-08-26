@@ -73,6 +73,8 @@ private slots:
     void _setUnreadChats(int count);
     void _setUnreadNotifications(int count);
 
+    void _saveOrReconnect(Qt::ApplicationState state);
+
 private:
     Settings* _settings;
     QNetworkAccessManager* _manager;

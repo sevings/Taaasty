@@ -5,8 +5,11 @@
 
 #include "data/User.h"
 
+#include "nbc/bayes.h"
+
 #include "defines.h"
 
+#include <QGuiApplication>
 #include <QDateTime>
 #include <QRegularExpression>
 #include <QDebug>
@@ -25,6 +28,9 @@ Tasty::Tasty(QNetworkAccessManager* web)
     , _me(nullptr)
 {
     qDebug() << "Tasty";
+
+    Q_TEST(connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)),
+                   this, SLOT(_saveOrReconnect(Qt::ApplicationState))));
 
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
@@ -223,4 +229,14 @@ void Tasty::_setUnreadNotifications(int count)
 
     _unreadNotifications = count;
     emit unreadNotificationsChanged();
+}
+
+
+
+void Tasty::_saveOrReconnect(Qt::ApplicationState state)
+{
+    if (state == Qt::ApplicationActive)
+        _pusher->connect();
+    else
+        Bayes::instance()->saveDb();
 }

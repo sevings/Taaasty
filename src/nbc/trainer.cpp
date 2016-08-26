@@ -285,7 +285,7 @@ void Trainer::_finishTraining()
     _curTlog = nullptr;
     _curName.clear();
 
-    _bayes->_saveDb();
+    _bayes->saveDb();
 
     auto future = QtConcurrent::run(this, &Trainer::_saveDb);
     _sync.setFuture(future);
@@ -369,7 +369,7 @@ void Trainer::_saveDb()
 
     Q_TEST(_bayes->db().commit());
 
-    _bayes->_saveDb();
+    _bayes->saveDb();
 }
 
 

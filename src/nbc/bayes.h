@@ -10,8 +10,6 @@ class EntryBase;
 class Trainer;
 class StemmerV;
 
-class QTimer;
-
 
 
 class Bayes : public QObject
@@ -35,12 +33,8 @@ public:
     Trainer* trainer();
     QSqlDatabase& db() { return _db; }
 
-signals:
-
 public slots:
-
-private slots:
-    void _saveDb();
+    void saveDb();
 
 private:
     struct FeatureCount {
@@ -74,7 +68,6 @@ private:
     Trainer* _trainer;
     StemmerV* _stemmer;
     QSqlDatabase _db;
-    QTimer* _saveTimer;
     mutable QReadWriteLock _lock;
 };
 
