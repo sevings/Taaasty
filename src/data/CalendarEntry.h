@@ -24,11 +24,15 @@ class CalendarEntry: public QObject
     Q_PROPERTY(QString truncatedTitle MEMBER _truncatedTitle CONSTANT)
     Q_PROPERTY(bool    isFlow         MEMBER _isFlow         CONSTANT)
 
+    Q_PROPERTY(Entry*  fullEntry      READ fullEntry         CONSTANT)
+
 public:
     CalendarEntry(QObject* parent = nullptr);
     CalendarEntry(const QJsonObject data, QObject* parent = nullptr);
 
-    EntryPtr   full();
+    Entry* fullEntry();
+
+    EntryPtr full();
     EntryBase* base();
 
     int     id() const;

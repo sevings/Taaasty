@@ -80,7 +80,7 @@ Pane {
                         return;
                     }
 
-                    window.pushFullEntryById(entry.id);
+                    window.pushFullEntry(entry.fullEntry);
                 }
             }
             ThemedText {

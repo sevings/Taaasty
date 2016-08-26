@@ -234,6 +234,9 @@ void Entry::setId(const int id)
 
 void Entry::reload()
 {
+    if (_loading)
+        return;
+
     auto request = new ApiRequest(QString("v1/entries/%1.json?include_comments=true").arg(_id));
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
     Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
@@ -436,7 +439,7 @@ Conversation* Entry::chat()
     if (_chat)
         return _chat.data();
 
-    _chat = ChatPtr::create(this);
+    _chat = ChatPtr::create(nullptr);
     _chat->setEntryId(_id);
 
     Q_TEST(connect(_chat.data(), SIGNAL(updated()), this, SLOT(_setChatId())));

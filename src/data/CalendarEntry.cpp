@@ -3,7 +3,9 @@
 #include <QDate>
 
 #include "Entry.h"
+
 #include "../tasty.h"
+#include "../pusherclient.h"
 
 
 
@@ -44,8 +46,19 @@ CalendarEntry::CalendarEntry(const QJsonObject data, QObject *parent)
 
 
 
+Entry* CalendarEntry::fullEntry()
+{
+    return full().data();
+}
+
+
+
 EntryPtr CalendarEntry::full()
 {
+    if (_entry)
+        return _entry;
+
+    _entry = Tasty::instance()->pusher()->entry(_id);
     if (_entry)
         return _entry;
 

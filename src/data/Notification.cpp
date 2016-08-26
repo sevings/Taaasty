@@ -1,8 +1,8 @@
 #include "Notification.h"
 
-#include "../defines.h"
-
 #include "User.h"
+
+#include "Entry.h"
 
 #include "../tasty.h"
 #include "../pusherclient.h"
@@ -30,7 +30,20 @@ Notification::Notification(const QJsonObject data, QObject *parent)
     _actionText = data.value("action_text").toString();
     _text       = data.value("text").toString();
     _entityId   = data.value("entity_id").toInt();
-    _entityType = data.value("entity_type").toString();
+
+    auto entityType = data.value("entity_type").toString();
+    if (entityType == "Entry")
+        _entityType = EntryType;
+    else if (entityType == "Relationship")
+        _entityType = RelationshipType;
+    else if (entityType == "Comment")
+        _entityType = CommentType;
+    else
+    {
+        qDebug() << "Unknown notification entity type:" << entityType;
+        _entityType = UnknownType;
+    }
+
     _parentId   = data.value("parent_id").toInt();
     _parentType = data.value("parent_type").toString();
 
@@ -98,5 +111,37 @@ void Notification::_updateRead(const QJsonObject data)
 int Notification::parentId() const
 {
     return _parentId;
+}
+
+
+
+Entry* Notification::entry()
+{
+    if (_entry )
+        return _entry.data();
+
+    int id = 0;
+    switch (_entityType)
+    {
+    case EntryType:
+        id = _entityId;
+        break;
+    case CommentType:
+        id = _parentId;
+        break;
+    default:
+        break;
+    }
+
+    if (id <= 0)
+        return nullptr;
+
+    _entry = Tasty::instance()->pusher()->entry(id);
+    if (_entry)
+        return _entry.data();
+
+    _entry = EntryPtr::create((QObject*)nullptr);
+    _entry->setId(id);
+    return _entry.data();
 }
 

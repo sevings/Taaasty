@@ -29,29 +29,17 @@ PopupFill {
             readonly property int h: notifName.paintedHeight + notifText.paintedHeight + 1 * mm
             height: (h > notifAvatar.height ? h : notifAvatar.height) + 2 * mm
             onClicked: {
-                if (model.notification.entityType === 'Entry')
+                var fullEntry = model.notification.entry;
+                if (fullEntry)
                 {
-                    if (!model.notification.entityId)
-                        return;
-
                     back.hide();
-                    Q.ApplicationWindow.window.pushFullEntryById(model.notification.entityId);
+                    Q.ApplicationWindow.window.pushFullEntry(fullEntry);
                 }
-                else if (model.notification.entityType === 'Relationship')
+                else if (model.notification.entityType == 3)//Notification.RelationshipType)
                 {
                     back.hide();
                     Q.ApplicationWindow.window.pushTlog(model.notification.sender.id);
                 }
-                else if (model.notification.entityType === 'Comment')
-                {
-                    if (!model.notification.parentId)
-                        return;
-
-                    back.hide();
-                    Q.ApplicationWindow.window.pushFullEntryById(model.notification.parentId);
-                }
-                else
-                    console.log(model.notification.entityType);
             }
             Rectangle {
                 anchors.fill: parent
