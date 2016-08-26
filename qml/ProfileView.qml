@@ -177,7 +177,7 @@ Pane {
                     icon: (parent.tlogMode == 0 //Trainer.WaterMode
                           ? '../icons/drop-solid-' : '../icons/drop-outline-')
                           + (dp < 2 ? '36' : '72') + '.png'
-                    enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
+                    enabled: parent.tlogMode == 0 || parent.tlogMode == 2 //Trainer.UndefinedMode
                     onClicked: {
                         parent.tlogMode = 0;
                         Trainer.trainTlog(tlog.tlogId, tlog.author.name, 0);
@@ -194,7 +194,7 @@ Pane {
                     icon: (parent.tlogMode == 1 //Trainer.FireMode
                           ? '../icons/flame-solid-' : '../icons/flame-outline-')
                           + (dp < 2 ? '36' : '72') + '.png'
-                    enabled: highlighted || parent.tlogMode == 2 //Trainer.UndefinedMode
+                    enabled: parent.tlogMode == 1 || parent.tlogMode == 2 //Trainer.UndefinedMode
                     onClicked: {
                         parent.tlogMode = 1;
                         Trainer.trainTlog(tlog.tlogId, tlog.author.name, 1);
