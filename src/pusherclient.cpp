@@ -43,10 +43,9 @@ PusherClient::PusherClient(Tasty* tasty)
 void PusherClient::addChat(ChatPtr chat)
 {
     if (!chat)
-    {
-        qDebug() << "Chat created not as a shared pointer";
         return;
-    }
+
+    Q_ASSERT(!chat->parent());
 
     _chats.insert(chat->id(), chat.toWeakRef());
 
@@ -83,10 +82,10 @@ ChatPtr PusherClient::chatByEntry(int entryId) const
 
 void PusherClient::addEntry(EntryPtr entry)
 {
+    Q_ASSERT(!entry || !entry->parent());
+
     if (entry)
         _entries.insert(entry->entryId(), entry.toWeakRef());
-    else
-        qDebug() << "Entry created not as a shared pointer";
 }
 
 
