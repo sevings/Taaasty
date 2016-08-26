@@ -342,26 +342,17 @@ void FeedModel::_addItems(QJsonObject data)
 
     auto feed =  data.contains("items") ? data.value("items").toArray()
                                         : data.value("entries").toArray();
-    if (feed.isEmpty())
-    {
-        _hasMore = false;
-        emit hasMoreChanged();
-        _loading = false;
-        emit loadingChanged();
-        return;
-    }
 
-    if (data.contains("prev_date"))
+    auto more = data.value("has_more").toBool()
+            || (data.contains("next_since_entry_id")
+                && !data.value("next_since_entry_id").isNull())
+            || (data.contains("prev_date")
+                && !data.value("prev_date").isNull());
+
+    if (more != _hasMore)
     {
-        auto prev = data.value("prev_date");
-        if (prev.isNull())
-        {
-            _hasMore = false;
-            emit hasMoreChanged();
-            _prevDate.clear();
-        }
-        else
-            _prevDate = prev.toString();
+        _hasMore = more;
+        emit hasMoreChanged();
     }
 
     QList<EntryPtr> all;
@@ -397,6 +388,27 @@ void FeedModel::_addItems(QJsonObject data)
 
         if (_lastEntry <= 0)
             _lastEntry = all.last()->entryId();
+    }
+
+    if (data.contains("prev_date"))
+    {
+        auto prev = data.value("prev_date");
+        if (prev.isNull())
+            _prevDate.clear();
+        else
+            _prevDate = prev.toString();
+    }
+
+    if (all.isEmpty())
+    {
+        _loading = false;
+
+        if (_hasMore)
+            fetchMore(QModelIndex());
+        else
+            emit loadingChanged();
+
+        return;
     }
 
     bool loadMore = false;
