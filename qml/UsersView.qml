@@ -12,18 +12,6 @@ Pane {
     property Tlog tlog: Tlog {
         tlogId: back.tlogId
     }
-    onModeChanged: {
-        if (mode === UsersModel.FollowersMode)
-            title = 'Подписчики';
-        else if (mode === UsersModel.FollowingsMode)
-            title = 'Подписки';
-        else if (mode === UsersModel.MyIgnoredMode)
-            title = 'Заблокированы';
-        else if (mode === UsersModel.FireMode)
-            title = 'Интересные тлоги';
-        else if (mode === UsersModel.WaterMode)
-            title = 'Неинтересные тлоги';
-    }
     Poppable {
         body: back
     }
@@ -135,7 +123,20 @@ Pane {
             Q.Label {
                 id: usersTitle
                 font.pointSize: window.fontBigger
-                text: back.title
+                text: {
+                    if (back.mode === UsersModel.FollowersMode)
+                        'Подписчики';
+                    else if (back.mode === UsersModel.FollowingsMode)
+                        'Подписки';
+                    else if (back.mode === UsersModel.MyIgnoredMode)
+                        'Заблокированы';
+                    else if (back.mode === UsersModel.FireMode)
+                        'Интересные тлоги';
+                    else if (back.mode === UsersModel.WaterMode)
+                        'Неинтересные тлоги';
+                    else
+                        '';
+                }
                 anchors.centerIn: parent
                 y: 1 * mm
             }
