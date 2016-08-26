@@ -70,11 +70,13 @@ public class NotificationClient extends org.qtproject.qt5.android.bindings.QtAct
         if (m_notificationManager == null) {
             m_notificationManager = (NotificationManager)m_instance.getSystemService(Context.NOTIFICATION_SERVICE);
             m_builder = new Notification.Builder(m_instance);
-            m_builder.setSmallIcon(R.drawable.icon);
+            m_builder.setSmallIcon(R.drawable.icon); //! \todo icon size
             m_builder.setContentTitle("Taaasty");
+            m_builder.setAutoCancel(true);
         }
 
-        m_builder.setContentText(s); //! \todo set category
+        m_builder.setContentText(s);
+        m_builder.setTicker(s);
         m_notificationManager.notify(1, m_builder.build());
     }
 }
