@@ -174,6 +174,7 @@ void NotificationsModel::_addItems(QJsonObject data)
     {
         auto notification = new Notification(notif.toObject(), this);
         _notifs.insert(size, notification);
+        _ids << notification->id(); //! \todo check existing ids
     }
 
     endInsertRows();
@@ -195,6 +196,10 @@ void NotificationsModel::_addItems(QJsonObject data)
 
 void NotificationsModel::_addPush(QJsonObject data)
 {
+    auto id = data.value("id").toInt();
+    if (_ids.contains(id))
+        return;
+
     beginInsertRows(QModelIndex(), 0, 0);
     
     if (!_notifs.isEmpty())
@@ -202,6 +207,7 @@ void NotificationsModel::_addPush(QJsonObject data)
 
     auto notification = new Notification(data, this);
     _notifs.prepend(notification);
+    _ids << notification->id();
 
     Q_TEST(connect(notification, SIGNAL(read()), this, SIGNAL(unreadChanged())));
     
@@ -232,11 +238,21 @@ void NotificationsModel::_addNewest(const QJsonObject data)
 
     _totalCount = data.value("total_count").toInt();
 
-    beginInsertRows(QModelIndex(), 0, list.size() - 1);
-
+    QList<Notification*> notifs;
     foreach(auto notif, list)
     {
-        auto notification = new Notification(notif.toObject(), this);
+        auto id = data.value("id").toInt();
+        if (!_ids.contains(id))
+        {
+            notifs << new Notification(notif.toObject(), this);
+            _ids << id;
+        }
+    }
+
+    beginInsertRows(QModelIndex(), 0, notifs.size() - 1);
+
+    foreach(auto notification, notifs)
+    {
         _notifs.prepend(notification);
 
 #ifdef Q_OS_ANDROID
@@ -268,6 +284,7 @@ void NotificationsModel::_reloadAll()
     _totalCount = 1;
     qDeleteAll(_notifs);
     _notifs.clear();
+    _ids.clear();
 
     endResetModel();
 

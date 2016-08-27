@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QJsonObject>
+#include <QSet>
 
 class Notification;
 
@@ -60,6 +61,7 @@ private slots:
 
 private:
     QList<Notification*> _notifs;
+    QSet<int> _ids;
     QString _url;
     bool _loading;
     bool _checking;
