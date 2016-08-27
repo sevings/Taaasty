@@ -50,6 +50,7 @@ public slots:
     QString slug() const                { return _slug; }
     void    setSlug(const QString slug);
 
+    void init(const QJsonObject data);
     void reload();
 
 signals:
@@ -57,7 +58,6 @@ signals:
     void loadingChanged();
 
 private slots:
-    void _init(const QJsonObject data);
 
 private:
     Relationship _relationship(const QJsonObject& data, const QString field);

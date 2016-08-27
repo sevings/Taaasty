@@ -118,6 +118,9 @@ Entry::Entry(QObject* parent)
 
 Entry::Entry(Conversation* chat)
     : EntryBase()
+    , _tlog(nullptr)
+    , _rating(nullptr)
+    , _media(nullptr)
     , _commentsModel(nullptr)
     , _attachedImagesModel(nullptr)
     , _loading(false)
@@ -167,8 +170,17 @@ void Entry::init(const QJsonObject data)
     _isWatched       = data.value("is_watching").toBool();
     _isPrivate       = data.value("is_private").toBool();
     _isFixed         = data.value("fixed_state").toString("not_fixed") != "not_fixed"; //! \todo check other values
-    _tlog            = new Tlog(data.value("tlog").toObject(), this);
-    _rating          = new Rating(data.value("rating").toObject(), this);
+
+    if (_tlog)
+        _tlog->init(data.value("tlog").toObject());
+    else
+        _tlog        = new Tlog(data.value("tlog").toObject(), this);
+
+    if (_rating)
+        _rating->init(data.value("rating").toObject());
+    else
+        _rating      = new Rating(data.value("rating").toObject(), this);
+
     _commentsCount   = data.value("comments_count").toInt();
 
     if (data.contains("title_truncated"))
@@ -182,6 +194,8 @@ void Entry::init(const QJsonObject data)
         _truncatedText = Tasty::truncateHtml(_text, 300);
 
     _source          = data.value("source").toString(); // quote author
+
+    delete _media;
     _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
                                          : nullptr; // music?
 //    _imagePreview    = data.value("preview_image").toObject();

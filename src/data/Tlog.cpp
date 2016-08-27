@@ -27,7 +27,7 @@ Tlog::Tlog(const QJsonObject data, QObject *parent)
     , _author(nullptr)
     , _loading(false)
 {
-    _init(data);
+    init(data);
 }
 
 
@@ -58,27 +58,7 @@ void Tlog::setSlug(const QString slug)
 
 
 
-void Tlog::reload()
-{
-    if ((_slug.isEmpty() && !_id) || _loading)
-            return;
-
-    auto url = QString("v1/tlog/%1.json");
-    if (_id)
-        url = url.arg(_id);
-    else
-        url = url.arg(_slug);
-
-    auto request = new ApiRequest(url);
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
-
-    _loading = true;
-    emit loadingChanged();
-}
-
-
-
-void Tlog::_init(const QJsonObject data)
+void Tlog::init(const QJsonObject data)
 {
     _id = data.value("id").toInt();
     _slug = data.value("slug").toString();
@@ -106,13 +86,33 @@ void Tlog::_init(const QJsonObject data)
     auto authorData = data.contains("author")
             ? data.value("author").toObject() : data;
     if (_author)
-        _author->_init(authorData);
+        _author->init(authorData);
     else
         _author = new Author(authorData, this);
 
     emit updated();
 
     _loading = false;
+    emit loadingChanged();
+}
+
+
+
+void Tlog::reload()
+{
+    if ((_slug.isEmpty() && !_id) || _loading)
+            return;
+
+    auto url = QString("v1/tlog/%1.json");
+    if (_id)
+        url = url.arg(_id);
+    else
+        url = url.arg(_slug);
+
+    auto request = new ApiRequest(url);
+    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject)));
+
+    _loading = true;
     emit loadingChanged();
 }
 

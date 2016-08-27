@@ -20,6 +20,7 @@ Rating::Rating(QObject* parent)
     , _bayesRating(0)
     , _isBayesVoted(false)
     , _isVotedAgainst(false)
+    , _parent(qobject_cast<Entry*>(parent))
 {
 
 }
@@ -52,7 +53,7 @@ Rating::~Rating()
 
 void Rating::reCalcBayes()
 {
-    auto type = Bayes::instance()->entryVoteType(_parent->entryId());
+    auto type = Bayes::instance()->entryVoteType(_entryId);
     switch (type)
     {
     case Bayes::Water:
@@ -94,8 +95,8 @@ void Rating::vote()
                                : QNetworkAccessManager::PostOperation);
     auto request = new ApiRequest(url, true, operation);
 
-    connect(request, SIGNAL(success(const QJsonObject)),
-            this, SLOT(init(const QJsonObject)));
+    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)),
+                   this, SLOT(init(const QJsonObject))));
 }
 
 

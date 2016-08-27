@@ -24,7 +24,7 @@ Author::Author(QObject* parent)
 Author::Author(const QJsonObject data, QObject *parent)
     : User(data, parent)
 {
-    _init(data);
+    init(data);
 }
 
 
@@ -57,30 +57,7 @@ bool Author::isDaylog() const
 
 
 
-void Author::checkStatus()
-{
-    auto url = QString("v1/online_statuses.json?user_ids=%1").arg(id());
-    auto request = new ApiRequest(url);
-
-    Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_initStatus(QJsonArray))));
-}
-
-
-
-void Author::reload()
-{
-    if (id() <= 0)
-        return;
-
-    auto request = new ApiRequest(QString("v1/tlog/%1.json").arg(id()));
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject)));
-
-    _loading = true;
-}
-
-
-
-void Author::_init(const QJsonObject data)
+void Author::init(const QJsonObject data)
 {
     User::_init(data);
 
@@ -112,10 +89,33 @@ void Author::_init(const QJsonObject data)
 
 
 
+void Author::checkStatus()
+{
+    auto url = QString("v1/online_statuses.json?user_ids=%1").arg(id());
+    auto request = new ApiRequest(url);
+
+    Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_initStatus(QJsonArray))));
+}
+
+
+
+void Author::reload()
+{
+    if (id() <= 0)
+        return;
+
+    auto request = new ApiRequest(QString("v1/tlog/%1.json").arg(id()));
+    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject)));
+
+    _loading = true;
+}
+
+
+
 void Author::_initFromTlog(const QJsonObject data)
 {
     auto author = data.value("author").toObject();
-    _init(author);
+    init(author);
 }
 
 

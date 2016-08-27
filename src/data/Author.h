@@ -12,8 +12,6 @@ class Author: public User
 {
     Q_OBJECT
 
-    friend class Tlog;
-
     Q_PROPERTY(bool    isFemale            MEMBER _isFemale            NOTIFY authorUpdated)
     Q_PROPERTY(bool    isPrivacy           MEMBER _isPrivacy           NOTIFY authorUpdated)
     Q_PROPERTY(bool    isOnline            MEMBER _isOnline            NOTIFY statusUpdated)
@@ -38,6 +36,7 @@ public:
     bool isDaylog() const;
 
 public slots:
+    void init(const QJsonObject data);
     void checkStatus();
     void reload();
 
@@ -46,7 +45,6 @@ signals:
     void statusUpdated();
 
 private slots:
-    void _init(const QJsonObject data);
     void _initFromTlog(const QJsonObject data);
     void _initStatus(const QJsonArray data);
     void _initStatus(const QJsonObject data);
