@@ -290,10 +290,9 @@ void ChatsModel::_addChats(QJsonArray data)
 
         auto chat = Tasty::instance()->pusher()->chat(id);
         if (!chat)
-        {
             chat = ChatPtr::create((QObject*)nullptr);
-            chat->init(item.toObject());
-        }
+
+        chat->init(item.toObject());
 
         _ids << chat->id();
         _allChats << chat;
