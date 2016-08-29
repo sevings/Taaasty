@@ -5,6 +5,7 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     innerFlick: listView
+    color: window.darkTheme ? window.backgroundColor : '#e6f1f2'
     property Chat chat: Chat { }
     property Tlog tlog: Tlog {
         tlogId: chat.recipientId
@@ -33,7 +34,6 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0 || !model.hasMore
         model: chat.messages
-//        interactive: back.x == 0
         onCountChanged: {
             if (count < 30)
                 positionViewAtEnd();
@@ -45,7 +45,9 @@ Pane {
         }
         delegate: Item {
             width: window.width
-            height: messageNick.height + messageText.height + messageImages.height + 4 * mm
+            height: (messageAvatar.height > messageBack.height
+                     ? messageAvatar.height : messageBack.height) + 2 * mm
+            readonly property bool isMyMessage: chat.userId === message.userId 
             Poppable {
                 body: back
                 onClicked: {
@@ -59,108 +61,100 @@ Pane {
                 if (index < 10)
                     listView.model.loadMore();
             }
-//            SmallAvatar {
-//                id: messageAvatar
-//                anchors {
-//                    top: parent.top
-//                    margins: 1 * mm
-//                    leftMargin: Settings.userId === message.userId ? 5 * mm : anchors.margins
-//                }
-//                user: message.user
-//                Poppable {
-//                    body: back
-//                    onClicked:
-//                    {
-//                        window.pushProfileById(message.user.id);
-//                        mouse.accepted = true;
-//                    }
-//                }
-//            }
-            ThemedText {
-                id: messageNick
+            SmallAvatar {
+                id: messageAvatar
                 anchors {
                     top: parent.top
-                    left: parent.left
-                    right: unreadMessage.visible ? unreadMessage.left : messageDate.left
                     margins: 1 * mm
-                    leftMargin: chat.userId === message.userId ? 10 * mm : anchors.margins
+                    left: isMyMessage ? undefined : parent.left
+                    right: isMyMessage ? parent.right : undefined
                 }
-                text: message.user.name
-                font.pointSize: window.fontSmaller
-                elide: Text.ElideRight
-                wrapMode: Text.NoWrap
-                font.bold: true
-                style: Text.Raised
-                styleColor: window.greenColor
+                user: message.user
+                popBody: back
+                onClicked: {
+                    window.pushProfileById(message.user.id);
+                }
             }
-            ThemedText {
-                id: messageDate
+            Rectangle {
+                id: messageBack
                 anchors {
                     top: parent.top
-                    right: parent.right
+                    left: isMyMessage ? undefined : messageAvatar.right
+                    right: isMyMessage ? messageAvatar.left : undefined
                     margins: 1 * mm
-                    rightMargin: chat.userId === message.userId ? anchors.margins : 10 * mm
+                    leftMargin: isMyMessage ? 1 * mm : 0
+                    rightMargin: isMyMessage ? 0 : 1 * mm
+                }                
+                readonly property int maxWidth: window.width - messageAvatar.width - 2 * mm
+                readonly property int textWidth: (messageText.contentWidth > messageDate.contentWidth
+                                                  ? messageText.contentWidth : messageDate.contentWidth)
+                                                  + 2 * mm
+                width: textWidth > maxWidth || messageImages.visible ? maxWidth : textWidth
+                height: messageDate.y + messageDate.contentHeight + 1 * mm
+                color: window.darkTheme ? '#404040' : window.backgroundColor
+                ListView {
+                    id: messageImages
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        right: parent.right
+                        margins: 1 * mm
+                    }
+                    interactive: false
+                    spacing: 1 * mm
+                    property AttachedImagesModel imagesModel: message.attachedImagesModel
+                    height: visible ? (imagesModel.listRatio() * width
+                            + (count - 1) * mm) : -1 * mm
+                    model: imagesModel
+                    visible: imagesModel && count > 0
+                    delegate: MyImage {
+                        id: picture
+                        width: messageImages.width
+                        height: image.height / image.width * width
+                        url: image.url
+                        extension: image.type
+                        savable: true
+                        popBody: back
+                    }
                 }
-                text: message.createdAt
-                font.pointSize: window.fontSmaller
-                color: window.secondaryTextColor
-                elide: Text.AlignRight
-                wrapMode: Text.NoWrap
+                ThemedText {
+                    id: messageText
+                    anchors {
+                        top: messageImages.bottom
+                        left: parent.left
+                    }
+                    width: messageBack.maxWidth - 2 * mm
+                    font.pointSize: window.fontSmaller
+                    text: message.text
+                    textFormat: Text.StyledText //! \todo rich text if image
+                    onLinkActivated: window.openLink(link)
+                    height: message.text.length > 0 ? contentHeight : -1 * mm
+                }
+                ThemedText {
+                    id: messageDate
+                    anchors {
+                        top: messageText.bottom
+                        left: parent.left
+                    }
+                    width: messageBack.maxWidth - 2 * mm
+                    font.pointSize: window.fontSmallest
+                    text: (chat.type == Chat.PrivateConversation && message.user.name.length
+                           ? '' : message.user.name + ', ')
+                          + message.createdAt
+                    color: window.secondaryTextColor
+                }
             }
             Rectangle {
                 id: unreadMessage
                 anchors {
-                    verticalCenter: messageDate.verticalCenter
-                    right: messageDate.left
-                    margins: 2 * mm
+                    verticalCenter: messageBack.top
+                    horizontalCenter: messageBack.right
                 }
                 width: 1.5 * mm
                 height: width
                 radius: height / 2
                 color: Material.primary
                 visible: !message.isRead
-            }
-            ThemedText {
-                id: messageText
-                anchors {
-                    top: messageDate.bottom
-                    left: parent.left
-                    right: parent.right
-                    margins: 1 * mm
-                    leftMargin: chat.userId === message.userId ? 10 * mm : anchors.margins
-                    rightMargin: chat.userId === message.userId ? anchors.margins : 10 * mm
-                }
-                font.pointSize: window.fontSmaller
-                text: message.text
-                textFormat: Text.RichText
-                onLinkActivated: window.openLink(link)
-                height: message.text.length > 0 ? contentHeight : 0
-            }
-            ListView {
-                id: messageImages
-                anchors {
-                    top: messageText.bottom
-                    left: parent.left
-                    right: parent.right
-                    margins: 1 * mm
-                    leftMargin: messageText.anchors.leftMargin
-                    rightMargin: messageText.anchors.rightMargin
-                }
-                interactive: false
-                spacing: 1 * mm
-                property AttachedImagesModel imagesModel: message.attachedImagesModel
-                height: imagesModel ? (imagesModel.listRatio() * messageText.width
-                        + (imagesModel.rowCount() - 1) * mm) : 0
-                model: imagesModel
-                delegate: MyImage {
-                    id: picture
-                    width: messageText.width
-                    height: image.height / image.width * width
-                    url: image.url
-                    extension: image.type
-                    savable: true
-                    popBody: back
-                }
             }
         }
         footer: MessageEditor {

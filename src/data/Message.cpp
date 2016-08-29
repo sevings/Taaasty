@@ -78,7 +78,7 @@ void Message::_init(const QJsonObject data)
     _conversationId = data.value("conversation_id").toInt();
     _read           = !data.value("read_at").isNull();
     auto d = data.value("created_at").toString();
-    _createdAt      = Tasty::parseDate(d);
+    _createdAt      = Tasty::parseDate(d, _chat && _chat->type() == Conversation::PrivateConversation);
     _setDate(d);
     _text           = data.value("content_html").toString().replace("&amp;", "&"); // TODO: SystemMessage
 

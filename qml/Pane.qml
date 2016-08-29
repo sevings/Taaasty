@@ -1,10 +1,10 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
-import QtQuick.Controls.Material 2.0
 import QtGraphicalEffects 1.0
 
-Item {
+Rectangle {
     id: back
+    color: window.backgroundColor
     property Flickable innerFlick
     property bool poppable
     signal popped
@@ -27,10 +27,6 @@ Item {
         samples: 5
         color: "#40000000"
         source: pane
-    }
-    Q.Pane {
-        anchors.fill: parent
-        padding: 0
     }
 }
 
