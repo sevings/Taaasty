@@ -88,8 +88,10 @@ Pane {
                     rightMargin: isMyMessage ? 0 : 1 * mm
                 }                
                 readonly property int maxWidth: window.width - messageAvatar.width - 2 * mm
-                readonly property int textWidth: (messageText.contentWidth > messageDate.contentWidth
-                                                  ? messageText.contentWidth : messageDate.contentWidth)
+                readonly property int dateWidth: messageDate.contentWidth
+                                                 + (unreadMessage.visible ? unreadMessage.width + 1 * mm : 0)
+                readonly property int textWidth: (messageText.contentWidth > dateWidth
+                                                  ? messageText.contentWidth : dateWidth)
                                                   + 2 * mm
                 width: textWidth > maxWidth || messageImages.visible ? maxWidth : textWidth
                 height: messageDate.y + messageDate.contentHeight + 1 * mm
@@ -138,25 +140,26 @@ Pane {
                         top: messageText.bottom
                         left: parent.left
                     }
-                    width: messageBack.maxWidth - 2 * mm
+                    width: messageBack.maxWidth - 2 * mm - (unreadMessage.visible ? unreadMessage.width + 1 * mm : 0)
                     font.pointSize: window.fontSmallest
                     text: (chat.type == Chat.PrivateConversation && message.user.name.length
                            ? '' : message.user.name + ', ')
                           + message.createdAt
                     color: window.secondaryTextColor
                 }
-            }
-            Rectangle {
-                id: unreadMessage
-                anchors {
-                    verticalCenter: messageBack.top
-                    horizontalCenter: messageBack.right
+                Rectangle {
+                    id: unreadMessage
+                    anchors {
+                        verticalCenter: messageDate.verticalCenter
+                        right: parent.right
+                        margins: 1 * mm
+                    }
+                    width: 1.5 * mm
+                    height: width
+                    radius: height / 2
+                    color: Material.primary
+                    visible: !message.isRead
                 }
-                width: 1.5 * mm
-                height: width
-                radius: height / 2
-                color: Material.primary
-                visible: !message.isRead
             }
         }
         footer: MessageEditor {
