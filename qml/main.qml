@@ -409,13 +409,15 @@ Q.ApplicationWindow {
     Loader {
         id: notifsView
         asynchronous: true
-        anchors.fill: parent
+        width: window.width
+        height: window.height
         sourceComponent: NotificationsView { }
     }
     Loader {
         id: chatsView
         asynchronous: true
-        anchors.fill: parent
+        width: window.width
+        height: window.height
         sourceComponent: ChatsView { }
     }
     PageMenu {

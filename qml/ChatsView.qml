@@ -34,7 +34,7 @@ PopupFill {
                         model.chat.readAll();
 
                     back.hide();
-                    Q.ApplicationWindow.window.pushMessages(model.chat);
+                    window.pushMessages(model.chat);
                 }
             }
             SmallAvatar {
@@ -49,7 +49,7 @@ PopupFill {
                         return;
 
                     back.hide();
-                    Q.ApplicationWindow.window.pushProfileById(chatAvatar.user.id);
+                    window.pushProfileById(chatAvatar.user.id);
                 }
             }
             ThemedText {

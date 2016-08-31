@@ -33,12 +33,12 @@ PopupFill {
                 if (fullEntry)
                 {
                     back.hide();
-                    Q.ApplicationWindow.window.pushFullEntry(fullEntry);
+                    window.pushFullEntry(fullEntry);
                 }
                 else if (model.notification.entityType == 3)//Notification.RelationshipType)
                 {
                     back.hide();
-                    Q.ApplicationWindow.window.pushTlog(model.notification.sender.id);
+                    window.pushTlog(model.notification.sender.id);
                 }
             }
             Rectangle {
@@ -55,7 +55,7 @@ PopupFill {
                         return;
 
                     back.hide();
-                    Q.ApplicationWindow.window.pushProfileById(model.notification.sender.id);
+                    window.pushProfileById(model.notification.sender.id);
                 }
             }
             Q.Label {
