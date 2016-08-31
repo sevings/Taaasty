@@ -166,6 +166,7 @@ void ChatsModel::loadUnread()
     qDebug() << "ChatsModel::loadUnread";
 
     _checking = true;
+    emit checkingChanged();
 
     QString url("v2/messenger/conversations.json?unread=true");
     _request = new ApiRequest(url, true);
@@ -210,10 +211,15 @@ void ChatsModel::_addUnread(QJsonArray data)
     qDebug() << "ChatsModel::_addUnread";
 
     _request = nullptr;
-    _checking = false;
 
+    emit Tasty::instance()->pusher()->unreadChats(data.size());
+    
     if (data.isEmpty())
+    {
+        _checking = false;
+        emit checkingChanged();
         return;
+    }
 
     QList<int> bubbleIds;
     QList<ChatPtr> chats;
@@ -252,7 +258,11 @@ void ChatsModel::_addUnread(QJsonArray data)
         _bubbleChat(id);
 
     if (chats.isEmpty())
+    {
+        _checking = false;
+        emit checkingChanged();
         return;
+    }
 
     beginInsertRows(QModelIndex(), 0, chats.size() - 1);
 
@@ -260,6 +270,9 @@ void ChatsModel::_addUnread(QJsonArray data)
         _chats.insert(i, chats.at(i));
 
     endInsertRows();
+    
+    _checking = false;
+    emit checkingChanged();
 }
 
 
@@ -345,6 +358,7 @@ void ChatsModel::_setNotChecking(QObject* request)
 {
     Q_UNUSED(request);
     _checking = false;
+    emit checkingChanged();
 }
 
 
@@ -443,4 +457,11 @@ void ChatsModel::_bubbleChat(int id)
 bool ChatsModel::loading() const
 {
     return _loading;
+}
+
+
+
+bool ChatsModel::checking() const
+{
+    return _checking;
 }

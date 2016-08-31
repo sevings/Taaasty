@@ -18,6 +18,7 @@ class MessageBase : public QObject
     Q_PROPERTY(QString  truncatedText   MEMBER _truncatedText  NOTIFY textUpdated)
     Q_PROPERTY(User*    user            MEMBER _user           NOTIFY baseUpdated)
     Q_PROPERTY(bool     isRead          MEMBER _read           NOTIFY readChanged)
+    Q_PROPERTY(bool     containsImage   MEMBER _containsImage  NOTIFY baseUpdated)
 
 public:
     explicit MessageBase(QObject* parent = nullptr);
@@ -46,6 +47,7 @@ protected:
     QString     _truncatedText;
     User*       _user;
     bool        _read;
+    bool        _containsImage;
 };
 
 #endif // MESSAGEBASE_H

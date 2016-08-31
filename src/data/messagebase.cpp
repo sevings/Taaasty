@@ -9,6 +9,7 @@ MessageBase::MessageBase(QObject* parent)
     , _id(0)
     , _user(nullptr)
     , _read(true)
+    , _containsImage(false)
 {
 
 }
@@ -38,7 +39,8 @@ QDateTime MessageBase::createdDate() const
 
 void MessageBase::_setTruncatedText()
 {
-    _truncatedText = Tasty::truncateHtml(_text);
+    _truncatedText = Tasty::truncateHtml(_text);    
+    _containsImage = _text.contains("<img", Qt::CaseInsensitive);
 }
 
 

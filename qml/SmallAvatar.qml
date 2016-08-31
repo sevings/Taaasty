@@ -9,7 +9,7 @@ MyImage {
         left: parent.left
     }
     width: 8 * mm
-    height: 8 * mm
+    height: width
     property User user
     property string symbol: user && user.name ? user.name[0].toUpperCase() : '?'
     property string defaultSource: ''

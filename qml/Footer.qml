@@ -6,6 +6,7 @@ Popup {
     id: footer
     height: 6 * mm
     closable: false
+    state: "opened"
     MouseArea {
         anchors.fill: parent
         onClicked: {

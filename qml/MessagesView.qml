@@ -69,10 +69,12 @@ Pane {
                     left: isMyMessage ? undefined : parent.left
                     right: isMyMessage ? parent.right : undefined
                 }
+                width: 7 * mm
                 user: message.user
                 popBody: back
                 onClicked: {
-                    window.pushProfileById(message.user.id);
+                    if (!chat.isAnonymous)
+                        window.pushProfileById(message.user.id);
                 }
             }
             Rectangle {
@@ -126,7 +128,7 @@ Pane {
                     width: messageBack.maxWidth - 2 * mm
                     font.pointSize: window.fontSmaller
                     text: message.text
-                    textFormat: Text.StyledText //! \todo rich text if image
+                    textFormat: message.containsImage ? Text.RichText : Text.StyledText
                     onLinkActivated: window.openLink(link)
                     height: message.text.length > 0 ? contentHeight : -1 * mm
                 }
