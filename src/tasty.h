@@ -50,7 +50,6 @@ signals:
     void authorizationNeeded();
     void authorized();
 
-    void ratingChanged(QJsonObject data);
     void unreadChatsChanged();
     void unreadNotificationsChanged();
 

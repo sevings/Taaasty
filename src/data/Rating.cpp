@@ -37,8 +37,7 @@ Rating::Rating(const QJsonObject data, Entry* parent)
 {
     init(data);
 
-    Q_TEST(connect(Tasty::instance(), SIGNAL(ratingChanged(QJsonObject)), this, SLOT(init(QJsonObject))));
-    Q_TEST(connect(&_watcher,         SIGNAL(finished()),                 this, SLOT(_changeBayesRating())));
+    Q_TEST(connect(&_watcher, SIGNAL(finished()), this, SLOT(_changeBayesRating())));
 }
 
 
@@ -110,6 +109,7 @@ void Rating::voteBayes()
     _watcher.setFuture(future);
 
     _isBayesVoted = true;
+    emit bayesChanged();
 }
 
 
@@ -123,6 +123,7 @@ void Rating::voteAgainst()
     _watcher.setFuture(future);
 
     _isVotedAgainst = true;
+    emit bayesChanged();
 }
 
 
