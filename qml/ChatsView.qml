@@ -44,10 +44,8 @@ PopupFill {
                     margins: 1 * mm
                 }
                 user: model.chat.entry ? model.chat.entry.author : model.chat.recipient
+                acceptClick: !model.chat.isAnonymous && (model.chat.recipient || model.chat.entry)
                 onClicked: {
-                    if (model.chat.isAnonymous || (!model.chat.recipient && !model.chat.entry))
-                        return;
-
                     back.hide();
                     window.pushProfileById(chatAvatar.user.id);
                 }

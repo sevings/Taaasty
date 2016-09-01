@@ -50,10 +50,8 @@ PopupFill {
                 id: notifAvatar
                 anchors.margins: 1 * mm
                 user: model.notification.sender
+                acceptClick: back.y <= 0 && model.notification.parentType !== 'AnonymousEntry'
                 onClicked: {
-                    if (back.y > 0 || model.notification.parentType === 'AnonymousEntry')
-                        return;
-
                     back.hide();
                     window.pushProfileById(model.notification.sender.id);
                 }

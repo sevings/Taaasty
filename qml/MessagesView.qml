@@ -72,9 +72,9 @@ Pane {
                 width: 7 * mm
                 user: message.user
                 popBody: back
+                acceptClick: !chat.isAnonymous
                 onClicked: {
-                    if (!chat.isAnonymous)
-                        window.pushProfileById(message.user.id);
+                    window.pushProfileById(message.user.id);
                 }
             }
             Rectangle {
