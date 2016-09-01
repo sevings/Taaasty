@@ -116,20 +116,20 @@ Q.Drawer {
             MenuItem {
                 text: 'Хорошее'
                 onTriggered: {
-                    window.setFeedMode(FeedModel.GoodMode);
+                    window.setFeedMode(FeedModel.WellMode);
                     drawer.close();
                 }
-                highlighted: page.mode === FeedModel.GoodMode
+                highlighted: page.mode === FeedModel.WellMode
                 visible: !window.chatsShows
                          && page.bestMode === true
             }
             MenuItem {
                 text: 'Неплохое'
                 onTriggered: {
-                    window.setFeedMode(FeedModel.WellMode);
+                    window.setFeedMode(FeedModel.GoodMode);
                     drawer.close();
                 }
-                highlighted: page.mode === FeedModel.WellMode
+                highlighted: page.mode === FeedModel.GoodMode
                 visible: !window.chatsShows
                          && page.bestMode === true
             }
