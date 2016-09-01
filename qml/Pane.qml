@@ -16,7 +16,7 @@ Rectangle {
             bottom: parent.bottom
             left: parent.left
         }
-        color: window.backgroundColor
+        color: back.color
         width: 3 * mm
     }
     DropShadow {
