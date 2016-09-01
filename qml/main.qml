@@ -1,14 +1,14 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0 as Q
+import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.0
 //import QtGraphicalEffects 1.0
 
 import org.binque.taaasty 1.0
 import ImageCache 2.0
 
-Q.ApplicationWindow {
+ApplicationWindow {
     id: window
-    visible: true
+    visible: false
     width: 540
     height: 960
     Material.theme: darkTheme ? Material.Dark : Material.Light
@@ -26,14 +26,22 @@ Q.ApplicationWindow {
     property int fontNormal: 20
     property int fontSmaller: 17
     property int fontSmallest: 14
-    readonly property bool notifsShows: notifsView.item && notifsView.item.showing
-    readonly property bool chatsShows: chatsView.item && chatsView.item.showing
+    readonly property bool notifsShows: notifsView && notifsView.item && notifsView.item.showing
+    readonly property bool chatsShows: chatsView && chatsView.item && chatsView.item.showing
     readonly property int anonymousId: 4409
-    readonly property alias stackSize: stack.depth
-    readonly property bool canShowPageMenu: !pageMenu.autoclose
+    readonly property int stackSize: stack ? stack.depth : 0
+    readonly property bool canShowPageMenu: pageMenu && !pageMenu.autoclose
     property CachedImage savingImage
+
+    property Loader notifsView
+    property Loader chatsView
+    property StackView stack
+    property PageMenu pageMenu
+    property Footer footerMenu
+    property InputDialog inputDialog
+
     title: qsTr("Taaasty")
-//    color: backgroundColor
+    color: loader.opacity == 1 ? window.backgroundColor : '#ff000000'
     onWidthChanged: {
         Tasty.setImageWidth(window.width - 2 * mm, window.width - 11 * mm);
     }
@@ -78,10 +86,10 @@ Q.ApplicationWindow {
         chatsView.item.toggle();
     }
     function showFooter() {
-        footer.state = "opened";
+        if (footerMenu) footerMenu.state = "opened";
     }
     function hideFooter() {
-        footer.state = "closed";
+        if (footerMenu) footerMenu.state = "closed";
     }
     function showLineInput(mode) {
         inputDialog.state = "opened";
@@ -268,180 +276,206 @@ Q.ApplicationWindow {
     function showPageMenu() {
         pageMenu.open();
     }
-    MainMenu {
-        id: menu
-        visible: stack.depth === 1 && stack.currentItem && stack.currentItem.x > 0
-    }
-    ParallelAnimation {
-        id: backAnimation
-        PropertyAnimation {
-            target: stack.currentItem
-            property: "x"
-            to: 0
-            duration: 100
-        }
-    }
-    ParallelAnimation {
-        id: forwardAnimation
-        PropertyAnimation {
-            target: stack.currentItem
-            property: "x"
-            to: 40 * mm
-            duration: 100
-        }
-    }
-    Q.StackView {
-        id: stack
+    Loader {
+        id: loader
         anchors.fill: parent
-        initialItem: feed
-        popEnter: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                duration: 300
-                from: 0
-                to: 1
-            }
-            PropertyAnimation {
-                property: "scale"
-                duration: 300
-                from: 0.8
-                to: 1
-            }
-        }
-        popExit: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                duration: 300
-                to: 0
-            }
-            NumberAnimation {
-                property: "x"
-                duration: 300
-                easing.type: Easing.InOutQuad
-                to: window.width
-            }
-            PropertyAnimation {
-                property: "scale"
-                duration: 300
-                from: 1
-                to: 1.2
-            }
-        }
-        pushEnter: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                duration: 300
-                from: 0
-                to: 1
-            }
-            NumberAnimation {
-                property: "x"
-                duration: 300
-                easing.type: Easing.InOutQuad
-                from: window.width
-                to: 0
-            }
-            PropertyAnimation {
-                property: "scale"
-                duration: 300
-                from: 1.2
-                to: 1
-            }
-        }
-        pushExit: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                duration: 300
-                from: 1
-                to: 0
-            }
-            PropertyAnimation {
-                property: "scale"
-                duration: 300
-                from: 1
-                to: 0.8
-            }
-        }
-        Component {
-            id: feed
-            FeedView {
-                poppable: Q.StackView.index > 0
-            }
-        }
-        property Component messages:            Qt.createComponent("MessagesView.qml",      Component.Asynchronous, stack);
-        property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack);
-        property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack);
-        property Component calendar:            Qt.createComponent("CalendarView.qml",      Component.Asynchronous, stack);
-        property Component users:               Qt.createComponent("UsersView.qml",         Component.Asynchronous, stack);
-        property Component loginDialog:         Qt.createComponent("LoginDialog.qml",       Component.Asynchronous, stack);
-        property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack);
-        property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack);
-        property Component about:               Qt.createComponent("About.qml",             Component.Asynchronous, stack);
-        property Component settings:            Qt.createComponent("SettingsPage.qml",      Component.Asynchronous, stack);
-        property Component flows:               Qt.createComponent("FlowsView.qml",         Component.Asynchronous, stack);
-        Connections {
-            target: Tasty
-            onAuthorizationNeeded: {
-                if (!stack.find(function (item) {
-                    return item.isLoginDialog;
-                }))
-                    window.pushLoginDialog();
-            }
-            onAuthorized: {
-                if (stack.currentItem.isLoginDialog)
-                    window.popFromStack();
-            }
-        }
-        Connections {
-            target: Trainer
-            onTrainStarted: {
-                if (!stack.find(function (item) {
-                    return item.isTrainingProgress;
-                }))
-                    window.pushTrainingProgress(full);
-            }
-            onTrainFinished: {
-                if (stack.currentItem.isTrainingProgress)
-                    window.popFromStack();
-            }
-        }
-    }
-    Loader {
-        id: notifsView
         asynchronous: true
-        width: window.width
-        height: window.height
-        sourceComponent: NotificationsView { }
-    }
-    Loader {
-        id: chatsView
-        asynchronous: true
-        width: window.width
-        height: window.height
-        sourceComponent: ChatsView { }
-    }
-    PageMenu {
-        id: pageMenu
-        page: stack.currentItem
-        openable: !menu.visible && !notifsShows
-    }
-    Footer {
-        id: footer
-    }
-    InputDialog {
-        id: inputDialog
-        anchors.margins: 2 * mm
-    }
-    Dialog {
-        id: dialog
-        z: 100
-        Connections {
-            target: Tasty
-            onError: {
-                dialog.show((code ? code + '\n' : '') + text);
+        focus: true
+        opacity: 0
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 200
+                easing.type: Easing.OutQuad;
             }
-            onInfo: {
-                dialog.show(text, true);
+        }
+        sourceComponent: Item {
+            Component.onCompleted: {
+                window.notifsView   = notifsView;
+                window.chatsView    = chatsView;
+                window.stack        = stack;
+                window.pageMenu     = pageMenu;
+                window.footerMenu   = footer;
+                window.inputDialog  = inputDialog;
+
+                window.visible = true;
+                loader.opacity = 1;
+            }
+            MainMenu {
+                id: menu
+                visible: stack.depth === 1 && stack.currentItem && stack.currentItem.x > 0
+            }
+            ParallelAnimation {
+                id: backAnimation
+                PropertyAnimation {
+                    target: stack.currentItem
+                    property: "x"
+                    to: 0
+                    duration: 100
+                }
+            }
+            ParallelAnimation {
+                id: forwardAnimation
+                PropertyAnimation {
+                    target: stack.currentItem
+                    property: "x"
+                    to: 40 * mm
+                    duration: 100
+                }
+            }
+            StackView {
+                id: stack
+                anchors.fill: parent
+                initialItem: feed
+                popEnter: Transition {
+                    PropertyAnimation {
+                        property: "opacity"
+                        duration: 300
+                        from: 0
+                        to: 1
+                    }
+                    PropertyAnimation {
+                        property: "scale"
+                        duration: 300
+                        from: 0.8
+                        to: 1
+                    }
+                }
+                popExit: Transition {
+                    PropertyAnimation {
+                        property: "opacity"
+                        duration: 300
+                        to: 0
+                    }
+                    NumberAnimation {
+                        property: "x"
+                        duration: 300
+                        easing.type: Easing.InOutQuad
+                        to: window.width
+                    }
+                    PropertyAnimation {
+                        property: "scale"
+                        duration: 300
+                        from: 1
+                        to: 1.2
+                    }
+                }
+                pushEnter: Transition {
+                    PropertyAnimation {
+                        property: "opacity"
+                        duration: 300
+                        from: 0
+                        to: 1
+                    }
+                    NumberAnimation {
+                        property: "x"
+                        duration: 300
+                        easing.type: Easing.InOutQuad
+                        from: window.width
+                        to: 0
+                    }
+                    PropertyAnimation {
+                        property: "scale"
+                        duration: 300
+                        from: 1.2
+                        to: 1
+                    }
+                }
+                pushExit: Transition {
+                    PropertyAnimation {
+                        property: "opacity"
+                        duration: 300
+                        from: 1
+                        to: 0
+                    }
+                    PropertyAnimation {
+                        property: "scale"
+                        duration: 300
+                        from: 1
+                        to: 0.8
+                    }
+                }
+                Component {
+                    id: feed
+                    FeedView {
+                        poppable: StackView.index > 0
+                    }
+                }
+                property Component messages:            Qt.createComponent("MessagesView.qml",      Component.Asynchronous, stack);
+                property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack);
+                property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack);
+                property Component calendar:            Qt.createComponent("CalendarView.qml",      Component.Asynchronous, stack);
+                property Component users:               Qt.createComponent("UsersView.qml",         Component.Asynchronous, stack);
+                property Component loginDialog:         Qt.createComponent("LoginDialog.qml",       Component.Asynchronous, stack);
+                property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack);
+                property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack);
+                property Component about:               Qt.createComponent("About.qml",             Component.Asynchronous, stack);
+                property Component settings:            Qt.createComponent("SettingsPage.qml",      Component.Asynchronous, stack);
+                property Component flows:               Qt.createComponent("FlowsView.qml",         Component.Asynchronous, stack);
+                Connections {
+                    target: Tasty
+                    onAuthorizationNeeded: {
+                        if (!stack.find(function (item) {
+                            return item.isLoginDialog;
+                        }))
+                            window.pushLoginDialog();
+                    }
+                    onAuthorized: {
+                        if (stack.currentItem.isLoginDialog)
+                            window.popFromStack();
+                    }
+                }
+                Connections {
+                    target: Trainer
+                    onTrainStarted: {
+                        if (!stack.find(function (item) {
+                            return item.isTrainingProgress;
+                        }))
+                            window.pushTrainingProgress(full);
+                    }
+                    onTrainFinished: {
+                        if (stack.currentItem.isTrainingProgress)
+                            window.popFromStack();
+                    }
+                }
+            }
+            Loader {
+                id: notifsView
+                asynchronous: true
+                width: window.width
+                height: window.height
+                sourceComponent: NotificationsView { }
+            }
+            Loader {
+                id: chatsView
+                asynchronous: true
+                width: window.width
+                height: window.height
+                sourceComponent: ChatsView { }
+            }
+            PageMenu {
+                id: pageMenu
+                page: stack.currentItem
+                openable: !menu.visible && !notifsShows
+            }
+            Footer {
+                id: footer
+            }
+            InputDialog {
+                id: inputDialog
+                anchors.margins: 2 * mm
+            }
+            Dialog {
+                id: dialog
+                z: 100
+                Connections {
+                    target: Tasty
+                    onError: {
+                        dialog.show((code ? code + '\n' : '') + text);
+                    }
+                    onInfo: {
+                        dialog.show(text, true);
+                    }
+                }
             }
         }
     }

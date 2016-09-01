@@ -102,7 +102,9 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
-    android/src/org/binque/taaasty/NotificationClient.java
+    android/src/org/binque/taaasty/NotificationClient.java \
+    android/res/values/apptheme.xml \
+    android/res/drawable/splash.xml
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
