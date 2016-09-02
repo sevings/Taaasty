@@ -173,7 +173,7 @@ ApplicationWindow {
                 && stack.currentItem.tlogId === tlogId)
             return;
 
-        stack.push(feed,
+        stack.push(stack.feed,
                    {
                        mode: FeedModel.TlogMode,
                        tlogId: tlogId,
@@ -376,23 +376,18 @@ ApplicationWindow {
                     to: 0.8
                 }
             }
-            Component {
-                id: feed
-                FeedView {
-                    poppable: StackView.index > 0
-                }
-            }
-            property Component messages:            Qt.createComponent("MessagesView.qml",      Component.Asynchronous, stack);
-            property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack);
-            property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack);
-            property Component calendar:            Qt.createComponent("CalendarView.qml",      Component.Asynchronous, stack);
-            property Component users:               Qt.createComponent("UsersView.qml",         Component.Asynchronous, stack);
-            property Component loginDialog:         Qt.createComponent("LoginDialog.qml",       Component.Asynchronous, stack);
-            property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack);
-            property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack);
-            property Component about:               Qt.createComponent("About.qml",             Component.Asynchronous, stack);
-            property Component settings:            Qt.createComponent("SettingsPage.qml",      Component.Asynchronous, stack);
-            property Component flows:               Qt.createComponent("FlowsView.qml",         Component.Asynchronous, stack);
+            property Component feed:                Qt.createComponent("FeedView.qml",                                  stack)
+            property Component messages:            Qt.createComponent("MessagesView.qml",      Component.Asynchronous, stack)
+            property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack)
+            property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack)
+            property Component calendar:            Qt.createComponent("CalendarView.qml",      Component.Asynchronous, stack)
+            property Component users:               Qt.createComponent("UsersView.qml",         Component.Asynchronous, stack)
+            property Component loginDialog:         Qt.createComponent("LoginDialog.qml",       Component.Asynchronous, stack)
+            property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack)
+            property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack)
+            property Component about:               Qt.createComponent("About.qml",             Component.Asynchronous, stack)
+            property Component settings:            Qt.createComponent("SettingsPage.qml",      Component.Asynchronous, stack)
+            property Component flows:               Qt.createComponent("FlowsView.qml",         Component.Asynchronous, stack)
             Connections {
                 target: Tasty
                 onAuthorizationNeeded: {
