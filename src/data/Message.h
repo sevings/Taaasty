@@ -19,6 +19,7 @@ class Message: public MessageBase
     Q_PROPERTY(int      userId          MEMBER _userId         NOTIFY updated)
     Q_PROPERTY(int      recipientId     MEMBER _recipientId    NOTIFY updated)
     Q_PROPERTY(int      conversationId  MEMBER _conversationId NOTIFY updated)
+    Q_PROPERTY(User*    replyTo         READ replyTo            NOTIFY updated)
     
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel MEMBER _attachedImagesModel NOTIFY updated)
     
@@ -29,7 +30,8 @@ public:
 
     int id() const;
     
-    int userId() const;
+    int   userId() const;
+    User* replyTo();
 
 public slots:
     void read();
@@ -49,6 +51,8 @@ private:
     int     _userId;
     int     _recipientId;
     int     _conversationId;
+    User*   _replyTo;
+    int     _replyUserId;
 
     Conversation* _chat;
     

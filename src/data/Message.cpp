@@ -19,6 +19,8 @@ Message::Message(QObject* parent)
     , _userId(0)
     , _recipientId(0)
     , _conversationId(0)
+    , _replyTo(nullptr)
+    , _replyUserId(0)
     , _chat(nullptr)
     , _attachedImagesModel(nullptr)
 {
@@ -29,6 +31,7 @@ Message::Message(QObject* parent)
 
 Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
     : MessageBase(parent)
+    , _replyTo(nullptr)
     , _chat(chat)
     , _attachedImagesModel(nullptr)
 {
@@ -52,6 +55,26 @@ Message::~Message()
 int Message::id() const
 {
     return _id;
+}
+
+
+
+int Message::userId() const
+{
+    return _userId;
+}
+
+
+
+User* Message::replyTo()
+{
+    if (_replyUserId <= 0)
+        return nullptr;
+
+    if (!_replyTo)
+        _replyTo = _chat->user(_replyUserId);
+
+    return _replyTo;
 }
 
 
@@ -94,6 +117,9 @@ void Message::_init(const QJsonObject data)
         
     _correctHtml();
     _setTruncatedText();
+
+    auto reply = data.value("reply_message").toObject();
+    _replyUserId = reply.value("user_id").toInt();
 
     Tasty::instance()->pusher()->addMessage(this);
 
@@ -148,9 +174,4 @@ void Message::_markRemoved(const QJsonObject data)
     _setTruncatedText();
 
     emit textUpdated();
-}
-
-int Message::userId() const
-{
-    return _userId;
 }

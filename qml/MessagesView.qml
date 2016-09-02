@@ -129,7 +129,7 @@ Pane {
                     }
                     width: messageBack.maxWidth - 2 * mm
                     font.pointSize: window.fontSmaller
-                    text: message.text
+                    text: (message.replyTo ? '<b>' + message.replyTo.name + '</b>, ' : '') + message.text
                     textFormat: message.containsImage ? Text.RichText : Text.StyledText
                     onLinkActivated: window.openLink(link)
                     height: message.text.length > 0 ? contentHeight : -1 * mm
