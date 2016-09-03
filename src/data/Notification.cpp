@@ -6,6 +6,8 @@
 
 #include "../tasty.h"
 #include "../pusherclient.h"
+#include "../apirequest.h"
+
 
 
 Notification::Notification(QObject* parent)
@@ -15,12 +17,16 @@ Notification::Notification(QObject* parent)
     , _read(false)
     , _entityId(0)
     , _parentId(0)
+    , _reading(false)
 {
 
 }
 
+
+
 Notification::Notification(const QJsonObject data, QObject *parent)
     : QObject(parent)
+    , _reading(false)
 {
     _id         = data.value("id").toInt();
     _createdAt  = Tasty::parseDate(data.value("created_at").toString());
@@ -85,6 +91,8 @@ QString Notification::text() const
     return _text;
 }
 
+
+
 int Notification::id() const
 {
     return _id;
@@ -98,15 +106,6 @@ bool Notification::isRead() const
 }
 
 
-
-void Notification::_updateRead(const QJsonObject data)
-{
-    if (_read || data.value("id").toInt() != _id)
-        return;
-
-    _read = !data.value("read_at").isNull();
-    emit read();
-}
 
 int Notification::parentId() const
 {
@@ -145,3 +144,30 @@ Entry* Notification::entry()
     return _entry.data();
 }
 
+
+
+void Notification::read()
+{
+    if (_read || _id <= 0 || _reading)
+        return;
+
+    _reading = true;
+
+    auto url = QString("v2/messenger/notifications/%1/read.json").arg(_id);
+    auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation);
+
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_updateRead(QJsonObject))));
+}
+
+
+
+void Notification::_updateRead(const QJsonObject data)
+{
+    _reading = false;
+
+    if (_read || data.value("id").toInt() != _id)
+        return;
+
+    _read = !data.value("read_at").isNull();
+    emit readChanged();
+}

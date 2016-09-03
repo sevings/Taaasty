@@ -28,9 +28,10 @@ NotificationsModel::NotificationsModel(QObject* parent)
 {
     qDebug() << "NotificationsModel";
 
-    Q_TEST(connect(Tasty::instance(),           SIGNAL(authorized()),              this, SLOT(_reloadAll())));
-    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(notification(QJsonObject)), this, SLOT(_addPush(QJsonObject))));
-    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(unreadNotifications(int)),  this, SLOT(_check(int))));
+    Q_TEST(connect(Tasty::instance(),           SIGNAL(unreadNotificationsChanged()), this, SIGNAL(unreadChanged())));
+    Q_TEST(connect(Tasty::instance(),           SIGNAL(authorized()),                 this, SLOT(_reloadAll())));
+    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(notification(QJsonObject)),    this, SLOT(_addPush(QJsonObject))));
+    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(unreadNotifications(int)),     this, SLOT(_check(int))));
 }
 
 
@@ -108,7 +109,7 @@ void NotificationsModel::fetchMore(const QModelIndex& parent)
 
 bool NotificationsModel::unread() const
 {
-    return !_notifs.isEmpty() && !_notifs.first()->isRead();
+    return !_notifs.isEmpty() && Tasty::instance()->unreadNotifications() > 0;
 }
 
 
@@ -142,7 +143,7 @@ QHash<int, QByteArray> NotificationsModel::roleNames() const
          if (!_notifs.at(i)->isRead())
          {
              _notifs.at(i)->_read = true;
-             emit _notifs.at(i)->read();
+             emit _notifs.at(i)->readChanged();
          }
          else
              break;
@@ -182,12 +183,6 @@ void NotificationsModel::_addItems(QJsonObject data)
     if (_notifs.size() >= _totalCount)
         emit hasMoreChanged();
 
-    if (_notifs.size() == list.size())
-    {
-        Q_TEST(connect(_notifs.first(), SIGNAL(read()), this, SIGNAL(unreadChanged())));
-        emit unreadChanged();
-    }
-
     _loading = false;
     emit loadingChanged();
 }
@@ -201,18 +196,13 @@ void NotificationsModel::_addPush(QJsonObject data)
         return;
 
     beginInsertRows(QModelIndex(), 0, 0);
-    
-    if (!_notifs.isEmpty())
-        Q_TEST(disconnect(_notifs.first(), SIGNAL(read()), this, SIGNAL(unreadChanged())));
 
     auto notification = new Notification(data, this);
     _notifs.prepend(notification);
     _ids << notification->id();
 
-    Q_TEST(connect(notification, SIGNAL(read()), this, SIGNAL(unreadChanged())));
-    
 #ifdef Q_OS_ANDROID
-    if (!notification->_read)
+    if (!notification->isRead())
     {
         auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
                 .arg(notification->actionText()).arg(notification->text());

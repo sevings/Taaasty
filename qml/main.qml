@@ -376,7 +376,7 @@ ApplicationWindow {
                     to: 0.8
                 }
             }
-            property Component feed:                Qt.createComponent("FeedView.qml",                                  stack)
+            property Component feed:                Qt.createComponent("FeedView.qml",     Component.PreferSynchronous, stack)
             property Component messages:            Qt.createComponent("MessagesView.qml",      Component.Asynchronous, stack)
             property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack)
             property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack)

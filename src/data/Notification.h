@@ -19,7 +19,7 @@ class Notification: public QObject
     Q_PROPERTY(int          id         MEMBER _id         CONSTANT)
     Q_PROPERTY(QString      createdAt  MEMBER _createdAt  CONSTANT)
     Q_PROPERTY(User*        sender     MEMBER _sender     CONSTANT)
-    Q_PROPERTY(bool         read       MEMBER _read       NOTIFY read)
+    Q_PROPERTY(bool         isRead     MEMBER _read       NOTIFY readChanged)
     Q_PROPERTY(QString      action     MEMBER _action     CONSTANT)
     Q_PROPERTY(QString      actionText MEMBER _actionText CONSTANT)
     Q_PROPERTY(QString      text       MEMBER _text       CONSTANT) //! \todo show updates
@@ -60,12 +60,16 @@ public:
 
     Entry* entry();
 
-signals:
+public slots:
     void read();
-    
-private:
+
+signals:
+    void readChanged();
+
+private slots:
     void _updateRead(const QJsonObject data);
 
+private:
     int         _id;
     QString     _createdAt;
     User*       _sender;
@@ -80,4 +84,6 @@ private:
     //QString _image;
 
     EntryPtr    _entry;
+
+    bool        _reading;
 };

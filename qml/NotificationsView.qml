@@ -83,7 +83,7 @@ PopupFill {
                 height: width
                 radius: height / 2
                 color: Material.primary
-                visible: !model.notification.read
+                visible: !model.notification.isRead
             }
             ThemedText {
                 id: notifText
