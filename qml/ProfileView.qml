@@ -165,7 +165,7 @@ Pane {
                 }
                 height: tlogVoteButton.height
                 property int tlogMode: Trainer.typeOfTlog(tlog.tlogId)
-                enabled: readButton.enabled
+                visible: readButton.enabled
                 IconButton {
                     id: tlogVoteAgainstButton
                     anchors {
