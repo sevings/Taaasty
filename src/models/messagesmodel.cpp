@@ -40,16 +40,15 @@ void MessagesModel::init(Conversation* chat)
     if (!chat || _chatId)
         return;
 
-    beginResetModel();
-
     _chat = chat;
     _chatId = chat->id();
     _totalCount = chat->totalCount();
 
+    emit totalCountChanged(_totalCount);
+    emit hasMoreChanged();
+
     Q_TEST(connect(chat, SIGNAL(messageSent(QJsonObject)),      this, SLOT(_addMessage(QJsonObject))));
     Q_TEST(connect(chat, SIGNAL(messageReceived(QJsonObject)),  this, SLOT(_addMessage(QJsonObject))));
-
-    endResetModel();
 }
 
 

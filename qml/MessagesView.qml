@@ -142,7 +142,7 @@ Pane {
                     }
                     width: messageBack.maxWidth - 2 * mm - (unreadMessage.visible ? unreadMessage.width + 1 * mm : 0)
                     font.pointSize: window.fontSmallest
-                    text: (chat.type == Chat.PrivateConversation && message.user.name.length
+                    text: (chat.type == Chat.PrivateConversation || !message.user.name.length
                            ? '' : message.user.name + ', ')
                           + message.createdAt
                     color: window.secondaryTextColor

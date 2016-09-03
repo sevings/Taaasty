@@ -39,7 +39,7 @@ class Conversation: public QObject, public QEnableSharedFromThis<Conversation>
 //    Q_PROPERTY(QList<User*>     users           MEMBER _users           NOTIFY updated)
 //    Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
     Q_PROPERTY(Author*          recipient       MEMBER _recipient       NOTIFY updated)
-    Q_PROPERTY(MessagesModel*   messages        MEMBER _messages        NOTIFY updated)
+    Q_PROPERTY(MessagesModel*   messages        MEMBER _messages        CONSTANT)
     Q_PROPERTY(bool  isMyLastMessageUnread   READ isMyLastMessageUnread NOTIFY updated)
     Q_PROPERTY(MessageBase*     lastMessage     READ lastMessage        NOTIFY lastMessageChanged)
     Q_PROPERTY(bool             isInvolved      READ isInvolved         NOTIFY isInvolvedChanged)
