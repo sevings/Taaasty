@@ -584,7 +584,7 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
     {
     case MyTlogMode:
         _url = QString("v1/tlog/%1/entries/tlogs.json")
-                .arg(Tasty::instance()->settings()->login());
+                .arg(Tasty::instance()->settings()->userId());
         break;
     case FriendsMode:
         _url = "v1/my_feeds/friends/tlogs.json";
