@@ -4,6 +4,8 @@
 #include <QJsonObject>
 #include <QFutureWatcher>
 
+#include "../nbc/bayes.h"
+
 class Entry;
 
 
@@ -43,7 +45,7 @@ signals:
     void bayesChanged();
 
 private slots:
-    void _changeBayesRating();
+    void _changeBayesRating(Bayes::Type type);
 
 private:
     int  _entryId;
@@ -58,5 +60,5 @@ private:
 
     Entry* _parent;
 
-    QFutureWatcher<int> _watcher;
+    QFutureWatcher<void> _watcher;
 };

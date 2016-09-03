@@ -5,8 +5,11 @@
 #include "../defines.h"
 
 #include "../apirequest.h"
-#include "../nbc/bayes.h"
+#include "../tasty.h"
+#include "../settings.h"
+
 #include "Entry.h"
+#include "Author.h"
 
 
 
@@ -36,8 +39,6 @@ Rating::Rating(const QJsonObject data, Entry* parent)
     , _parent(parent)
 {
     init(data);
-
-    Q_TEST(connect(&_watcher, SIGNAL(finished()), this, SLOT(_changeBayesRating())));
 }
 
 
@@ -76,8 +77,6 @@ void Rating::reCalcBayes()
 
     _bayesRating = Bayes::instance()->classify(_parent);
     emit bayesChanged();
-//    auto future = QtConcurrent::run(Bayes::instance(), &Bayes::classify, _parent, 0);
-//    _watcher.setFuture(future);
 }
 
 
@@ -105,11 +104,10 @@ void Rating::voteBayes()
     if (_isBayesVoted || _isVotedAgainst)
         return;
 
-    auto future = QtConcurrent::run(Bayes::instance(), &Bayes::voteForEntry, _parent, Bayes::Fire);
+    auto future = QtConcurrent::run(this, &Rating::_changeBayesRating, Bayes::Fire);
     _watcher.setFuture(future);
 
     _isBayesVoted = true;
-    emit bayesChanged();
 }
 
 
@@ -119,11 +117,10 @@ void Rating::voteAgainst()
     if (_isBayesVoted || _isVotedAgainst)
         return;
 
-    auto future = QtConcurrent::run(Bayes::instance(), &Bayes::voteForEntry, _parent, Bayes::Water);
+    auto future = QtConcurrent::run(this, &Rating::_changeBayesRating, Bayes::Water);
     _watcher.setFuture(future);
 
     _isVotedAgainst = true;
-    emit bayesChanged();
 }
 
 
@@ -137,16 +134,17 @@ void Rating::init(const QJsonObject data)
     _votes      = data.value("votes").toInt();
     _rating     = data.value("rating").toInt();
     _isVoted    = data.value("is_voted").toBool();
-    _isVotable  = data.value("is_voteable").toBool();
+    _isVotable  = data.value("is_voteable").toBool() && (!_parent || (_parent->type() != "anonymous"
+            && _parent->author()->id() != Tasty::instance()->settings()->userId()));
 
     emit dataChanged();
 }
 
 
 
-void Rating::_changeBayesRating()
+void Rating::_changeBayesRating(Bayes::Type type)
 {
-    _bayesRating = _watcher.result();
+    _bayesRating = Bayes::instance()->voteForEntry(_parent, type);
 
     emit bayesChanged();
 }
