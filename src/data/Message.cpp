@@ -81,7 +81,7 @@ User* Message::replyTo()
 
 void Message::read()
 {
-    if (_read || _id <= 0 || _userId == Tasty::instance()->settings()->userId())
+    if (_read || _id <= 0 || _userId == _chat->userId())
         return;
 
     auto url = QString("v2/messenger/conversations/by_id/%1/messages/read.json").arg(_conversationId);

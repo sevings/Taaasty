@@ -36,6 +36,7 @@ public:
 
     void addMessage(Message* msg);
     void removeMessage(int id);
+    Message* message(int id) const;
 
     void addComment(Comment* cmt);
     void removeComment(int id);

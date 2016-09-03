@@ -4,6 +4,7 @@
 #include <QJsonObject>
 #include <QHash>
 #include <QEnableSharedFromThis>
+#include <QPointer>
 
 #include "../defines.h"
 
@@ -132,7 +133,7 @@ private:
     QHash<int, User*>   _leftUsers;
     Author*             _recipient;
     MessagesModel*      _messages;
-    Message*            _lastMessage;
+    QPointer<Message>   _lastMessage;
 
     EntryPtr _entry;
 

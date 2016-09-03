@@ -172,7 +172,8 @@ bool Conversation::isInvolved() const
 
 bool Conversation::isMyLastMessageUnread() const
 {
-    return _lastMessage->userId() == _userId && !_lastMessage->isRead();
+    return  _lastMessage && _lastMessage->userId() == _userId
+            && !_lastMessage->isRead();
 }
 
 
@@ -230,12 +231,12 @@ MessageBase* Conversation::lastMessage()
     if (_entryId)
     {
         auto lst = entry()->commentsModel()->lastComment();
-        if (lst && lst->createdDate() > last->createdDate())
+        if (!last || (lst && lst->createdDate() > last->createdDate()))
             last = lst;
     }
 
     auto lst = messages()->lastMessage();
-    if (lst && lst->createdDate() > last->createdDate())
+    if (!last || (lst && lst->createdDate() > last->createdDate()))
         last = lst;
 
     return last;
@@ -342,7 +343,11 @@ void Conversation::init(const QJsonObject data)
         _leftUsers.insert(user->id(), user);
      }
 
-     _lastMessage       = new Message(data.value("last_message").toObject(), this, this);
+     auto last = data.value("last_message").toObject();
+     auto lastId = last.value("id").toInt();
+     _lastMessage = Tasty::instance()->pusher()->message(lastId);
+     if (!_lastMessage)
+         _lastMessage   = new Message(last, this, this);
 
      emit isInvolvedChanged();
      emit unreadCountChanged();

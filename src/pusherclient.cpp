@@ -118,6 +118,13 @@ void PusherClient::removeMessage(int id)
 
 
 
+Message*PusherClient::message(int id) const
+{
+    return _messages.value(id);
+}
+
+
+
 void PusherClient::addComment(Comment* cmt)
 {
     _comments.insert(cmt->id(), cmt);

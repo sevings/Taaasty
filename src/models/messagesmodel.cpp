@@ -248,13 +248,11 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
 
 void MessagesModel::_addMessage(const QJsonObject data)
 {
-    auto msg = new Message(data, _chat, this);
+    auto id = data.value("id").toInt();
+    if (_ids.contains(id))
+        return;
 
-     if (_ids.contains(msg->id()))
-     {
-         delete msg;
-         return;
-     }
+    auto msg = new Message(data, _chat, this);
 
     _setTotalCount(_totalCount + 1);
 
