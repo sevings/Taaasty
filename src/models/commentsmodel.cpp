@@ -41,7 +41,7 @@ CommentsModel::CommentsModel(Entry *entry)
 
 
 
-void CommentsModel::init(const QJsonArray feed)
+void CommentsModel::init(const QJsonArray feed, int totalCount)
 {
     auto reset = _comments.size() != feed.size();
     if (reset)
@@ -64,6 +64,8 @@ void CommentsModel::init(const QJsonArray feed)
         else
             _comments << cmts;
     }
+
+    _totalCount = totalCount;
 
     if (reset)
         endResetModel();

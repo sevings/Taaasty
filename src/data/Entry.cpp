@@ -147,7 +147,7 @@ CommentsModel* Entry::commentsModel()
 
     delete _commentsModel;
     _commentsModel = new CommentsModel(this);
-    _commentsModel->init(_commentsData);
+    _commentsModel->init(_commentsData, _commentsCount);
     _commentsData = QJsonArray();
 
     Q_TEST(connect(_commentsModel,    SIGNAL(totalCountChanged(int)),   this, SLOT(_setCommentsCount(int))));
@@ -213,7 +213,7 @@ void Entry::init(const QJsonObject data)
     _commentsData    = data.value("comments").toArray();
     if (_commentsModel && _commentsModel->entryId() == _id)
     {
-        _commentsModel->init(_commentsData);
+        _commentsModel->init(_commentsData, _commentsCount);
         _commentsData = QJsonArray();
     }
 
