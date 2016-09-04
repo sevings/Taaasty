@@ -43,7 +43,8 @@ SOURCES += src/main.cpp \
     src/pusherclient.cpp \
     src/data/messagebase.cpp \
     src/models/flowsmodel.cpp \
-    src/data/Flow.cpp
+    src/data/Flow.cpp \
+    src/textreader.cpp
 
 RESOURCES += qml.qrc
 
@@ -92,7 +93,8 @@ HEADERS += \
     src/pusherclient.h \
     src/data/messagebase.h \
     src/models/flowsmodel.h \
-    src/data/Flow.h
+    src/data/Flow.h \
+    src/textreader.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

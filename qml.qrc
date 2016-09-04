@@ -68,5 +68,6 @@
         <file>icons/left-arrow-white-128.png</file>
         <file>icons/menu-rounded-white-128.png</file>
         <file>icons/menu-white-128.png</file>
+        <file>other/about.html</file>
     </qresource>
 </RCC>
