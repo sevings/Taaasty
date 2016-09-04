@@ -304,7 +304,7 @@ Q.Drawer {
             MenuItem {
                 text: 'Обзор постов'
                 onTriggered: {
-                    window.pushCalendar(page.author.id);
+                    window.pushCalendar(page.tlog);
                     drawer.close();
                 }
                 highlighted: page.mode === FlowsModel.AllFlowsMode

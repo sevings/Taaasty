@@ -183,10 +183,10 @@ ApplicationWindow {
                    }
                    )
     }
-    function pushCalendar(tlogId) {
+    function pushCalendar(tlog) {
         stack.push(stack.calendar,
                    {
-                       tlogId: tlogId,
+                       tlog: tlog,
                        poppable: true
                    }
                    )

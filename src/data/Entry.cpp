@@ -47,7 +47,13 @@ void EntryBase::load(int id)
 void EntryBase::_initBase(QJsonObject data)
 {
     _id     = data.value("id").toInt();
-    _author = new Author(data.value("author").toObject(), this);
+
+    auto authorData = data.value("author").toObject();
+    if (_author && authorData.contains("slug"))
+        _author->init(authorData);
+    else
+        _author = new Author(authorData, this);
+
     _type   = data.value("type").toString();
     _text   = data.value("text").toString().trimmed();
     _title  = data.value("title").toString().trimmed();
@@ -171,10 +177,11 @@ void Entry::init(const QJsonObject data)
     _isPrivate       = data.value("is_private").toBool();
     _isFixed         = data.value("fixed_state").toString("not_fixed") != "not_fixed"; //! \todo check other values
 
-    if (_tlog)
-        _tlog->init(data.value("tlog").toObject());
+    auto tlogData = data.value("tlog").toObject();
+    if (_tlog && tlogData.contains("slug"))
+        _tlog->init(tlogData);
     else
-        _tlog        = new Tlog(data.value("tlog").toObject(), this);
+        _tlog        = new Tlog(tlogData, this);
 
     if (_rating)
         _rating->init(data.value("rating").toObject());

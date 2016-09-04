@@ -4,9 +4,9 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    property int tlogId: 0
+    readonly property int tlogId: tlog.tlogId
     property Tlog tlog: Tlog {
-        tlogId: back.tlogId
+
     }
     Poppable {
         body: back
