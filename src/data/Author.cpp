@@ -101,13 +101,13 @@ void Author::checkStatus()
 
 void Author::reload()
 {
-    if (id() <= 0)
+    if (id() <= 0 || isLoading())
         return;
 
-    auto request = new ApiRequest(QString("v1/tlog/%1.json").arg(id()));
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject)));
+    _request = new ApiRequest(QString("v1/tlog/%1.json").arg(id()));
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
 
-    _loading = true;
+    _initRequest();
 }
 
 

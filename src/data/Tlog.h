@@ -3,15 +3,17 @@
 #include <QObject>
 #include <QJsonObject>
 
+#include "TastyData.h"
+
 class Author;
 
 
 
-class Tlog: public QObject
+class Tlog: public TastyData
 {
     Q_OBJECT
 
-    Q_PROPERTY(int          tlogId              READ tlogId   WRITE setId   NOTIFY updated)
+    Q_PROPERTY(int          tlogId              READ tlogId   WRITE setId   NOTIFY updated) //! \todo remove
     Q_PROPERTY(QString      slug                READ slug   WRITE setSlug   NOTIFY updated)
     Q_PROPERTY(QString      title               MEMBER _title               NOTIFY updated)
     Q_PROPERTY(QString      entriesCount        MEMBER _entriesCount        NOTIFY updated)
@@ -24,8 +26,6 @@ class Tlog: public QObject
     Q_PROPERTY(Relationship myRelationship      MEMBER _myRelation          NOTIFY updated)
     Q_PROPERTY(Relationship hisRelationship     MEMBER _hisRelation         NOTIFY updated)
     Q_PROPERTY(Author*      author              READ author                 NOTIFY updated)
-
-    Q_PROPERTY(bool loading                     MEMBER _loading             NOTIFY loadingChanged)
 
 public:
     enum Relationship {
@@ -57,12 +57,9 @@ signals:
     void updated();
     void loadingChanged();
 
-private slots:
-
 private:
     Relationship _relationship(const QJsonObject& data, const QString field);
 
-    int             _id;
     QString         _slug;
     QString         _title;
     QString         _entriesCount;
@@ -75,6 +72,4 @@ private:
     Relationship    _myRelation;
     Relationship    _hisRelation;
     Author*         _author;
-
-    bool            _loading;
 };

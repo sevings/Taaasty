@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QJsonObject>
 
-#include "messagebase.h"
+#include "MessageBase.h"
 
 class Conversation;
 class AttachedImagesModel;
@@ -19,7 +19,7 @@ class Message: public MessageBase
     Q_PROPERTY(int      userId          MEMBER _userId         NOTIFY updated)
     Q_PROPERTY(int      recipientId     MEMBER _recipientId    NOTIFY updated)
     Q_PROPERTY(int      conversationId  MEMBER _conversationId NOTIFY updated)
-    Q_PROPERTY(User*    replyTo         READ replyTo            NOTIFY updated)
+    Q_PROPERTY(User*    replyTo         READ replyTo           NOTIFY updated)
     
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel MEMBER _attachedImagesModel NOTIFY updated)
     
@@ -28,16 +28,14 @@ public:
     Message(const QJsonObject data, Conversation* chat, QObject* parent = nullptr);
     ~Message();
 
-    int id() const;
-    
     int   userId() const;
     User* replyTo();
 
-public slots:
-    void read();
-
 signals:
     void updated();
+
+public slots:
+    void read();
 
 private slots:
     void _init(const QJsonObject data);

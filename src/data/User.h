@@ -3,15 +3,16 @@
 #include <QObject>
 #include <QJsonObject>
 
+#include "TastyData.h"
+
 class ApiRequest;
 
 
 
-class User: public QObject
+class User: public TastyData
 {
     Q_OBJECT
 
-    Q_PROPERTY(int     id           MEMBER _id          NOTIFY updated)
     Q_PROPERTY(QString tlogUrl      MEMBER _tlogUrl     NOTIFY updated)
     Q_PROPERTY(QString name         MEMBER _name        NOTIFY updated)
     Q_PROPERTY(QString slug         MEMBER _slug        NOTIFY updated)
@@ -28,7 +29,6 @@ public:
     User(QObject* parent = nullptr);
     User(const QJsonObject data, QObject* parent = nullptr);
 
-    int     id() const;
     void    setId(int id);
 
     QString name() const;
@@ -42,10 +42,8 @@ signals:
 protected slots:
     void _init(const QJsonObject data);
     void _initFromTlog(const QJsonObject data);
-    void _setNotLoading(QObject* request);
 
 private:
-    int     _id;
     QString _tlogUrl;
     QString _name;
     QString _slug;
@@ -57,6 +55,4 @@ private:
     QString _symbol;
     QString _backgroundColor;
     QString _nameColor;
-
-    ApiRequest* _request;
 };

@@ -4,19 +4,19 @@
 #include <QJsonObject>
 
 #include "../defines.h"
+#include "TastyData.h"
 
 class User;
 
 
 
-class Notification: public QObject
+class Notification: public TastyData
 {
     Q_OBJECT
 
     friend class PusherClient;
     friend class NotificationsModel;
     
-    Q_PROPERTY(int          id         MEMBER _id         CONSTANT)
     Q_PROPERTY(QString      createdAt  MEMBER _createdAt  CONSTANT)
     Q_PROPERTY(User*        sender     MEMBER _sender     CONSTANT)
     Q_PROPERTY(bool         isRead     MEMBER _read       NOTIFY readChanged)
@@ -53,7 +53,6 @@ public:
 
     QString text() const;
 
-    int id() const;
     bool isRead() const;
 
     int parentId() const;
@@ -70,7 +69,6 @@ private slots:
     void _updateRead(const QJsonObject data);
 
 private:
-    int         _id;
     QString     _createdAt;
     User*       _sender;
     bool        _read;
@@ -84,6 +82,4 @@ private:
     //QString _image;
 
     EntryPtr    _entry;
-
-    bool        _reading;
 };

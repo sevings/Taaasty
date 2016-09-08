@@ -110,14 +110,14 @@ void CommentsModel::setEntryId(const int id)
 
 void CommentsModel::check()
 {
-    if (_checking || !_entryId || !_entry || _entry->loading())
+    if (_checking || !_entryId || !_entry || _entry->isLoading())
         return;
 
     _checking = true;
 
     QString url = _url.arg(_entryId);
     if (!_comments.isEmpty())
-        url += QString("&from_comment_id=%1").arg(_comments.last()->_id);
+        url += QString("&from_comment_id=%1").arg(_comments.last()->id());
 
     _request = new ApiRequest(url);
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addLastComments(QJsonObject))));
@@ -138,7 +138,7 @@ Comment* CommentsModel::lastComment() const
 
 void CommentsModel::loadMore()
 {
-    if (_loading || !_entryId || !_entry || _entry->loading())// || !hasMore())
+    if (_loading || !_entryId || !_entry || _entry->isLoading())// || !hasMore())
         return;
 
     _loading = true;
@@ -146,7 +146,7 @@ void CommentsModel::loadMore()
 
     QString url = _url.arg(_entryId);
     if (!_comments.isEmpty())
-        url += QString("&to_comment_id=%1").arg(_comments.first()->_id);
+        url += QString("&to_comment_id=%1").arg(_comments.first()->id());
 
     _request = new ApiRequest(url);
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addComments(QJsonObject))));

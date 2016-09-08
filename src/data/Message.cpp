@@ -52,13 +52,6 @@ Message::~Message()
 
 
 
-int Message::id() const
-{
-    return _id;
-}
-
-
-
 int Message::userId() const
 {
     return _userId;
@@ -84,11 +77,13 @@ void Message::read()
     if (_read || _id <= 0 || _userId == _chat->userId())
         return;
 
-    auto url = QString("v2/messenger/conversations/by_id/%1/messages/read.json").arg(_conversationId);
+    auto url  = QString("v2/messenger/conversations/by_id/%1/messages/read.json").arg(_conversationId);
     auto data = QString("ids=%1").arg(_id);
-    auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation, data);
+    _request  = new ApiRequest(url, true, QNetworkAccessManager::PutOperation, data);
 
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
+    
+    _initRequest();
 }
 
 
@@ -123,6 +118,7 @@ void Message::_init(const QJsonObject data)
 
     Tasty::instance()->pusher()->addMessage(this);
 
+    emit idChanged();
     emit readChanged();
     emit baseUpdated();
     emit updated();

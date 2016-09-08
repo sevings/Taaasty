@@ -1,24 +1,16 @@
-#include "messagebase.h"
+#include "MessageBase.h"
 
 #include "../tasty.h"
 
 
 
 MessageBase::MessageBase(QObject* parent)
-    : QObject(parent)
-    , _id(0)
+    : TastyData(parent)
     , _user(nullptr)
     , _read(true)
     , _containsImage(false)
 {
 
-}
-
-
-
-int MessageBase::id() const
-{
-    return _id;
 }
 
 
@@ -50,10 +42,14 @@ void MessageBase::_setDate(const QString d)
     _date = QDateTime::fromString(d.left(19), "yyyy-MM-ddTHH:mm:ss");
 }
 
+
+
 User* MessageBase::user() const
 {
     return _user;
 }
+
+
 
 QString MessageBase::text() const
 {

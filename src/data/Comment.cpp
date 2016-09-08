@@ -43,21 +43,31 @@ Comment::~Comment()
 
 void Comment::edit(const QString text)
 {
-    auto url = QString("v1/comments/%1.json").arg(_id);
+    if (isLoading())
+        return;
+    
+    auto url  = QString("v1/comments/%1.json").arg(_id);
     auto data = QString("text=%1").arg(text);
-    auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation, data);
+    _request  = new ApiRequest(url, true, QNetworkAccessManager::PutOperation, data);
 
-    connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_init(const QJsonObject)));
+    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_init(const QJsonObject))));
+    
+    _initRequest();
 }
 
 
 
 void Comment::remove()
 {
+    if (isLoading())
+        return;
+    
     auto url = QString("v1/comments/%1.json").arg(_id);
-    auto request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
+    _request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
 
-    connect(request, SIGNAL(success(const QString)), this, SLOT(_remove(const QString)));
+    Q_TEST(connect(_request, SIGNAL(success(const QString)), this, SLOT(_remove(const QString))));
+    
+    _initRequest();
 }
 
 
@@ -80,6 +90,7 @@ void Comment::_init(const QJsonObject data)
     _correctHtml();
     _setTruncatedText();
 
+    emit idChanged();
     emit baseUpdated();
     emit updated();
 

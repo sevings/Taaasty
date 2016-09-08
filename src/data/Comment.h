@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QJsonObject>
 
-#include "messagebase.h"
+#include "MessageBase.h"
 
 class Notification;
 
@@ -13,7 +13,6 @@ class Comment: public MessageBase
 {
     Q_OBJECT
 
-    friend class CommentsModel;
     friend class PusherClient;
 
     Q_PROPERTY(bool        isEditable   MEMBER _isEditable     NOTIFY updated)
@@ -25,12 +24,12 @@ public:
     Comment(const QJsonObject data, QObject* parent = nullptr);
     ~Comment();
 
+signals:
+    void updated();
+
 public slots:
     void edit(const QString text);
     void remove();
-
-signals:
-    void updated();
 
 private slots:
     void _init(const QJsonObject data);

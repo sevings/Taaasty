@@ -10,12 +10,10 @@
 
 
 Tlog::Tlog(QObject* parent)
-    : QObject(parent)
-    , _id(0)
+    : TastyData(parent)
     , _myRelation(Undefined)
     , _hisRelation(Undefined)
     , _author(new Author(this))
-    , _loading(false)
 {
 
 }
@@ -23,9 +21,8 @@ Tlog::Tlog(QObject* parent)
 
 
 Tlog::Tlog(const QJsonObject data, QObject *parent)
-    : QObject(parent)
+    : TastyData(parent)
     , _author(nullptr)
-    , _loading(false)
 {
     init(data);
 }
@@ -38,6 +35,8 @@ void Tlog::setId(const int id)
         return;
 
     _id = id;
+    emit idChanged();
+
     _slug.clear();
 
     reload();
@@ -52,6 +51,7 @@ void Tlog::setSlug(const QString slug)
 
    _slug = slug;
    _id = 0;
+   emit idChanged();
 
    reload();
 }
@@ -90,17 +90,15 @@ void Tlog::init(const QJsonObject data)
     else
         _author = new Author(authorData, this);
 
+    emit idChanged();
     emit updated();
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 
 
 void Tlog::reload()
 {
-    if ((_slug.isEmpty() && !_id) || _loading)
+    if ((_slug.isEmpty() && !_id) || isLoading())
             return;
 
     auto url = QString("v1/tlog/%1.json");
@@ -109,11 +107,10 @@ void Tlog::reload()
     else
         url = url.arg(_slug);
 
-    auto request = new ApiRequest(url);
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject)));
+    _request = new ApiRequest(url);
+    connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject)));
 
-    _loading = true;
-    emit loadingChanged();
+    _initRequest();
 }
 
 

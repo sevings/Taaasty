@@ -63,6 +63,4 @@ private:
     QString _daysCount;
     QString _followingsCount;
     QString _lastSeenAt;
-
-    bool _loading;
 };

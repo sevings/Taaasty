@@ -22,8 +22,7 @@
 
 
 Conversation::Conversation(QObject* parent)
-    : QObject(parent)
-    , _id(0)
+    : TastyData(parent)
     , _type(UninitializedConversation)
     , _unreadCount(0)
     , _unreceivedCount(0)
@@ -36,8 +35,6 @@ Conversation::Conversation(QObject* parent)
     , _entryId(0)
     , _recipient(nullptr)
     , _messages(nullptr)
-    , _loading(false)
-    , _reading(false)
 {
     
 }
@@ -51,19 +48,13 @@ Conversation::~Conversation()
 
 
 
-int Conversation::id() const
-{
-    return _id;
-}
-
-
-
 void Conversation::setId(int id)
 {
-    if (_loading || id <= 0 || id == _id)
+    if (isLoading() || id <= 0 || id == _id)
         return;
 
     _id = id;
+    emit idChanged();
 
     Tasty::instance()->pusher()->addChat(sharedFromThis());
 
@@ -74,39 +65,35 @@ void Conversation::setId(int id)
 
 void Conversation::setUserId(int id)
 {
-    if (_loading || id <= 0 || id == _userId)
+    if (isLoading() || id <= 0 || id == _userId)
         return;
 
     _userId = id;
 
-    auto request = new ApiRequest(QString("v2/messenger/conversations/by_user_id/%1.json").arg(_userId), true, QNetworkAccessManager::PostOperation);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
+    _request = new ApiRequest(QString("v2/messenger/conversations/by_user_id/%1.json").arg(_userId), true, QNetworkAccessManager::PostOperation);
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
-    _loading = true;
-    emit loadingChanged();
+    _initRequest();
 }
 
 
 
 void Conversation::setSlug(const QString slug)
 {
-    if (_loading || slug.isEmpty())
+    if (isLoading() || slug.isEmpty())
         return;
 
-    auto request = new ApiRequest(QString("v2/messenger/conversations/by_slug/%1.json").arg(slug), true, QNetworkAccessManager::PostOperation);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
+    _request = new ApiRequest(QString("v2/messenger/conversations/by_slug/%1.json").arg(slug), true, QNetworkAccessManager::PostOperation);
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
-    _loading = true;
-    emit loadingChanged();
+    _initRequest();
 }
 
 
 
 void Conversation::setEntryId(int entryId)
 {
-    if (_loading || entryId <= 0 || _entryId == entryId)
+    if (isLoading() || entryId <= 0 || _entryId == entryId)
         return;
 
     _entryId = entryId;
@@ -115,20 +102,10 @@ void Conversation::setEntryId(int entryId)
     Tasty::instance()->pusher()->addChat(sharedFromThis());
 
     auto data = QString("id=%1").arg(entryId);
-    auto request = new ApiRequest(QString("v2/messenger/conversations/by_entry_id.json"), true, QNetworkAccessManager::PostOperation, data);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
+    _request = new ApiRequest(QString("v2/messenger/conversations/by_entry_id.json"), true, QNetworkAccessManager::PostOperation, data);
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
-    _loading = true;
-    emit loadingChanged();
-}
-
-
-
-void Conversation::_setNotLoading()
-{
-    _loading = false;
-    emit loadingChanged();
+    _initRequest();
 }
 
 
@@ -141,7 +118,6 @@ void Conversation::_markRead(const QJsonObject data)
         return;
     }
 
-    _reading = false;
     _unreadCount = 0;
     emit unreadCountChanged();
 }
@@ -349,6 +325,7 @@ void Conversation::init(const QJsonObject data)
      if (!_lastMessage)
          _lastMessage   = new Message(last, this, this);
 
+     emit idChanged();
      emit isInvolvedChanged();
      emit unreadCountChanged();
      emit lastMessageChanged();
@@ -359,38 +336,34 @@ void Conversation::init(const QJsonObject data)
 
 void Conversation::update()
 {
-    if (_id <= 0 || _loading)
+    if (_id <= 0 || isLoading())
         return;
 
-    auto request = new ApiRequest(QString("/v2/messenger/conversations/by_id/%1.json").arg(_id), true);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
+    _request = new ApiRequest(QString("/v2/messenger/conversations/by_id/%1.json").arg(_id), true);
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
-    _loading = true;
-    emit loadingChanged();
+    _initRequest();
 }
 
 
 
 void Conversation::sendMessage(const QString text)
 {
-    if (_loading || _id <= 0)
+    if (isLoading() || _id <= 0)
         return;
-
-    _loading = true;
-//    emit loadingChanged();
 
     auto content = QUrl::toPercentEncoding(text.trimmed());
     auto uuid    = QUuid::createUuid().toString().remove('{').remove('}');
     auto data    = QString("uuid=%1&content=%2").arg(uuid).arg(QString::fromUtf8(content));
     auto url     = QString("v2/messenger/conversations/by_id/%1/messages.json").arg(_id);
-    auto request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
+    _request     = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
 
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(messageSent(const QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
+    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SIGNAL(messageSent(const QJsonObject))));
 
     if (_unreadCount > 0)
-        Q_TEST(connect(request, SIGNAL(success(QJsonObject)),   this, SLOT(readAll())));
+        Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),   this, SLOT(readAll())));
+    
+    _initRequest(false);
 }
 
 
@@ -400,51 +373,47 @@ void Conversation::readAll()
     if (_reading || _unreadCount <= 0 || _id <= 0)// || !isInvolved())
         return;
 
-    _reading = true;
-
     auto url = QString("v2/messenger/conversations/by_id/%1/messages/read_all.json").arg(_id);
-    auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation);
+    _reading = new ApiRequest(url, true, QNetworkAccessManager::PutOperation);
 
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SIGNAL(allMessagesRead(const QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)),       this, SLOT(_markRead(QJsonObject)))); //! \todo _setNotReading()
+    Q_TEST(connect(_reading, SIGNAL(success(const QJsonObject)), this, SIGNAL(allMessagesRead(const QJsonObject))));
+    Q_TEST(connect(_reading, SIGNAL(success(QJsonObject)),       this, SLOT(_markRead(QJsonObject))));
 }
 
 
 
 void Conversation::leave()
 {
-    if (_loading || !isInvolved())
+    if (isLoading() || !isInvolved())
         return;
     
-    _loading = true;
-    
     auto url = QString("v2/messenger/conversations/by_id/%1/leave.json").arg(_id);
-    auto request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation);
+    _request = new ApiRequest(url, true, QNetworkAccessManager::PutOperation);
 
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
+    
+    _initRequest();
 }
 
 
 
 void Conversation::remove()
 {
-    if (_loading || !isInvolved())
+    if (isLoading() || !isInvolved())
         return;
 
-    _loading = true;
-
     auto url = QString("v2/messenger/conversations/by_id/%1.json").arg(_id);
-    auto request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
+    _request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
 
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
+    
+    _initRequest(false);
 }
 
 
 
 void Conversation::_emitLeft(const QJsonObject data)
 {
-    _loading = false;
-    
     if (data.value("status").toString() != "success")
     {
         qDebug() << "error leave chat" << _id;

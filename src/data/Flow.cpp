@@ -8,11 +8,9 @@
 
 
 Flow::Flow(QObject *parent)
-    : QObject(parent)
-    , _id(0)
+    : TastyData(parent)
     , _isPrivate(false)
     , _isPremoderate(false)
-    , _loading(false)
 {
 
 }
@@ -20,8 +18,7 @@ Flow::Flow(QObject *parent)
 
 
 Flow::Flow(const QJsonObject data, QObject* parent)
-    : QObject(parent)
-    , _loading(false)
+    : TastyData(parent)
 {
     _init(data);
 }
@@ -34,12 +31,12 @@ void Flow::setId(const int id)
         return;
 
     _id = id;
+    emit idChanged();
 
-    auto request = new ApiRequest(QString("v1/flows/%1.json").arg(_id));
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
+    _request = new ApiRequest(QString("v1/flows/%1.json").arg(_id));
+    connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
 
-    _loading = true;
-    emit loadingChanged();
+    _initRequest();
 }
 
 
@@ -59,8 +56,6 @@ void Flow::_init(const QJsonObject data)
     _entriesCount   = Tasty::num2str(data.value("public_tlog_entries_count").toInt(),
                                      "запись", "записи", "записей");
 
+    emit idChanged();
     emit updated();
-
-    _loading = false;
-    emit loadingChanged();
 }

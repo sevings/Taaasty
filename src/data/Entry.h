@@ -6,6 +6,7 @@
 #include <QEnableSharedFromThis>
 
 #include "../defines.h"
+#include "TastyData.h"
 
 class Author;
 class Tlog;
@@ -17,7 +18,7 @@ class MessagesModel;
 
 
 
-class EntryBase: public QObject
+class EntryBase: public TastyData
 {
     Q_OBJECT
 
@@ -43,7 +44,6 @@ protected slots:
     void _maybeError();
 
 protected:
-    int         _id;
     Author*     _author;
     QString     _text;
     QString     _title;
@@ -56,7 +56,7 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
 {
     Q_OBJECT
 
-    Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated)
+    Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated) //! \todo remove 
     Q_PROPERTY(QString     createdAt      MEMBER _createdAt         NOTIFY updated)
     Q_PROPERTY(QString     url            MEMBER _url               NOTIFY updated)
     Q_PROPERTY(QString     type           MEMBER _type              NOTIFY updated)
@@ -84,8 +84,6 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(CommentsModel* comments    READ commentsModel        NOTIFY updated)
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel READ attachedImagesModel NOTIFY updated)
 
-    Q_PROPERTY(bool loading               MEMBER _loading           NOTIFY loadingChanged)
-
 public:
     Entry(QObject* parent = nullptr);
     Entry(Conversation* chat);
@@ -97,8 +95,6 @@ public:
     int wordCount() const;
 
     Rating* rating() const;
-
-    bool loading() const;
 
     Tlog* tlog() const;
 
@@ -129,15 +125,12 @@ signals:
     void favoritedChanged();
     void commentAdded(const QJsonObject data);
 
-    void loadingChanged();
-
 private slots:
     void _changeWatched(const QJsonObject data);
     void _changeFavorited(const QJsonObject data);
     void _setCommentsCount(int tc);
     void _setWatched();
     void _correctHtml();
-    void _setNotLoading();
     void _setChatId();
 
 private:
@@ -166,6 +159,4 @@ private:
     CommentsModel*       _commentsModel;
     AttachedImagesModel* _attachedImagesModel;
     ChatPtr              _chat;
-
-    bool        _loading;
 };

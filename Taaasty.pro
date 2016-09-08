@@ -41,10 +41,11 @@ SOURCES += src/main.cpp \
     src/models/chatsmodel.cpp \
     src/models/messagesmodel.cpp \
     src/pusherclient.cpp \
-    src/data/messagebase.cpp \
     src/models/flowsmodel.cpp \
     src/data/Flow.cpp \
-    src/textreader.cpp
+    src/textreader.cpp \
+    src/data/MessageBase.cpp \
+    src/data/TastyData.cpp
 
 RESOURCES += qml.qrc
 
@@ -91,10 +92,11 @@ HEADERS += \
     src/models/chatsmodel.h \
     src/models/messagesmodel.h \
     src/pusherclient.h \
-    src/data/messagebase.h \
     src/models/flowsmodel.h \
     src/data/Flow.h \
-    src/textreader.h
+    src/textreader.h \
+    src/data/MessageBase.h \
+    src/data/TastyData.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

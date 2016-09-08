@@ -4,9 +4,9 @@
 #include <QJsonObject>
 #include <QHash>
 #include <QEnableSharedFromThis>
-#include <QPointer>
 
 #include "../defines.h"
+#include "TastyData.h"
 
 class MessageBase;
 class Message;
@@ -16,13 +16,12 @@ class MessagesModel;
 
 
 
-class Conversation: public QObject, public QEnableSharedFromThis<Conversation>
+class Conversation: public TastyData, public QEnableSharedFromThis<Conversation>
 {
     Q_OBJECT
 
     friend class PusherClient;
 
-    Q_PROPERTY(int              id              MEMBER _id              NOTIFY updated)
     Q_PROPERTY(ConversationType type            MEMBER _type            NOTIFY updated)
     Q_PROPERTY(int              unreadCount     MEMBER _unreadCount     NOTIFY unreadCountChanged)
     Q_PROPERTY(int              unreceivedCount MEMBER _unreceivedCount NOTIFY updated)
@@ -57,7 +56,6 @@ public:
     Conversation(QObject* parent = nullptr);
     ~Conversation();
 
-    int  id() const;
     void setId(int id);
     void setUserId(int id);
     void setSlug(const QString slug);
@@ -109,12 +107,10 @@ signals:
     void isInvolvedChanged();
 
 private slots:
-    void _setNotLoading();
     void _markRead(const QJsonObject data);
     void _emitLeft(const QJsonObject data);
 
 private:
-    int                 _id;
     ConversationType    _type;
     int                 _unreadCount;
     int                 _unreceivedCount;
@@ -137,6 +133,5 @@ private:
 
     EntryPtr _entry;
 
-    bool _loading;
-    bool _reading;
+    QPointer<ApiRequest> _reading;
 };

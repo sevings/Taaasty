@@ -4,15 +4,16 @@
 #include <QObject>
 #include <QDateTime>
 
+#include "TastyData.h"
+
 class User;
 
 
 
-class MessageBase : public QObject
+class MessageBase : public TastyData
 {
     Q_OBJECT
 
-    Q_PROPERTY(int      id              MEMBER _id             NOTIFY baseUpdated)
     Q_PROPERTY(QString  createdAt       MEMBER _createdAt      NOTIFY baseUpdated)
     Q_PROPERTY(QString  text            MEMBER _text           NOTIFY textUpdated)
     Q_PROPERTY(QString  truncatedText   MEMBER _truncatedText  NOTIFY textUpdated)
@@ -23,7 +24,6 @@ class MessageBase : public QObject
 public:
     explicit MessageBase(QObject* parent = nullptr);
 
-    int         id() const;
     bool        isRead() const;
     QDateTime   createdDate() const;
 
@@ -40,7 +40,6 @@ protected:
     void _setTruncatedText();
     void _setDate(const QString d);
 
-    int         _id;
     QString     _createdAt;
     QDateTime   _date;
     QString     _text;

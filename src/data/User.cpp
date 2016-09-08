@@ -7,9 +7,7 @@
 
 
 User::User(QObject* parent)
-    : QObject(parent)
-    , _id(0)
-    , _request(nullptr)
+    : TastyData(parent)
 {
 
 }
@@ -17,17 +15,9 @@ User::User(QObject* parent)
 
 
 User::User(const QJsonObject data, QObject *parent)
-    : QObject(parent)
-    , _request(nullptr)
+    : TastyData(parent)
 {
     _init(data);
-}
-
-
-
-int User::id() const
-{
-    return _id;
 }
 
 
@@ -38,10 +28,12 @@ void User::setId(int id)
         return;
 
     _id = id;
+    emit idChanged();
 
     _request = new ApiRequest(QString("v1/tlog/%1.json").arg(_id));
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading(QObject*))));
+    
+    _initRequest();
 }
 
 
@@ -82,8 +74,9 @@ User& User::operator=(const User& other)
     if (_request)
     {
         Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
-        Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading(QObject*))));
     }
+
+    emit idChanged();
 
     return *this;
 }
@@ -116,9 +109,8 @@ void User::_init(const QJsonObject data)
     _backgroundColor = colors.value("background").toString();
     _nameColor       = colors.value("name").toString();
 
+    emit idChanged();
     emit updated();
-
-    _request = nullptr;
 }
 
 
@@ -127,12 +119,4 @@ void User::_initFromTlog(const QJsonObject data)
 {
     auto author = data.value("author").toObject();
     _init(author);
-}
-
-
-
-void User::_setNotLoading(QObject* request)
-{
-    if (_request == request)
-        _request = nullptr;
 }

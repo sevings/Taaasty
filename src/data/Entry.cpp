@@ -21,8 +21,7 @@
 
 
 EntryBase::EntryBase(QObject* parent)
-    : QObject(parent)
-    , _id(0)
+    : TastyData(parent)
     , _author(nullptr)
 {
 
@@ -36,10 +35,13 @@ void EntryBase::load(int id)
         return;
 
     _id = id;
+    emit idChanged();
 
-    auto request = new ApiRequest(QString("v1/entries/%1.json").arg(_id));
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_initBase(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_maybeError())));
+    _request = new ApiRequest(QString("v1/entries/%1.json").arg(_id));
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initBase(QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),  this, SLOT(_maybeError())));
+    
+    _initRequest();
 }
 
 
@@ -58,6 +60,7 @@ void EntryBase::_initBase(QJsonObject data)
     _text   = data.value("text").toString().trimmed();
     _title  = data.value("title").toString().trimmed();
 
+    emit idChanged();
     emit loaded();
 }
 
@@ -115,7 +118,6 @@ Entry::Entry(QObject* parent)
     , _wordCount(0)
     , _commentsModel(nullptr)
     , _attachedImagesModel(new AttachedImagesModel(this))
-    , _loading(false)
 {
     Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
 }
@@ -129,7 +131,6 @@ Entry::Entry(Conversation* chat)
     , _media(nullptr)
     , _commentsModel(nullptr)
     , _attachedImagesModel(nullptr)
-    , _loading(false)
 {
     if (chat)
         _chatId = chat->id();
@@ -175,7 +176,7 @@ void Entry::init(const QJsonObject data)
     _isWatchable     = data.value("can_watch").toBool();
     _isWatched       = data.value("is_watching").toBool();
     _isPrivate       = data.value("is_private").toBool();
-    _isFixed         = data.value("fixed_state").toString("not_fixed") != "not_fixed"; //! \todo check other values
+    _isFixed         = data.value("fixed_state").toString("not_fixed") != "not_fixed";
 
     auto tlogData = data.value("tlog").toObject();
     if (_tlog && tlogData.contains("slug"))
@@ -232,9 +233,6 @@ void Entry::init(const QJsonObject data)
 
     emit updated();
     emit commentsCountChanged();
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 
@@ -245,47 +243,47 @@ void Entry::setId(const int id)
         return;
 
     _id = id;
+    emit idChanged();
+
     _chatId = 0;
     _chat.clear();
 
     reload();
+    
+    Q_TEST(connect(_request, SIGNAL(destroyed()), this, SLOT(_maybeError())));
 }
 
 
 
 void Entry::reload()
 {
-    if (_loading)
+    if (isLoading())
         return;
 
-    auto request = new ApiRequest(QString("v1/entries/%1.json?include_comments=true").arg(_id));
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading())));
+    _request = new ApiRequest(QString("v1/entries/%1.json?include_comments=true").arg(_id));
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
-    _loading = true;
-    emit loadingChanged();
+    _initRequest();
 }
 
 
 
 void Entry::addComment(const QString text)
 {
-    if (_loading || _id <= 0 || !Tasty::instance()->isAuthorized())
+    if (isLoading() || _id <= 0 || !Tasty::instance()->isAuthorized())
         return;
 
-    _loading = true;
-//    emit loadingChanged();
-    
     auto content = QUrl::toPercentEncoding(text.trimmed());
     auto data    = QString("entry_id=%1&text=%2").arg(_id).arg(QString::fromUtf8(content));
-    auto request = new ApiRequest("v1/comments.json", true,
+    _request     = new ApiRequest("v1/comments.json", true,
                                   QNetworkAccessManager::PostOperation, data);
 
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this,   SIGNAL(commentAdded(const QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this,   SLOT(_setWatched())));
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), chat(), SLOT(readAll())));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this,   SLOT(_setNotLoading())));
+    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this,   SIGNAL(commentAdded(const QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this,   SLOT(_setWatched())));
+    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), chat(), SLOT(readAll())));
 
+    _initRequest(false);
+    
     ChatsModel::instance()->addChat(sharedFromThis());
 }
 
@@ -293,54 +291,48 @@ void Entry::addComment(const QString text)
 
 void Entry::watch()
 {
-    if (_loading || _id <= 0)
+    if (isLoading() || _id <= 0)
         return;
 
-    _loading = true;
-//    emit loadingChanged();
-    
-    ApiRequest* request = nullptr;
     if (_isWatched)
     {
         auto url = QString("v1/watching.json?entry_id=%1").arg(_id);
-        request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
+        _request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
     }
     else
     {
-        auto url = QString("v1/watching.json");
+        auto url  = QString("v1/watching.json");
         auto data = QString("entry_id=%1").arg(_id);
-        request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
+        _request  = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
     }
 
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeWatched(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
+    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeWatched(QJsonObject))));
+    
+    _initRequest(false);
 }
 
 
 
 void Entry::favorite()
 {
-    if (_loading || _id <= 0)
+    if (isLoading() || _id <= 0)
         return;
 
-    _loading = true;
-//    emit loadingChanged();
-    
-    ApiRequest* request = nullptr;
     if (_isFavorited)
     {
         auto url = QString("v1/favorites.json?entry_id=%1").arg(_id);
-        request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
+        _request = new ApiRequest(url, true, QNetworkAccessManager::DeleteOperation);
     }
     else
     {
-        auto url = QString("v1/favorites.json");
+        auto url  = QString("v1/favorites.json");
         auto data = QString("entry_id=%1").arg(_id);
-        request = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
+        _request  = new ApiRequest(url, true, QNetworkAccessManager::PostOperation, data);
     }
 
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeFavorited(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),        this, SLOT(_setNotLoading())));
+    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeFavorited(QJsonObject))));
+    
+    _initRequest(false);
 }
 
 
@@ -407,17 +399,6 @@ void Entry::_correctHtml()
 
 
 
-void Entry::_setNotLoading()
-{
-    _loading = false;
-    emit loadingChanged();
-
-    if (!_tlog || _tlog->tlogId() <= 0)
-        emit updatingError(); // TODO: emit it only after setId()
-}
-
-
-
 void Entry::_setChatId()
 {
     auto chat = dynamic_cast<Conversation*>(sender());
@@ -473,13 +454,6 @@ Conversation* Entry::chat()
 Tlog* Entry::tlog() const
 {
     return _tlog;
-}
-
-
-
-bool Entry::loading() const
-{
-    return _loading;
 }
 
 
