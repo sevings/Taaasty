@@ -100,7 +100,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FeedModel.MyTlogMode
-                visible: !window.chatsShows
+                visible: !window.chatsShows && page.isFeedView === true
                          && (   page.mode === FeedModel.MyTlogMode
                              || page.mode === FeedModel.MyPrivateMode)
             }
@@ -111,12 +111,12 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FeedModel.MyPrivateMode
-                visible: !window.chatsShows
+                visible: !window.chatsShows && page.isFeedView === true
                          && (   page.mode === FeedModel.MyTlogMode
                              || page.mode === FeedModel.MyPrivateMode)
             }
             MenuSeparator {
-                visible: !window.chatsShows
+                visible: !window.chatsShows && page.isFeedView === true
                          && (   page.mode === FeedModel.MyTlogMode
                              || page.mode === FeedModel.MyPrivateMode)
             }
@@ -309,22 +309,32 @@ Q.Drawer {
 
             // FLOWS SECTION
             MenuItem {
-                text: 'Все потоки'
+                text: 'Популярные'
                 onTriggered: {
-                    page.mode = 0; //= FlowsModel.AllFlowsMode
+                    page.mode = 0; //= FlowsModel.PopularMode
                     drawer.close();
                 }
-                highlighted: page.mode === FlowsModel.AllFlowsMode
+                highlighted: page.mode === FlowsModel.PopularMode
                 visible: !window.chatsShows
                          && page.isFlowsView === true
             }
             MenuItem {
-                text: 'Мои потоки'
+                text: 'Новые'
                 onTriggered: {
-                    page.mode = 1; //= FlowsModel.MyFlowsMode
+                    page.mode = 1; //= FlowsModel.NewestMode
                     drawer.close();
                 }
-                highlighted: page.mode === FlowsModel.MyFlowsMode
+                highlighted: page.mode === FlowsModel.NewestMode
+                visible: !window.chatsShows
+                         && page.isFlowsView === true
+            }
+            MenuItem {
+                text: 'Мои'
+                onTriggered: {
+                    page.mode = 2; //= FlowsModel.MyMode
+                    drawer.close();
+                }
+                highlighted: page.mode === FlowsModel.MyMode
                 visible: !window.chatsShows
                          && page.isFlowsView === true
             }

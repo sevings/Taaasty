@@ -21,8 +21,9 @@ class FlowsModel : public QAbstractListModel
 public:
     enum Mode
     {
-        AllFlowsMode,
-        MyFlowsMode
+        PopularMode,
+        NewestMode,
+        MyMode
     };
 
     Q_ENUMS(Mode)

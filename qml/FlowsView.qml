@@ -5,7 +5,7 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     innerFlick: listView
-    property int mode: Tasty.isAuthorized ? FlowsModel.MyFlowsMode : FlowsModel.AllFlowsMode
+    property int mode: Tasty.isAuthorized ? FlowsModel.MyMode : FlowsModel.PopularMode
     readonly property bool isFlowsView: true
     Poppable {
         body: back
