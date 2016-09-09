@@ -38,7 +38,8 @@ public:
         GoodMode,
         BetterThanMode,
         TlogMode,
-        FavoritesMode
+        FavoritesMode,
+        MyPrivateMode
     };
 
     Q_ENUMS(Mode)

@@ -92,6 +92,35 @@ Q.Drawer {
                 visible: pageProfile.visible
             }
 
+            // MY TLOG SECTION
+            MenuItem {
+                text: 'Открытые'
+                onTriggered: {
+                    window.setFeedMode(FeedModel.MyTlogMode);
+                    drawer.close();
+                }
+                highlighted: page.mode === FeedModel.MyTlogMode
+                visible: !window.chatsShows
+                         && (   page.mode === FeedModel.MyTlogMode
+                             || page.mode === FeedModel.MyPrivateMode)
+            }
+            MenuItem {
+                text: 'Приватные'
+                onTriggered: {
+                    window.setFeedMode(FeedModel.MyPrivateMode);
+                    drawer.close();
+                }
+                highlighted: page.mode === FeedModel.MyPrivateMode
+                visible: !window.chatsShows
+                         && (   page.mode === FeedModel.MyTlogMode
+                             || page.mode === FeedModel.MyPrivateMode)
+            }
+            MenuSeparator {
+                visible: !window.chatsShows
+                         && (   page.mode === FeedModel.MyTlogMode
+                             || page.mode === FeedModel.MyPrivateMode)
+            }
+
             // BEST SECTION
             MenuItem {
                 text: 'Лучшее'

@@ -615,7 +615,11 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
         break;
     case FavoritesMode:
         _url = QString("v1/tlog/%1/favorites/tlogs.json")
-                .arg(Tasty::instance()->settings()->login());
+                .arg(Tasty::instance()->settings()->userId());
+        break;
+    case MyPrivateMode:
+        _url = QString("v1/tlog/%1/privates/tlogs.json")
+                .arg(Tasty::instance()->settings()->userId());
         break;
     default:
         qDebug() << "feed mode =" << mode;
