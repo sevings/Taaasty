@@ -28,9 +28,7 @@ Popup {
         iconHeight: 32
         icon: '../icons/' + (window.stackSize > 1 || window.notifsShows || window.chatsShows
                              ? 'left-arrow-' : 'menu-rounded-')
-              + 'white-'
-              + '128.png'
-//              + (dp < 2 ? '32' : '64') + '.png'
+              + 'white-128.png'
         onClicked: {
             if (window.notifsShows)
                 window.hideNotifs();
@@ -54,10 +52,7 @@ Popup {
         visible: Tasty.isAuthorized
         highlighted: window.chatsShows
         iconHeight: 32
-        icon: '../icons/chat-'
-              + 'white-'
-              + '128.png'
-//              + (dp < 2 ? '32' : '64') + '.png'
+        icon: '../icons/chat-white-128.png'
         onClicked: {
             window.toggleChats();
         }
@@ -100,10 +95,7 @@ Popup {
         visible: Tasty.isAuthorized
         highlighted: window.notifsShows
         iconHeight: 32
-        icon: '../icons/bell-'
-              + 'white-'
-              + '128.png'
-//              + (dp < 2 ? '32' : '64') + '.png'
+        icon: '../icons/bell-white-128.png'
         onClicked: {
             window.toggleNotifs();
         }
@@ -145,10 +137,7 @@ Popup {
         width: parent.width / 4
         visible: window.canShowPageMenu
         iconHeight: 32
-        icon: '../icons/menu-'
-              + 'white-'
-              + '128.png'
-//              + (dp < 2 ? '32' : '64') + '.png'
+        icon: '../icons/menu-white-128.png'
         onClicked: {
             window.showPageMenu();
         }

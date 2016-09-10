@@ -250,7 +250,7 @@ Pane {
                 fillMode: Image.PreserveAspectFit
                 source: (window.darkTheme ? '../icons/comment-light-'
                                           : '../icons/comment-dark-')
-                        + (dp < 2 ? '36' : '72') + '.png'
+                        + '72.png'
             }
             ThemedText {
                 id: comments
@@ -273,7 +273,7 @@ Pane {
                        && (entry.rating.isBayesVoted || entry.rating.isVotedAgainst)
                        && (entry.rating.isVotable || entry.rating.isBayesVoted))
                        ? '../icons/flame-solid-' : '../icons/flame-outline-')
-                      + (dp < 2 ? '36' : '72') + '.png'
+                      + '72.png'
                 enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable
                 onClicked: {
                     entry.rating.vote();
@@ -287,7 +287,7 @@ Pane {
                 }
                 icon: (entry.rating.isVotedAgainst ? '../icons/drop-solid-'
                                                    : '../icons/drop-outline-')
-                      + (dp < 2 ? '36' : '72') + '.png'
+                      + '72.png'
                 enabled: !entry.rating.isBayesVoted
                 onClicked: {
                     entry.rating.voteAgainst();

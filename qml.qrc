@@ -40,28 +40,12 @@
         <file>qml/PageMenu.qml</file>
         <file>qml/IconButton.qml</file>
         <file>icons/comment-dark-72.png</file>
-        <file>icons/comment-dark-36.png</file>
-        <file>icons/comment-light-36.png</file>
         <file>icons/comment-light-72.png</file>
-        <file>icons/drop-outline-36.png</file>
         <file>icons/drop-outline-72.png</file>
-        <file>icons/drop-solid-36.png</file>
         <file>icons/drop-solid-72.png</file>
-        <file>icons/flame-outline-36.png</file>
         <file>icons/flame-outline-72.png</file>
-        <file>icons/flame-solid-36.png</file>
         <file>icons/flame-solid-72.png</file>
-        <file>icons/chat-white-32.png</file>
-        <file>icons/chat-white-64.png</file>
-        <file>icons/left-arrow-white-32.png</file>
-        <file>icons/left-arrow-white-64.png</file>
-        <file>icons/menu-rounded-white-32.png</file>
-        <file>icons/menu-rounded-white-64.png</file>
-        <file>icons/menu-white-32.png</file>
-        <file>icons/menu-white-64.png</file>
         <file>qml/PopupFill.qml</file>
-        <file>icons/bell-white-32.png</file>
-        <file>icons/bell-white-64.png</file>
         <file>qml/MyFlickable.qml</file>
         <file>icons/bell-white-128.png</file>
         <file>icons/chat-white-128.png</file>

@@ -143,7 +143,7 @@ Pane {
                     width: (parent.width - 3 * mm) / 2
                     icon: (parent.tlogMode == 0 //Trainer.WaterMode
                           ? '../icons/drop-solid-' : '../icons/drop-outline-')
-                          + (dp < 2 ? '36' : '72') + '.png'
+                          + '72.png'
                     enabled: parent.tlogMode == 0 || parent.tlogMode == 2 //Trainer.UndefinedMode
                     onClicked: {
                         parent.tlogMode = 0;
@@ -160,7 +160,7 @@ Pane {
                     width: tlogVoteAgainstButton.width
                     icon: (parent.tlogMode == 1 //Trainer.FireMode
                           ? '../icons/flame-solid-' : '../icons/flame-outline-')
-                          + (dp < 2 ? '36' : '72') + '.png'
+                          + '72.png'
                     enabled: parent.tlogMode == 1 || parent.tlogMode == 2 //Trainer.UndefinedMode
                     onClicked: {
                         parent.tlogMode = 1;
