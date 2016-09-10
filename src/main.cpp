@@ -3,11 +3,8 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickStyle>
-
-#ifdef QT_DEBUG
-#   include <QDateTime>
-#   include <QDebug>
-#endif
+#include <QDateTime>
+#include <QDebug>
 
 #include "defines.h"
 
@@ -122,7 +119,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("Trainer", trainer);
 
 #ifdef Q_OS_ANDROID
-    int density = 160; // todo: why 160?
+    int density = 160; //! \todo: why 160?
 #else
     float density = 267; // test
 #endif
@@ -134,6 +131,9 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("mm", density / 25.4); // N900: 1 mm = 10.5 px; Q10: 12.9
     engine.rootContext()->setContextProperty("pt", 1);
     engine.rootContext()->setContextProperty("dp", scale); // N900: 1.5; Q10: 2
+
+//    engine.rootContext()->setContextProperty("qtVersion", QT_VERSION_STR);
+    engine.rootContext()->setContextProperty("builtAt", QDate::currentDate().toString("dd.MM.yy"));
 
     engine.setBaseUrl(QStringLiteral("qrc:/qml/"));
     engine.load(QUrl(QStringLiteral("main.qml")));

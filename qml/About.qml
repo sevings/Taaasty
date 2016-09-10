@@ -24,9 +24,8 @@ Pane {
                     right: parent.right
                     verticalCenter: parent.verticalCenter
                 }
-                horizontalAlignment: Text.AlignHCenter
                 onLinkActivated: window.openLink(link)
-                text: Qt.application.name + ' ' + Qt.application.version
+                text: Qt.application.name + ' ' + Qt.application.version + ' (' + builtAt + ').<br>'
                       + reader.read()
             }
             TextReader {
