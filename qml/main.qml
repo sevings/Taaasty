@@ -167,15 +167,18 @@ ApplicationWindow {
                    }
                    )
     }
-    function pushTlog(tlogId, sinceId, sinceDate) {
+    function pushTlog(tlogId, sinceId, sinceDate, mode) {
+        if (mode === undefined)
+            mode = FeedModel.TlogMode;
+
         if (stack.currentItem.isFeedView
-                && stack.currentItem.mode === FeedModel.TlogMode
+                && stack.currentItem.mode === mode
                 && stack.currentItem.tlogId === tlogId)
             return;
 
         stack.push(stack.feed,
                    {
-                       mode: FeedModel.TlogMode,
+                       mode: mode,
                        tlogId: tlogId,
                        sinceId: sinceId || 0,
                        sinceDate: sinceDate || '',

@@ -77,9 +77,9 @@ Item {
             }
             MenuItem {
                 text: 'Избранное'
-                onTriggered: { changeMode(FeedModel.FavoritesMode) }
+                onTriggered: { changeMode(FeedModel.MyFavoritesMode) }
                 visible: Tasty.isAuthorized
-                highlighted: stack.currentItem.mode === FeedModel.FavoritesMode
+                highlighted: stack.currentItem.mode === FeedModel.MyFavoritesMode
             }
 //            MenuSeparator { }
 //            ThemedButton {

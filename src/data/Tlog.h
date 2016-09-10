@@ -19,6 +19,9 @@ class Tlog: public TastyData
     Q_PROPERTY(QString      entriesCount        MEMBER _entriesCount        NOTIFY updated)
     Q_PROPERTY(QString      publicEntriesCount  MEMBER _publicEntriesCount  NOTIFY updated)
     Q_PROPERTY(QString      privateEntriesCount MEMBER _privateEntriesCount NOTIFY updated)
+    Q_PROPERTY(QString      favoritesCount      MEMBER _favoritesCount      NOTIFY updated)
+    Q_PROPERTY(QString      commentsCount       MEMBER _commentsCount       NOTIFY updated)
+    Q_PROPERTY(QString      tagsCount           MEMBER _tagsCount           NOTIFY updated)
     Q_PROPERTY(QString      daysCount           MEMBER _daysCount           NOTIFY updated)
     Q_PROPERTY(QString      followersCount      MEMBER _followersCount      NOTIFY updated)
     Q_PROPERTY(QString      followingsCount     MEMBER _followingsCount     NOTIFY updated)
@@ -65,6 +68,9 @@ private:
     QString         _entriesCount;
     QString         _publicEntriesCount;
     QString         _privateEntriesCount;
+    QString         _favoritesCount;
+    QString         _commentsCount;
+    QString         _tagsCount;
     QString         _daysCount;
     QString         _followersCount;
     QString         _followingsCount;

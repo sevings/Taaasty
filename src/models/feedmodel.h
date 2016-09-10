@@ -29,6 +29,8 @@ public:
     enum Mode {
         InvalidMode,
         MyTlogMode,
+        MyFavoritesMode,
+        MyPrivateMode,
         FriendsMode,
         LiveMode,
         AnonymousMode,
@@ -38,8 +40,7 @@ public:
         GoodMode,
         BetterThanMode,
         TlogMode,
-        FavoritesMode,
-        MyPrivateMode
+        FavoritesMode
     };
 
     Q_ENUMS(Mode)

@@ -70,10 +70,25 @@ void Tlog::init(const QJsonObject data)
     _privateEntriesCount = Tasty::num2str(data.value("private_entries_count").toInt(),
                                           "скрытая запись", "скрытые записи", "скрытых записей");
 
-    auto date = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
-    auto today = QDateTime::currentDateTime();
-    int days = (today.toMSecsSinceEpoch() - date.toMSecsSinceEpoch()) / (24 * 60 * 60 * 1000);
-    _daysCount = Tasty::num2str(days, "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
+    if (data.contains("stats"))
+    {
+        auto stats = data.value("stats").toObject();
+        _favoritesCount = QString("%1 в избранном").arg(stats.value("favorites_count").toInt());
+        _commentsCount = Tasty::num2str(stats.value("comments_count").toInt(), "комментарий", "комментария", "комментариев");
+        _tagsCount = Tasty::num2str(stats.value("tags_count").toInt(), "тег", "тега", "тегов");
+        _daysCount = Tasty::num2str(stats.value("days_count").toInt(), "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
+    }
+    else
+    {
+        _favoritesCount.clear();
+        _commentsCount.clear();
+        _tagsCount.clear();
+
+        auto date = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+        auto today = QDateTime::currentDateTime();
+        int days = (today.toMSecsSinceEpoch() - date.toMSecsSinceEpoch()) / (24 * 60 * 60 * 1000);
+        _daysCount = Tasty::num2str(days, "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
+    }
 
     auto relations = data.value("relationships_summary").toObject();
     _followersCount = Tasty::num2str(relations.value("followers_count").toInt(), "подписчик", "подписчика", "подписчиков");

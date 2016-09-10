@@ -92,7 +92,7 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     emit loadingChanged();
 
     QString url = _url;
-    if (_mode == TlogMode)
+    if (_mode == TlogMode || _mode == FavoritesMode)
     {
         if (_tlog > 0)
             url = url.arg(_tlog);
@@ -127,7 +127,7 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
     Q_TEST(connect(_request, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading(QObject*))));
+    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading(QObject*))));
 }
 
 
@@ -586,6 +586,14 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
         _url = QString("v1/tlog/%1/entries/tlogs.json")
                 .arg(Tasty::instance()->settings()->userId());
         break;
+    case MyFavoritesMode:
+        _url = QString("v1/tlog/%1/favorites/tlogs.json")
+                .arg(Tasty::instance()->settings()->userId());
+        break;
+    case MyPrivateMode:
+        _url = QString("v1/tlog/%1/privates/tlogs.json")
+                .arg(Tasty::instance()->settings()->userId());
+        break;
     case FriendsMode:
         _url = "v1/my_feeds/friends/tlogs.json";
         break;
@@ -614,12 +622,7 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
         _url = "v1/tlog/%1/entries/tlogs.json";
         break;
     case FavoritesMode:
-        _url = QString("v1/tlog/%1/favorites/tlogs.json")
-                .arg(Tasty::instance()->settings()->userId());
-        break;
-    case MyPrivateMode:
-        _url = QString("v1/tlog/%1/privates/tlogs.json")
-                .arg(Tasty::instance()->settings()->userId());
+        _url = "v1/tlog/%1/favorites/tlogs.json";
         break;
     default:
         qDebug() << "feed mode =" << mode;

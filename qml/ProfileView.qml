@@ -216,6 +216,26 @@ Pane {
                     left: parent.left
                     right: parent.right
                 }
+                text: tlog.favoritesCount
+                onClicked: window.pushTlog(author.id, 0, '', FeedModel.FavoritesMode)
+                visible: tlog.tlogId === author.id && !author.isFlow
+                enabled: readButton.enabled
+            }
+            ThemedButton {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                text: tlog.privateEntriesCount
+                onClicked: window.pushTlog(author.id, 0, '', FeedModel.MyPrivateMode)
+                visible: tlog.tlogId === author.id && !author.isFlow
+                enabled: tlog.myRelationship === Tlog.Me
+            }
+            ThemedButton {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
                 text: tlog.followersCount
                 onClicked: window.pushUsers(UsersModel.FollowersMode, author.id, tlog)
                 visible: tlog.tlogId === author.id && !author.isFlow
