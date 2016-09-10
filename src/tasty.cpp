@@ -99,6 +99,9 @@ QString Tasty::parseDate(const QString d, const bool bigLetter)
 
 void Tasty::correctHtml(QString& html, bool isEntry)
 {
+    QRegularExpression firstSlugRe("^(~|@)([a-zA-Z0-9_\\-\\.]+)");
+    html.replace(firstSlugRe, "<a href='http://taaasty.com/~\\2'>\\1\\2</a>");
+
     QRegularExpression slugRe("([^'/>\\w\\-\\.])(~|@)([a-zA-Z0-9_\\-\\.]+)");
     html.replace(slugRe, "\\1<a href='http://taaasty.com/~\\3'>\\2\\3</a>");
 
