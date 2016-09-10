@@ -13,6 +13,7 @@
 #ifdef Q_OS_ANDROID
 #   include "../androidnotifier.h"
 #   include "../data/User.h"
+#   include "../settings.h"
 #endif
 
 
@@ -202,7 +203,7 @@ void NotificationsModel::_addPush(QJsonObject data)
     _ids << notification->id();
 
 #ifdef Q_OS_ANDROID
-    if (!notification->isRead())
+    if (!notification->isRead() && Tasty::instance()->settings()->systemNotifications())
     {
         auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
                 .arg(notification->actionText()).arg(notification->text());
@@ -246,7 +247,7 @@ void NotificationsModel::_addNewest(const QJsonObject data)
         _notifs.prepend(notification);
 
 #ifdef Q_OS_ANDROID
-        if (!notification->isRead())
+        if (!notification->isRead() && Tasty::instance()->settings()->systemNotifications())
         {
             auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
                     .arg(notification->actionText()).arg(notification->text());

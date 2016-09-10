@@ -267,7 +267,7 @@ void MessagesModel::_addMessage(const QJsonObject data)
     emit lastMessageChanged();
 
 #ifdef Q_OS_ANDROID
-    if (!msg->isRead() && msg->userId() != _chat->userId())
+    if (!msg->isRead() && msg->userId() != _chat->userId() && Tasty::instance()->settings()->systemNotifications())
     {
         auto text = QString("%1:\n%2").arg(msg->user()->name())
                 .arg(msg->text());

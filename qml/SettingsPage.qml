@@ -33,6 +33,7 @@ Pane {
                 shortBox.checked  = Settings.hideShortPosts;
                 nbcBox.checked    = Settings.hideNegativeRated;
                 darkBox.checked   = Settings.darkTheme;
+                notiBox.checked   = Settings.systemNotifications
             }
             ThemedText {
                 text: 'Настройки'
@@ -59,6 +60,11 @@ Pane {
                 id: darkBox
                 text: 'Темная тема'
                 onCheckedChanged: { Settings.darkTheme = checked; }
+            }
+            ThemedCheckBox {
+                id: notiBox
+                text: 'Системные уведомления'
+                onCheckedChanged: { Settings.systemNotifications = checked; }
             }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2

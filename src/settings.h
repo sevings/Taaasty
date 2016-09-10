@@ -11,16 +11,17 @@ class Settings : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString  login               READ login              WRITE setLogin              NOTIFY loginChanged)
-    Q_PROPERTY(QString  accessToken         READ accessToken        WRITE setAccessToken        NOTIFY accessTokenChanged)
-    Q_PROPERTY(int      userId              READ userId             WRITE setUserId             NOTIFY userIdChanged)
-    Q_PROPERTY(int      maxImageWidth       READ maxImageWidth      WRITE setMaxImageWidth      NOTIFY maxImageWidthChanged)
-    Q_PROPERTY(bool     autoloadImages      READ autoloadImages     WRITE setAutoloadImages     NOTIFY autoloadImagesChanged)
-    Q_PROPERTY(bool     hideShortPosts      READ hideShortPosts     WRITE setHideShortPosts     NOTIFY hideShortPostsChanged)
-    Q_PROPERTY(bool     hideNegativeRated   READ hideNegativeRated  WRITE setHideNegativeRated  NOTIFY hideNegativeRatedChanged)
-    Q_PROPERTY(bool     darkTheme           READ darkTheme          WRITE setDarkTheme          NOTIFY darkThemeChanged)
-    Q_PROPERTY(QString  lastTitle           READ lastTitle          WRITE setLastTitle          NOTIFY lastTitleChanged)
-    Q_PROPERTY(QString  lastText            READ lastText           WRITE setLastText           NOTIFY lastTextChanged)
+    Q_PROPERTY(QString  login               READ login                  WRITE setLogin                  NOTIFY loginChanged)
+    Q_PROPERTY(QString  accessToken         READ accessToken            WRITE setAccessToken            NOTIFY accessTokenChanged)
+    Q_PROPERTY(int      userId              READ userId                 WRITE setUserId                 NOTIFY userIdChanged)
+    Q_PROPERTY(int      maxImageWidth       READ maxImageWidth          WRITE setMaxImageWidth          NOTIFY maxImageWidthChanged)
+    Q_PROPERTY(bool     autoloadImages      READ autoloadImages         WRITE setAutoloadImages         NOTIFY autoloadImagesChanged)
+    Q_PROPERTY(bool     hideShortPosts      READ hideShortPosts         WRITE setHideShortPosts         NOTIFY hideShortPostsChanged)
+    Q_PROPERTY(bool     hideNegativeRated   READ hideNegativeRated      WRITE setHideNegativeRated      NOTIFY hideNegativeRatedChanged)
+    Q_PROPERTY(bool     darkTheme           READ darkTheme              WRITE setDarkTheme              NOTIFY darkThemeChanged)
+    Q_PROPERTY(bool     systemNotifications READ systemNotifications    WRITE setSystemNotifications    NOTIFY systemNotificationsChanged)
+    Q_PROPERTY(QString  lastTitle           READ lastTitle              WRITE setLastTitle              NOTIFY lastTitleChanged)
+    Q_PROPERTY(QString  lastText            READ lastText               WRITE setLastText               NOTIFY lastTextChanged)
 
 public:
     explicit Settings(QObject *parent = 0);
@@ -52,6 +53,9 @@ public:
     bool darkTheme() const;
     void setDarkTheme(bool dark);
 
+    bool systemNotifications() const;
+    void setSystemNotifications(bool enable);
+
     QString lastTitle() const;
     void setLastTitle(const QString title);
 
@@ -67,6 +71,7 @@ signals:
     void hideShortPostsChanged();
     void hideNegativeRatedChanged();
     void darkThemeChanged();
+    void systemNotificationsChanged();
     void lastTitleChanged();
     void lastTextChanged();
 

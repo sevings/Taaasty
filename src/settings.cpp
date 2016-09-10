@@ -105,7 +105,7 @@ void Settings::setMaxImageWidth(const int width)
 
 bool Settings::autoloadImages() const
 {
-    return _settings.value("autoload_images").toBool();
+    return _settings.value("autoload_images", true).toBool();
 }
 
 
@@ -163,6 +163,22 @@ void Settings::setDarkTheme(bool dark)
     _settings.setValue("dark_theme", dark);
 
     emit darkThemeChanged();
+}
+
+
+
+bool Settings::systemNotifications() const
+{
+    return _settings.value("system_notifications", true).toBool();
+}
+
+
+
+void Settings::setSystemNotifications(bool enable)
+{
+    _settings.setValue("system_notifications", enable);
+
+    emit systemNotificationsChanged();
 }
 
 
