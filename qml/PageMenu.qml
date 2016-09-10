@@ -83,7 +83,7 @@ Q.Drawer {
                     height: parent.height
                     text: pageProfile.tlog ? pageProfile.tlog.author.name : ''
                     onTriggered: {
-                        window.pushProfile(pageProfile.tlog, pageProfile.tlog.author);
+                        window.pushProfile(pageProfile.tlog);
                         drawer.close();
                     }
                 }

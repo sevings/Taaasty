@@ -142,11 +142,10 @@ ApplicationWindow {
                    }
                    )
     }
-    function pushProfile(tlog, author) {
+    function pushProfile(tlog) {
         stack.push(stack.profile,
                    {
                        tlog: tlog,
-                       author: author,
                        poppable: true
                    }
                    )

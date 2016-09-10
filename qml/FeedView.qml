@@ -146,7 +146,10 @@ Pane {
                 visible: mode !== FeedModel.AnonymousMode
                 acceptClick: back.x <= 0 && mode !== FeedModel.AnonymousMode
                 onClicked: {
-                    window.pushProfile(entry.tlog, entry.author);
+                    if (entry.tlog.id === entry.author.id)
+                        window.pushProfile(entry.tlog);
+                    else
+                        window.pushProfileById(entry.author.id);
                 }
             }
             ThemedText {

@@ -63,24 +63,28 @@ void Tlog::init(const QJsonObject data)
     _id = data.value("id").toInt();
     _slug = data.value("slug").toString();
     _title = data.value("title").toString();
-    _entriesCount = Tasty::num2str(data.value("total_entries_count").toInt(),
-                                   "запись", "записи", "записей");
-    _publicEntriesCount = Tasty::num2str(data.value("public_entries_count").toInt(),
-                                         "запись", "записи", "записей");
-    _privateEntriesCount = Tasty::num2str(data.value("private_entries_count").toInt(),
-                                          "скрытая запись", "скрытые записи", "скрытых записей");
+    _entriesCount = "<h1>" + Tasty::num2str(data.value("total_entries_count").toInt(),
+                                            "</h1>запись", "</h1>записи", "</h1>записей");
+    _publicEntriesCount = "<h1>" + Tasty::num2str(data.value("public_entries_count").toInt(),
+                                                  "</h1>запись", "</h1>записи", "</h1>записей");
+    _privateEntriesCount = "<h1>" + Tasty::num2str(data.value("private_entries_count").toInt(),
+                                                   "</h1>скрыта", "</h1>скрыто", "</h1>скрыто");
 
     if (data.contains("stats"))
     {
         auto stats = data.value("stats").toObject();
-        _favoritesCount = QString("%1 в избранном").arg(stats.value("favorites_count").toInt());
-        _commentsCount = Tasty::num2str(stats.value("comments_count").toInt(), "комментарий", "комментария", "комментариев");
-        _tagsCount = Tasty::num2str(stats.value("tags_count").toInt(), "тег", "тега", "тегов");
-        _daysCount = Tasty::num2str(stats.value("days_count").toInt(), "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
+        _favoritesCount = QString("<h1>%1</h1>в избранном")
+                .arg(stats.value("favorites_count").toInt());
+        _commentsCount = Tasty::num2str(stats.value("comments_count").toInt(),
+                                        "комментарий", "комментария", "комментариев");
+        _tagsCount = Tasty::num2str(stats.value("tags_count").toInt(),
+                                    "тег", "тега", "тегов");
+        _daysCount = Tasty::num2str(stats.value("days_count").toInt(),
+                                    "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
     }
     else
     {
-        _favoritesCount.clear();
+        _favoritesCount = "Избранное";
         _commentsCount.clear();
         _tagsCount.clear();
 
@@ -91,9 +95,12 @@ void Tlog::init(const QJsonObject data)
     }
 
     auto relations = data.value("relationships_summary").toObject();
-    _followersCount = Tasty::num2str(relations.value("followers_count").toInt(), "подписчик", "подписчика", "подписчиков");
-    _followingsCount = Tasty::num2str(relations.value("followings_count").toInt(), "подписка", "подписки", "подписок");
-    _ignoredCount = Tasty::num2str(relations.value("ignored_count").toInt(), "блокирован", "блокировано", "блокировано");
+    _followersCount = "<h1>" + Tasty::num2str(relations.value("followers_count").toInt(),
+                                              "</h1>подписчик", "</h1>подписчика", "</h1>подписчиков");
+    _followingsCount = "<h1>" + Tasty::num2str(relations.value("followings_count").toInt(),
+                                               "</h1>подписка", "</h1>подписки", "</h1>подписок");
+    _ignoredCount = "<h1>" + Tasty::num2str(relations.value("ignored_count").toInt(),
+                                            "</h1>блокирован", "</h1>блокировано", "</h1>блокировано");
 
     _hisRelation = _relationship(data, "his_relationship");
     _myRelation =  _relationship(data, "my_relationship");
