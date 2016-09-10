@@ -143,8 +143,8 @@ Pane {
                 }
                 user: entry.author
                 popBody: back
-                visible: mode !== FeedModel.AnonymousMode
-                acceptClick: back.x <= 0 && mode !== FeedModel.AnonymousMode
+                visible: entry.type !== 'anonymous'
+                acceptClick: back.x <= 0
                 onClicked: {
                     if (entry.tlog.id === entry.author.id)
                         window.pushProfile(entry.tlog);
@@ -164,7 +164,7 @@ Pane {
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 horizontalAlignment: Text.AlignLeft
-                visible: mode !== FeedModel.AnonymousMode
+                visible: entry.type !== 'anonymous'
             }
             ThemedText {
                 id: date
