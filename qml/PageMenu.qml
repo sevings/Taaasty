@@ -346,7 +346,6 @@ Q.Drawer {
                     window.pushCalendar(page.tlog);
                     drawer.close();
                 }
-                highlighted: page.mode === FlowsModel.AllFlowsMode
                 visible: !window.chatsShows
                          && page.isProfileView === true
                          && (!page.author.isPrivacy
