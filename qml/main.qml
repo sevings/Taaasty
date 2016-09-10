@@ -115,6 +115,15 @@ ApplicationWindow {
         showLineInput('save');
     }
     function pushMessages(chat) {
+        var item = stack.find(function (item) {
+            return item.isMessagesView && item.chat.id === chat.id;
+        })
+        if (item) {
+            if (item !== stack.currentItem)
+                stack.pop(item);
+            return;
+        }
+
         stack.push(stack.messages,
                    {
                        chat: chat,
@@ -123,6 +132,15 @@ ApplicationWindow {
                    )
     }
     function pushFullEntry(entry, scroll) {
+        var item = stack.find(function (item) {
+            return item.isFullEntryView && item.entry.id === entry.id;
+        })
+        if (item) {
+            if (item !== stack.currentItem)
+                stack.pop(item);
+            return;
+        }
+
         stack.push(stack.fullEntry,
                    {
                        entry: entry,

@@ -228,10 +228,10 @@ Q.Drawer {
                 }
                 visible: !window.chatsShows
                          && page.isMessagesView === true
-                         && page.chat.entry && page.chat.isInvolved
+                         && page.chat.entry //&& page.chat.isInvolved
             }
             MenuSeparator {
-                visible: chatTopic.visible
+                visible: chatTopic.visible && leftChat.visible
             }
 
             // ENTRY SECTION
@@ -270,6 +270,7 @@ Q.Drawer {
                          && Tasty.isAuthorized
             }
             MenuItem {
+                id: leftChat
                 text: ((page.isFullEntryView === true
                         && page.entry.chat
                         && page.entry.chat.type === Chat.PrivateConversation)
