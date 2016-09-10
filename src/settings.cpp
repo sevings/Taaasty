@@ -34,6 +34,9 @@ QString Settings::login() const
 
 void Settings::setLogin(const QString login)
 {
+    if (login == this->login())
+        return;
+
     _settings.setValue("login", login);
 
     emit loginChanged();
@@ -50,6 +53,9 @@ QString Settings::accessToken() const
 
 void Settings::setAccessToken(const QString token)
 {
+    if (token == accessToken())
+        return;
+
     _settings.setValue("access_token", token);
 
     emit accessTokenChanged();
@@ -66,7 +72,11 @@ QDateTime Settings::expiresAt() const
 
 void Settings::setExpiresAt(const QString date)
 {
-    _settings.setValue("expires_at", QDateTime::fromString(date.left(19), "yyyy-MM-ddTHH:mm:ss"));
+    auto at = QDateTime::fromString(date.left(19), "yyyy-MM-ddTHH:mm:ss");
+    if (at == expiresAt())
+        return;
+
+    _settings.setValue("expires_at", at);
 }
 
 
@@ -80,6 +90,9 @@ int Settings::userId() const
 
 void Settings::setUserId(const int id)
 {
+    if (id == userId())
+        return;
+
     _settings.setValue("user_id", id);
 
     emit userIdChanged();
@@ -96,6 +109,9 @@ int Settings::maxImageWidth() const
 
 void Settings::setMaxImageWidth(const int width)
 {
+    if (width == maxImageWidth())
+        return;
+
     _settings.setValue("max_image_width", width);
 
     emit maxImageWidthChanged();
@@ -112,6 +128,9 @@ bool Settings::autoloadImages() const
 
 void Settings::setAutoloadImages(bool load)
 {
+    if (load == autoloadImages())
+        return;
+
     _settings.setValue("autoload_images", load);
 
     emit autoloadImagesChanged(load);
@@ -128,6 +147,9 @@ bool Settings::hideShortPosts() const
 
 void Settings::setHideShortPosts(bool hide)
 {
+    if (hide == hideShortPosts())
+        return;
+
     _settings.setValue("hide_short_posts", hide);
 
     emit hideShortPostsChanged();
@@ -144,6 +166,9 @@ bool Settings::hideNegativeRated() const
 
 void Settings::setHideNegativeRated(bool hide)
 {
+    if (hide == hideNegativeRated())
+        return;
+
     _settings.setValue("hide_negative_rated", hide);
 
     emit hideNegativeRatedChanged();
@@ -160,6 +185,9 @@ bool Settings::darkTheme() const
 
 void Settings::setDarkTheme(bool dark)
 {
+    if (dark == darkTheme())
+        return;
+
     _settings.setValue("dark_theme", dark);
 
     emit darkThemeChanged();
@@ -176,6 +204,9 @@ bool Settings::systemNotifications() const
 
 void Settings::setSystemNotifications(bool enable)
 {
+    if (enable == systemNotifications())
+        return;
+
     _settings.setValue("system_notifications", enable);
 
     emit systemNotificationsChanged();
@@ -192,6 +223,9 @@ QString Settings::lastTitle() const
 
 void Settings::setLastTitle(const QString title)
 {
+    if (title == lastTitle())
+        return;
+
     _settings.setValue("last_title", title);
 
     emit lastTitleChanged();
@@ -208,6 +242,9 @@ QString Settings::lastText() const
 
 void Settings::setLastText(const QString text)
 {
+    if (text == lastText())
+        return;
+
     _settings.setValue("last_text", text);
 
     emit lastTextChanged();
