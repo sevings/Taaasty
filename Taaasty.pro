@@ -22,7 +22,6 @@ SOURCES += src/main.cpp \
     src/cache/cachedimage.cpp \
     src/nbc/stemmerv.cpp \
     src/models/usersmodeltlog.cpp \
-    src/models/usersmodelbayes.cpp \
     src/androidnotifier.cpp \
     src/data/AttachedImage.cpp \
     src/data/Author.cpp \
@@ -72,9 +71,7 @@ HEADERS += \
     src/defines.h \
     src/nbc/stemmerv.h \
     src/models/usersmodeltlog.h \
-    src/models/usersmodelbayes.h \
     src/androidnotifier.h \
-    src/messageoutput.h \
     src/data/AttachedImage.h \
     src/data/Author.h \
     src/data/CalendarEntry.h \

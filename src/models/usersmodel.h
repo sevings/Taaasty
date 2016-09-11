@@ -20,8 +20,6 @@ class UsersModel : public QAbstractListModel
 
 public:
     enum Mode {
-        WaterMode,
-        FireMode,
         FollowingsMode,
         FollowersMode,
         MyFollowingsMode,

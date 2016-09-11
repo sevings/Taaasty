@@ -8,7 +8,6 @@
 #include <QReadWriteLock>
 
 #include "../models/calendarmodel.h"
-#include "../models/usersmodelbayes.h"
 
 class Bayes;
 class Tlog;
@@ -32,8 +31,8 @@ class Trainer : public QObject
 
 public:
     enum Mode {
-        WaterMode = UsersModel::WaterMode,
-        FireMode = UsersModel::FireMode,
+        WaterMode,
+        FireMode,
         UndefinedMode
     };
 

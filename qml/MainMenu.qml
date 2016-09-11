@@ -81,25 +81,6 @@ Item {
                 visible: Tasty.isAuthorized
                 highlighted: stack.currentItem.mode === FeedModel.MyFavoritesMode
             }
-//            MenuSeparator { }
-//            ThemedButton {
-//                anchors.left: parent.left
-//                anchors.right: parent.right
-//                text: 'Неинтересные'
-//                onClicked: { 
-//                    backAnimation.start();
-//                    window.pushUsers(UsersModel.WaterMode);
-//                }
-//            }
-//            ThemedButton {
-//                anchors.left: parent.left
-//                anchors.right: parent.right
-//                text: 'Интересные'
-//                onClicked: { 
-//                    backAnimation.start();
-//                    window.pushUsers(UsersModel.FireMode);
-//                }
-//            }
             MenuSeparator { }
             MenuItem {
                 text: 'Настройки'

@@ -6,7 +6,6 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     innerFlick: users
-    readonly property bool bayesMode: mode === UsersModel.FireMode || mode === UsersModel.WaterMode
     property int mode: UsersModel.MyFollowingsMode
     property int tlogId
     property Tlog tlog: Tlog {
@@ -30,18 +29,9 @@ Pane {
         visible: count > 0
 //        interactive: back.x == 0
         height: contentHeight > parent.height ? parent.height : contentHeight
-        Component.onCompleted: {
-            var qml = 'import org.binque.taaasty 1.0\n' + (bayesMode ? 'UsersModelBayes { } ' : 'UsersModelTlog { } ');
-            var mdl = Qt.createQmlObject(qml, users);
-            back.modeChanged.connect(function() { mdl.mode = back.mode; } )
-            mdl.mode = back.mode;
-            if (!bayesMode)
-            {
-                mdl.tlog = back.tlogId
-                back.tlogIdChanged.connect(function() { mdl.tlog = back.tlogId; })
-            }
-
-            users.model = mdl;
+        model: UsersModelTlog {
+            mode: back.mode
+            tlog: back.tlogId
         }
         delegate: Item {
             width: window.width
@@ -77,15 +67,7 @@ Pane {
                 user: model.user
                 popBody: back
                 onClicked: {
-                    if (bayesMode)
-                    {
-                        if (removing.running)
-                            removing.stop();
-                        else
-                            removing.start();
-                    }
-                    else
-                        window.pushProfileById(user.id);
+                    window.pushProfileById(user.id);
                 }
             }
             Q.Label {
@@ -130,10 +112,6 @@ Pane {
                         'Подписки';
                     else if (back.mode === UsersModel.MyIgnoredMode)
                         'Заблокированы';
-                    else if (back.mode === UsersModel.FireMode)
-                        'Интересные тлоги';
-                    else if (back.mode === UsersModel.WaterMode)
-                        'Неинтересные тлоги';
                     else
                         '';
                 }

@@ -19,7 +19,6 @@
 #include "models/commentsmodel.h"
 #include "models/attachedimagesmodel.h"
 #include "models/usersmodeltlog.h"
-//#include "models/usersmodelbayes.h"
 #include "models/notificationsmodel.h"
 #include "models/chatsmodel.h"
 #include "models/messagesmodel.h"
@@ -41,8 +40,6 @@
 #include "data/User.h"
 #include "data/Flow.h"
 
-#include "messageoutput.h"
-
 
 
 int main(int argc, char *argv[])
@@ -55,8 +52,6 @@ int main(int argc, char *argv[])
 
     QQuickStyle::setStyle("Material");
 
-//    installLog();
-
 #ifdef QT_DEBUG
     auto now = QDateTime::currentDateTime().toMSecsSinceEpoch();
 #endif
@@ -66,7 +61,6 @@ int main(int argc, char *argv[])
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
     qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
     qmlRegisterType<UsersModelTlog>     ("org.binque.taaasty", 1, 0, "UsersModelTlog");
-//    qmlRegisterType<UsersModelBayes>    ("org.binque.taaasty", 1, 0, "UsersModelBayes");
     qmlRegisterType<MessagesModel>      ("org.binque.taaasty", 1, 0, "MessagesModel");
     qmlRegisterType<FlowsModel>         ("org.binque.taaasty", 1, 0, "FlowsModel");
 
@@ -148,8 +142,6 @@ int main(int argc, char *argv[])
     auto pusher = tasty->pusher();
     delete tasty;
     delete pusher;
-
-//    finishLog();
 
     return res;
 }

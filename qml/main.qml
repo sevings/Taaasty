@@ -228,10 +228,9 @@ ApplicationWindow {
                    }
                    )
     }
-    function pushTrainingProgress(full) {
+    function pushTrainingProgress() {
         stack.push(stack.trainingProgress,
                    {
-                       fullLoad: full,
                        poppable: false
                    }
                    )
@@ -427,7 +426,7 @@ ApplicationWindow {
                     if (!stack.find(function (item) {
                         return item.isTrainingProgress;
                     }))
-                        window.pushTrainingProgress(full);
+                        window.pushTrainingProgress();
                 }
                 onTrainFinished: {
                     if (stack.currentItem.isTrainingProgress)
