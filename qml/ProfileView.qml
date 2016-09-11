@@ -177,19 +177,14 @@ Pane {
                     onClicked: window.pushTlog(author.id)
                     enabled: !author.isPrivacy || tlog.myRelationship === Tlog.Friend || tlog.myRelationship === Tlog.Me
                 }
-                Item {
-                    visible: author.isFlow
-                    width: parent.cellWidth
-                    height: parent.cellHeight
-                }
                 ThemedButton {
                     width: parent.cellWidth
                     height: parent.cellHeight
                     font.pointSize: window.fontSmallest
-                    text: tlog.privateEntriesCount
-                    onClicked: window.pushTlog(author.id, 0, '', FeedModel.MyPrivateMode)
-                    visible: !author.isFlow
-                    enabled: tlog.myRelationship === Tlog.Me
+                    text: tlog.tagsCount
+//                    onClicked: window.pushTlog(author.id, 0, '', FeedModel.MyPrivateMode)
+//                    visible: !author.isFlow
+                    enabled: false
                 }
                 ThemedButton {
                     id: favButton

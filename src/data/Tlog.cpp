@@ -77,8 +77,8 @@ void Tlog::init(const QJsonObject data)
                 .arg(stats.value("favorites_count").toInt());
         _commentsCount = Tasty::num2str(stats.value("comments_count").toInt(),
                                         "комментарий", "комментария", "комментариев");
-        _tagsCount = Tasty::num2str(stats.value("tags_count").toInt(),
-                                    "тег", "тега", "тегов");
+        _tagsCount = "<h1>" + Tasty::num2str(stats.value("tags_count").toInt(),
+                                    "</h1>тег", "</h1>тега", "</h1>тегов");
         _daysCount = Tasty::num2str(stats.value("days_count").toInt(),
                                     "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
     }
@@ -86,7 +86,7 @@ void Tlog::init(const QJsonObject data)
     {
         _favoritesCount = "Избранное";
         _commentsCount.clear();
-        _tagsCount.clear();
+        _tagsCount = "Теги";
 
         auto date = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
         auto today = QDateTime::currentDateTime();
