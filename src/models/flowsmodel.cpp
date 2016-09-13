@@ -41,6 +41,12 @@ FlowsModel::FlowsModel(QObject* parent)
     qDebug() << "FlowsModel";
 
     setMode(Tasty::instance()->isAuthorized() ? MyMode : PopularMode);
+    
+    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, [=]()
+    {
+        if (_mode == MyMode)
+            reset();
+    }));
 }
 
 
