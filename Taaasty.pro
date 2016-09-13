@@ -44,7 +44,8 @@ SOURCES += src/main.cpp \
     src/data/Flow.cpp \
     src/textreader.cpp \
     src/data/MessageBase.cpp \
-    src/data/TastyData.cpp
+    src/data/TastyData.cpp \
+    src/models/tagsmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -93,7 +94,8 @@ HEADERS += \
     src/data/Flow.h \
     src/textreader.h \
     src/data/MessageBase.h \
-    src/data/TastyData.h
+    src/data/TastyData.h \
+    src/models/tagsmodel.h
 
 DISTFILES += \
     android/AndroidManifest.xml \
