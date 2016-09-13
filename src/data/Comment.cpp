@@ -111,6 +111,7 @@ void Comment::_init(const QJsonObject data)
     _setTruncatedText();
 
     emit idChanged();
+    emit userUpdated();
     emit baseUpdated();
     emit updated();
 

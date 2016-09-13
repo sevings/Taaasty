@@ -37,7 +37,7 @@ class MessageBase : public TastyData
     Q_PROPERTY(QString  createdAt       MEMBER _createdAt      NOTIFY baseUpdated)
     Q_PROPERTY(QString  text            MEMBER _text           NOTIFY textUpdated)
     Q_PROPERTY(QString  truncatedText   MEMBER _truncatedText  NOTIFY textUpdated)
-    Q_PROPERTY(User*    user            MEMBER _user           NOTIFY baseUpdated)
+    Q_PROPERTY(User*    user            MEMBER _user           NOTIFY userUpdated)
     Q_PROPERTY(bool     isRead          MEMBER _read           NOTIFY readChanged)
     Q_PROPERTY(bool     containsImage   MEMBER _containsImage  NOTIFY baseUpdated)
 
@@ -52,6 +52,7 @@ public:
     User* user() const;
 
 signals:
+    void userUpdated();
     void baseUpdated();
     void textUpdated();
     void readChanged();

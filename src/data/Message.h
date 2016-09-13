@@ -61,6 +61,7 @@ private slots:
     void _init(const QJsonObject data);
     void _correctHtml();
     void _markRead(const QJsonObject data);
+    void _updateUser();
 
 private:
     void _updateRead(const QJsonObject data);
