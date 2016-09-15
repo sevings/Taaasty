@@ -223,6 +223,27 @@ ApplicationWindow {
                    }
                    )
     }
+    function pushTags(tlog) {
+        stack.push(stack.tags,
+                   {
+                       tlog: tlog,
+                       tlogId: tlog.id,
+                       poppable: true
+                   }
+                   )
+    }
+    function pushTlogTag(tlog, tag) {
+        stack.push(stack.feed,
+                   {
+                       mode: FeedModel.TlogMode,
+                       tlog: tlog,
+                       tlogId: tlog.id,
+                       slug: tlog.slug,
+                       tag: tag,
+                       poppable: true
+                   }
+                   )
+    }
     function pushCalendar(tlog) {
         stack.push(stack.calendar,
                    {
@@ -427,6 +448,7 @@ ApplicationWindow {
             property Component about:               Qt.createComponent("About.qml",             Component.Asynchronous, stack)
             property Component settings:            Qt.createComponent("SettingsPage.qml",      Component.Asynchronous, stack)
             property Component flows:               Qt.createComponent("FlowsView.qml",         Component.Asynchronous, stack)
+            property Component tags:                Qt.createComponent("TagsView.qml",          Component.Asynchronous, stack)
             Connections {
                 target: Tasty
                 onAuthorizationNeeded: {

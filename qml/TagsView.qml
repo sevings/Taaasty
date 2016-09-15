@@ -51,7 +51,10 @@ Pane {
             }
             onLoaded: {
                 if (!listView.visible)
-                    splash.text = 'Нет тегов'
+                {
+                    splash.text = 'Нет тегов';
+                    splash.running = false;
+                }
             }
         }
         delegate: Rectangle {
@@ -68,7 +71,7 @@ Pane {
                         return;
                     }
 
-                    // window.pushFullEntry(entry.fullEntry);
+                    window.pushTlogTag(back.tlog, model.tagName);
                 }
             }
             ThemedText {

@@ -44,6 +44,7 @@ class FeedModel : public QAbstractListModel
     Q_PROPERTY(bool     isPrivate   READ isPrivate                  NOTIFY isPrivateChanged)
     Q_PROPERTY(int      minRating   READ minRating  WRITE setMinRating)
     Q_PROPERTY(QString  query       READ query      WRITE setQuery  NOTIFY queryChanged)
+    Q_PROPERTY(QString  tag         READ tag        WRITE setTag    NOTIFY tagChanged)
 
 public:
     enum Mode {
@@ -82,25 +83,29 @@ public:
     bool canFetchMore(const QModelIndex& parent) const override;
     void fetchMore(const QModelIndex& parent) override;
 
-    Q_INVOKABLE void setMode(const Mode mode);
-    Q_INVOKABLE Mode mode() const {return _mode; }
+    void setMode(const Mode mode);
+    Mode mode() const {return _mode; }
 
-    Q_INVOKABLE void setTlog(const int tlog);
-    Q_INVOKABLE int tlog() const {return _tlog; }
+    void setTlog(const int tlog);
+    int tlog() const {return _tlog; }
 
-    Q_INVOKABLE void setSlug(const QString slug);
-    Q_INVOKABLE QString slug() const { return _slug; }
+    void setSlug(const QString slug);
+    QString slug() const { return _slug; }
 
-    Q_INVOKABLE void setMinRating(const int rating);
-    Q_INVOKABLE int minRating() const { return _minRating; }
+    void setMinRating(const int rating);
+    int minRating() const { return _minRating; }
 
-    Q_INVOKABLE void setQuery(const QString query);
-    Q_INVOKABLE QString query() const { return _query; }
+    void setQuery(const QString query);
+    QString query() const { return _query; }
+
+    void setTag(const QString tag);
+    QString tag() const { return _tag; }
 
     Q_INVOKABLE void reset(Mode mode = InvalidMode, int tlog = -1,
-                           QString slug = QString(), QString query = QString());
+                           QString slug = QString(), QString query = QString(),
+                           QString tag = QString());
 
-    Q_INVOKABLE bool isPrivate() const { return _isPrivate; }
+    bool isPrivate() const { return _isPrivate; }
 
     bool hideMode() const;
     bool hideShort() const;
@@ -119,6 +124,7 @@ signals:
     void loadingChanged();
     void isPrivateChanged();
     void queryChanged();
+    void tagChanged();
     void entryCreated(EntryPtr entry);
 
 protected:
@@ -152,6 +158,7 @@ private:
     bool _isPrivate;
     int _minRating;
     QString _query;
+    QString _tag;
     int     _page;
     QString _prevDate;
 

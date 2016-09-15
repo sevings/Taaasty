@@ -43,6 +43,7 @@
 #include "models/chatsmodel.h"
 #include "models/messagesmodel.h"
 #include "models/flowsmodel.h"
+#include "models/tagsmodel.h"
 #include "nbc/bayes.h"
 #include "nbc/trainer.h"
 
@@ -83,6 +84,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<UsersModelTlog>     ("org.binque.taaasty", 1, 0, "UsersModelTlog");
     qmlRegisterType<MessagesModel>      ("org.binque.taaasty", 1, 0, "MessagesModel");
     qmlRegisterType<FlowsModel>         ("org.binque.taaasty", 1, 0, "FlowsModel");
+    qmlRegisterType<TagsModel>          ("org.binque.taaasty", 1, 0, "TagsModel");
 
     qmlRegisterUncreatableType<UsersModel>("org.binque.taaasty", 1, 0, "UsersModel", "Use subclasses instead");
 

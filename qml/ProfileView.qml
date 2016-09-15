@@ -202,9 +202,9 @@ Pane {
                     height: parent.cellHeight
                     font.pointSize: window.fontSmallest
                     text: tlog.tagsCount
-//                    onClicked: window.pushTlog(author.id, 0, '', FeedModel.MyPrivateMode)
+                    onClicked: window.pushTags(tlog)
 //                    visible: !author.isFlow
-                    enabled: false
+                    enabled: readButton.enabled
                 }
                 ThemedButton {
                     id: favButton

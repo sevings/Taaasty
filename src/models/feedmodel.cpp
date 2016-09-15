@@ -131,6 +131,8 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 
     if (!_query.isEmpty())
         url += QString("%1q=%2&page=%3").arg(splitter).arg(_query).arg(_page++);
+    else if (!_tag.isEmpty() && (_mode == TlogMode || _mode == MyTlogMode))
+        url += QString("%1&page=%3").arg(splitter).arg(_page++);
     else if (!_prevDate.isEmpty())
         url += QString("%1date=%2").arg(splitter).arg(_prevDate);
     else if (_lastEntry)
@@ -139,7 +141,7 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     if (_prevDate.isEmpty())
     {
         splitter = url.endsWith(".json") ? "?" : "&";
-        int limit = _entries.isEmpty() && _query.isEmpty() ? 10 : 20;
+        int limit = _entries.isEmpty() && _query.isEmpty() && _tag.isEmpty() ? 10 : 20;
         url += QString("%1limit=%2").arg(splitter).arg(limit);
     }
 
@@ -195,15 +197,16 @@ void FeedModel::setQuery(const QString query)
 
 
 
-void FeedModel::reset(Mode mode, int tlog, QString slug, QString query)
+void FeedModel::setTag(const QString tag)
+{
+    reset (InvalidMode, 0, QString(), QString(), tag);
+}
+
+
+
+void FeedModel::reset(Mode mode, int tlog, QString slug, QString query, QString tag)
 {
     beginResetModel();
-
-    if (mode != InvalidMode)
-    {
-        _mode = mode;
-        _setUrl(mode);
-    }
 
     if (tlog > 0)
         _tlog = tlog;
@@ -214,6 +217,14 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query)
     _page = 1;
     _query = QUrl::toPercentEncoding(query);
     emit queryChanged();
+
+    _tag = QUrl::toPercentEncoding(tag);
+    emit tagChanged();
+
+    if (mode != InvalidMode)
+        _mode = mode;
+
+    _setUrl(_mode);
 
     _isPrivate = false;
     emit isPrivateChanged();
@@ -603,8 +614,12 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
     switch(mode)
     {
     case MyTlogMode:
-        _url = QString("v1/tlog/%1/entries/tlogs.json")
-                .arg(Tasty::instance()->settings()->userId());
+        if (_tag.isEmpty())
+            _url = QString("v1/tlog/%1/entries/tlogs.json")
+                    .arg(Tasty::instance()->settings()->userId());
+        else
+            _url = QString("v1/tlog/%1/entries/tags_tlogs/%2.json")
+                    .arg(Tasty::instance()->settings()->userId()).arg(_tag);
         break;
     case MyFavoritesMode:
         _url = QString("v1/tlog/%1/favorites/tlogs.json")
@@ -639,7 +654,10 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
         _url = "v1/feeds/best/tlogs.json?rating=%1";
         break;
     case TlogMode:
-        _url = "v1/tlog/%1/entries/tlogs.json";
+        if (_tag.isEmpty())
+            _url = QString("v1/tlog/%1/entries/tlogs.json");
+        else
+            _url = QString("v1/tlog/%2/entries/tags_tlogs/%1.json").arg(_tag);
         break;
     case FavoritesMode:
         _url = "v1/tlog/%1/favorites/tlogs.json";

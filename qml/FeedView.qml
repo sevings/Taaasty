@@ -37,6 +37,7 @@ Pane {
     property string slug: ''
     property int minRating: 0
     property string query: ''
+    property string tag: ''
     property Tlog tlog: Tlog {
         tlogId: back.tlogId
         slug: back.slug
@@ -108,6 +109,7 @@ Pane {
             slug: back.slug
             minRating: back.minRating
             query: back.query
+            tag: back.tag
         }
         delegate: Item {
             id: entryView
