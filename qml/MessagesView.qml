@@ -31,8 +31,10 @@ Pane {
         tlogId: chat.recipientId
     }
     readonly property bool isMessagesView: true
+    property bool wasEmpty
     signal addGreeting(string slug)
     Component.onCompleted: {
+        back.wasEmpty = !listView.visible;
         chat.messages.check();
         listView.positionViewAtEnd();
     }
@@ -55,8 +57,10 @@ Pane {
         visible: count > 0 || !model.hasMore
         model: chat.messages
         onCountChanged: {
-            if (count < 30)
+            if (back.wasEmpty) {
                 positionViewAtEnd();
+                back.wasEmpty = false;
+            }
         }
         header: ListBusyIndicator {
             running: listView.model.loading
