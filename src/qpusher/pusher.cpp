@@ -70,28 +70,28 @@ Pusher::Pusher(const QString appKey, QObject *parent)
 
 #ifdef QT_DEBUG
     QObject::connect(_socket, static_cast<void(QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error),
-        [=](QAbstractSocket::SocketError error)
+        [](QAbstractSocket::SocketError error)
     {
         qDebug() << "Socket error:" << error;
     });
 
-    QObject::connect(_pingTimer, &QTimer::timeout, [=]()
+    QObject::connect(_pingTimer, &QTimer::timeout, []()
     {
         qDebug() << "pinging pusher at" << QTime::currentTime().toString();
     });
 
-    QObject::connect(_socket, &QWebSocket::pong, [=]()
+    QObject::connect(_socket, &QWebSocket::pong, []()
     {
         qDebug() << "pong from pusher at" << QTime::currentTime().toString();
     });
 
-    QObject::connect(_pongTimer, &QTimer::timeout, [=]()
+    QObject::connect(_pongTimer, &QTimer::timeout, []()
     {
         qDebug() << "pusher has not ponged before" << QTime::currentTime().toString();
     });
 
     QObject::connect(_socket, &QWebSocket::sslErrors,
-                     [=](const QList<QSslError>& errors)
+                     [](const QList<QSslError>& errors)
     {
         foreach (auto error, errors)
             qDebug() << "Socket SSL error:" << error;
