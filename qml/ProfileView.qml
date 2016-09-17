@@ -141,8 +141,20 @@ Pane {
             ThemedText {
                 width: window.width
                 horizontalAlignment: Text.AlignHCenter
-                text: tlog.hisRelationship === Tlog.Friend ? 'Следит за вашим тлогом'
-                                                           : 'Не следит за вашим тлогом'
+                text: {
+                    switch (tlog.hisRelationship) {
+                    case Tlog.Friend:
+                        'Следит за вашим тлогом';    break;
+                    case Tlog.None:
+                        'Не следит за вашим тлогом'; break;
+                    case Tlog.Me:
+                        'Это вы';                    break;
+                    case Tlog.Ignored:
+                        'Вы заблокированы';          break;
+                    default:
+                        '';
+                    }
+                }
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
                          && tlog.hisRelationship !== Tlog.Undefined && tlog.hisRelationship !== Tlog.Me
@@ -195,7 +207,10 @@ Pane {
                     font.pointSize: window.fontSmallest
                     text: tlog.publicEntriesCount
                     onClicked: window.pushTlog(author.id)
-                    enabled: !author.isPrivacy || tlog.myRelationship === Tlog.Friend || tlog.myRelationship === Tlog.Me
+                    enabled: (!author.isPrivacy
+                              || tlog.myRelationship === Tlog.Friend
+                              || tlog.myRelationship === Tlog.Me)
+                             && tlog.hisRelationship !== Tlog.Ignored
                 }
                 ThemedButton {
                     width: parent.cellWidth
