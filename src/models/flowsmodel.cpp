@@ -42,7 +42,7 @@ FlowsModel::FlowsModel(QObject* parent)
 
     setMode(Tasty::instance()->isAuthorized() ? MyMode : PopularMode);
     
-    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, [=]()
+    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, [this]()
     {
         if (_mode == MyMode)
             reset();
@@ -115,15 +115,12 @@ void FlowsModel::setMode(const FlowsModel::Mode mode)
     {
     case PopularMode:
         _url = "v1/flows.json?sort=popular&page=%1&limit=20";
-        disconnect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(reset()));
         break;
     case NewestMode:
         _url = "v1/flows.json?sort=newest&page=%1&limit=20";
-        disconnect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(reset()));
         break;
     case MyMode:
         _url = "v1/flows.json?sort=my&page=%1&limit=20";
-        Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(reset())));
         break;
     default:
         qDebug() << "Flows mode:" << _mode;

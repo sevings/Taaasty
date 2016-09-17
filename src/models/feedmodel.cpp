@@ -50,10 +50,19 @@ FeedModel::FeedModel(QObject* parent)
 {
     qDebug() << "FeedModel";
 
-    Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideShortPostsChanged()),    this, SLOT(_changeHideSome())));
-    Q_TEST(connect(Tasty::instance()->settings(), SIGNAL(hideNegativeRatedChanged()), this, SLOT(_changeHideSome())));
+    Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideShortPostsChanged,    this, &FeedModel::_changeHideSome));
+    Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideNegativeRatedChanged, this, &FeedModel::_changeHideSome));
 
-    Q_TEST(connect(Tasty::instance(), SIGNAL(authorized()), this, SLOT(_reloadRatings())));
+    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, [this]()
+    {
+        if (_mode == MyTlogMode
+                || _mode == MyFavoritesMode
+                || _mode == MyPrivateMode
+                || _mode == FriendsMode)
+            reset();
+        else
+            _reloadRatings();
+    }));
 }
 
 
