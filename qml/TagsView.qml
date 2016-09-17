@@ -80,6 +80,7 @@ Pane {
                     verticalCenter: parent.verticalCenter
                     left: parent.left
                     right: tagCount.left
+                    margins: 1.5 * mm
                 }
                 text: '#' + model.tagName
                 elide: Text.ElideRight
@@ -92,6 +93,7 @@ Pane {
                 anchors {
                     verticalCenter: parent.verticalCenter
                     right: parent.right
+                    margins: 1.5 * mm
                 }
                 text: model.tagCount
                 color: window.secondaryTextColor
