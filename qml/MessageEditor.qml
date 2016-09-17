@@ -27,7 +27,7 @@ Item {
         left: parent.left
         right: parent.right
     }
-    implicitHeight: 16 * mm
+    implicitHeight: 17 * mm
     property alias message: input.text
     property bool uploading: false
     onFocusChanged: {

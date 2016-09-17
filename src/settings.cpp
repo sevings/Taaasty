@@ -45,6 +45,29 @@ Settings::Settings(QObject *parent)
 
 
 
+void Settings::swapProfiles()
+{
+    auto save  = saveProfile();
+    auto login = save ? this->login() : QString();
+    auto token = save ? accessToken() : QString();
+    auto until = save ? expiresAt()   : QDateTime();
+    auto id    = save ? userId()      : 0;
+
+    setSaveProfile(prevSaveProfile());
+    setLogin(prevLogin());
+    setAccessToken(prevAccessToken());
+    setExpiresAt(prevExpiresAt());
+    setUserId(prevUserId());
+
+    setPrevSaveProfile(save);
+    setPrevLogin(login);
+    setPrevAccessToken(token);
+    setPrevExpiresAt(until);
+    setPrevUserId(id);
+}
+
+
+
 QString Settings::login() const
 {
     return _settings.value("login").toString();
@@ -90,13 +113,20 @@ QDateTime Settings::expiresAt() const
 
 
 
+void Settings::setExpiresAt(const QDateTime date)
+{
+    if (date == expiresAt())
+        return;
+
+    _settings.setValue("expires_at", date);
+}
+
+
+
 void Settings::setExpiresAt(const QString date)
 {
     auto at = QDateTime::fromString(date.left(19), "yyyy-MM-ddTHH:mm:ss");
-    if (at == expiresAt())
-        return;
-
-    _settings.setValue("expires_at", at);
+    setExpiresAt(at);
 }
 
 
@@ -116,6 +146,122 @@ void Settings::setUserId(const int id)
     _settings.setValue("user_id", id);
 
     emit userIdChanged();
+}
+
+
+
+bool Settings::saveProfile() const
+{
+    return _settings.value("save_profile").toBool();
+}
+
+
+
+void Settings::setSaveProfile(const bool save)
+{
+    if (save == saveProfile())
+        return;
+
+    _settings.setValue("save_profile", save);
+}
+
+
+
+QString Settings::prevLogin() const
+{
+    return _settings.value("prev_login").toString();
+}
+
+
+
+void Settings::setPrevLogin(const QString login)
+{
+    if (login == this->prevLogin())
+        return;
+
+    _settings.setValue("prev_login", login);
+
+    emit prevLoginChanged();
+}
+
+
+
+QString Settings::prevAccessToken() const
+{
+    return _settings.value("prev_access_token").toString();
+}
+
+
+
+void Settings::setPrevAccessToken(const QString token)
+{
+    if (token == prevAccessToken())
+        return;
+
+    _settings.setValue("prev_access_token", token);
+
+    emit prevAccessTokenChanged();
+}
+
+
+
+QDateTime Settings::prevExpiresAt() const
+{
+    return _settings.value("prev_expires_at").toDateTime();
+}
+
+
+
+void Settings::setPrevExpiresAt(const QDateTime date)
+{
+    if (date == prevExpiresAt())
+        return;
+
+    _settings.setValue("prev_expires_at", date);
+}
+
+
+
+void Settings::setPrevExpiresAt(const QString date)
+{
+    auto at = QDateTime::fromString(date.left(19), "yyyy-MM-ddTHH:mm:ss");
+    setPrevExpiresAt(at);
+}
+
+
+
+int Settings::prevUserId() const
+{
+    return _settings.value("prev_user_id").toInt();
+}
+
+
+
+void Settings::setPrevUserId(const int id)
+{
+    if (id == prevUserId())
+        return;
+
+    _settings.setValue("prev_user_id", id);
+
+    emit prevUserIdChanged();
+}
+
+
+
+bool Settings::prevSaveProfile() const
+{
+    return _settings.value("prev_save_profile").toBool();
+}
+
+
+
+void Settings::setPrevSaveProfile(const bool save)
+{
+    if (save == prevSaveProfile())
+        return;
+
+    _settings.setValue("prev_save_profile", save);
 }
 
 

@@ -46,6 +46,7 @@ Tasty::Tasty(QNetworkAccessManager* web)
     , _unreadChats(0)
     , _unreadNotifications(0)
     , _me(nullptr)
+    , _saveProfile(false)
 {
     qDebug() << "Tasty";
 
@@ -174,9 +175,11 @@ User* Tasty::me()
 
 
 
-void Tasty::authorize(const QString login, const QString password)
+void Tasty::authorize(const QString login, const QString password, bool save)
 {
     qDebug() << "authorize";
+
+    _saveProfile = save;
 
     auto data = QString("email=%1&password=%2")
             .arg(login)
@@ -186,6 +189,16 @@ void Tasty::authorize(const QString login, const QString password)
                                   QNetworkAccessManager::PostOperation, data);
 
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readAccessToken(const QJsonObject)));
+
+}
+
+
+
+void Tasty::swapProfiles()
+{
+    _settings->swapProfiles();
+
+    _finishLogin();
 }
 
 
@@ -199,6 +212,9 @@ void Tasty::reconnectToPusher()
 
 void Tasty::_readAccessToken(const QJsonObject data)
 {
+    if (_settings->saveProfile())
+        _settings->swapProfiles();
+
     auto apiKey      = data.value("api_key").toObject();
     auto accessToken = apiKey.value("access_token").toString();
     auto expiresAt   = apiKey.value("expires_at").toString();
@@ -209,17 +225,9 @@ void Tasty::_readAccessToken(const QJsonObject data)
     _settings->setExpiresAt(expiresAt);
     _settings->setUserId(userId);
     _settings->setLogin(login);
+    _settings->setSaveProfile(_saveProfile);
 
-    _unreadChats = 0;
-    emit unreadChatsChanged();
-
-    _unreadNotifications = 0;
-    emit unreadNotificationsChanged();
-
-    if (_me)
-        _me->setId(userId);
-
-    emit authorized();
+    _finishLogin();
 }
 
 
@@ -262,4 +270,20 @@ void Tasty::_saveOrReconnect(Qt::ApplicationState state)
         _pusher->connect();
     else
         Bayes::instance()->saveDb();
+}
+
+
+
+void Tasty::_finishLogin()
+{
+    _unreadChats = 0;
+    emit unreadChatsChanged();
+
+    _unreadNotifications = 0;
+    emit unreadNotificationsChanged();
+
+    if (_me)
+        _me->setId(_settings->userId());
+
+    emit authorized();
 }

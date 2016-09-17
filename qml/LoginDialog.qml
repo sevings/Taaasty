@@ -88,8 +88,17 @@ Pane {
                 width: 40 * mm
                 onAccepted: {
                     if (loginButton.enabled)
-                        Tasty.authorize(mail.text, password.text);
+                        Tasty.authorize(mail.text, password.text, saveBox.checked);
                 }
+            }
+            ThemedCheckBox {
+                id: saveBox
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: 40 * mm
+                text: 'Сохранить'
+                checked: true
             }
             ThemedButton {
                 id: loginButton
@@ -98,7 +107,7 @@ Pane {
                 }
                 text: 'Войти'
                 width: 40 * mm
-                onClicked: Tasty.authorize(mail.text, password.text)
+                onClicked: Tasty.authorize(mail.text, password.text, saveBox.checked)
                 enabled: mail.text && password.text
             }
         //    ThemedButton {

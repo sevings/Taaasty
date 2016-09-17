@@ -81,7 +81,8 @@ signals:
     void networkAccessible();
 
 public slots:
-    void authorize(const QString login, const QString password);
+    void authorize(const QString login, const QString password, bool save);
+    void swapProfiles();
     void reconnectToPusher();
 
 private slots:
@@ -106,6 +107,10 @@ private:
     int _unreadNotifications;
 
     User* _me;
+
+    bool _saveProfile;
+
+    void _finishLogin();
 };
 
 #endif // TASTY_H
