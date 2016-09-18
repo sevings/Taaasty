@@ -50,8 +50,10 @@ class Settings : public QObject
 
 public:
     explicit Settings(QObject *parent = 0);
+    ~Settings();
 
     void swapProfiles();
+    void clearProfile();
 
     QString login() const;
     void setLogin(const QString login);

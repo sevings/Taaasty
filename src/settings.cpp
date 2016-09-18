@@ -45,6 +45,14 @@ Settings::Settings(QObject *parent)
 
 
 
+Settings::~Settings()
+{
+    if (!saveProfile())
+        clearProfile();
+}
+
+
+
 void Settings::swapProfiles()
 {
     auto save  = saveProfile();
@@ -64,6 +72,17 @@ void Settings::swapProfiles()
     setPrevAccessToken(token);
     setPrevExpiresAt(until);
     setPrevUserId(id);
+}
+
+
+
+void Settings::clearProfile()
+{
+    setSaveProfile(false);
+    setLogin(QString());
+    setAccessToken(QString());
+    setExpiresAt(QDateTime());
+    setUserId(0);
 }
 
 
