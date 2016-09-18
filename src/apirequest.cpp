@@ -32,50 +32,55 @@ ApiRequest::ApiRequest(const QString url,
                        const bool accessTokenRequired,
                        const QNetworkAccessManager::Operation method,
                        const QString data)
-    : _reply(nullptr)
-    , _readyData(data.toUtf8())
-    , _method(method)
+    : _readyData(data.toUtf8())
+    , _accessToken(Tasty::instance()->settings()->accessToken().toUtf8())
+    , _fullUrl(QString("http://api.taaasty.com:80/%1").arg(url))
 {
     qDebug() << "ApiRequest to" << url;
 
-    QUrl fullUrl(QString("http://api.taaasty.com:80/%1").arg(url));
-
-    auto tasty = Tasty::instance();
-    auto settings = tasty->settings();
-    auto accessToken = settings->accessToken();
-    //auto expiresAt = settings->expiresAt();
-
-    if (accessTokenRequired && (!tasty->isAuthorized()))// || expiresAt <= QDateTime::currentDateTime()))
+    if (accessTokenRequired && (!Tasty::instance()->isAuthorized()))// || expiresAt <= QDateTime::currentDateTime()))
     {
         qDebug() << "authorization needed for" << url;
-        emit tasty->authorizationNeeded();
+        emit Tasty::instance()->authorizationNeeded();
         deleteLater();
         return;
     }
 
-    _request.setUrl(fullUrl);
-    _request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    _request.setHeader(QNetworkRequest::ContentLengthHeader, _readyData.length());
-    _request.setRawHeader(QByteArray("X-User-Token"), accessToken.toUtf8());
-    _request.setRawHeader(QByteArray("Connection"), QByteArray("close"));
+    Q_TEST(connect(this, SIGNAL(error(int,QString)), Tasty::instance(), SIGNAL(error(int,QString))));
 
-    Q_TEST(connect(this, SIGNAL(error(int,QString)), tasty, SIGNAL(error(int,QString))));
-
-    _start();
+    _start(method);
 }
 
 
 
-ApiRequest::~ApiRequest()
+ApiRequest::ApiRequest(const QString url,
+                       const QString accessToken)
+    : _accessToken(accessToken.toUtf8())
+    , _fullUrl(QString("http://api.taaasty.com:80/%1").arg(url))
 {
-    delete _reply;
+    qDebug() << "ApiRequest to" << url;
+
+    if (accessToken.isEmpty())
+    {
+        deleteLater();
+        return;
+    }
+
+    _start(QNetworkAccessManager::GetOperation);
 }
 
 
 
 void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 {
-    qDebug() << code << _reply->errorString(); //AuthenticationRequiredError 204, UnknownContentError 299
+#ifdef QT_DEBUG
+    auto reply = qobject_cast<QNetworkReply*>(sender());
+
+    if (reply)
+        qDebug() << code << reply->errorString(); //AuthenticationRequiredError 204, UnknownContentError 299
+    else
+        qDebug() << code;
+#endif
 
     emit error(code);
 
@@ -88,19 +93,21 @@ void ApiRequest::_finished()
 {
     deleteLater();
 
-    auto data = _reply->readAll();
+    auto reply = qobject_cast<QNetworkReply*>(sender());
+    if (!reply)
+        return;
+
+    auto data = reply->readAll();
 
     QJsonParseError jpe;
     auto json = QJsonDocument::fromJson(data, &jpe);
     if (jpe.error != QJsonParseError::NoError)
     {
-//        qDebug() << "parse error:" << jpe.errorString();
-//        qDebug() << "json:" << data;
         emit success(QString::fromUtf8(data));
         return;
     }
 
-    if (_reply->error() == QNetworkReply::NoError)
+    if (reply->error() == QNetworkReply::NoError)
     {
         if (json.isObject())
             emit success(json.object());
@@ -121,22 +128,30 @@ void ApiRequest::_finished()
 
 
 
-void ApiRequest::_start()
+void ApiRequest::_start(const QNetworkAccessManager::Operation method)
 {
+    QNetworkRequest request;
+    request.setUrl(_fullUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    request.setHeader(QNetworkRequest::ContentLengthHeader, _readyData.length());
+    request.setRawHeader(QByteArray("X-User-Token"), _accessToken);
+    request.setRawHeader(QByteArray("Connection"), QByteArray("close"));
+
+    QNetworkReply* reply = nullptr;
     auto manager = Tasty::instance()->manager();
-    switch(_method)
+    switch(method)
     {
     case QNetworkAccessManager::GetOperation:
-        _reply = manager->get(_request);
+        reply = manager->get(request);
         break;
     case QNetworkAccessManager::PutOperation:
-        _reply = manager->put(_request, _readyData);
+        reply = manager->put(request, _readyData);
         break;
     case QNetworkAccessManager::PostOperation:
-        _reply = manager->post(_request, _readyData);
+        reply = manager->post(request, _readyData);
         break;
     case QNetworkAccessManager::DeleteOperation:
-        _reply = manager->deleteResource(_request);
+        reply = manager->deleteResource(request);
         break;
     default:
         qDebug() << "Unsupported operation in ApiRequest";
@@ -144,7 +159,7 @@ void ApiRequest::_start()
         return;
     }
 
-    Q_TEST(connect(_reply, SIGNAL(finished()), this, SLOT(_finished())));
-    Q_TEST(connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(_printNetworkError(QNetworkReply::NetworkError))));
+    Q_TEST(connect(reply, SIGNAL(finished()), this, SLOT(_finished())));
+    Q_TEST(connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                   this, SLOT(_printNetworkError(QNetworkReply::NetworkError))));
 }

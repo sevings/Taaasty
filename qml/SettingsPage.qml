@@ -95,12 +95,22 @@ Pane {
                 text: Tasty.isAuthorized ? 'Вы вошли как <i>' + Settings.login + '</i>' : 'Вы не вошли'
             }
             ThemedButton {
+                id: prevLoginButton
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
                 highlighted: true
                 text: Settings.prevLogin
-                onClicked: Tasty.swapProfiles()
                 visible: Settings.prevLogin.length > 0
+                onClicked: {
+                    enabled = false;
+                    Tasty.swapProfiles();
+                }
+                Connections {
+                    target: Tasty
+                    onAuthorized: {
+                        prevLoginButton.enabled = true;
+                    }
+                }
             }
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter

@@ -196,9 +196,14 @@ void Tasty::authorize(const QString login, const QString password, bool save)
 
 void Tasty::swapProfiles()
 {
-    _settings->swapProfiles();
+    auto token = _settings->prevAccessToken();
+    if (token.isEmpty())
+        return;
 
-    _finishLogin();
+    // avoid error 403 reasonable_security_violation (is that even legal?)
+    auto request = new ApiRequest("v1/app/stats.json", token);
+    Q_TEST(connect(request, SIGNAL(error(int,QString)),   this, SLOT(_swapProfiles())));
+    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_swapProfiles())));
 }
 
 
@@ -206,6 +211,15 @@ void Tasty::swapProfiles()
 void Tasty::reconnectToPusher()
 {
     _pusher->connect();
+}
+
+
+
+void Tasty::_swapProfiles()
+{
+    _settings->swapProfiles();
+
+    _finishLogin();
 }
 
 

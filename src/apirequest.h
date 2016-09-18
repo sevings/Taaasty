@@ -33,11 +33,13 @@ class ApiRequest : public QObject
 {
     Q_OBJECT
 public:
-    explicit ApiRequest(const QString url,
-                        const bool accessTokenRequired = false,
-                        const QNetworkAccessManager::Operation method = QNetworkAccessManager::GetOperation,
-                        const QString data = QString());
-    ~ApiRequest();
+    ApiRequest(const QString url,
+               const bool accessTokenRequired = false,
+               const QNetworkAccessManager::Operation method = QNetworkAccessManager::GetOperation,
+               const QString data = QString());
+
+    // get resource with another token
+    ApiRequest(const QString url, const QString accessToken);
 
 signals:
     void success(const QJsonObject data);
@@ -51,13 +53,11 @@ private slots:
     void _finished();
 
 private:
-    void _start();
+    QByteArray  _readyData;
+    QByteArray  _accessToken;
+    QUrl        _fullUrl;
 
-    QNetworkReply*  _reply;
-    QNetworkRequest _request;
-    QByteArray      _readyData;
-
-    const QNetworkAccessManager::Operation _method;
+    void _start(const QNetworkAccessManager::Operation method);
 };
 
 #endif // APIREQUEST_H

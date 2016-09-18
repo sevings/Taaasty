@@ -86,6 +86,7 @@ public slots:
     void reconnectToPusher();
 
 private slots:
+    void _swapProfiles();
     void _readAccessToken(const QJsonObject data);
 
     void _showNetAccessibility(QNetworkAccessManager::NetworkAccessibility accessible);
