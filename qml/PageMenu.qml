@@ -114,7 +114,7 @@ Q.Drawer {
 
             // MY TLOG SECTION
             MenuItem {
-                text: 'Открытые'
+                text: 'Все записи'
                 onTriggered: {
                     window.setFeedMode(FeedModel.MyTlogMode);
                     drawer.close();
@@ -125,7 +125,7 @@ Q.Drawer {
                              || page.mode === FeedModel.MyPrivateMode)
             }
             MenuItem {
-                text: 'Приватные'
+                text: 'Скрытые'
                 onTriggered: {
                     window.setFeedMode(FeedModel.MyPrivateMode);
                     drawer.close();
