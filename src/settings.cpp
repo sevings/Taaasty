@@ -171,7 +171,7 @@ void Settings::setUserId(const int id)
 
 bool Settings::saveProfile() const
 {
-    return _settings.value("save_profile").toBool();
+    return _settings.value("save_profile", true).toBool();
 }
 
 
@@ -270,7 +270,7 @@ void Settings::setPrevUserId(const int id)
 
 bool Settings::prevSaveProfile() const
 {
-    return _settings.value("prev_save_profile").toBool();
+    return _settings.value("prev_save_profile", true).toBool();
 }
 
 
