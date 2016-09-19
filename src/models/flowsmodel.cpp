@@ -42,7 +42,7 @@ FlowsModel::FlowsModel(QObject* parent)
 
     setMode(Tasty::instance()->isAuthorized() ? MyMode : PopularMode);
     
-    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, [this]()
+    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, [&]()
     {
         if (_mode == MyMode)
             reset();

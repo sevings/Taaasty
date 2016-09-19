@@ -53,7 +53,7 @@ FeedModel::FeedModel(QObject* parent)
     Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideShortPostsChanged,    this, &FeedModel::_changeHideSome));
     Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideNegativeRatedChanged, this, &FeedModel::_changeHideSome));
 
-    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, [this]()
+    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, [&]()
     {
         if (_mode == MyTlogMode
                 || _mode == MyFavoritesMode
