@@ -62,7 +62,8 @@ Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
     if (_userId != Tasty::instance()->settings()->userId())
         Q_TEST(connect(chat, SIGNAL(allMessagesRead(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
     
-    Q_TEST(connect(chat, SIGNAL(updated()), this, SLOT(_updateUser())));
+    if (_user->slug().isEmpty())
+        Q_TEST(connect(chat, SIGNAL(updated()), this, SLOT(_updateUser())));
 }
 
 
@@ -175,12 +176,19 @@ void Message::_markRead(const QJsonObject data)
 void Message::_updateUser()
 {
     if (!_user->slug().isEmpty())
+    {
+        if (_chat)
+        disconnect(_chat, SIGNAL(updated()), this, SLOT(_updateUser()));
         return;
+    }
     
     _user = _chat->user(_userId);
     emit userUpdated();
     
     Q_ASSERT(_user);
+
+    if (!_user->slug().isEmpty() && _chat)
+        disconnect(_chat, SIGNAL(updated()), this, SLOT(_updateUser()));
 }
 
 
