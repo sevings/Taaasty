@@ -439,8 +439,6 @@ void Conversation::_emitLeft(const QJsonObject data)
         qDebug() << "error leave chat" << _id;
         return;
     }
-    
-    emit left(_id);
 
     auto user = _users.value(_userId);
     if (!user)
@@ -453,6 +451,8 @@ void Conversation::_emitLeft(const QJsonObject data)
     emit isInvolvedChanged();
 
     emit Tasty::instance()->info("Беседа удалена");
+
+    emit left(_id);
 }
 
 
