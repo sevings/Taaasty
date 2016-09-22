@@ -116,3 +116,5 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
         $$PWD/../../android/libcrypto.so \
         $$PWD/../../android/libssl.so
 }
+
+DEFINES += BUILDDATE=\\\"$$system("date +%d.%m.%Y")\\\"

@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("dp", scale); // N900: 1.5; Q10: 2
 
 //    engine.rootContext()->setContextProperty("qtVersion", QT_VERSION_STR);
-    engine.rootContext()->setContextProperty("builtAt", QDate::currentDate().toString("dd.MM.yy"));
+    engine.rootContext()->setContextProperty("builtAt", QString::fromLatin1(BUILDDATE));
 
     engine.setBaseUrl(QStringLiteral("qrc:/qml/"));
     engine.load(QUrl(QStringLiteral("main.qml")));
