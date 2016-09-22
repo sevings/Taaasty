@@ -41,6 +41,7 @@ class Conversation: public TastyData, public QEnableSharedFromThis<Conversation>
     Q_OBJECT
 
     friend class PusherClient;
+    friend class MessagesModel;
 
     Q_PROPERTY(ConversationType type            MEMBER _type            NOTIFY updated)
     Q_PROPERTY(int              unreadCount     MEMBER _unreadCount     NOTIFY unreadCountChanged)
@@ -129,6 +130,7 @@ signals:
 private slots:
     void _markRead(const QJsonObject data);
     void _emitLeft(const QJsonObject data);
+    void _decUnread(bool read);
 
 private:
     ConversationType    _type;

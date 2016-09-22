@@ -280,7 +280,8 @@ void MessagesModel::_addMessage(const QJsonObject data)
     _messages << msg;
     _ids << msg->id();
 
-    Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
+    Q_TEST(connect(msg, &QObject::destroyed, this, &MessagesModel::_removeMessage));
+    Q_TEST(connect(msg, &MessageBase::readChanged, _chat, &Conversation::_decUnread));
 
     endInsertRows();
 
@@ -364,7 +365,8 @@ QList<Message*> MessagesModel::_messagesList(QJsonArray feed)
         _ids << msg->id();
         msgs.insert(i, msg);
 
-        Q_TEST(connect(msg, SIGNAL(destroyed(QObject*)), this, SLOT(_removeMessage(QObject*))));
+        Q_TEST(connect(msg, &QObject::destroyed, this, &MessagesModel::_removeMessage));
+        Q_TEST(connect(msg, &MessageBase::readChanged, _chat, &Conversation::_decUnread));
     }
     
     return msgs;

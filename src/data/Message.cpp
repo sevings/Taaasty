@@ -143,7 +143,7 @@ void Message::_init(const QJsonObject data)
 
     emit idChanged();
     emit userUpdated();
-    emit readChanged();
+    emit readChanged(_read);
     emit baseUpdated();
     emit updated();
 }
@@ -168,7 +168,7 @@ void Message::_markRead(const QJsonObject data)
     }
 
     _read = true;
-    emit readChanged();
+    emit readChanged(true);
 }
 
 
@@ -199,7 +199,7 @@ void Message::_updateRead(const QJsonObject data)
         return;
 
     _read = !data.value("read_at").isNull();
-    emit readChanged();
+    emit readChanged(_read);
 }
 
 

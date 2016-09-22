@@ -55,7 +55,7 @@ signals:
     void userUpdated();
     void baseUpdated();
     void textUpdated();
-    void readChanged();
+    void readChanged(bool read);
 
 protected:
     void _setTruncatedText();

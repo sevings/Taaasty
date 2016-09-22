@@ -457,6 +457,20 @@ void Conversation::_emitLeft(const QJsonObject data)
 
 
 
+void Conversation::_decUnread(bool read)
+{
+    if (!read || !_unreadCount)
+        return;
+
+    if (_unreadCount == 1)
+        readAll();
+
+    _unreadCount--;
+    emit unreadCountChanged();
+}
+
+
+
 int Conversation::userId() const
 {
     return _userId;
