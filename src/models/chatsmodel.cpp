@@ -213,6 +213,10 @@ void ChatsModel::reset()
     _request = nullptr;
     
     endResetModel();
+
+    emit hasMoreChanged();
+    emit loadingChanged();
+    emit checkingChanged();
 }
 
 
