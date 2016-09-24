@@ -53,16 +53,7 @@ FeedModel::FeedModel(QObject* parent)
     Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideShortPostsChanged,    this, &FeedModel::_changeHideSome));
     Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideNegativeRatedChanged, this, &FeedModel::_changeHideSome));
 
-    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, [&]()
-    {
-        if (_mode == MyTlogMode
-                || _mode == MyFavoritesMode
-                || _mode == MyPrivateMode
-                || _mode == FriendsMode)
-            reset();
-        else
-            _reloadRatings();
-    }));
+    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, this, &FeedModel::_resetOrReloadRatings));
 }
 
 
@@ -383,11 +374,12 @@ void FeedModel::_addItems(QJsonObject data)
     auto feed =  data.contains("items") ? data.value("items").toArray()
                                         : data.value("entries").toArray();
 
-    auto more = data.value("has_more").toBool()
-            || (data.contains("next_since_entry_id")
-                && !data.value("next_since_entry_id").isNull())
-            || (data.contains("prev_date")
-                && !data.value("prev_date").isNull());
+    auto more = (data.contains("prev_date")
+                 && !data.value("prev_date").isNull())
+            || (data.contains("has_more")
+                ? data.value("has_more").toBool()
+                : (data.contains("next_since_entry_id")
+                   && !data.value("next_since_entry_id").isNull()));
 
     if (more != _hasMore)
     {
@@ -525,6 +517,19 @@ void FeedModel::_setNotLoading(QObject* request)
     }
 
     _request = nullptr;
+}
+
+
+
+void FeedModel::_resetOrReloadRatings()
+{
+    if (_mode == MyTlogMode
+            || _mode == MyFavoritesMode
+            || _mode == MyPrivateMode
+            || _mode == FriendsMode)
+        reset();
+    else
+        _reloadRatings();
 }
 
 

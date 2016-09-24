@@ -136,9 +136,10 @@ private slots:
     void _changeHideSome();
     void _setPrivate(int errorCode);
     void _setNotLoading(QObject* request);
+    void _resetOrReloadRatings();
     void _reloadRatings();
     void _setRatings(const QJsonArray data);
-
+    
 private:
     void _addAll(QList<EntryPtr>& all);
     bool _addSome(QList<EntryPtr>& all);
