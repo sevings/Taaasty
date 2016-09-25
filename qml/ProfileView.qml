@@ -128,6 +128,8 @@ Pane {
                         'Вы не подписаны';      break;
                     case Tlog.Me:
                         'Это вы';               break;
+                    case Tlog.Requested:
+                        'Вы отправили запрос';  break;
                     case Tlog.Ignored:
                         'Тлог заблокирован';    break;
                     default:
@@ -149,6 +151,8 @@ Pane {
                         'Не следит за вашим тлогом'; break;
                     case Tlog.Me:
                         'Это вы';                    break;
+                    case Tlog.Requested:
+                        'Ожидает одобрения';         break;
                     case Tlog.Ignored:
                         'Вы заблокированы';          break;
                     default:

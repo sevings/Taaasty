@@ -362,6 +362,83 @@ Q.Drawer {
 
             // PROFILE SECTION
             MenuItem {
+                text: visible ?
+                          (page.tlog.myRelationship === Tlog.None
+                           ? (page.tlog.author.isPrivacy ? 'Отправить запрос' : 'Подписаться')
+                           : (page.tlog.myRelationship === Tlog.Requested ? 'Отменить запрос' : 'Отписаться'))
+                        : ''
+                onTriggered: {
+                    if (page.tlog.myRelationship === Tlog.Friend
+                            || page.tlog.myRelationship === Tlog.Requested)
+                        page.tlog.unfollow();
+                    else
+                        page.tlog.follow();
+
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && page.isProfileView === true
+                         && (page.tlog.myRelationship === Tlog.Friend
+                             || page.tlog.myRelationship === Tlog.Requested
+                             || page.tlog.myRelationship === Tlog.None)
+                         && page.tlog.hisRelationship !== Tlog.Ignored
+                enabled: visible && !page.tlog.changingRelation
+            }
+            MenuItem {
+                text: 'Отписать'
+                onTriggered: {
+                    page.tlog.unsubscribeHim();
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && page.isProfileView === true
+                         && (page.tlog.hisRelationship === Tlog.Friend)
+                enabled: visible && !page.tlog.changingRelation
+            }
+            MenuItem {
+                text: visible && page.tlog.myRelationship === Tlog.Ignored ? 'Разблокировать' : 'Заблокировать'
+                onTriggered: {
+                    if (page.tlog.myRelationship === Tlog.Ignored)
+                        page.tlog.cancelIgnoring();
+                    else
+                        page.tlog.ignore();
+
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && page.isProfileView === true
+                         && (page.tlog.myRelationship === Tlog.Ignored
+                             || page.tlog.myRelationship === Tlog.None)
+                enabled: visible && !page.tlog.changingRelation
+            }
+            MenuItem {
+                text: 'Принять запрос'
+                onTriggered: {
+                    page.tlog.approveFriendRequest();
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && page.isProfileView === true
+                         && page.tlog.hisRelationship === Tlog.Requested
+                enabled: visible && !page.tlog.changingRelation
+            }
+            MenuItem {
+                text: 'Отклонить запрос'
+                onTriggered: {
+                    page.tlog.disapproveFriendRequest();
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && page.isProfileView === true
+                         && page.tlog.hisRelationship === Tlog.Requested
+                enabled: visible && !page.tlog.changingRelation
+            }
+            MenuSeparator {
+                visible: tlogCalendar.visible
+                         && Tasty.isAuthorized
+            }
+            MenuItem {
+                id: tlogCalendar
                 text: 'Обзор постов'
                 onTriggered: {
                     window.pushCalendar(page.tlog);
@@ -372,6 +449,7 @@ Q.Drawer {
                          && (!page.author.isPrivacy
                              || page.tlog.myRelationship === Tlog.Friend
                              || page.tlog.myRelationship === Tlog.Me)
+                         && page.tlog.hisRelationship !== Tlog.Ignored
             }
         }
     }

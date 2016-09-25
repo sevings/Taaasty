@@ -46,15 +46,17 @@ class Tlog: public TastyData
     Q_PROPERTY(QString      followersCount      MEMBER _followersCount      NOTIFY updated)
     Q_PROPERTY(QString      followingsCount     MEMBER _followingsCount     NOTIFY updated)
     Q_PROPERTY(QString      ignoredCount        MEMBER _ignoredCount        NOTIFY updated)
-    Q_PROPERTY(Relationship myRelationship      MEMBER _myRelation          NOTIFY updated)
-    Q_PROPERTY(Relationship hisRelationship     MEMBER _hisRelation         NOTIFY updated)
+    Q_PROPERTY(Relationship myRelationship      MEMBER _myRelation          NOTIFY myRelationChanged)
+    Q_PROPERTY(Relationship hisRelationship     MEMBER _hisRelation         NOTIFY hisRelationChanged)
     Q_PROPERTY(Author*      author              READ author                 NOTIFY updated)
+    Q_PROPERTY(bool         changingRelation    READ changingRelation       NOTIFY changingRelationChanged)
 
 public:
     enum Relationship {
         Undefined,
         Me,
         Friend,
+        Requested,
         Ignored,
         None
     };
@@ -66,6 +68,8 @@ public:
 
     Author* author() const { return _author; }
 
+    bool changingRelation() const;
+
 public slots:
     int  tlogId() const                 { return _id; }
     void setId(const int id);
@@ -76,11 +80,32 @@ public slots:
     void init(const QJsonObject data);
     void reload();
 
+    void follow();
+    void unfollow();
+
+    void ignore();
+    void cancelIgnoring();
+
+    void unsubscribeHim();
+
+    void approveFriendRequest();
+    void disapproveFriendRequest();
+
 signals:
     void updated();
+    void myRelationChanged();
+    void hisRelationChanged();
     void loadingChanged();
+    void changingRelationChanged();
+
+private slots:
+    void _setMyRelation(const QJsonObject data);
+    void _setHisRelation(const QJsonObject data);
 
 private:
+    void _changeMyRelation(const QString url);
+    void _handleFriendRequest(const QString url);
+
     Relationship _relationship(const QJsonObject& data, const QString field);
 
     QString         _slug;
@@ -98,4 +123,6 @@ private:
     Relationship    _myRelation;
     Relationship    _hisRelation;
     Author*         _author;
+
+    QPointer<ApiRequest> _relationRequest;
 };

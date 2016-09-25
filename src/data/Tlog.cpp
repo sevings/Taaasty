@@ -49,6 +49,13 @@ Tlog::Tlog(const QJsonObject data, QObject *parent)
 
 
 
+bool Tlog::changingRelation() const
+{
+    return _relationRequest;
+}
+
+
+
 void Tlog::setId(const int id)
 {
     if (id <= 0 || id == _id)
@@ -134,6 +141,8 @@ void Tlog::init(const QJsonObject data)
 
     emit idChanged();
     emit updated();
+    emit myRelationChanged();
+    emit hisRelationChanged();
 }
 
 
@@ -157,6 +166,137 @@ void Tlog::reload()
 
 
 
+void Tlog::follow()
+{
+    Q_ASSERT(_myRelation != Friend && _myRelation != Requested);
+    if (_myRelation == Friend || _myRelation == Requested)
+        return;
+
+    _changeMyRelation("v1/relationships/to/tlog/%1/follow.json");
+}
+
+
+
+void Tlog::unfollow()
+{
+    Q_ASSERT(_myRelation == Friend || _myRelation == Requested);
+    if (_myRelation != Friend && _myRelation != Requested)
+        return;
+
+    _changeMyRelation("v1/relationships/to/tlog/%1/unfollow.json");
+}
+
+
+
+void Tlog::ignore()
+{
+    Q_ASSERT(_myRelation != Ignored);
+    if (_myRelation == Ignored)
+        return;
+
+    _changeMyRelation("v1/relationships/to/tlog/%1/ignore.json");
+}
+
+
+
+void Tlog::cancelIgnoring()
+{
+    Q_ASSERT(_myRelation == Ignored);
+    if (_myRelation != Ignored)
+        return;
+
+    _changeMyRelation("v1/relationships/to/tlog/%1/cancel.json");
+}
+
+
+
+void Tlog::unsubscribeHim()
+{
+    Q_ASSERT(_hisRelation == Friend);
+    if (_hisRelation != Friend)
+        return;
+
+    if (_relationRequest || !Tasty::instance()->isAuthorized())
+        return;
+
+    auto url = QString("v1/relationships/by/tlog/%1.json");
+    _relationRequest = new ApiRequest(url.arg(_id), true, QNetworkAccessManager::DeleteOperation);
+
+    Q_TEST(connect(_relationRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_setHisRelation(QJsonObject))));
+    Q_TEST(connect(_relationRequest, &QObject::destroyed,
+            this, &Tlog::changingRelationChanged, Qt::QueuedConnection));
+
+    emit changingRelationChanged();
+}
+
+
+
+void Tlog::approveFriendRequest()
+{
+    _handleFriendRequest("v1/relationships/by/tlog/%1/approve.json");
+}
+
+
+
+void Tlog::disapproveFriendRequest()
+{
+    _handleFriendRequest("v1/relationships/by/tlog/%1/disapprove.json");
+}
+
+
+
+void Tlog::_setMyRelation(const QJsonObject data)
+{
+    _myRelation = _relationship(data, "state");
+    emit myRelationChanged();
+}
+
+
+
+void Tlog::_setHisRelation(const QJsonObject data)
+{
+    _hisRelation = _relationship(data, "state");
+    emit hisRelationChanged();
+}
+
+
+
+void Tlog::_changeMyRelation(const QString url)
+{
+    if (_relationRequest || !Tasty::instance()->isAuthorized())
+        return;
+
+    _relationRequest = new ApiRequest(url.arg(_id), true, QNetworkAccessManager::PostOperation);
+
+    Q_TEST(connect(_relationRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_setMyRelation(QJsonObject))));
+    Q_TEST(connect(_relationRequest, &QObject::destroyed,
+            this, &Tlog::changingRelationChanged, Qt::QueuedConnection));
+
+    emit changingRelationChanged();
+}
+
+
+
+void Tlog::_handleFriendRequest(const QString url)
+{
+    Q_ASSERT(_hisRelation == Requested);
+    if (_hisRelation != Requested)
+        return;
+
+    if (_relationRequest || !Tasty::instance()->isAuthorized())
+        return;
+
+    _relationRequest = new ApiRequest(url.arg(_id), true, QNetworkAccessManager::PostOperation);
+
+    Q_TEST(connect(_relationRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_setHisRelation(QJsonObject))));
+    Q_TEST(connect(_relationRequest, &QObject::destroyed,
+            this, &Tlog::changingRelationChanged, Qt::QueuedConnection));
+
+    emit changingRelationChanged();
+}
+
+
+
 Tlog::Relationship Tlog::_relationship(const QJsonObject& data, const QString field)
 {
     if (!data.contains(field))
@@ -165,6 +305,8 @@ Tlog::Relationship Tlog::_relationship(const QJsonObject& data, const QString fi
     auto relation = data.value(field).toString();
     if (relation == "friend")
         return Friend;
+    if (relation == "requested")
+        return Requested;
     if (relation == "none")
         return None;
     if (relation == "ignored")
