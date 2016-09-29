@@ -23,10 +23,14 @@
 #include <QNetworkAccessManager>
 #include <QStandardPaths>
 #include <QDir>
+#include <QFile>
 #include <QDebug>
+#include <QtConcurrent>
+#include <QFuture>
 
 #include <QSslSocket>
 
+#include "../defines.h"
 #include "cachedimage.h"
 
 
@@ -80,6 +84,14 @@ void CacheManager::setAutoload(bool autoload)
 
 
 
+void CacheManager::clearUnusedImages()
+{
+    auto future = QtConcurrent::run(this, &CacheManager::_clearUnusedImages);
+    _watcher.setFuture(future);
+}
+
+
+
 int CacheManager::maxWidth() const
 {
     return _maxWidth;
@@ -113,7 +125,30 @@ CachedImage* CacheManager::image(QString url)
         _path = cachePath.absolutePath();
     }
 
+    if (_watcher.isRunning())
+        _watcher.waitForFinished();
+
     auto image = new CachedImage(this, url);
     _images.insert(url, image);
     return image;
+}
+
+
+
+void CacheManager::_clearUnusedImages()
+{
+    QSet<QString> images;
+    foreach (auto image, _images)
+        images << image->sourceFileName();
+
+    QDir dir(_path);
+    auto files = dir.entryList(QDir::Files | QDir::NoDotAndDotDot, QDir::Size);
+    foreach (auto file, files)
+    {
+        if (images.contains(file))
+            continue;
+        
+        if (!QFile::remove(_path + "/" + file))
+            qDebug() << "Could not remove image" << file;
+    }
 }

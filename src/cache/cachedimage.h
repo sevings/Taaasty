@@ -46,21 +46,21 @@ public:
 
     explicit CachedImage(CacheManager* parent = nullptr, QString url = QString());
 
-    Q_INVOKABLE QUrl    source() const;
+    QUrl    source() const;
+    QString sourceFileName() const;
 
-    Q_INVOKABLE int     received() const    { return _kbytesReceived; }
-    Q_INVOKABLE int     total() const       { return _kbytesTotal; }
+    int     received() const    { return _kbytesReceived; }
+    int     total() const       { return _kbytesTotal; }
 
-    Q_INVOKABLE bool    isDownloading() const;
-    Q_INVOKABLE bool    isAvailable() const { return _available; }
+    bool    isDownloading() const;
+    bool    isAvailable() const { return _available; }
 
-    Q_INVOKABLE QString extension() const   { return _extension; }
-    Q_INVOKABLE void    setExtension(QString format);
+    QString extension() const   { return _extension; }
+    void    setExtension(QString format);
 
-    Q_INVOKABLE QString fileName() const;
+    QString fileName() const;
 
     ImageFormat format() const;
-
 public slots:
     void getInfo();
     void download();
@@ -92,7 +92,7 @@ private:
 
     ImageFormat _format;
 
-    QString _hash;
+    uint    _hash;
     QString _url;
     QString _extension;
 

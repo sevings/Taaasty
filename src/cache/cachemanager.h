@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QFutureWatcher>
 
 class QNetworkAccessManager;
 class CachedImage;
@@ -48,15 +49,21 @@ public:
 
 public slots:
     void setAutoload(bool autoload);
+    void clearUnusedImages();
 
 private:
     CacheManager(QNetworkAccessManager* web = nullptr);
 
-    QHash<QString, CachedImage*> _images;
-    QNetworkAccessManager* _web;
-    QString _path;
-    int _maxWidth;
-    bool _autoload;
+    QHash<QString, CachedImage*>    _images;
+    
+    QNetworkAccessManager*          _web;
+    QFutureWatcher<void>            _watcher;
+    QString                         _path;
+    
+    int                             _maxWidth;
+    bool                            _autoload;
+    
+    void _clearUnusedImages();    
 };
 
 #endif // CACHEMANAGER_H

@@ -62,11 +62,6 @@ Pane {
                 horizontalAlignment: Text.AlignHCenter
             }
             ThemedCheckBox {
-                id: imagesBox
-                text: 'Загружать изображения'
-                onCheckedChanged: { Settings.autoloadImages = checked; }
-            }
-            ThemedCheckBox {
                 id: shortBox
                 text: 'Скрывать короткие посты'
                 onCheckedChanged: { Settings.hideShortPosts = checked; }
@@ -85,6 +80,21 @@ Pane {
                 id: notiBox
                 text: 'Системные уведомления'
                 onCheckedChanged: { Settings.systemNotifications = checked; }
+            }
+            ThemedCheckBox {
+                id: imagesBox
+                text: 'Загружать изображения'
+                onCheckedChanged: { Settings.autoloadImages = checked; }
+            }
+            ThemedButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                implicitWidth: 40 * mm
+                highlighted: true
+                text: 'Очистить кэш'
+                onClicked: {
+                    enabled = false;
+                    Cache.clearUnusedImages();
+                }
             }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2

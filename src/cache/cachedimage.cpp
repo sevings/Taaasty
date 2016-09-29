@@ -55,7 +55,7 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
     if (_url.startsWith("//"))
         _url = "http:" + _url;
 
-    _hash = QString::number(qHash(_url));
+    _hash = qHash(_url);
     if (_exists())
     {
         _available = true;
@@ -76,6 +76,13 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
 QUrl CachedImage::source() const
 {
     return QUrl::fromLocalFile(_path());
+}
+
+
+
+QString CachedImage::sourceFileName() const
+{
+    return QString("%1.%2").arg(_hash).arg(_extension);
 }
 
 
@@ -359,7 +366,7 @@ bool CachedImage::_exists()
 
 QString CachedImage::_path() const
 {
-    return QString("%1/%2.%3").arg(_man->path()).arg(_hash).arg(_extension);
+    return QString("%1/%2").arg(_man->path()).arg(sourceFileName());
 }
 
 
