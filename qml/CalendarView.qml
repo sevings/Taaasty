@@ -30,10 +30,21 @@ Pane {
     }
     Poppable {
         body: back
+        Text {
+            visible: !listView.visible && !calendarModel.loading
+            anchors.centerIn: parent
+            color: window.secondaryTextColor
+            horizontalAlignment: Text.AlignHCenter
+            font.pointSize: window.fontBigger
+            wrapMode: Text.Wrap
+            text: 'Нет записей'
+        }
     }
     Splash {
         id: splash
-        visible: !listView.visible
+        visible: calendarModel.loading
+        running: !calendarModel.isPrivate
+        text: 'Это закрытый ' + (tlog.author.isFlow ? 'поток' : 'тлог')
     }
     MyListView {
         id: listView
@@ -49,10 +60,6 @@ Pane {
             id: calendarModel
             Component.onCompleted: {
                 setTlog(back.tlogId);
-            }
-            onLoaded: {
-                if (!listView.visible)
-                    splash.text = 'Нет записей'
             }
         }
         section.property: 'entry.month'

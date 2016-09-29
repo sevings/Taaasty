@@ -32,6 +32,7 @@
 
 CalendarModel::CalendarModel(QObject* parent)
     : QAbstractListModel(parent)
+    , _isPrivate(false)
 {
     qDebug() << "CalendarModel";
 }
@@ -64,13 +65,19 @@ QVariant CalendarModel::data(const QModelIndex &index, int role) const
 
 void CalendarModel::setTlog(const int tlog)
 {
-    if (tlog <= 0)
+    if (tlog <= 0 || loading())
         return;
 
     QString url = QString("v1/tlog/%1/calendar.json").arg(tlog);
-    auto request = new ApiRequest(url);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
+    _request = new ApiRequest(url);
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
+    
+    Q_TEST(connect(_request, &QObject::destroyed, 
+        this, &CalendarModel::loadingChanged, Qt::QueuedConnection));
 
+    emit loadingChanged();
+    
     beginResetModel();
 
     qDeleteAll(_calendar);
@@ -105,6 +112,13 @@ CalendarEntry* CalendarModel::firstMonthEntry(QString month) const
 {
     auto e = _firstMonthEntries.value(month);
     return e;
+}
+
+
+
+bool CalendarModel::loading() const
+{
+    return _request;
 }
 
 
@@ -145,4 +159,15 @@ void CalendarModel::_setCalendar(QJsonObject data)
     endResetModel();
 
     emit loaded();
+}
+
+
+
+void CalendarModel::_setPrivate(int errorCode)
+{
+    if (errorCode == 403)
+    {
+        _isPrivate = true;
+        emit isPrivateChanged();
+    }
 }
