@@ -478,6 +478,78 @@ int Conversation::userId() const
 
 
 
+QString Conversation::typedUsers()
+{
+    QString typed;
+    
+    if (_typedUsers.isEmpty())
+        return typed;
+    
+    if (_type == PrivateConversation)
+        return "Печатает...";        
+    
+    QStringList userNames;
+    foreach (auto userId, _typedUsers.keys())
+    {
+        auto user = this->user(userId);
+        if (!user->name().isEmpty())
+            userNames << user->name();
+    }
+    
+    if (userNames.isEmpty())
+        return "Печатает...";
+    
+    typed += userNames.first();
+    
+    if (userNames.size() == 1)
+        return typed + " печатает...";
+    
+    for (int i = 1; i < userNames.size() - 1; i++)
+        typed += ", " + userNames.at(i);
+    
+    typed += " и " + userNames.last() + " печатают...";    
+    return typed;
+}
+
+
+
+bool Conversation::isTyped() const 
+{
+    return !_typedUsers.isEmpty();
+}
+
+
+
+void Conversation::addTyped(int userId)
+{
+    auto timer = _typedUsers.value(userId);
+    if (timer)
+    {
+        timer->start();
+        return;
+    }
+    
+    timer = new QTimer(this);
+    timer->setInterval(7000); //! \note pusher event is every 5 sec
+    timer->start();
+    
+    Q_TEST(connect(timer, &QTimer::timeout, this, &Conversation::_removeTypedUser));
+    
+    _typedUsers.insert(userId, timer);
+    
+    emit typedUsersChanged();
+}
+
+
+
+void Conversation::removeTyped(int userId)
+{
+    _typedUsers.remove(userId);
+    emit typedUsersChanged();
+}
+
+
+
 Entry* Conversation::entry()
 {
     return _entry.data();
@@ -495,4 +567,16 @@ int Conversation::entryId() const
 int Conversation::unreadCount() const
 {
     return _unreadCount;
+}
+
+
+
+void Conversation::_removeTypedUser()
+{
+    auto timer = qobject_cast<QTimer*>(sender());
+    if (!timer)
+        return;
+    
+    auto userId = _typedUsers.key(timer);
+    removeTyped(userId);
 }

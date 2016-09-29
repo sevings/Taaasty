@@ -287,6 +287,8 @@ void MessagesModel::_addMessage(const QJsonObject data)
 
     emit lastMessageChanged();
 
+    _chat->removeTyped(msg->userId());
+
 #ifdef Q_OS_ANDROID
     if (!msg->isRead() && msg->userId() != _chat->userId() && Tasty::instance()->settings()->systemNotifications())
     {

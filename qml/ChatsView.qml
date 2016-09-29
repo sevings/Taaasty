@@ -134,14 +134,36 @@ PopupFill {
                 height: width
                 radius: height / 2
                 color: Material.primary
-                visible: model.chat.unreadCount > 0 || model.chat.isMyLastMessageUnread
-                Q.Label {
-                    visible: model.chat.unreadCount > 0
-                    anchors.centerIn: parent
-                    text: model.chat.unreadCount
-                    font.pointSize: window.fontSmallest
-                    color: 'white'
+                visible: model.chat.unreadCount > 0
+                         || model.chat.isMyLastMessageUnread
+                         || model.chat.isTyped
+                SequentialAnimation
+                {
+                    running: model.chat.isTyped
+                    alwaysRunToEnd : true
+                    loops: Animation.Infinite
+                    NumberAnimation {
+                        target: unreadMessages
+                        property: 'opacity'
+                        from: 1
+                        to: 0
+                        duration: 500
+                    }
+                    NumberAnimation {
+                        target: unreadMessages
+                        property: 'opacity'
+                        from: 0
+                        to: 1
+                        duration: 500
+                    }
                 }
+            }
+            Q.Label {
+                visible: model.chat.unreadCount > 0
+                anchors.centerIn: unreadMessages
+                text: model.chat.unreadCount
+                font.pointSize: window.fontSmallest
+                color: 'white'
             }
         }
         footer: ListBusyIndicator {

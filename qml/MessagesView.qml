@@ -153,8 +153,7 @@ Pane {
                     }
                     width: messageBack.maxWidth - 2 * mm
                     font.pointSize: window.fontSmaller
-                    text: (message.replyTo && message.replyTo.name.length > 0
-                           ? '<b>' + message.replyTo.name + '</b>, ' : '') + message.text
+                    text: (message.replyTo ? '<b>' + message.replyTo.name + '</b>, ' : '') + message.text
                     textFormat: message.containsImage ? Text.RichText : Text.StyledText
                     onLinkActivated: window.openLink(link)
                     height: message.text.length > 0 ? contentHeight : -1 * mm
@@ -187,23 +186,45 @@ Pane {
                 }
             }
         }
-        footer: MessageEditor {
-            id: messageEditor
-            onSent: {
-                chat.sendMessage(messageEditor.message)
-            }
-            visible: chat.canTalk
-            height: visible ? implicitHeight : - 1 * mm
-            Connections {
-                target: chat
-                onMessageSent: {
-                    messageEditor.clear();
+        footer: Item {
+            height: typedText.height + messageEditor.height + 1 * mm
+            width: window.width
+            ThemedText {
+                id: typedText
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    top: parent.top
                 }
+                text: chat.typedUsers
+                font.pointSize: window.fontSmallest
+                color: window.secondaryTextColor
+//                height: contentHeight
+//                elide: Text.ElideRight
             }
-            Connections {
-                target: back
-                onAddGreeting: {
-                    messageEditor.addGreeting(slug);
+            MessageEditor {
+                id: messageEditor
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    top: typedText.bottom
+                }
+                visible: chat.canTalk
+                height: visible ? implicitHeight : - 1 * mm
+                onSent: {
+                    chat.sendMessage(messageEditor.message)
+                }
+                Connections {
+                    target: chat
+                    onMessageSent: {
+                        messageEditor.clear();
+                    }
+                }
+                Connections {
+                    target: back
+                    onAddGreeting: {
+                        messageEditor.addGreeting(slug);
+                    }
                 }
             }
         }

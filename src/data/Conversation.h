@@ -24,6 +24,8 @@
 #include <QJsonObject>
 #include <QHash>
 #include <QEnableSharedFromThis>
+#include <QTimer>
+#include <QMap>
 
 #include "../defines.h"
 #include "TastyData.h"
@@ -63,6 +65,8 @@ class Conversation: public TastyData, public QEnableSharedFromThis<Conversation>
     Q_PROPERTY(bool  isMyLastMessageUnread   READ isMyLastMessageUnread NOTIFY updated)
     Q_PROPERTY(MessageBase*     lastMessage     READ lastMessage        NOTIFY lastMessageChanged)
     Q_PROPERTY(bool             isInvolved      READ isInvolved         NOTIFY isInvolvedChanged)
+    Q_PROPERTY(QString          typedUsers      READ typedUsers         NOTIFY typedUsersChanged)
+    Q_PROPERTY(bool             isTyped         READ isTyped            NOTIFY typedUsersChanged)
     
 public:
     enum ConversationType {
@@ -106,6 +110,11 @@ public:
 
     int userId() const;
 
+    QString typedUsers();
+    bool isTyped() const;
+    void addTyped(int userId);
+    void removeTyped(int userId);
+    
 public slots:
     void init(const QJsonObject data);
 
@@ -122,15 +131,16 @@ signals:
     void messageSent(const QJsonObject);
     void messageReceived(const QJsonObject);
     void allMessagesRead(const QJsonObject data);
-    void typed(int userId);
     void lastMessageChanged();
     void left(int id);
     void isInvolvedChanged();
+    void typedUsersChanged();
 
 private slots:
     void _markRead(const QJsonObject data);
     void _emitLeft(const QJsonObject data);
     void _decUnread(bool read);
+    void _removeTypedUser();
 
 private:
     ConversationType    _type;
@@ -152,6 +162,7 @@ private:
     Author*             _recipient;
     MessagesModel*      _messages;
     QPointer<Message>   _lastMessage;
+    QMap<int, QTimer*>  _typedUsers;
 
     EntryPtr _entry;
 
