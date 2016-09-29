@@ -37,9 +37,10 @@ class Tasty : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool isAuthorized        READ isAuthorized        NOTIFY authorized)
-    Q_PROPERTY(int  unreadChats         READ unreadChats         NOTIFY unreadChatsChanged)
-    Q_PROPERTY(int  unreadNotifications READ unreadNotifications NOTIFY unreadNotificationsChanged)
+    Q_PROPERTY(bool isAuthorized         READ isAuthorized         NOTIFY authorized)
+    Q_PROPERTY(int  unreadChats          READ unreadChats          NOTIFY unreadChatsChanged)
+    Q_PROPERTY(int  unreadNotifications  READ unreadNotifications  NOTIFY unreadNotificationsChanged)
+    Q_PROPERTY(int  unreadFriendsEntries READ unreadFriendsEntries NOTIFY unreadFriendsEntriesChanged)
 
 public:
     explicit Tasty(QNetworkAccessManager* web = nullptr);
@@ -51,10 +52,13 @@ public:
     QNetworkAccessManager*  manager() const { return _manager; }
     PusherClient*           pusher() const { return _pusher; }
 
-    Q_INVOKABLE bool isAuthorized() const;
+    bool isAuthorized() const;
 
-    Q_INVOKABLE int unreadChats()         const { return _unreadChats; }
-    Q_INVOKABLE int unreadNotifications() const { return _unreadNotifications; }
+    int unreadChats()          const { return _unreadChats; }
+    int unreadNotifications()  const { return _unreadNotifications; }
+    int unreadFriendsEntries() const { return _unreadFriendsEntries; }
+
+    void clearUnreadFriendsEntries();
 
     Q_INVOKABLE static QString num2str(const int n, const QString str1,
                     const QString str234, const QString str5);
@@ -72,6 +76,7 @@ signals:
 
     void unreadChatsChanged();
     void unreadNotificationsChanged();
+    void unreadFriendsEntriesChanged();
 
     void error(const int code, const QString text);
     void info(const QString text);
@@ -93,6 +98,7 @@ private slots:
 
     void _setUnreadChats(int count);
     void _setUnreadNotifications(int count);
+    void _incUnreadFriendsEntries();
 
     void _saveOrReconnect(Qt::ApplicationState state);
 
@@ -106,6 +112,7 @@ private:
 
     int _unreadChats;
     int _unreadNotifications;
+    int _unreadFriendsEntries;
 
     User* _me;
 

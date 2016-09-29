@@ -224,6 +224,9 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query, QString 
     if (mode != InvalidMode)
         _mode = mode;
 
+    if (_mode == FriendsMode)
+        Tasty::instance()->clearUnreadFriendsEntries();
+
     _setUrl(_mode);
 
     _isPrivate = false;

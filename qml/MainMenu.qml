@@ -54,7 +54,8 @@ Item {
                 highlighted: stack.currentItem.mode === FeedModel.MyTlogMode
             }
             MenuItem {
-                text: 'Подписки'
+                text: 'Подписки' + (Tasty.unreadFriendsEntries > 0 
+                        ? ' <b>+' + Tasty.unreadFriendsEntries + '</b>' : '')
                 onTriggered: { changeMode(FeedModel.FriendsMode) }
                 visible: Tasty.isAuthorized
                 highlighted: stack.currentItem.mode === FeedModel.FriendsMode

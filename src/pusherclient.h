@@ -69,23 +69,32 @@ signals:
     void unreadChat();
     void unreadChats(int count);
     void unreadNotifications(int count);
+    void unreadFriendsEntry(int entryId);
 
 public slots:
     void connect();
     void reconnect();
 
 private slots:
-    void _getPusherAuth();
-    void _resubscribeToPrivate();
-    void _subscribeToPrivate(const QJsonObject data);
-    void _handlePrivatePusherEvent(const QString event, const QString data);
+    void _resubscribe();
     void _sendReady();
-
+    
+    void _getMessagingAuth();
+    void _getFriendsAuth();
+    
+    void _subscribeToMessaging(const QJsonObject data);
+    void _subscribeToFriends(const QJsonObject data);
+        
+    void _handleMessagingEvent(const QString event, const QString data);
+    void _handleFriendsEvent(const QString event, const QString data);
+        
 private:
-    void _addPrivateChannel();
+    void        _addPrivateChannels();
+    ApiRequest* _getPusherAuth(const QString channel);
 
     Pusher* _pusher;
-    QString _privateChannel;
+    QString _messagingChannel;
+    QString _friendsChannel;
 
     Tasty* _tasty;
 

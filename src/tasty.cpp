@@ -45,6 +45,7 @@ Tasty::Tasty(QNetworkAccessManager* web)
     , _commentImageWidth(_entryImageWidth)
     , _unreadChats(0)
     , _unreadNotifications(0)
+    , _unreadFriendsEntries(0)
     , _me(nullptr)
     , _saveProfile(false)
 {
@@ -56,8 +57,9 @@ Tasty::Tasty(QNetworkAccessManager* web)
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
 
-    Q_TEST(connect(_pusher, SIGNAL(unreadChats(int)),         this, SLOT(_setUnreadChats(int))));
-    Q_TEST(connect(_pusher, SIGNAL(unreadNotifications(int)), this, SLOT(_setUnreadNotifications(int))));
+    Q_TEST(connect(_pusher, SIGNAL(unreadChats(int)),          this, SLOT(_setUnreadChats(int))));
+    Q_TEST(connect(_pusher, SIGNAL(unreadNotifications(int)),  this, SLOT(_setUnreadNotifications(int))));
+    Q_TEST(connect(_pusher, SIGNAL(unreadFriendsEntry(int)), this, SLOT(_incUnreadFriendsEntries())));
 
 //    _pusher->subscribe("live");
 }
@@ -82,6 +84,14 @@ Tasty* Tasty::instance(QNetworkAccessManager* web)
 bool Tasty::isAuthorized() const
 {
     return !_settings->accessToken().isEmpty();
+}
+
+
+
+void Tasty::clearUnreadFriendsEntries()
+{
+    _unreadFriendsEntries = 0;
+    emit unreadFriendsEntriesChanged();
 }
 
 
@@ -278,6 +288,14 @@ void Tasty::_setUnreadNotifications(int count)
 
 
 
+void Tasty::_incUnreadFriendsEntries()
+{
+    _unreadFriendsEntries++;
+    emit unreadFriendsEntriesChanged();
+}
+
+
+
 void Tasty::_saveOrReconnect(Qt::ApplicationState state)
 {
     if (state == Qt::ApplicationActive)
@@ -296,6 +314,9 @@ void Tasty::_finishLogin()
     _unreadNotifications = 0;
     emit unreadNotificationsChanged();
 
+    _unreadFriendsEntries = 0;
+    emit unreadFriendsEntriesChanged();
+    
     if (_me)
         _me->setId(_settings->userId());
 
