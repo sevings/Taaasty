@@ -55,6 +55,8 @@ Conversation::Conversation(QObject* parent)
     , _entryId(0)
     , _recipient(nullptr)
     , _messages(nullptr)
+    , _typedTimer(nullptr)
+    , _hadTyped(false)
 {
     
 }
@@ -372,6 +374,10 @@ void Conversation::sendMessage(const QString text)
     if (isLoading() || _id <= 0)
         return;
 
+    _hadTyped = false;
+    if (_typedTimer)
+        _typedTimer->stop();
+
     auto content = QUrl::toPercentEncoding(text.trimmed());
     auto uuid    = QUuid::createUuid().toString().remove('{').remove('}');
     auto data    = QString("uuid=%1&content=%2").arg(uuid).arg(QString::fromUtf8(content));
@@ -432,6 +438,32 @@ void Conversation::remove()
 
 
 
+void Conversation::sendTyped()
+{
+    if (!_typedTimer)
+    {
+        _typedTimer = new QTimer(this);
+        _typedTimer->setInterval(5000);
+        _typedTimer->setSingleShot(true);
+        Q_TEST(connect(_typedTimer, &QTimer::timeout, this, &Conversation::_sendTyped));
+    }
+    
+    if (_typedTimer->isActive())
+    {
+        qDebug() << _typedTimer->remainingTime();
+         if (_typedTimer->remainingTime() < 1000 && _typedTimer->remainingTime() > 0)
+            _hadTyped = true;
+    }
+    else
+    {
+        _typedTimer->start();
+        _hadTyped = true;
+        _sendTyped();
+    }    
+}
+
+
+
 void Conversation::_emitLeft(const QJsonObject data)
 {
     if (data.value("status").toString() != "success")
@@ -467,6 +499,41 @@ void Conversation::_decUnread(bool read)
 
     _unreadCount--;
     emit unreadCountChanged();
+}
+
+
+
+void Conversation::_removeTypedUser()
+{
+    auto timer = qobject_cast<QTimer*>(sender());
+    if (!timer)
+        return;
+    
+    auto userId = _typedUsers.key(timer);
+    removeTyped(userId);
+}
+
+
+
+void Conversation::_sendTyped()
+{
+    if (!_hadTyped || _typedRequest)
+        return;
+    
+    _hadTyped = false;
+    
+    auto url = QString("v2/messenger/conversations/by_id/%1/typed.json").arg(_id);
+    _typedRequest = new ApiRequest(url, true, QNetworkAccessManager::PostOperation);
+    
+#ifdef QT_DEBUG    
+    Q_TEST(connect(_typedRequest, static_cast<void(ApiRequest::*)(QJsonObject)>(&ApiRequest::success),
+                   [](const QJsonObject data)
+    {
+        auto status = data.value("status").toString();
+        if (status != "success")
+            qDebug() << "Error sending typed:" << data;
+    }));
+#endif
 }
 
 
@@ -567,16 +634,4 @@ int Conversation::entryId() const
 int Conversation::unreadCount() const
 {
     return _unreadCount;
-}
-
-
-
-void Conversation::_removeTypedUser()
-{
-    auto timer = qobject_cast<QTimer*>(sender());
-    if (!timer)
-        return;
-    
-    auto userId = _typedUsers.key(timer);
-    removeTyped(userId);
 }

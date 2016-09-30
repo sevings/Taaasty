@@ -23,11 +23,7 @@ import QtQuick.Controls 2.0 as Q
 
 Item {
     id: editor
-    // anchors {
-        // left: parent.left
-        // right: parent.right
-    // }
-    width: window.width
+    implicitWidth: window.width
     implicitHeight: 18 * mm
     property alias message: input.text
     property bool uploading: false

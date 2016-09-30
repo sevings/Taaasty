@@ -123,6 +123,8 @@ public slots:
     void readAll();
     void leave();
     void remove();
+    
+    void sendTyped();
 
 signals:
     void updated();
@@ -141,6 +143,7 @@ private slots:
     void _emitLeft(const QJsonObject data);
     void _decUnread(bool read);
     void _removeTypedUser();
+    void _sendTyped();
 
 private:
     ConversationType    _type;
@@ -166,5 +169,9 @@ private:
 
     EntryPtr _entry;
 
+    QTimer*              _typedTimer;
+    bool                 _hadTyped;
+    QPointer<ApiRequest> _typedRequest;
+    
     QPointer<ApiRequest> _reading;
 };

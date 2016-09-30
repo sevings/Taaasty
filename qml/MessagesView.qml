@@ -199,8 +199,6 @@ Pane {
                 text: chat.typedUsers
                 font.pointSize: window.fontSmallest
                 color: window.secondaryTextColor
-//                height: contentHeight
-//                elide: Text.ElideRight
             }
             MessageEditor {
                 id: messageEditor
@@ -213,6 +211,10 @@ Pane {
                 height: visible ? implicitHeight : - 1 * mm
                 onSent: {
                     chat.sendMessage(messageEditor.message)
+                }
+                onMessageChanged: {
+                    if (message.length > 0)
+                        chat.sendTyped()
                 }
                 Connections {
                     target: chat
