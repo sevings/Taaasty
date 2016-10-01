@@ -107,6 +107,8 @@ ApplicationWindow {
     function showLineInput(mode) {
         inputDialog.state = "opened";
         inputDialog.mode = mode;
+        if (mode === 'query')
+            inputDialog.text = stack.currentItem.query || ''
     }
     function hideLineInput() {
         inputDialog.state = "closed";
