@@ -632,52 +632,52 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
     {
     case MyTlogMode:
         if (_tag.isEmpty())
-            _url = QString("v1/tlog/%1/entries/tlogs.json")
+            _url = QString("v2/tlog/%1/entries/tlogs.json")
                     .arg(Tasty::instance()->settings()->userId());
         else
-            _url = QString("v1/tlog/%1/entries/tags_tlogs/%2.json")
+            _url = QString("v2/tlog/%1/entries/tags_tlogs/%2.json")
                     .arg(Tasty::instance()->settings()->userId()).arg(_tag);
         break;
     case MyFavoritesMode:
-        _url = QString("v1/tlog/%1/favorites/tlogs.json")
+        _url = QString("v2/tlog/%1/favorites/tlogs.json")
                 .arg(Tasty::instance()->settings()->userId());
         break;
     case MyPrivateMode:
-        _url = QString("v1/tlog/%1/privates/tlogs.json")
+        _url = QString("v2/tlog/%1/privates/tlogs.json")
                 .arg(Tasty::instance()->settings()->userId());
         break;
     case FriendsMode:
         _url = "v1/my_feeds/friends/tlogs.json";
         break;
     case LiveMode:
-        _url = "v1/feeds/live/tlogs.json";
+        _url = "v2/feeds/live/tlogs.json";
         break;
     case AnonymousMode:
-        _url = "v1/feeds/anonymous/tlogs.json";
+        _url = "v2/feeds/anonymous/tlogs.json";
         break;
     case BestMode:
-        _url = "v1/feeds/best/tlogs.json?rating=best";
+        _url = "v2/feeds/best/tlogs.json?rating=best";
         break;
     case ExcellentMode:
-        _url = "v1/feeds/best/tlogs.json?rating=excellent";
+        _url = "v2/feeds/best/tlogs.json?rating=excellent";
         break;
     case WellMode:
-        _url = "v1/feeds/best/tlogs.json?rating=well";
+        _url = "v2/feeds/best/tlogs.json?rating=well";
         break;
     case GoodMode:
-        _url = "v1/feeds/best/tlogs.json?rating=good";
+        _url = "v2/feeds/best/tlogs.json?rating=good";
         break;
     case BetterThanMode:
-        _url = "v1/feeds/best/tlogs.json?rating=%1";
+        _url = "v2/feeds/best/tlogs.json?rating=%1";
         break;
     case TlogMode:
         if (_tag.isEmpty())
-            _url = QString("v1/tlog/%1/entries/tlogs.json");
+            _url = QString("v2/tlog/%1/entries/tlogs.json");
         else
-            _url = QString("v1/tlog/%2/entries/tags_tlogs/%1.json").arg(_tag);
+            _url = QString("v2/tlog/%2/entries/tags_tlogs/%1.json").arg(_tag);
         break;
     case FavoritesMode:
-        _url = "v1/tlog/%1/favorites/tlogs.json";
+        _url = "v2/tlog/%1/favorites/tlogs.json";
         break;
     default:
         qDebug() << "feed mode =" << mode;

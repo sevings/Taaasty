@@ -110,11 +110,11 @@ void UsersModelTlog::setMode(const UsersModel::Mode mode)
     switch(mode)
     {
     case FollowersMode:
-        _url = QString("v1/tlog/%1/followers.json?limit=20").arg(_tlog);
+        _url = QString("v2/tlog/%1/followers.json?limit=20").arg(_tlog);
         _field = "reader";
         break;
     case FollowingsMode:
-        _url = QString("v1/tlog/%1/followings.json?limit=20").arg(_tlog);
+        _url = QString("v2/tlog/%1/followings.json?limit=20").arg(_tlog);
         _field = "user";
         break;
     case MyFollowingsMode:
