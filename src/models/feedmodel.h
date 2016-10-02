@@ -54,6 +54,7 @@ public:
         MyPrivateMode,
         FriendsMode,
         LiveMode,
+        FlowsMode,
         AnonymousMode,
         BestMode,
         ExcellentMode,

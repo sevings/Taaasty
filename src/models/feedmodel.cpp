@@ -652,6 +652,9 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
     case LiveMode:
         _url = "v1/feeds/live/tlogs.json";
         break;
+    case FlowsMode:
+        _url = "v1/feeds/live_flows/tlogs.json";
+        break;
     case AnonymousMode:
         _url = "v1/feeds/anonymous/tlogs.json";
         break;

@@ -141,6 +141,36 @@ Q.Drawer {
                              || page.mode === FeedModel.MyPrivateMode)
             }
 
+            // LIVE SECTION
+            MenuItem {
+                text: 'Все посты'
+                onTriggered: {
+                    window.setFeedMode(FeedModel.LiveMode);
+                    drawer.close();
+                }
+                highlighted: page.mode === FeedModel.LiveMode
+                visible: !window.chatsShows
+                         && (   page.mode === FeedModel.LiveMode
+                             || page.mode === FeedModel.FlowsMode)
+            }
+            MenuItem {
+                text: 'Потоки'
+                onTriggered: {
+                    window.setFeedMode(FeedModel.FlowsMode);
+                    drawer.close();
+                }
+                highlighted: page.mode === FeedModel.FlowsMode
+                visible: !window.chatsShows
+                         && (   page.mode === FeedModel.LiveMode
+                             || page.mode === FeedModel.FlowsMode)
+            }
+            MenuSeparator {
+                visible: !window.chatsShows
+                         && (   page.mode === FeedModel.LiveMode
+                             || page.mode === FeedModel.FlowsMode)
+            }
+
+
             // BEST SECTION
             MenuItem {
                 text: 'Лучшее'

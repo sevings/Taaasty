@@ -67,6 +67,7 @@ Item {
                 text: 'Прямой эфир'
                 onTriggered: { changeMode(FeedModel.LiveMode) }
                 highlighted: stack.currentItem.mode === FeedModel.LiveMode
+                             || stack.currentItem.mode === FeedModel.FlowsMode
             }
             MenuItem {
                 text: 'Лучшее'
