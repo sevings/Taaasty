@@ -124,7 +124,7 @@ void Author::reload()
     if (id() <= 0 || isLoading())
         return;
 
-    _request = new ApiRequest(QString("v2/tlog/%1.json").arg(id()));
+    _request = new ApiRequest(QString("v1/tlog/%1.json").arg(id()));
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
 
     _initRequest();

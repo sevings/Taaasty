@@ -152,7 +152,7 @@ void Tlog::reload()
     if ((_slug.isEmpty() && !_id) || isLoading())
             return;
 
-    auto url = QString("v2/tlog/%1.json");
+    auto url = QString("v1/tlog/%1.json");
     if (_id)
         url = url.arg(_id);
     else
