@@ -314,8 +314,10 @@ void Conversation::init(const QJsonObject data)
      else if (_entryId)
      {
          auto e = entry();
-         _topic         = e->title().isEmpty() ? e->text() : e->title();
+         _topic         = e->title().trimmed().isEmpty() ? e->text() : e->title();
          _topic = Tasty::truncateHtml(_topic);
+         if (_topic.trimmed().isEmpty())
+             _topic = QString("(запись %1)").arg(e->author()->name());
      }
      else
          _topic.clear();
@@ -323,7 +325,7 @@ void Conversation::init(const QJsonObject data)
      auto users = data.value("users").toArray();
      foreach(auto userData, users)
      {
-        auto user = new User(userData.toObject(), this); // TODO: isOnline
+        auto user = new User(userData.toObject(), this); //! \todo isOnline
         _users.insert(user->id(), user);
      }
 
