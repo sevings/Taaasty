@@ -30,15 +30,7 @@ MouseArea {
     drag.maximumX: body ? body.width * 0.9 : 0
     drag.threshold: 2 * mm
     property bool shiftable: true
-    enabled: false
-    Component.onCompleted: {
-        enabled = true;
-    }
     onReleased: {
-        if (!propagateComposedEvents) {
-            propagateComposedEvents = true
-        }
-
         if (!body)
             return;
 
@@ -70,5 +62,6 @@ MouseArea {
     }
     onDoubleClicked: {
         // supress second click
+        mouse.accepted = true;
     }
 }
