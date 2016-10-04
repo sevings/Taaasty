@@ -37,8 +37,8 @@
 #endif
 
 
-NotificationsModel::NotificationsModel(QObject* parent)
-    : QAbstractListModel(parent)
+NotificationsModel::NotificationsModel(Tasty* tasty)
+    : QAbstractListModel(tasty)
     , _url("v2/messenger/notifications.json?limit=2")
     , _loading(false)
     , _checking(false)
@@ -49,10 +49,10 @@ NotificationsModel::NotificationsModel(QObject* parent)
 {
     qDebug() << "NotificationsModel";
 
-    Q_TEST(connect(Tasty::instance(),           SIGNAL(unreadNotificationsChanged()), this, SIGNAL(unreadChanged())));
-    Q_TEST(connect(Tasty::instance(),           SIGNAL(authorized()),                 this, SLOT(_reloadAll())));
-    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(notification(QJsonObject)),    this, SLOT(_addPush(QJsonObject))));
-    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(unreadNotifications(int)),     this, SLOT(_check(int))));
+    Q_TEST(connect(tasty,           SIGNAL(unreadNotificationsChanged()), this, SIGNAL(unreadChanged())));
+    Q_TEST(connect(tasty,           SIGNAL(authorized()),                 this, SLOT(_reloadAll())));
+    Q_TEST(connect(tasty->pusher(), SIGNAL(notification(QJsonObject)),    this, SLOT(_addPush(QJsonObject))));
+    Q_TEST(connect(tasty->pusher(), SIGNAL(unreadNotifications(int)),     this, SLOT(_check(int))));
 }
 
 
@@ -64,9 +64,9 @@ NotificationsModel::~NotificationsModel()
 
 
 
-NotificationsModel*NotificationsModel::instance(QObject* parent)
+NotificationsModel*NotificationsModel::instance(Tasty* tasty)
 {
-    static auto model = new NotificationsModel(parent);
+    static auto model = new NotificationsModel(tasty);
     return model;
 }
 

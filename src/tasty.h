@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QNetworkAccessManager>
+#include <QQmlApplicationEngine>
 
 #include "settings.h"
 
@@ -43,10 +44,10 @@ class Tasty : public QObject
     Q_PROPERTY(int  unreadFriendsEntries READ unreadFriendsEntries NOTIFY unreadFriendsEntriesChanged)
 
 public:
-    explicit Tasty(QNetworkAccessManager* web = nullptr);
+    explicit Tasty();
     ~Tasty();
 
-    static Tasty* instance(QNetworkAccessManager* web = nullptr);
+    static Tasty* instance();
 
     Settings*               settings() const { return _settings; }
     QNetworkAccessManager*  manager() const { return _manager; }
@@ -91,6 +92,8 @@ public slots:
     void reconnectToPusher();
 
 private slots:
+    void _init();
+
     void _swapProfiles();
     void _readAccessToken(const QJsonObject data);
 
@@ -103,6 +106,7 @@ private slots:
     void _saveOrReconnect(Qt::ApplicationState state);
 
 private:
+    QQmlApplicationEngine* _engine;
     Settings* _settings;
     QNetworkAccessManager* _manager;
     PusherClient* _pusher;

@@ -52,7 +52,7 @@ Trainer::Trainer(Bayes* parent)
 
     Q_TEST(connect(&_addWatcher, SIGNAL(finished()), this, SLOT(_loadEntries())));
 
-    _loadDb();
+//    _loadDb();
 }
 
 

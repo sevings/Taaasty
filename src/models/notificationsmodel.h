@@ -27,6 +27,7 @@
 #include <QSet>
 
 class Notification;
+class Tasty;
 
 #ifdef Q_OS_ANDROID
 class AndroidNotifier;
@@ -42,10 +43,10 @@ class NotificationsModel : public QAbstractListModel
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 
 public:
-    NotificationsModel(QObject* parent = nullptr);
+    NotificationsModel(Tasty* tasty = nullptr);
     ~NotificationsModel();
 
-    static NotificationsModel* instance(QObject* parent = nullptr);
+    static NotificationsModel* instance(Tasty* tasty = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;

@@ -31,6 +31,7 @@
 #include "../data/Conversation.h"
 
 class ApiRequest;
+class Tasty;
 
 
 
@@ -52,9 +53,9 @@ public:
 
     Q_ENUMS(Mode)
     
-    static ChatsModel* instance(QObject* parent = nullptr);
+    static ChatsModel* instance(Tasty* tasty = nullptr);
 
-    ChatsModel(QObject* parent = nullptr);
+    ChatsModel(Tasty* tasty = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;

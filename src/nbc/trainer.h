@@ -40,6 +40,7 @@ class Trainer : public QObject
     Q_OBJECT
 
     friend class UsersModelBayes;
+    friend class Bayes;
 
     Q_PROPERTY(Mode mode READ mode WRITE setMode NOTIFY modeChanged)
 

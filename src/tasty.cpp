@@ -20,29 +20,60 @@
 
 #include "tasty.h"
 
-#include "apirequest.h"
-#include "pusherclient.h"
-
-#include "data/User.h"
-
-#include "nbc/bayes.h"
+#include <QGuiApplication>
+#include <QRegularExpression>
+#include <QQmlContext>
+#include <QQmlEngine>
+#include <QQuickStyle>
+#include <QDateTime>
+#include <QDebug>
 
 #include "defines.h"
 
-#include <QGuiApplication>
-#include <QDateTime>
-#include <QRegularExpression>
-#include <QDebug>
+#include "tasty.h"
+#include "apirequest.h"
+#include "settings.h"
+#include "pusherclient.h"
+#include "textreader.h"
+#include "cache/cachemanager.h"
+#include "cache/cachedimage.h"
+#include "models/feedmodel.h"
+#include "models/calendarmodel.h"
+#include "models/commentsmodel.h"
+#include "models/attachedimagesmodel.h"
+#include "models/usersmodeltlog.h"
+#include "models/notificationsmodel.h"
+#include "models/chatsmodel.h"
+#include "models/messagesmodel.h"
+#include "models/flowsmodel.h"
+#include "models/tagsmodel.h"
+#include "nbc/bayes.h"
+#include "nbc/trainer.h"
+
+#include "data/AttachedImage.h"
+#include "data/Author.h"
+#include "data/CalendarEntry.h"
+#include "data/Comment.h"
+#include "data/Entry.h"
+#include "data/Media.h"
+#include "data/Notification.h"
+#include "data/Message.h"
+#include "data/Conversation.h"
+#include "data/Rating.h"
+#include "data/Tlog.h"
+#include "data/User.h"
+#include "data/Flow.h"
 
 
 
-Tasty::Tasty(QNetworkAccessManager* web)
+Tasty::Tasty()
     : QObject()
-    , _settings(new Settings(this))
-    , _manager(web ? web : new QNetworkAccessManager(this))
-    , _pusher(new PusherClient(this))
-    , _entryImageWidth(_settings->maxImageWidth())
-    , _commentImageWidth(_entryImageWidth)
+    , _engine(nullptr)
+    , _settings(nullptr)
+    , _manager(nullptr)
+    , _pusher(nullptr)
+    , _entryImageWidth(0)
+    , _commentImageWidth(0)
     , _unreadChats(0)
     , _unreadNotifications(0)
     , _unreadFriendsEntries(0)
@@ -51,17 +82,7 @@ Tasty::Tasty(QNetworkAccessManager* web)
 {
     qDebug() << "Tasty";
 
-    Q_TEST(connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)),
-                   this, SLOT(_saveOrReconnect(Qt::ApplicationState))));
-
-    Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
-                   this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
-
-    Q_TEST(connect(_pusher, SIGNAL(unreadChats(int)),          this, SLOT(_setUnreadChats(int))));
-    Q_TEST(connect(_pusher, SIGNAL(unreadNotifications(int)),  this, SLOT(_setUnreadNotifications(int))));
-    Q_TEST(connect(_pusher, SIGNAL(unreadFriendsEntry(int)), this, SLOT(_incUnreadFriendsEntries())));
-
-//    _pusher->subscribe("live");
+    Q_TEST(QMetaObject::invokeMethod(this, "_init"));
 }
 
 
@@ -73,9 +94,9 @@ Tasty::~Tasty()
 
 
 
-Tasty* Tasty::instance(QNetworkAccessManager* web)
+Tasty* Tasty::instance()
 {
-    static auto tasty = new Tasty(web);
+    static auto tasty = new Tasty;
     return tasty;
 }
 
@@ -221,6 +242,118 @@ void Tasty::swapProfiles()
 void Tasty::reconnectToPusher()
 {
     _pusher->connect();
+}
+
+
+
+void Tasty::_init()
+{
+#ifdef QT_DEBUG
+    static bool inited = false;
+    Q_ASSERT(!inited);
+    inited = true;
+
+    auto now = QDateTime::currentMSecsSinceEpoch();
+#endif
+
+    Bayes::instance(this);
+
+    _engine     = new QQmlApplicationEngine(this);
+    _settings   = new Settings(this);
+    _manager    = _engine->networkAccessManager();
+    _pusher     = new PusherClient(this);
+
+    _entryImageWidth   = _settings->maxImageWidth();
+    _commentImageWidth = _entryImageWidth;
+
+    Q_TEST(connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)),
+                   this, SLOT(_saveOrReconnect(Qt::ApplicationState))));
+
+    Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
+                   this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
+
+    Q_TEST(connect(_pusher, SIGNAL(unreadChats(int)),          this, SLOT(_setUnreadChats(int))));
+    Q_TEST(connect(_pusher, SIGNAL(unreadNotifications(int)),  this, SLOT(_setUnreadNotifications(int))));
+    Q_TEST(connect(_pusher, SIGNAL(unreadFriendsEntry(int)), this, SLOT(_incUnreadFriendsEntries())));
+
+    QQuickStyle::setStyle("Material");
+
+    qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
+    qmlRegisterType<CalendarModel>      ("org.binque.taaasty", 1, 0, "CalendarModel");
+    qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
+    qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
+    qmlRegisterType<UsersModelTlog>     ("org.binque.taaasty", 1, 0, "UsersModelTlog");
+    qmlRegisterType<MessagesModel>      ("org.binque.taaasty", 1, 0, "MessagesModel");
+    qmlRegisterType<FlowsModel>         ("org.binque.taaasty", 1, 0, "FlowsModel");
+    qmlRegisterType<TagsModel>          ("org.binque.taaasty", 1, 0, "TagsModel");
+
+    qmlRegisterUncreatableType<UsersModel>("org.binque.taaasty", 1, 0, "UsersModel", "Use subclasses instead");
+
+    qmlRegisterType<Entry>          ("org.binque.taaasty", 1, 0, "TlogEntry");
+    qmlRegisterType<CalendarEntry>  ("org.binque.taaasty", 1, 0, "CalendarEntry");
+    qmlRegisterType<Comment>        ("org.binque.taaasty", 1, 0, "Comment");
+    qmlRegisterType<User>           ("org.binque.taaasty", 1, 0, "User");
+    qmlRegisterType<Author>         ("org.binque.taaasty", 1, 0, "Author");
+    qmlRegisterType<Tlog>           ("org.binque.taaasty", 1, 0, "Tlog");
+    qmlRegisterType<Rating>         ("org.binque.taaasty", 1, 0, "Rating");
+    qmlRegisterType<AttachedImage>  ("org.binque.taaasty", 1, 0, "AttachedImage");
+    qmlRegisterType<Media>          ("org.binque.taaasty", 1, 0, "Media");
+    qmlRegisterType<Notification>   ("org.binque.taaasty", 1, 0, "Notification");
+    qmlRegisterType<Message>        ("org.binque.taaasty", 1, 0, "Message");
+    qmlRegisterType<MessageBase>    ("org.binque.taaasty", 1, 0, "MessageBase");
+    qmlRegisterType<Conversation>   ("org.binque.taaasty", 1, 0, "Chat");
+    qmlRegisterType<Flow>           ("org.binque.taaasty", 1, 0, "Flow");
+
+    qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");
+
+    qmlRegisterType<TextReader>("TextReader", 1, 0, "TextReader");
+
+    auto root = _engine->rootContext();
+    root->setContextProperty("Tasty", this);
+    root->setContextProperty("Settings", _settings);
+
+    auto notifs = NotificationsModel::instance(this);
+    root->setContextProperty("NotifsModel", notifs);
+
+    auto chats = ChatsModel::instance(this);
+    root->setContextProperty("ChatsModel", chats);
+
+    auto cache = CacheManager::instance(_manager);
+    cache->setMaxWidth(_settings->maxImageWidth());
+    cache->setAutoload(_settings->autoloadImages());
+    root->setContextProperty("Cache", cache);
+
+    Q_TEST(QObject::connect(_settings, SIGNAL(autoloadImagesChanged(bool)), cache, SLOT(setAutoload(bool))));
+
+    auto bayes = Bayes::instance();
+    root->setContextProperty("Bayes", bayes);
+
+    auto trainer = bayes->trainer();
+    root->setContextProperty("Trainer", trainer);
+
+#ifdef Q_OS_ANDROID
+    int density = 160; //! \todo: why 160?
+#else
+    float density = 267; // test
+#endif
+
+    double scale = density < 180 ? 1 :
+                   density < 270 ? 1.5 :
+                   density < 360 ? 2 : 3;
+
+    root->setContextProperty("mm", density / 25.4); // N900: 1 mm = 10.5 px; Q10: 12.9
+    root->setContextProperty("pt", 1);
+    root->setContextProperty("dp", scale); // N900: 1.5; Q10: 2
+
+    root->setContextProperty("builtAt", QString::fromLatin1(__DATE__));
+
+    _engine->setBaseUrl(QStringLiteral("qrc:/qml/"));
+    _engine->load(QUrl(QStringLiteral("main.qml")));
+
+#ifdef QT_DEBUG
+    auto ms = QDateTime::currentMSecsSinceEpoch() - now;
+    qDebug() << "Started in" << ms << "ms";
+#endif
 }
 
 

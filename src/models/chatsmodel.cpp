@@ -35,16 +35,16 @@
 
 
 
-ChatsModel* ChatsModel::instance(QObject* parent)
+ChatsModel* ChatsModel::instance(Tasty* tasty)
 {
-    static auto model = new ChatsModel(parent);
+    static auto model = new ChatsModel(tasty);
     return model;
 }
 
 
 
-ChatsModel::ChatsModel(QObject* parent)
-    : QAbstractListModel(parent)
+ChatsModel::ChatsModel(Tasty* tasty)
+    : QAbstractListModel(tasty)
     , _mode(AllChatsMode)
     , _hasMore(true)
     , _url("v2/messenger/conversations.json?limit=10&page=%1")
@@ -55,9 +55,9 @@ ChatsModel::ChatsModel(QObject* parent)
 {
     qDebug() << "ChatsModel";
 
-    Q_TEST(connect(Tasty::instance(),           SIGNAL(authorized()),       this, SLOT(reset())));
-    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(unreadChat()),       this, SLOT(loadUnread())));
-    Q_TEST(connect(Tasty::instance()->pusher(), SIGNAL(unreadChats(int)),   this, SLOT(_checkUnread(int))));
+    Q_TEST(connect(tasty,           SIGNAL(authorized()),       this, SLOT(reset())));
+    Q_TEST(connect(tasty->pusher(), SIGNAL(unreadChat()),       this, SLOT(loadUnread())));
+    Q_TEST(connect(tasty->pusher(), SIGNAL(unreadChats(int)),   this, SLOT(_checkUnread(int))));
 }
 
 

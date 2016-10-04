@@ -26,6 +26,7 @@
 #include <QRegularExpression>
 #include <QtMath>
 #include <QStandardPaths>
+#include <QtConcurrent>
 
 #ifdef QT_DEBUG
 #   include <QDateTime>
@@ -43,7 +44,7 @@
 Bayes::Bayes(QObject *parent)
     : QObject(parent)
     , _loaded(false)
-    , _trainer(nullptr)
+    , _trainer(new Trainer(this))
     , _stemmer(StemmerV::instance())
 
 {
@@ -52,7 +53,7 @@ Bayes::Bayes(QObject *parent)
     _total[Water] = 0;
     _total[Fire]  = 0;
 
-    _loadDb();
+    QtConcurrent::run(this, &Bayes::_loadDb);
 }
 
 
@@ -235,6 +236,8 @@ void Bayes::_loadDb()
 
     Q_TEST(_db.commit());
 
+    _trainer->_loadDb();
+
 #ifdef QT_DEBUG
     auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
     qDebug() << "Loaded in" << ms << "ms";
@@ -351,8 +354,5 @@ void Bayes::_addEntry(const EntryBase* entry, const Bayes::Type type)
 
 Trainer* Bayes::trainer()
 {
-    if (!_trainer)
-        _trainer = new Trainer(this);
-
     return _trainer;
 }
