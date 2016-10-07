@@ -58,7 +58,7 @@ Pane {
             spacing: 2 * mm
             Q.Label {
                 id: mailLabel
-                text: 'E-mail'
+                text: 'E-mail или ник'
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                 }

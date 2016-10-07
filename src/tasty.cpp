@@ -332,7 +332,7 @@ void Tasty::_init()
     root->setContextProperty("Trainer", trainer);
 
 #ifdef Q_OS_ANDROID
-    int density = 160; //! \todo: why 160?
+    int density = 160;
 #else
     float density = 267; // test
 #endif
