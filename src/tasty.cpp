@@ -332,7 +332,7 @@ void Tasty::_init()
     root->setContextProperty("Trainer", trainer);
 
 #ifdef Q_OS_ANDROID
-    int density = 160;
+    float density = 160;
 #else
     float density = 267; // test
 #endif
@@ -344,6 +344,7 @@ void Tasty::_init()
     root->setContextProperty("mm", density / 25.4); // N900: 1 mm = 10.5 px; Q10: 12.9
     root->setContextProperty("pt", 1);
     root->setContextProperty("dp", scale); // N900: 1.5; Q10: 2
+    root->setContextProperty("sp", density / 160); // scaleable pixels
 
     root->setContextProperty("builtAt", QString::fromLatin1(__DATE__));
 
