@@ -49,14 +49,15 @@ Item {
         }
         height: 14 * mm
     }
-    ThemedButton {
+    IconButton {
         id: button
         anchors {
             bottom: parent.bottom
             right: parent.right
         }
-        width: parent.width / 5
-        text: '+'
+        icon: (window.darkTheme ? '../icons/send-light-'
+                                : '../icons/send-dark-')
+              + '128.png'
         enabled: !editor.uploading && input.text
         onClicked: {
             editor.uploading = true;

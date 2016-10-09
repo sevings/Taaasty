@@ -317,10 +317,11 @@ Pane {
                     top: wc.bottom
                     left: parent.left
                 }
+                visible: text
                 text: entry.commentsCount || ''
                 icon: (window.darkTheme ? '../icons/comment-light-'
                                         : '../icons/comment-dark-')
-                      + '72.png'
+                      + '128.png'
                 onClicked: {
                     if (back.x > 0)
                         backAnimation.start();

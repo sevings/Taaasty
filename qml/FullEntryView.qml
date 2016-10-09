@@ -278,7 +278,7 @@ Pane {
                 fillMode: Image.PreserveAspectFit
                 source: (window.darkTheme ? '../icons/comment-light-'
                                           : '../icons/comment-dark-')
-                        + '72.png'
+                        + '128.png'
             }
             ThemedText {
                 id: comments
@@ -288,7 +288,6 @@ Pane {
                 }
                 text: entry.commentsCount
                 height: fullEntryVoteButton.height
-                color: window.secondaryTextColor
                 verticalAlignment: Text.AlignVCenter
             }
             IconButton {
