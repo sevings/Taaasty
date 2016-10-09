@@ -27,9 +27,6 @@ Flickable {
     anchors.margins: 1 * mm
     flickableDirection: Flickable.VerticalFlick
     property alias text: input.text
-    onFocusChanged: if (focus) {
-                        input.forceActiveFocus();
-                    }
     function addGreeting(slug) {
         input.insert(0, '@' + slug + ', ');
         input.forceActiveFocus();
@@ -54,5 +51,6 @@ Flickable {
         padding: 1 * mm
         implicitHeight: contentHeight + 2 * mm
         implicitWidth: 30 * mm
+        focus: true
     }
 }

@@ -216,6 +216,10 @@ Pane {
                     if (message.length > 0)
                         chat.sendTyped()
                 }
+                onActiveFocusChanged: {
+                    if (focus)
+                        listView.positionViewAtEnd();
+                }
                 Connections {
                     target: chat
                     onMessageSent: {
@@ -226,6 +230,10 @@ Pane {
                     target: back
                     onAddGreeting: {
                         messageEditor.addGreeting(slug);
+                    }
+                    onHeightChanged: { // keyboard shown
+                        if (messageEditor.focus)
+                            listView.positionViewAtEnd();
                     }
                 }
             }

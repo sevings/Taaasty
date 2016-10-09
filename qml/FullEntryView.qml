@@ -384,6 +384,10 @@ Pane {
             onSent: {
                 entry.addComment(commentEditor.message);
             }
+            onActiveFocusChanged: {
+                if (focus)
+                    fullEntry.positionViewAtEnd();
+            }
             Connections {
                 target: entry
                 onCommentAdded: {
@@ -394,6 +398,10 @@ Pane {
                 target: back
                 onAddGreeting: {
                     commentEditor.addGreeting(slug);
+                }
+                onHeightChanged: { // keyboard shown
+                    if (commentEditor.focus)
+                        fullEntry.positionViewAtEnd();
                 }
             }
         }

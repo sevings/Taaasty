@@ -21,17 +21,17 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 
-Item {
+FocusScope {
     id: editor
     implicitWidth: window.width
     implicitHeight: 18 * mm
     property alias message: input.text
     property bool uploading: false
-    onFocusChanged: {
-        if (focus)
-            input.focus = true;
-    }
     signal sent
+    onActiveFocusChanged: {
+        if (focus)
+            window.hideFooter();
+    }
     function clear() {
         input.clear();
         uploading = false;
@@ -48,6 +48,7 @@ Item {
             right: button.left
         }
         height: 14 * mm
+        focus: true
     }
     IconButton {
         id: button
