@@ -44,12 +44,16 @@ Rectangle {
             enabled = true;
             popup.forceActiveFocus();
         }
-        else
+        else {
             enabled = false;
+            focus = false;
+        }
     }
     Keys.onBackPressed: {
-        if (!closable)
+        if (!closable) {
+            event.accepted = !window.mayBeClose();
             return;
+        }
 
         closing();
         event.accepted = true;

@@ -62,19 +62,23 @@ ApplicationWindow {
         Tasty.setImageWidth(window.width - 2 * mm, window.width - 11 * mm);
     }
     onClosing: {
+        close.accepted = mayBeClose();
+    }
+    function mayBeClose() {
         if (notifsShows) {
             hideNotifs();
-            close.accepted = false;
+            return false;
         }
-        else if (chatsShows) {
+        if (chatsShows) {
             hideChats();
-            close.accepted = false;
+            return false;
         }
-        else if (stack.depth > 1) {
+        if (stack.depth > 1) {
             if (!stack.currentItem.isTrainingProgress)
                 stack.pop();
-            close.accepted = false;
+            return false;
         }
+        return true;
     }
     function showNotifs() {
         notifsView.item.show();

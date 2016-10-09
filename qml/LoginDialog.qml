@@ -70,6 +70,12 @@ Pane {
                     horizontalCenter: parent.horizontalCenter
                 }
                 width: 40 * mm
+                onAccepted: {
+                    if (loginButton.enabled)
+                        Tasty.authorize(mail.text, password.text, saveBox.checked);
+                    else
+                        password.focus = true;
+                }
             }
             Q.Label {
                 id: passwordLabel
@@ -80,7 +86,7 @@ Pane {
                 font.pointSize: window.fontBigger
             }
             LineInput {
-                id: password // TODO: Enter key
+                id: password
                 echoMode: TextInput.Password
                 anchors {
                     horizontalCenter: parent.horizontalCenter
