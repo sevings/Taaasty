@@ -44,7 +44,7 @@ T.ToolButton {
     anchors.margins: 1 * mm
 //    implicitWidth: 10 * mm
     property url icon: ''
-    property int iconHeight: 24
+    property int iconHeight: 24 * sp
     font.pointSize: window.fontNormal
     implicitWidth: Math.max(background ? background.implicitWidth : 0,
                             contentItem.implicitWidth + leftPadding + rightPadding)
@@ -82,8 +82,8 @@ T.ToolButton {
 
     //! [background]
     background: Rectangle {
-        implicitWidth: 48
-        implicitHeight: 48
+        implicitWidth: 48 * sp
+        implicitHeight: 48 * sp
 
         color: control.down ? control.Material.buttonPressColor : control.Material.buttonHoverColor
         visible: control.enabled && (control.down || control.visualFocus || control.checked || control.highlighted)

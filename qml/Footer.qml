@@ -24,7 +24,7 @@ import org.binque.taaasty 1.0
 
 Popup {
     id: footer
-    height: 6 * mm
+    height: 56 * sp
     closable: false
     state: "opened"
     MouseArea {
@@ -45,7 +45,6 @@ Popup {
         }
         height: parent.height
         width: parent.width / 4
-        iconHeight: 32
         icon: '../icons/' + (window.stackSize > 1 || window.notifsShows || window.chatsShows
                              ? 'left-arrow-' : 'menu-rounded-')
               + 'white-128.png'
@@ -71,7 +70,6 @@ Popup {
         width: parent.width / 4
         visible: Tasty.isAuthorized
         highlighted: window.chatsShows
-        iconHeight: 32
         icon: '../icons/chat-white-128.png'
         onClicked: {
             window.toggleChats();
@@ -114,7 +112,6 @@ Popup {
         width: parent.width / 4
         visible: Tasty.isAuthorized
         highlighted: window.notifsShows
-        iconHeight: 32
         icon: '../icons/bell-white-128.png'
         onClicked: {
             window.toggleNotifs();
@@ -156,7 +153,6 @@ Popup {
         height: parent.height
         width: parent.width / 4
         visible: window.canShowPageMenu
-        iconHeight: 32
         icon: '../icons/menu-white-128.png'
         onClicked: {
             window.showPageMenu();

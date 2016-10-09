@@ -78,6 +78,10 @@ ApplicationWindow {
                 stack.pop();
             return false;
         }
+        if (!menu.visible) {
+            forwardAnimation.start();
+            return false;
+        }
         return true;
     }
     function showNotifs() {
@@ -341,23 +345,19 @@ ApplicationWindow {
         visible: stackLoader.opacity == 1
                  && stack.depth === 1 && stack.currentItem && stack.currentItem.x > 0
     }
-    ParallelAnimation {
+    PropertyAnimation {
         id: backAnimation
-        PropertyAnimation {
-            target: stack.currentItem
-            property: "x"
-            to: 0
-            duration: 100
-        }
+        target: stack.currentItem
+        property: "x"
+        to: 0
+        duration: 100
     }
-    ParallelAnimation {
+    PropertyAnimation {
         id: forwardAnimation
-        PropertyAnimation {
-            target: stack.currentItem
-            property: "x"
-            to: 40 * mm
-            duration: 100
-        }
+        target: stack.currentItem
+        property: "x"
+        to: 40 * mm
+        duration: 100
     }
     Loader {
         id: stackLoader
