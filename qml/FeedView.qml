@@ -311,29 +311,22 @@ Pane {
                 width: length < maxWidth ? length : maxWidth
                 color: window.secondaryTextColor
             }
-            Image {
-                id: entryCommentsIcon
-                anchors {
-                    margins: 2 * mm
-                    verticalCenter: comments.verticalCenter
-                    left: parent.left
-                }
-                height: 27
-                fillMode: Image.PreserveAspectFit
-                source: (window.darkTheme ? '../icons/comment-light-'
-                                          : '../icons/comment-dark-')
-                        + '72.png'
-            }
-            ThemedText {
-                id: comments
+            IconButton {
+                id: commentsButton
                 anchors {
                     top: wc.bottom
-                    left: entryCommentsIcon.right
+                    left: parent.left
                 }
-                text: entry.commentsCount
-                height: entryVoteButton.height
-                color: window.secondaryTextColor
-                verticalAlignment: Text.AlignVCenter
+                text: entry.commentsCount || ''
+                icon: (window.darkTheme ? '../icons/comment-light-'
+                                        : '../icons/comment-dark-')
+                      + '72.png'
+                onClicked: {
+                    if (back.x > 0)
+                        backAnimation.start();
+                    else
+                        window.pushFullEntry(entry, false, true);
+                }
             }
             IconButton {
                 id: entryVoteButton

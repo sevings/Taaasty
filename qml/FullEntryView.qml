@@ -34,6 +34,7 @@ Pane {
     property CommentsModel commentsModel: entry.comments
     property bool showProfiles: tlog.tlogId !== window.anonymousId
     property bool scrollToBottom: false
+    property bool scrollToFirst: false
     readonly property bool isFullEntryView: true
     signal addGreeting(string slug)
     function checkComments() {
@@ -54,6 +55,13 @@ Pane {
         checkComments();
         if (scrollToBottom)
             fullEntry.positionViewAtEnd();
+        else if (scrollToFirst)
+        {
+            if (fullEntry.count > 0)
+                fullEntry.positionViewAtIndex(0, ListView.Beginning);
+            else
+                fullEntry.positionViewAtEnd();
+        }
         if (!entry.createdAt.length)
             entry.reload();
     }

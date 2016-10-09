@@ -153,7 +153,7 @@ ApplicationWindow {
                    }
                    )
     }
-    function pushFullEntry(entry, scroll) {
+    function pushFullEntry(entry, toBottom, toFirst) {
         var item = stack.find(function (item) {
             return item.isFullEntryView && item.entry.id === entry.id;
         })
@@ -166,7 +166,8 @@ ApplicationWindow {
         stack.push(stack.fullEntry,
                    {
                        entry: entry,
-                       scrollToBottom: scroll === true,
+                       scrollToBottom: toBottom === true,
+                       scrollToFirst: toFirst === true,
                        poppable: true
                    }
                    )

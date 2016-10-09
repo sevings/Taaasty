@@ -42,11 +42,12 @@ T.ToolButton {
     id: control
 
     anchors.margins: 1 * mm
-    implicitWidth: 10 * mm
+//    implicitWidth: 10 * mm
     property url icon: ''
-    property int iconHeight: 27
-//    implicitWidth: Math.max(background ? background.implicitWidth : 0,
-//                            contentItem.implicitWidth + leftPadding + rightPadding)
+    property int iconHeight: 24
+    font.pointSize: window.fontNormal
+    implicitWidth: Math.max(background ? background.implicitWidth : 0,
+                            contentItem.implicitWidth + leftPadding + rightPadding)
     implicitHeight: Math.max(background ? background.implicitHeight : 0,
                              contentItem.implicitHeight + topPadding + bottomPadding)
     baselineOffset: contentItem.y + contentItem.baselineOffset
@@ -55,11 +56,26 @@ T.ToolButton {
 
     //! [contentItem]
     contentItem: Item {
-        Image {
+        implicitHeight: Math.max(control.iconHeight, contentText.height)
+        implicitWidth: row.width + 3 * mm
+        Row {
+            id: row
             anchors.centerIn: parent
-            source: control.icon
-            height: control.iconHeight
-            fillMode: Image.PreserveAspectFit
+            spacing: 1 * mm
+            Image {
+                source: control.icon
+                height: control.iconHeight
+                fillMode: Image.PreserveAspectFit
+            }
+            Text {
+                id: contentText
+                text: control.text
+                font: control.font
+                color: control.enabled ? control.Material.primaryTextColor : control.Material.hintTextColor
+                visible: control.text.length
+                verticalAlignment: Text.AlignVCenter
+                height: parent.height
+            }
         }
     }
     //! [contentItem]
