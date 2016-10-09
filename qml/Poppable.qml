@@ -30,20 +30,29 @@ MouseArea {
     drag.maximumX: body ? body.width * 0.9 : 0
     drag.threshold: 2 * mm
     property bool shiftable: true
+    property int bodyX: 0
+    property int prevBodyX: 0
+    Connections {
+        target: body
+        onXChanged: {
+            prevBodyX = bodyX;
+            bodyX = body ? body.x : 0;
+        }
+    }
     onReleased: {
         if (!body)
             return;
 
         if (body.poppable)
         {
-            if (body.x > window.width / 2)
+            if (bodyX > prevBodyX)
                 body.popped();
             else
                 backAnimation.start();
         }
         else
         {
-            if (body.x > 20 * mm && shiftable)
+            if (bodyX > prevBodyX && shiftable)
                 forwardAnimation.start();
             else
                 backAnimation.start();
