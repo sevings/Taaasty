@@ -22,19 +22,21 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QFutureWatcher>
 
 #include "../nbc/bayes.h"
+#include "TastyData.h"
 
 class Entry;
 
 
 
-class Rating: public QObject
+class Rating: public TastyData
 {
     Q_OBJECT
 
-    Q_PROPERTY (int  entryId    MEMBER _entryId     NOTIFY dataChanged)
+    Q_PROPERTY (int  entryId    MEMBER _id          NOTIFY dataChanged)
     Q_PROPERTY (int  votes      MEMBER _votes       NOTIFY dataChanged)
     Q_PROPERTY (int  rating     MEMBER _rating      NOTIFY dataChanged)
     Q_PROPERTY (bool isVoted    MEMBER _isVoted     NOTIFY dataChanged)
@@ -53,6 +55,8 @@ public:
 
     int bayesRating() const;
 
+    void setId(int entryId);
+    
 public slots:
     void vote();
     void voteBayes();
@@ -66,9 +70,9 @@ signals:
 
 private slots:
     void _changeBayesRating(Bayes::Type type);
+    void _reinit(const QJsonArray data);
 
 private:
-    int  _entryId;
     int  _votes;
     int  _rating;
     bool _isVoted;

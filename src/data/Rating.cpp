@@ -34,8 +34,7 @@
 
 
 Rating::Rating(QObject* parent)
-    : QObject(parent)
-    , _entryId(0)
+    : TastyData(parent)
     , _votes(0)
     , _rating(0)
     , _isVoted(false)
@@ -51,8 +50,7 @@ Rating::Rating(QObject* parent)
 
 
 Rating::Rating(const QJsonObject data, Entry* parent)
-    : QObject(parent)
-    , _entryId(0)
+    : TastyData(parent)
     , _bayesRating(0)
     , _isBayesVoted(false)
     , _isVotedAgainst(false)
@@ -73,7 +71,7 @@ Rating::~Rating()
 
 void Rating::reCalcBayes()
 {
-    auto type = Bayes::instance()->entryVoteType(_entryId);
+    auto type = Bayes::instance()->entryVoteType(_id);
     switch (type)
     {
     case Bayes::Water:
@@ -101,6 +99,30 @@ void Rating::reCalcBayes()
 
 
 
+int Rating::bayesRating() const
+{
+    return _bayesRating;
+}
+
+
+
+void Rating::setId(int entryId)
+{
+    if (_id == entryId || isLoading())
+        return;
+    
+    _id = entryId;
+    
+    auto url = QString("v1/ratings.json?ids=%1").arg(_id);
+    _request = new ApiRequest(url, true);
+    
+    Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_reinit(QJsonArray))));
+    
+    _initRequest();
+}
+
+
+
 void Rating::vote()
 {
     voteBayes();
@@ -108,7 +130,7 @@ void Rating::vote()
     if (!_isVotable || !Tasty::instance()->isAuthorized())
         return;
 
-    auto url = QString("v1/entries/%1/votes.json").arg(_entryId);
+    auto url = QString("v1/entries/%1/votes.json").arg(_id);
     auto operation = (_isVoted ? QNetworkAccessManager::DeleteOperation
                                : QNetworkAccessManager::PostOperation);
     auto request = new ApiRequest(url, true, operation);
@@ -149,7 +171,7 @@ void Rating::init(const QJsonObject data)
 {
     int id = data.value("entry_id").toInt();
     if (id)
-        _entryId = id;
+        _id = id;
 
     _votes      = data.value("votes").toInt();
     _rating     = data.value("rating").toInt();
@@ -171,7 +193,10 @@ void Rating::_changeBayesRating(Bayes::Type type)
 
 
 
-int Rating::bayesRating() const
+void Rating::_reinit(const QJsonArray data)
 {
-    return _bayesRating;
+    if (data.isEmpty())
+        return;
+    
+    init(data.first().toObject());
 }

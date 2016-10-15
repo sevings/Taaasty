@@ -204,10 +204,20 @@ void Entry::init(const QJsonObject data)
     else
         _tlog        = new Tlog(tlogData, this);
 
-    if (_rating)
+//    if (data.contains("rating"))
+//    {
+//        if (_rating)
+//
+//        else
+//            _rating  = new Rating(data.value("rating").toObject(), this);
+//    }
+    if (!_rating)
+        _rating = new Rating(this);
+
+    if (isLoading())
         _rating->init(data.value("rating").toObject());
     else
-        _rating      = new Rating(data.value("rating").toObject(), this);
+        _rating->setId(_id);
 
     _commentsCount   = data.value("comments_count").toInt();
 
