@@ -56,7 +56,7 @@ Pane {
     MyFlickable {
         id: flickable
         anchors.fill: parent
-        bottomMargin: 1 * mm
+        bottomMargin: 1.5 * mm
         contentWidth: parent.width
         contentHeight: column.height
 //        interactive: profileView.x == 0
@@ -66,7 +66,7 @@ Pane {
         Column {
             id: column
             width: window.width
-            spacing: 1 * mm
+            spacing: 1.5 * mm
             visible: !tlog.loading
             MyImage {
                 id: bigAvatar
@@ -169,12 +169,12 @@ Pane {
                 height: tlogVoteButton.height
                 property int tlogMode: Trainer.typeOfTlog(tlog.tlogId)
                 visible: readButton.enabled
-                spacing: 1 * mm
-                leftPadding: 1 * mm
-                rightPadding: 1 * mm
+                spacing: 1.5 * mm
+                leftPadding: 1.5 * mm
+                rightPadding: 1.5 * mm
                 IconButton {
                     id: tlogVoteAgainstButton
-                    width: (parent.width - 3 * mm) / 2
+                    width: (parent.width - 4.5 * mm) / 2
                     icon: (parent.tlogMode == 0 //Trainer.WaterMode
                           ? '../icons/drop-solid-' : '../icons/drop-outline-')
                           + '72.png'
@@ -200,10 +200,10 @@ Pane {
             Grid {
                 width: window.width
                 columns: 3
-                padding: 1 * mm
-                spacing: 1 * mm
+                padding: 1.5 * mm
+                spacing: 1.5 * mm
                 readonly property int cellHeight: readButton.implicitHeight
-                readonly property int cellWidth: (window.width - 4 * mm) / 3
+                readonly property int cellWidth: (window.width - 6 * mm) / 3
                 ThemedButton {
                     id: readButton
                     width: parent.cellWidth

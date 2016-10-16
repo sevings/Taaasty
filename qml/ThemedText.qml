@@ -23,7 +23,7 @@ import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 
 Q.Label {
-    anchors.margins: 1 * mm
+    anchors.margins: 1.5 * mm
     font.pointSize: window.fontNormal
     wrapMode: Text.Wrap
 }

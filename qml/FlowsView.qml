@@ -78,11 +78,11 @@ Pane {
                     top: parent.top
                     left: parent.left
                     right: parent.right
-                    bottomMargin: 1 * mm
+                    bottomMargin: 1.5 * mm
                 }
                 url: flow.picUrl
                 width: window.width
-                height: width * 10 / 16
+                height: width * 9 / 16
                 clip: true
                 popBody: back
                 acceptClick: false
@@ -105,7 +105,7 @@ Pane {
                     left: parent.left
                     right: parent.right
                 }
-                height: text.length === 0 ? -1 * mm : paintedHeight
+                height: text.length === 0 ? -1.5 * mm : paintedHeight
             }
             ThemedText {
                 id: flowFollowers

@@ -43,8 +43,8 @@ PopupFill {
         cacheBuffer: back.visible ? 2 * window.height : 0
         delegate: Rectangle {
             width: window.width
-            readonly property int textHeight: lastMessage.y + lastMessage.height - 2 * mm
-            height: (textHeight > chatAvatar.height ? textHeight : chatAvatar.height) + 2 * mm
+            readonly property int textHeight: lastMessage.y + lastMessage.height - 3 * mm
+            height: (textHeight > chatAvatar.height ? textHeight : chatAvatar.height) + 3 * mm
             color: pop.pressed ? Material.primary : 'transparent'
             MouseArea {
                 id: pop
@@ -61,7 +61,7 @@ PopupFill {
                 id: chatAvatar
                 anchors {
                     top: parent.top
-                    margins: 1 * mm
+                    margins: 1.5 * mm
                 }
                 user: model.chat.entry ? model.chat.entry.author : model.chat.recipient
                 acceptClick: !model.chat.isAnonymous && (model.chat.recipient || model.chat.entry)
@@ -100,7 +100,7 @@ PopupFill {
                 anchors {
                     top: chatNick.bottom
                     left: chatAvatar.right
-                    margins: 1 * mm
+                    margins: 1.5 * mm
                 }
                 user: visible ? model.chat.lastMessage.user
                               : chatAvatar.user

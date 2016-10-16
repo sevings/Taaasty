@@ -24,7 +24,7 @@ import QtQuick.Controls.Material 2.0
 
 Flickable {
     id: flickText
-    anchors.margins: 1 * mm
+    anchors.margins: 1.5 * mm
     flickableDirection: Flickable.VerticalFlick
     property alias text: input.text
     function addGreeting(slug) {
@@ -48,8 +48,8 @@ Flickable {
         font.pointSize: window.fontNormal
         wrapMode: TextEdit.Wrap
         textFormat: Text.PlainText
-        padding: 1 * mm
-        implicitHeight: contentHeight + 2 * mm
+        padding: 1.5 * mm
+        implicitHeight: contentHeight + 3 * mm
         implicitWidth: 30 * mm
         focus: true
     }

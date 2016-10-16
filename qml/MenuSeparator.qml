@@ -23,7 +23,7 @@ import QtQuick.Controls.Material 2.0
 
 Rectangle {
     implicitWidth: parent.width - 3 * mm
-    implicitHeight: 0.2 * mm
+    implicitHeight: 0.3 * mm
     color: Material.primary
     anchors.horizontalCenter: parent.horizontalCenter
 }

@@ -66,9 +66,7 @@ MouseArea {
     }
     Rectangle {
         id: page
-        readonly property int maxWidth: window.width - 4 * mm
-        readonly property int textWidth: dialogText.contentWidth + 5 * mm
-        width: textWidth > maxWidth ? maxWidth : textWidth
+        width: Math.min(window.width - 4 * mm, dialogText.contentWidth + 5 * mm)
         height: dialogText.contentHeight + 5 * mm
         anchors.centerIn: parent
         color: window.backgroundColor

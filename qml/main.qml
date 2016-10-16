@@ -56,10 +56,10 @@ ApplicationWindow {
     title: qsTr("Taaasty")
     color: stackLoader.opacity == 1 ? window.backgroundColor : '#ff000000'
     onWidthChanged: {
-        Tasty.setImageWidth(window.width - 2 * mm, window.width - 11 * mm);
+        Tasty.setImageWidth(window.width - 3 * mm, window.width - 12.5 * mm);
     }
     Component.onCompleted: {
-        Tasty.setImageWidth(window.width - 2 * mm, window.width - 11 * mm);
+        Tasty.setImageWidth(window.width - 3 * mm, window.width - 12.5 * mm);
     }
     onClosing: {
         close.accepted = mayBeClose();

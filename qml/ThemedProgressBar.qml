@@ -25,7 +25,7 @@ import QtQuick.Layouts 1.3
 
 ColumnLayout {
     id: control
-    spacing: 1 * mm
+    spacing: 1.5 * mm
     property string text: ''
     property bool percents: false
     property alias to: bar.to
@@ -37,7 +37,7 @@ ColumnLayout {
     Q.ProgressBar {
         id: bar
         Layout.preferredWidth: window.width
-        padding: 1 * mm
+        padding: 1.5 * mm
         value: control.showValue
     }
     ThemedText {

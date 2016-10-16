@@ -140,7 +140,7 @@ Pane {
                 font.pointSize: window.fontSmaller
                 visible: entry.author.id !== entry.tlog.tlogId
                          && entry.tlog.tlogId !== tlog.tlogId
-                height: visible ? contentHeight : -mm
+                height: visible ? contentHeight : - 1.5 * mm
                 horizontalAlignment: Text.AlignHCenter
                 text: entry.tlog.author.name
                       + (entry.tlog.author.title ? '\n' + entry.tlog.author.title : '')
@@ -161,7 +161,7 @@ Pane {
                 id: entryAvatar
                 anchors {
                     top: repostText.bottom
-                    margins: 1 * mm
+                    margins: 1.5 * mm
                 }
                 user: entry.author
                 popBody: back
@@ -207,8 +207,8 @@ Pane {
                     top: entryAvatar.visible ? entryAvatar.bottom : date.bottom
                     left: parent.left
                     right: parent.right
-                    topMargin: 1 * mm
-                    bottomMargin: 1 * mm
+                    topMargin: 1.5 * mm
+                    bottomMargin: 1.5 * mm
                 }
                 property AttachedImage image: entry.attachedImagesModel.first()
                 active: image
@@ -247,7 +247,7 @@ Pane {
                     top: firstImage.bottom
                     left: parent.left
                     right: parent.right
-                    bottomMargin: 1 * mm
+                    bottomMargin: 1.5 * mm
                 }
                 onLoaded: item.media = media
                 sourceComponent: MediaLink {
@@ -277,7 +277,7 @@ Pane {
                     top: entryTitle.bottom
                     left: parent.left
                     right: parent.right
-                    leftMargin: entry.type === 'quote' ? 5 * mm : 1 * mm
+                    leftMargin: entry.type === 'quote' ? 5 * mm : 1.5 * mm
                     rightMargin: anchors.leftMargin
                 }
                 textFormat: Text.RichText
@@ -303,12 +303,13 @@ Pane {
                 anchors {
                     top: quoteSource.bottom
                     left: parent.left
-                    margins: 1 * mm
+                    margins: 1.5 * mm
                 }
                 height: 0.5 * mm
-                property int maxWidth: parent.width - 2 * mm
-                property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
-                width: length < maxWidth ? length : maxWidth
+                radius: height / 2
+                readonly property int maxWidth: parent.width - 2 * mm
+                readonly property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
+                width: Math.min(length, maxWidth)
                 color: window.secondaryTextColor
             }
             IconButton {

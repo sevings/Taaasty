@@ -41,10 +41,10 @@ import QtQuick.Controls.Material 2.0
 T.ToolButton {
     id: control
 
-    anchors.margins: 1 * mm
+    anchors.margins: 1.5 * mm
 //    implicitWidth: 10 * mm
     property url icon: ''
-    property int iconHeight: 24 * sp
+    property int iconHeight: 20 * sp
     font.pointSize: window.fontNormal
     implicitWidth: Math.max(background ? background.implicitWidth : 0,
                             contentItem.implicitWidth + leftPadding + rightPadding)
@@ -61,7 +61,7 @@ T.ToolButton {
         Row {
             id: row
             anchors.centerIn: parent
-            spacing: 1 * mm
+            spacing: 1.5 * mm
             Image {
                 source: control.icon
                 height: control.iconHeight

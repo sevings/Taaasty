@@ -62,9 +62,9 @@ ListView {
             margins: 0.5 * mm
         }
         y: parent.visibleArea.yPosition * (parent.height - height + h)
-        width: 1 * mm
+        width: 1.5 * mm
         property int h: parent.visibleArea.heightRatio * parent.height
-        height: h > 5 * mm ? h : 5 * mm
+        height: Math.max(5 * mm, h)
         color: Material.foreground
         opacity: parent.movingVertically ? 0.7 : 0
         visible: opacity > 0 && height < parent.height * 0.9
@@ -80,7 +80,7 @@ ListView {
         id: upButton
         anchors {
             right: parent.right
-            margins: 1 * mm
+            margins: 1.5 * mm
         }
         width: 10 * mm
         height: width

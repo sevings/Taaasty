@@ -47,7 +47,7 @@ FocusScope {
             left: parent.left
             right: button.left
         }
-        height: 14 * mm
+        height: 15 * mm
         focus: true
     }
     IconButton {

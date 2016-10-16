@@ -101,7 +101,7 @@ Pane {
 //        interactive: back.x == 0
         delegate: Item {
             width: window.width
-            readonly property int textHeight: nameText.height + commentText.height - 1 * mm
+            readonly property int textHeight: nameText.height + commentText.height - 1.5 * mm
             height: (textHeight > commentAvatar.height ? textHeight : commentAvatar.height) + 4 * mm
 //            color: pop.pressed ? Material.primary : 'transparent'
             Component.onCompleted: {
@@ -117,7 +117,7 @@ Pane {
             SmallAvatar {
                 id: commentAvatar
                 anchors {
-                    margins: 1 * mm
+                    margins: 1.5 * mm
                     topMargin: 2 * mm
                 }
                 user: comment.user
@@ -134,8 +134,8 @@ Pane {
                     top: parent.top
                     left: commentAvatar.right
                     right: commentDate.left
-                    leftMargin: 1 * mm
-                    rightMargin: 1 * mm
+                    leftMargin: 1.5 * mm
+                    rightMargin: 1.5 * mm
                     topMargin: 2 * mm
                 }
                 wrapMode: Text.Wrap
@@ -151,8 +151,8 @@ Pane {
                 anchors {
                     baseline: nameText.baseline
                     right: parent.right
-                    leftMargin: 1 * mm
-                    rightMargin: 1 * mm
+                    leftMargin: 1.5 * mm
+                    rightMargin: 1.5 * mm
                 }
                 font.pointSize: window.fontSmaller
             }
@@ -160,7 +160,7 @@ Pane {
                 id: commentText
                 text: comment.text
                 anchors {
-                    rightMargin: 1 * mm
+                    rightMargin: 1.5 * mm
                     top: nameText.bottom
                     left: nameText.left
                     right: parent.right
@@ -174,7 +174,7 @@ Pane {
         header: Item {
             id: fullEntryContent
             width: window.width
-            height: 10 * mm + fullTitle.height + fullContent.height + quoteSource.height
+            height: 14 * mm + fullTitle.height + fullContent.height + quoteSource.height
                     + fullEntryVoteButton.height + fullEntryDate.height
                     + (busy.running ? busy.height : loadMoreButton.height)
                     + fullEntryImages.height + mediaLink.height
@@ -187,10 +187,10 @@ Pane {
                     top: parent.top
                     left: parent.left
                     right: parent.right
-                    bottomMargin: 1 * mm
+                    bottomMargin: 1.5 * mm
                 }
                 interactive: false
-                spacing: 1 * mm
+                spacing: 1.5 * mm
                 property AttachedImagesModel imagesModel: entry.attachedImagesModel
                 height: imagesModel ? (imagesModel.listRatio() * window.width
                         + (imagesModel.rowCount() - 1) * mm) : 0
@@ -212,7 +212,7 @@ Pane {
                     top: fullEntryImages.bottom
                     left: parent.left
                     right: parent.right
-                    bottomMargin: 1 * mm
+                    bottomMargin: 1.5 * mm
                 }
                 media: entry.media
                 acceptClick: mediaLink.url
@@ -232,7 +232,7 @@ Pane {
                 font.pointSize: (entry.text.length > 0 ? window.fontBigger
                                                       : window.fontNormal)
                 textFormat: Text.RichText
-                height: entry.title.length > 0 ? contentHeight : entry.text.length > 0 ? -1 * mm : 0
+                height: entry.title.length > 0 ? contentHeight : entry.text.length > 0 ? -1.5 * mm : 0
                 onLinkActivated: window.openLink(link)
             }
             ThemedText {
@@ -242,11 +242,11 @@ Pane {
                     top: fullTitle.bottom
                     left: parent.left
                     right: parent.right
-                    leftMargin: entry.type === 'quote' ? 5 * mm : 1 * mm
+                    leftMargin: entry.type === 'quote' ? 5 * mm : 1.5 * mm
                     rightMargin: anchors.leftMargin
                 }
                 textFormat: Text.RichText
-                height: entry.text.length > 0 ? contentHeight : entry.title.length > 0 ? -1 * mm : 0
+                height: entry.text.length > 0 ? contentHeight : entry.title.length > 0 ? -1.5 * mm : 0
                 onLinkActivated: window.openLink(link)
             }
             ThemedText {
@@ -260,7 +260,7 @@ Pane {
                 font.pointSize: window.fontSmaller
                 font.italic: true
                 textFormat: Text.RichText
-                height: entry.source.length > 0 ? contentHeight : -1 * mm
+                height: entry.source.length > 0 ? contentHeight : -1.5 * mm
                 horizontalAlignment: Text.AlignRight
             }
             Text {
@@ -268,7 +268,7 @@ Pane {
                 anchors {
                     top: quoteSource.bottom
                     left: parent.left
-                    margins: 1 * mm
+                    margins: 1.5 * mm
                 }
                 text: entry.createdAt
                 color: window.secondaryTextColor
@@ -351,12 +351,12 @@ Pane {
                 anchors {
                     top: fullEntryVoteButton.bottom
                     horizontalCenter: parent.horizontalCenter
-                    margins: 1 * mm
+                    margins: 1.5 * mm
                     topMargin: 2 * mm
                 }
                 text: enabled || fullEntry.count > 0 ? 'Еще' : ''
                 height: visible ? implicitHeight : 0 // changing height forces layout
-                width: parent.width / 3
+                width: 40 * mm
                 visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
                 highlighted: true
                 onClicked: commentsModel.loadMore()
@@ -366,7 +366,7 @@ Pane {
                 anchors {
                     top: fullEntryVoteButton.bottom
                     horizontalCenter: parent.horizontalCenter
-                    margins: 1 * mm
+                    margins: 1.5 * mm
                     topMargin: 2 * mm
                 }
                 running: commentsModel && commentsModel.loading
@@ -376,7 +376,7 @@ Pane {
         footer: MessageEditor {
             id: commentEditor
             visible: Tasty.isAuthorized
-            height: visible ? implicitHeight : - 1 * mm
+            height: visible ? implicitHeight : - 1.5 * mm
             onSent: {
                 entry.addComment(commentEditor.message);
             }
@@ -422,10 +422,10 @@ Pane {
                 left: parent.left
                 right: parent.right
                 top: parent.top
-                topMargin: 1 * mm
-                bottomMargin: 1 * mm
+                topMargin: 1.5 * mm
+                bottomMargin: 1.5 * mm
             }
-            spacing: 1 * mm
+            spacing: 1.5 * mm
             MenuItem {
                 text: 'Ответить'
                 onTriggered: {

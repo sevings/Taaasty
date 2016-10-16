@@ -89,7 +89,7 @@ Pane {
                 id: messageAvatar
                 anchors {
                     top: parent.top
-                    margins: 1 * mm
+                    margins: 1.5 * mm
                     left: isMyMessage ? undefined : parent.left
                     right: isMyMessage ? parent.right : undefined
                 }
@@ -107,18 +107,16 @@ Pane {
                     top: parent.top
                     left: isMyMessage ? undefined : messageAvatar.right
                     right: isMyMessage ? messageAvatar.left : undefined
-                    margins: 1 * mm
-                    leftMargin: isMyMessage ? 1 * mm : 0
-                    rightMargin: isMyMessage ? 0 : 1 * mm
+                    margins: 1.5 * mm
+                    leftMargin: isMyMessage ? 1.5 * mm : 0
+                    rightMargin: isMyMessage ? 0 : 1.5 * mm
                 }                
-                readonly property int maxWidth: window.width - messageAvatar.width - 2 * mm
+                readonly property int maxWidth: window.width - messageAvatar.width - 3 * mm
                 readonly property int dateWidth: messageDate.contentWidth
-                                                 + (unreadMessage.visible ? unreadMessage.width + 1 * mm : 0)
-                readonly property int textWidth: (messageText.contentWidth > dateWidth
-                                                  ? messageText.contentWidth : dateWidth)
-                                                  + 2 * mm
+                                                 + (unreadMessage.visible ? unreadMessage.width + 1.5 * mm : 0)
+                readonly property int textWidth: Math.max(messageText.contentWidth, dateWidth) + 3 * mm
                 width: textWidth > maxWidth || messageImages.visible ? maxWidth : textWidth
-                height: messageDate.y + messageDate.contentHeight + 1 * mm
+                height: messageDate.y + messageDate.contentHeight + 1.5 * mm
                 color: window.darkTheme ? '#404040' : window.backgroundColor
                 ListView {
                     id: messageImages
@@ -126,13 +124,13 @@ Pane {
                         top: parent.top
                         left: parent.left
                         right: parent.right
-                        margins: 1 * mm
+                        margins: 1.5 * mm
                     }
                     interactive: false
-                    spacing: 1 * mm
+                    spacing: 1.5 * mm
                     property AttachedImagesModel imagesModel: message.attachedImagesModel
                     height: visible ? (imagesModel.listRatio() * width
-                            + (count - 1) * mm) : -1 * mm
+                            + (count - 1) * mm) : -1.5 * mm
                     model: imagesModel
                     visible: imagesModel && count > 0
                     delegate: MyImage {
@@ -151,12 +149,12 @@ Pane {
                         top: messageImages.bottom
                         left: parent.left
                     }
-                    width: messageBack.maxWidth - 2 * mm
+                    width: messageBack.maxWidth - 3 * mm
                     font.pointSize: window.fontSmaller
                     text: (message.replyTo && message.replyTo.name.length > 0 ? '<b>' + message.replyTo.name + '</b>, ' : '') + message.text
                     textFormat: message.containsImage ? Text.RichText : Text.StyledText
                     onLinkActivated: window.openLink(link)
-                    height: message.text.length > 0 ? contentHeight : -1 * mm
+                    height: message.text.length > 0 ? contentHeight : -1.5 * mm
                 }
                 ThemedText {
                     id: messageDate
@@ -164,7 +162,7 @@ Pane {
                         top: messageText.bottom
                         left: parent.left
                     }
-                    width: messageBack.maxWidth - 2 * mm - (unreadMessage.visible ? unreadMessage.width + 1 * mm : 0)
+                    width: messageBack.maxWidth - 3 * mm - (unreadMessage.visible ? unreadMessage.width + 1.5 * mm : 0)
                     font.pointSize: window.fontSmallest
                     text: (chat.type == Chat.PrivateConversation || !message.user.name.length
                            ? '' : message.user.name + ', ')
@@ -176,7 +174,7 @@ Pane {
                     anchors {
                         verticalCenter: messageDate.verticalCenter
                         right: parent.right
-                        margins: 1 * mm
+                        margins: 1.5 * mm
                     }
                     width: 1.5 * mm
                     height: width
@@ -187,7 +185,7 @@ Pane {
             }
         }
         footer: Item {
-            height: typedText.height + messageEditor.height + 1 * mm
+            height: typedText.height + messageEditor.height + 1.5 * mm
             width: window.width
             ThemedText {
                 id: typedText
@@ -208,7 +206,7 @@ Pane {
                     top: typedText.bottom
                 }
                 visible: chat.canTalk
-                height: visible ? implicitHeight : - 1 * mm
+                height: visible ? implicitHeight : - 1.5 * mm
                 onSent: {
                     chat.sendMessage(messageEditor.message)
                 }
@@ -259,10 +257,10 @@ Pane {
                 left: parent.left
                 right: parent.right
                 top: parent.top
-                topMargin: 1 * mm
-                bottomMargin: 1 * mm
+                topMargin: 1.5 * mm
+                bottomMargin: 1.5 * mm
             }
-            spacing: 1 * mm
+            spacing: 1.5 * mm
             MenuItem {
                 text: 'Ответить'
                 onTriggered: {

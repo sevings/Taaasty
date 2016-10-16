@@ -91,7 +91,7 @@ Popup {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: parent.top
-                margins: 1 * mm
+                margins: 1.5 * mm
             }
             visible: Tasty.unreadChats
             color: Material.accent
@@ -132,7 +132,7 @@ Popup {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: parent.top
-                margins: 1 * mm
+                margins: 1.5 * mm
             }
             visible: Tasty.unreadNotifications
             color: Material.accent

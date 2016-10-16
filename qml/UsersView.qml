@@ -55,7 +55,7 @@ Pane {
         }
         delegate: Item {
             width: window.width
-            height: usersAvatar.height + 2 * mm
+            height: usersAvatar.height + 3 * mm
             Rectangle {
                 id: fillRect
                 anchors {
@@ -82,7 +82,7 @@ Pane {
                 anchors {
                     top: undefined
                     verticalCenter: parent.verticalCenter
-                    margins: 1 * mm
+                    margins: 1.5 * mm
                 }
                 user: model.user
                 popBody: back
@@ -98,8 +98,8 @@ Pane {
                     verticalCenter: parent.verticalCenter
                     left: usersAvatar.right
                     right: parent.right
-                    leftMargin: 1 * mm
-                    rightMargin: 1 * mm
+                    leftMargin: 1.5 * mm
+                    rightMargin: 1.5 * mm
                 }
                 elide: Text.ElideRight
             }
@@ -121,7 +121,7 @@ Pane {
         }
         header: Item {
             width: window.width
-            height: usersTitle.paintedHeight + 2 * mm
+            height: usersTitle.paintedHeight + 3 * mm
             Q.Label {
                 id: usersTitle
                 font.pointSize: window.fontBigger
@@ -136,7 +136,7 @@ Pane {
                         '';
                 }
                 anchors.centerIn: parent
-                y: 1 * mm
+                y: 1.5 * mm
             }
         }
         footer: ListBusyIndicator {

@@ -118,7 +118,7 @@ Loader {
             anchors {
                 verticalCenter: parent.verticalCenter
                 horizontalCenter: parent.horizontalCenter
-                bottomMargin: 1 * mm
+                bottomMargin: 1.5 * mm
             }
             sourceComponent: Rectangle {
                 id: downloadButton
@@ -166,7 +166,7 @@ Loader {
                         verticalCenter: parent.verticalCenter
                         left: parent.left
                         right: parent.right
-                        margins: 1 * mm
+                        margins: 1.5 * mm
                     }
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap

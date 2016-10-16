@@ -24,8 +24,8 @@ import QtQuick.Controls.Material 2.0
 
 Q.TextField {
     id: back
-    anchors.margins: 1 * mm
-    padding: 1 * mm
+    anchors.margins: 1.5 * mm
+    padding: 1.5 * mm
     font.pointSize: window.fontNormal
     implicitWidth: 30 * mm
 }

@@ -58,9 +58,9 @@ Rectangle {
             left: parent.left
             right: parent.right
             bottom: post.top
-            margins: 1 * mm
+            margins: 1.5 * mm
         }
-        spacing: 1 * mm
+        spacing: 1.5 * mm
         ThemedButton {
             id: italic
             width: (parent.width - 5 * 3) / 4

@@ -46,8 +46,8 @@ Pane {
         Column {
             id: column
             width: window.width
-            spacing: 1 * mm
-            padding: 1 * mm
+            spacing: 1.5 * mm
+            padding: 1.5 * mm
             Component.onCompleted: {
                 imagesBox.checked = Settings.autoloadImages;
                 shortBox.checked  = Settings.hideShortPosts;

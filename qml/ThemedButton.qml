@@ -24,6 +24,6 @@ import QtQuick.Controls.Material 2.0
 
 ToolButton {
     id: control
-    anchors.margins: 1 * mm
+    anchors.margins: 1.5 * mm
     font.pointSize: window.fontNormal
 }

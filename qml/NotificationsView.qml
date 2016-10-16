@@ -46,8 +46,7 @@ PopupFill {
         delegate: MouseArea {
             id: notif
             width: window.width
-            readonly property int h: notifName.paintedHeight + notifText.paintedHeight + 1 * mm
-            height: (h > notifAvatar.height ? h : notifAvatar.height) + 2 * mm
+            height: Math.max(notifName.paintedHeight + notifText.paintedHeight + 1.5 * mm, notifAvatar.height) + 3 * mm
             onClicked: {
                 var fullEntry = model.notification.entry;
                 if (fullEntry)
@@ -68,7 +67,7 @@ PopupFill {
             }
             SmallAvatar {
                 id: notifAvatar
-                anchors.margins: 1 * mm
+                anchors.margins: 1.5 * mm
                 user: model.notification.sender
                 acceptClick: back.y <= 0 && model.notification.parentType !== 'AnonymousEntry'
                 onClicked: {
@@ -84,8 +83,8 @@ PopupFill {
                     top: notifAvatar.top
                     left: notifAvatar.right
                     right: unreadNotice.left
-                    leftMargin: 1 * mm
-                    rightMargin: 1 * mm
+                    leftMargin: 1.5 * mm
+                    rightMargin: 1.5 * mm
                 }
                 wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller

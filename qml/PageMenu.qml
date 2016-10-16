@@ -43,14 +43,14 @@ Q.Drawer {
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
         flickableDirection: Flickable.VerticalFlick
-        topMargin: 1 * mm
-        bottomMargin: 1 * mm
+        topMargin: 1.5 * mm
+        bottomMargin: 1.5 * mm
         contentWidth: parent.width
         contentHeight: column.height
         Column {
             id: column
             width: parent.width
-            spacing: 1 * mm
+            spacing: 1.5 * mm
 
             // PROFILES SECTION
             Item {

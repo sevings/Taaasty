@@ -22,7 +22,7 @@ import QtQuick 2.7
 
 Popup {
     id: back
-    height: 4 * mm + label.height + input.height + acceptButton.height
+    height: 6 * mm + label.height + input.height + acceptButton.height
     property string mode: 'tlog'
     property alias text: input.text
     property alias echoMode: input.echoMode
@@ -83,7 +83,6 @@ Popup {
             right: parent.right
             left: parent.left
         }
-        width: window.width / 5
         text: {
             if (mode === 'tlog')
                 'Перейти';
