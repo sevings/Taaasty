@@ -43,27 +43,34 @@ Pane {
         else
             commentsModel.loadMore();
     }
+    function scrollWhereNeed() {
+        if (!scrollToBottom && !scrollToFirst)
+            return;
+
+        if (fullEntry.count <= 0) {
+            //fullEntry.positionViewAtEnd();
+            fullEntry.contentY = fullEntry.contentHeight;
+            fullEntry.returnToBounds();
+            console.log(fullEntry.contentY)
+        }
+        else if (scrollToBottom)
+            fullEntry.positionViewAtEnd();
+        else if (scrollToFirst)
+            fullEntry.positionViewAtIndex(0, ListView.Beginning);
+    }
     Connections {
         target: entry
         onUpdated: {
             checkComments();
-            if (scrollToBottom)
-                fullEntry.positionViewAtEnd();
+            scrollWhereNeed();
         }
     }
     Component.onCompleted: {
         checkComments();
-        if (scrollToBottom)
-            fullEntry.positionViewAtEnd();
-        else if (scrollToFirst)
-        {
-            if (fullEntry.count > 0)
-                fullEntry.positionViewAtIndex(0, ListView.Beginning);
-            else
-                fullEntry.positionViewAtEnd();
-        }
         if (!entry.createdAt.length)
             entry.reload();
+        else
+            scrollWhereNeed();
     }
     onVisibleChanged: {
         if (visible)
@@ -135,7 +142,7 @@ Pane {
                 font.pointSize: window.fontSmaller
                 font.bold: true
                 style: Text.Raised
-                styleColor: window.greenColor
+                styleColor: Material.accent
             }
             Q.Label {
                 id: commentDate
@@ -267,28 +274,17 @@ Pane {
                 color: window.secondaryTextColor
                 font.pointSize: window.fontSmallest
             }
-            Image {
-                id: fullEntryCommentsIcon
-                anchors {
-                    margins: 2 * mm
-                    verticalCenter: comments.verticalCenter
-                    left: parent.left
-                }
-                height: 27
-                fillMode: Image.PreserveAspectFit
-                source: (window.darkTheme ? '../icons/comment-light-'
-                                          : '../icons/comment-dark-')
-                        + '128.png'
-            }
-            ThemedText {
-                id: comments
+            IconButton {
+                id: commentsButton
                 anchors {
                     top: fullEntryDate.bottom
-                    left: fullEntryCommentsIcon.right
+                    left: parent.left
                 }
-                text: entry.commentsCount
-                height: fullEntryVoteButton.height
-                verticalAlignment: Text.AlignVCenter
+//                enabled: false
+                text: entry.commentsCount || ''
+                icon: (window.darkTheme ? '../icons/comment-light-'
+                                        : '../icons/comment-dark-')
+                      + '128.png'
             }
             IconButton {
                 id: fullEntryVoteButton
