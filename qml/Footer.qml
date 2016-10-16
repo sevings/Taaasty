@@ -24,7 +24,7 @@ import org.binque.taaasty 1.0
 
 Popup {
     id: footer
-    height: 56 * sp
+    height: 48 * sp
     closable: false
     state: "opened"
     MouseArea {
@@ -76,9 +76,8 @@ Popup {
         }
         ThemedText {
             anchors {
-                topMargin: 0
-                top: parent.top
-                right: parent.right
+                left: parent.horizontalCenter
+                baseline: parent.verticalCenter
             }
             text: '<b>+' + Tasty.unreadChats + '</b>'
             visible: Tasty.unreadChats > 0
@@ -118,9 +117,8 @@ Popup {
         }
         ThemedText {
             anchors {
-                topMargin: 0
-                top: parent.top
-                right: parent.right
+                left: parent.horizontalCenter
+                baseline: parent.verticalCenter
             }
             text: '<b>+' + Tasty.unreadNotifications + '</b>'
             visible: Tasty.unreadNotifications > 0
