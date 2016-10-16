@@ -124,6 +124,8 @@ ApplicationWindow {
     }
     function openLink(url) {
         var matches = /taaasty.com\/(?:~|%7E)?([^\/]+)(?:\/([\d]+))?/.exec(url);
+        if (!matches)
+            matches = /([a-zA-Z0-9_\\-\\.]+).mmm-tasty.ru(?:\/entries\/([\d]+))?/.exec(url);
         if (matches) {
             var slug = matches[1];
             var entryId = matches[2];
