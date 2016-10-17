@@ -62,7 +62,7 @@ ListView {
             margins: 0.5 * mm
         }
         y: parent.visibleArea.yPosition * (parent.height - height + h)
-        width: 1.5 * mm
+        width: 0.5 * mm
         property int h: parent.visibleArea.heightRatio * parent.height
         height: Math.max(5 * mm, h)
         color: Material.foreground
@@ -74,7 +74,7 @@ ListView {
         Behavior on height {
             NumberAnimation { duration: 500 }
         }
-        radius: 0.5 * mm
+        radius: width / 2
     }
 /*    Rectangle {
         id: upButton

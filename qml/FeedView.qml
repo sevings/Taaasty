@@ -307,7 +307,7 @@ Pane {
                 }
                 height: 0.5 * mm
                 radius: height / 2
-                readonly property int maxWidth: parent.width - 2 * mm
+                readonly property int maxWidth: parent.width - 3 * mm
                 readonly property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
                 width: Math.min(length, maxWidth)
                 color: window.secondaryTextColor
@@ -379,11 +379,12 @@ Pane {
                     right: entryVoteButton.left
                     bottom: entry.isVotable ? entryVoteButton.bottom : undefined
                     verticalCenter: entry.isVotable ? undefined : entryVoteButton.verticalCenter
+                    margins: width > height ? 0 : 0.7 * mm
                 }
                 height: entry.isVotable ? 0.5 * mm : width
                 radius: height / 2
                 color: entry.rating.bayesRating > 5 ? '#FF5722' : entry.rating.bayesRating < -5
-                                                      ? '#03A9F4' : window.secondaryTextColor
+                                                    ? '#03A9F4' : window.secondaryTextColor
                 Behavior on color {
                     ColorAnimation {
                         duration: 300
