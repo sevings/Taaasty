@@ -356,7 +356,7 @@ Pane {
                 }
                 text: enabled || fullEntry.count > 0 ? 'Еще' : ''
                 height: visible ? implicitHeight : 0 // changing height forces layout
-                width: 40 * mm
+                width: 20 * mm
                 visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
                 highlighted: true
                 onClicked: commentsModel.loadMore()

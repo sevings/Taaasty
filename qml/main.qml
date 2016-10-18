@@ -289,6 +289,12 @@ ApplicationWindow {
                    }
                    )
     }
+    function pushHelp() {
+        stack.push(stack.help,
+                   {
+                       poppable: true
+                   })
+    }
     function pushAbout() {
         stack.push(stack.about,
                    {
@@ -454,6 +460,7 @@ ApplicationWindow {
             property Component loginDialog:         Qt.createComponent("LoginDialog.qml",       Component.Asynchronous, stack)
             property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack)
             property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack)
+            property Component help:                Qt.createComponent("HelpPage.qml",          Component.Asynchronous, stack)
             property Component about:               Qt.createComponent("About.qml",             Component.Asynchronous, stack)
             property Component settings:            Qt.createComponent("SettingsPage.qml",      Component.Asynchronous, stack)
             property Component flows:               Qt.createComponent("FlowsView.qml",         Component.Asynchronous, stack)

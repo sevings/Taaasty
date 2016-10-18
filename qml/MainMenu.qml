@@ -105,6 +105,14 @@ Item {
             }
             MenuSeparator { }
             MenuItem {
+                text: 'Войти'
+                visible: !Tasty.isAuthorized
+                onTriggered: {
+                    backAnimation.start();
+                    window.pushLoginDialog();
+                }
+            }
+            MenuItem {
                 text: 'Настройки'
                 onTriggered: { 
                     backAnimation.start();
@@ -112,11 +120,10 @@ Item {
                 }
             }
             MenuItem {
-                text: 'Войти'
-                visible: !Tasty.isAuthorized
-                onTriggered: { 
+                text: 'Помощь'
+                onTriggered: {
                     backAnimation.start();
-                    window.pushLoginDialog();
+                    window.pushHelp();
                 }
             }
         }
