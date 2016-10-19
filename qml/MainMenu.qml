@@ -119,13 +119,6 @@ Item {
                     window.pushSettings();
                 }
             }
-            MenuItem {
-                text: 'Помощь'
-                onTriggered: {
-                    backAnimation.start();
-                    window.pushHelp();
-                }
-            }
         }
     }
 }

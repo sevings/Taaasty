@@ -73,16 +73,6 @@ Pane {
                 text: 'Задать другой вопрос'
                 entryId: 21449900
             }
-            MenuSeparator {
-                width: implicitWidth - parent.padding * 2
-            }
-            ThemedButton {
-                anchors.horizontalCenter: parent.horizontalCenter
-                implicitWidth: 40 * mm
-                highlighted: true
-                text: 'О клиенте'
-                onClicked: { window.pushAbout(); }
-            }
         }
     }
 }

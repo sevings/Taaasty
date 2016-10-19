@@ -129,6 +129,23 @@ Pane {
                 text: Tasty.isAuthorized ? 'Сменить тлог' : 'Войти'
                 onClicked: window.pushLoginDialog()
             }
+            MenuSeparator {
+                width: implicitWidth - parent.padding * 2
+            }
+            ThemedButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                implicitWidth: 40 * mm
+                highlighted: true
+                text: 'Помощь'
+                onClicked: { window.pushHelp(); }
+            }
+            ThemedButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                implicitWidth: 40 * mm
+                highlighted: true
+                text: 'О клиенте'
+                onClicked: { window.pushAbout(); }
+            }
         }
     }
 }
