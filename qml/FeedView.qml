@@ -379,7 +379,7 @@ Pane {
                     right: entryVoteButton.left
                     bottom: entry.isVotable ? entryVoteButton.bottom : undefined
                     verticalCenter: entry.isVotable ? undefined : entryVoteButton.verticalCenter
-                    margins: width > height ? 0 : 0.7 * mm
+                    margins: entry.isVotable ? 0 : 0.7 * mm
                 }
                 height: entry.isVotable ? 0.5 * mm : width
                 radius: height / 2
