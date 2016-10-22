@@ -41,7 +41,6 @@ FeedModel::FeedModel(QObject* parent)
     , _tlog(0)
     , _mode(InvalidMode)
     , _lastEntry(0)
-    , _isPrivate(false)
     , _minRating(0)
     , _page(1)
 {
@@ -142,7 +141,7 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     _loadRequest = new ApiRequest(url);
 
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
-    Q_TEST(connect(_loadRequest, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
+    Q_TEST(connect(_loadRequest, SIGNAL(error(int,QString)),   this, SLOT(_setErrorString(int))));
 
     _initLoad();
 }
@@ -224,8 +223,8 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query, QString 
 
     _setUrl(_mode);
 
-    _isPrivate = false;
-    emit isPrivateChanged();
+    _errorString.clear();
+    emit errorStringChanged();
 
     _prevDate.clear();
 
@@ -472,13 +471,23 @@ void FeedModel::_changeHideSome()
 
 
 
-void FeedModel::_setPrivate(int errorCode)
+void FeedModel::_setErrorString(int errorCode)
 {
-    if (errorCode == 403)
+    switch (errorCode)
     {
-        _isPrivate = true;
-        emit isPrivateChanged();
+    case 403:
+        _errorString = "Доступ запрещен";
+        break;
+    case 404:
+        _errorString = "Тлог не найден";
+        break;
+    default:
+        qDebug() << "FeedModel error code" << errorCode;
+        _errorString = QString("Ошибка %1").arg(errorCode);
+        break;
     }
+
+    emit errorStringChanged();
 }
 
 

@@ -29,19 +29,11 @@ Pane {
     readonly property bool isFlowsView: true
     Poppable {
         body: back
-        Text {
-            visible: !listView.visible && !flowsModel.hasMore
-            anchors.centerIn: parent
-            color: window.secondaryTextColor
-            horizontalAlignment: Text.AlignHCenter
-            font.pointSize: window.fontBigger
-            wrapMode: Text.Wrap
-            text: 'Нет потоков'
-        }
     }
     Splash {
         visible: !listView.visible && flowsModel.hasMore
-        running: !flowsModel.isPrivate
+        running: flowsModel.loading
+        text: 'Нет потоков'
     }
     MyListView {
         id: listView

@@ -68,20 +68,11 @@ Pane {
     }
     Poppable {
         body: back
-        Text {
-            visible: !listView.visible && !feedModel.hasMore
-            anchors.centerIn: parent
-            color: window.secondaryTextColor
-            horizontalAlignment: Text.AlignHCenter
-            font.pointSize: window.fontBigger
-            wrapMode: Text.Wrap
-            text: 'Нет записей'
-        }
     }
     Splash {
         visible: !listView.visible && feedModel.hasMore
-        running: !feedModel.isPrivate
-        text: 'Это закрытый ' + (tlog.author.isFlow ? 'поток' : 'тлог')
+        running: feedModel.loading
+        text: feedModel.errorString || 'Нет записей'
     }
     MyListView {
         id: listView
