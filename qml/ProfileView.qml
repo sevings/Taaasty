@@ -35,6 +35,8 @@ Pane {
     readonly property bool isProfileView: true
     Splash {
         visible: !column.visible
+        running: tlog.loading
+        text: tlog.errorString
     }
     Component.onCompleted: {
         if (!tlog.slug.length)

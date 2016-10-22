@@ -31,8 +31,8 @@ PopupFill {
     }
     Splash {
         visible: !listView.visible
-        running: listView.model.hasMore
-        text: 'Нет бесед'
+        running: ChatsModel.loading
+        text: ChatsModel.errorString || 'Нет бесед'
     }
     MyListView {
         id: listView

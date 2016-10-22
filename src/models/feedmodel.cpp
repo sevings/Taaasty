@@ -141,7 +141,6 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     _loadRequest = new ApiRequest(url);
 
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
-    Q_TEST(connect(_loadRequest, SIGNAL(error(int,QString)),   this, SLOT(_setErrorString(int))));
 
     _initLoad();
 }
@@ -467,27 +466,6 @@ void FeedModel::_changeHideSome()
             _entries << e;
 
     endResetModel();
-}
-
-
-
-void FeedModel::_setErrorString(int errorCode)
-{
-    switch (errorCode)
-    {
-    case 403:
-        _errorString = "Доступ запрещен";
-        break;
-    case 404:
-        _errorString = "Тлог не найден";
-        break;
-    default:
-        qDebug() << "FeedModel error code" << errorCode;
-        _errorString = QString("Ошибка %1").arg(errorCode);
-        break;
-    }
-
-    emit errorStringChanged();
 }
 
 

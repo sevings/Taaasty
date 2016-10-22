@@ -33,7 +33,7 @@ Pane {
     Splash {
         visible: !listView.visible && flowsModel.hasMore
         running: flowsModel.loading
-        text: 'Нет потоков'
+        text: flowsModel.errorString || 'Нет потоков'
     }
     MyListView {
         id: listView

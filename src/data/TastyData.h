@@ -31,22 +31,29 @@ class TastyData: public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int  id      READ id        NOTIFY idChanged)
-    Q_PROPERTY(bool loading READ isLoading NOTIFY loadingChanged)
+    Q_PROPERTY(int  id              READ id             NOTIFY idChanged)
+    Q_PROPERTY(bool loading         READ isLoading      NOTIFY loadingChanged)
+    Q_PROPERTY(QString errorString  READ errorString    NOTIFY errorStringChanged)
 
 public:
     TastyData(QObject* parent = nullptr);
 
-    int id() const;
-    bool isLoading() const;
+    int     id() const;
+    bool    isLoading() const;
+    QString errorString() const;
 
 signals:
     void idChanged();
     void loadingChanged();
+    void errorStringChanged();
+
+protected slots:
+    void _setErrorString(int errorCode);
 
 protected:
     int _id;
     QPointer<ApiRequest> _request;
+    QString              _errorString;
     
     void _initRequest(bool emitting = true);
 };

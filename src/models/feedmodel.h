@@ -38,7 +38,6 @@ class FeedModel : public TastyListModel
     Q_PROPERTY(Mode     mode        READ mode       WRITE setMode)
     Q_PROPERTY(int      tlog        READ tlog       WRITE setTlog)
     Q_PROPERTY(QString  slug        READ slug       WRITE setSlug)
-    Q_PROPERTY(QString  errorString READ errorString                NOTIFY errorStringChanged)
     Q_PROPERTY(int      minRating   READ minRating  WRITE setMinRating)
     Q_PROPERTY(QString  query       READ query      WRITE setQuery  NOTIFY queryChanged)
     Q_PROPERTY(QString  tag         READ tag        WRITE setTag    NOTIFY tagChanged)
@@ -103,8 +102,6 @@ public:
                            QString slug = QString(), QString query = QString(),
                            QString tag = QString());
 
-    QString errorString() const { return _errorString; }
-
     bool hideMode() const;
     bool hideShort() const;
     bool hideNegative() const;
@@ -117,7 +114,6 @@ public:
     Q_INVOKABLE void setSinceDate(const QString date);
 
 signals:
-    void errorStringChanged();
     void queryChanged();
     void tagChanged();
     void entryCreated(EntryPtr entry);
@@ -129,7 +125,6 @@ private slots:
     void _addItems(QJsonObject data);
     void _addNewPost(QJsonObject data);
     void _changeHideSome();
-    void _setErrorString(int errorCode);
     void _resetOrReloadRatings();
     void _reloadRatings();
     void _setRatings(const QJsonArray data);
@@ -154,7 +149,6 @@ private:
     QString         _tag;
     int             _page;
     QString         _prevDate;
-    QString         _errorString;
 };
 
 #endif // FEEDMODEL_H

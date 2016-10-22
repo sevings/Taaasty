@@ -48,6 +48,34 @@ bool TastyData::isLoading() const
 
 
 
+QString TastyData::errorString() const
+{
+    return _errorString;
+}
+
+
+
+void TastyData::_setErrorString(int errorCode)
+{
+    switch (errorCode)
+    {
+    case 403:
+        _errorString = "Доступ запрещен";
+        break;
+    case 404:
+        _errorString = "Страница не найдена";
+        break;
+    default:
+        qDebug() << "TastyData error code" << errorCode;
+        _errorString = QString("При загрузке проиошла ошибка %1").arg(errorCode);
+        break;
+    }
+
+    emit errorStringChanged();
+}
+
+
+
 void TastyData::_initRequest(bool emitting)
 {
     if (emitting)
@@ -56,6 +84,11 @@ void TastyData::_initRequest(bool emitting)
     if (!_request)
         return;
     
+    _errorString.clear();
+
     Q_TEST(connect(_request, &QObject::destroyed, 
             this, &TastyData::loadingChanged, Qt::QueuedConnection));
+
+    Q_TEST(connect(_request, SIGNAL(error(int,QString)),
+                   this, SLOT(_setErrorString(int))));
 }

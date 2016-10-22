@@ -33,8 +33,8 @@ PopupFill {
     }
     Splash {
         visible: !notifsView.visible
-        running: notifsView.model.hasMore
-        text: 'Нет уведомлений'
+        running: NotifsModel.loading
+        text: NotifsModel.errorString || 'Нет уведомлений'
     }
     MyListView {
         id: notifsView

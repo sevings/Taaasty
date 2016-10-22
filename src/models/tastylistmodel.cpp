@@ -35,6 +35,34 @@ bool TastyListModel::hasMore() const
 
 
 
+QString TastyListModel::errorString() const
+{
+    return _errorString;
+}
+
+
+
+void TastyListModel::_setErrorString(int errorCode)
+{
+    switch (errorCode)
+    {
+    case 403:
+        _errorString = "Доступ запрещен";
+        break;
+    case 404:
+        _errorString = "Страница не найдена";
+        break;
+    default:
+        qDebug() << "TastyListModel error code" << errorCode;
+        _errorString = QString("При загрузке проиошла ошибка %1").arg(errorCode);
+        break;
+    }
+
+    emit errorStringChanged();
+}
+
+
+
 void TastyListModel::_initLoad(bool emitting)
 {
     if (emitting)
@@ -43,8 +71,13 @@ void TastyListModel::_initLoad(bool emitting)
     if (!_loadRequest)
         return;
 
+    _errorString.clear();
+
     Q_TEST(connect(_loadRequest, &QObject::destroyed,
             this, &TastyListModel::loadingChanged, Qt::QueuedConnection));
+
+    Q_TEST(connect(_loadRequest, SIGNAL(error(int,QString)),
+                   this, SLOT(_setErrorString(int))));
 }
 
 

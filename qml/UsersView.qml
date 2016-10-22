@@ -36,8 +36,8 @@ Pane {
     }
     Splash {
         visible: !users.visible
-        running: users.model.hasMore
-        text: 'Список пуст'
+        running: users.model.loading
+        text: users.model.errorString || 'Список пуст'
     }
     MyListView {
         id: users
@@ -47,7 +47,6 @@ Pane {
             right: parent.right
         }
         visible: count > 0
-//        interactive: back.x == 0
         height: contentHeight > parent.height ? parent.height : contentHeight
         model: UsersModelTlog {
             mode: back.mode
