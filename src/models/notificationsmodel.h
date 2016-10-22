@@ -21,10 +21,10 @@
 #ifndef NOTIFICATIONSMODEL_H
 #define NOTIFICATIONSMODEL_H
 
-#include <QObject>
-#include <QAbstractListModel>
 #include <QJsonObject>
 #include <QSet>
+
+#include "tastylistmodel.h"
 
 class Notification;
 class Tasty;
@@ -34,13 +34,11 @@ class AndroidNotifier;
 #endif
 
 
-class NotificationsModel : public QAbstractListModel
+class NotificationsModel : public TastyListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool hasMore READ hasMore NOTIFY hasMoreChanged)
     Q_PROPERTY(bool unread  READ unread  NOTIFY unreadChanged)
-    Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 
 public:
     NotificationsModel(Tasty* tasty = nullptr);
@@ -48,21 +46,20 @@ public:
 
     static NotificationsModel* instance(Tasty* tasty = nullptr);
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    bool canFetchMore(const QModelIndex& parent) const override;
-    void fetchMore(const QModelIndex& parent) override;
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    virtual bool canFetchMore(const QModelIndex& parent) const override;
+    virtual void fetchMore(const QModelIndex& parent) override;
 
-    Q_INVOKABLE bool hasMore() const { return canFetchMore(QModelIndex()); }
-    Q_INVOKABLE bool unread() const;
-    Q_INVOKABLE void markAsRead();
+    virtual bool hasMore() const override;
 
-    bool loading() const;
+    bool unread() const;
 
 signals:
-    void hasMoreChanged();
-    void loadingChanged();
     void unreadChanged();
+
+public slots:
+    void markAsRead();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
@@ -77,16 +74,11 @@ private slots:
     void _reloadAll();
     void _check(int actual);
 
-    void _setNotLoading();
-    void _setNotChecking();
-
 private:
     QList<Notification*> _notifs;
-    QSet<int> _ids;
-    QString _url;
-    bool _loading;
-    bool _checking;
-    int _totalCount;
+    QSet<int>            _ids;
+    QString              _url;
+    int                  _totalCount;
 
 #ifdef Q_OS_ANDROID
     AndroidNotifier* _androidNotifier;

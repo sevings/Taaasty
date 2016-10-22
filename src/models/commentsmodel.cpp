@@ -37,13 +37,10 @@
 
 
 CommentsModel::CommentsModel(Entry *entry)
-    : QAbstractListModel(entry)
+    : TastyListModel(entry)
     , _entryId(0)
-    , _loading(false)
-    , _checking(false)
     , _totalCount(0)
     , _url("v1/comments.json?entry_id=%1&limit=50")
-    , _request(nullptr)
     , _entry(entry)
 {
     if (!entry)
@@ -69,11 +66,9 @@ void CommentsModel::init(const QJsonArray feed, int totalCount)
 
     _comments.clear();
     _ids.clear();
-    _loading = false;
-    _checking = false;
 
-    delete _request;
-    _request = nullptr;
+    _loadRequest = nullptr;
+    _checkRequest = nullptr;
 
     auto cmts = _commentsList(feed);
     if (!cmts.isEmpty())
@@ -128,20 +123,9 @@ void CommentsModel::setEntryId(const int id)
 
 
 
-void CommentsModel::check()
+bool CommentsModel::hasMore() const
 {
-    if (_checking || !_entryId || !_entry || _entry->isLoading())
-        return;
-
-    _checking = true;
-
-    QString url = _url.arg(_entryId);
-    if (!_comments.isEmpty())
-        url += QString("&from_comment_id=%1").arg(_comments.last()->id());
-
-    _request = new ApiRequest(url);
-    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addLastComments(QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),   this, SLOT(_setNotLoading(QObject*))));
+    return _comments.size() < _totalCount;
 }
 
 
@@ -156,21 +140,36 @@ Comment* CommentsModel::lastComment() const
 
 
 
-void CommentsModel::loadMore()
+void CommentsModel::check()
 {
-    if (_loading || !_entryId || !_entry || _entry->isLoading())// || !hasMore())
+    if (isChecking() || !_entryId || !_entry || _entry->isLoading())
         return;
 
-    _loading = true;
-    emit loadingChanged();
+    QString url = _url.arg(_entryId);
+    if (!_comments.isEmpty())
+        url += QString("&from_comment_id=%1").arg(_comments.last()->id());
+
+    _checkRequest = new ApiRequest(url);
+    Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)),  this, SLOT(_addLastComments(QJsonObject))));
+
+    _initCheck();
+}
+
+
+
+void CommentsModel::loadMore()
+{
+    if (isLoading() || !_entryId || !_entry || _entry->isLoading())// || !hasMore())
+        return;
 
     QString url = _url.arg(_entryId);
     if (!_comments.isEmpty())
         url += QString("&to_comment_id=%1").arg(_comments.first()->id());
 
-    _request = new ApiRequest(url);
-    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addComments(QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),   this, SLOT(_setNotLoading(QObject*))));
+    _loadRequest = new ApiRequest(url);
+    Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)),  this, SLOT(_addComments(QJsonObject))));
+
+    _initLoad();
 }
 
 
@@ -189,8 +188,6 @@ void CommentsModel::_addComments(const QJsonObject data)
     auto feed = data.value("comments").toArray();
     if (feed.isEmpty())
     {
-        _loading = false;
-        emit loadingChanged();
         _setTotalCount(_comments.size());
         emit hasMoreChanged();
         return;
@@ -199,9 +196,6 @@ void CommentsModel::_addComments(const QJsonObject data)
     _setTotalCount(data.value("total_count").toInt());
 
     _addComments(feed);
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 
@@ -210,11 +204,7 @@ void CommentsModel::_addComments(const QJsonArray feed)
 {
     auto cmts = _commentsList(feed);
     if (cmts.isEmpty())
-    {
-        _loading = false;
-        emit loadingChanged();
         return;
-    }
 
     beginInsertRows(QModelIndex(), 0, cmts.size() - 1);
 
@@ -233,8 +223,6 @@ void CommentsModel::_addComments(const QJsonArray feed)
 
 void CommentsModel::_addLastComments(const QJsonObject data)
 {
-    _checking = false;
-
     auto feed = data.value("comments").toArray();
     if (feed.isEmpty())
         return;
@@ -304,23 +292,6 @@ void CommentsModel::_removeComment(QObject* cmt)
 
     if (i == _comments.size())
         emit lastCommentChanged();
-}
-
-
-
-void CommentsModel::_setNotLoading(QObject* request)
-{
-    if (request != _request)
-        return;
-
-    if (_loading)
-    {
-        _loading = false;
-        emit loadingChanged();
-    }
-
-    _checking = false;
-    _request = nullptr;
 }
 
 

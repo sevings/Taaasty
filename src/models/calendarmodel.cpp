@@ -31,7 +31,7 @@
 
 
 CalendarModel::CalendarModel(QObject* parent)
-    : QAbstractListModel(parent)
+    : TastyListModel(parent)
     , _isPrivate(false)
 {
     qDebug() << "CalendarModel";
@@ -65,19 +65,19 @@ QVariant CalendarModel::data(const QModelIndex &index, int role) const
 
 void CalendarModel::setTlog(const int tlog)
 {
-    if (tlog <= 0 || loading())
+    if (tlog <= 0 || isLoading())
         return;
 
     QString url = QString("v1/tlog/%1/calendar.json").arg(tlog);
-    _request = new ApiRequest(url);
-    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
+    _loadRequest = new ApiRequest(url);
+    Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
+    Q_TEST(connect(_loadRequest, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
     
-    Q_TEST(connect(_request, &QObject::destroyed, 
+    Q_TEST(connect(_loadRequest, &QObject::destroyed,
         this, &CalendarModel::loadingChanged, Qt::QueuedConnection));
 
-    emit loadingChanged();
-    
+    _initLoad();
+
     beginResetModel();
 
     qDeleteAll(_calendar);
@@ -112,13 +112,6 @@ CalendarEntry* CalendarModel::firstMonthEntry(QString month) const
 {
     auto e = _firstMonthEntries.value(month);
     return e;
-}
-
-
-
-bool CalendarModel::loading() const
-{
-    return _request;
 }
 
 

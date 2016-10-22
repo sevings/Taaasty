@@ -44,14 +44,10 @@ ChatsModel* ChatsModel::instance(Tasty* tasty)
 
 
 ChatsModel::ChatsModel(Tasty* tasty)
-    : QAbstractListModel(tasty)
+    : TastyListModel(tasty)
     , _mode(AllChatsMode)
-    , _hasMore(true)
     , _url("v2/messenger/conversations.json?limit=10&page=%1")
-    , _loading(false)
-    , _checking(false)
     , _page(1)
-    , _request(nullptr)
 {
     qDebug() << "ChatsModel";
 
@@ -99,19 +95,17 @@ bool ChatsModel::canFetchMore(const QModelIndex& parent) const
 
 void ChatsModel::fetchMore(const QModelIndex& parent)
 {
-    if (_loading || parent.isValid() || !Tasty::instance()->isAuthorized())
+    if (isLoading() || parent.isValid() || !Tasty::instance()->isAuthorized())
         return;
 
     qDebug() << "ChatsModel::fetchMore";
 
-    _loading = true;
-    emit loadingChanged();
-
     QString url = _url.arg(_page);
-    _request = new ApiRequest(url, true);
+    _loadRequest = new ApiRequest(url, true);
 
-    Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_addChats(QJsonArray))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotLoading(QObject*))));
+    Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonArray)), this, SLOT(_addChats(QJsonArray))));
+
+    _initLoad();
 }
 
 
@@ -180,19 +174,17 @@ void ChatsModel::addChat(EntryPtr entry)
 
 void ChatsModel::loadUnread()
 {
-    if (_checking)
+    if (isChecking())
         return;
 
     qDebug() << "ChatsModel::loadUnread";
 
-    _checking = true;
-    emit checkingChanged();
-
     QString url("v2/messenger/conversations.json?unread=true");
-    _request = new ApiRequest(url, true);
+    _checkRequest = new ApiRequest(url, true);
 
-    Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_addUnread(QJsonArray))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)), this, SLOT(_setNotChecking(QObject*))));
+    Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonArray)), this, SLOT(_addUnread(QJsonArray))));
+
+    _initCheck();
 }
 
 
@@ -206,17 +198,13 @@ void ChatsModel::reset()
     _ids.clear();
 
     _hasMore = true;
-    _loading = false;
+    delete _checkRequest;
+    delete _loadRequest;
     _page = 1;
 
-    delete _request;
-    _request = nullptr;
-    
     endResetModel();
 
     emit hasMoreChanged();
-    emit loadingChanged();
-    emit checkingChanged();
 }
 
 
@@ -234,16 +222,10 @@ void ChatsModel::_addUnread(QJsonArray data)
 {
     qDebug() << "ChatsModel::_addUnread";
 
-    _request = nullptr;
-
     emit Tasty::instance()->pusher()->unreadChats(data.size());
     
     if (data.isEmpty())
-    {
-        _checking = false;
-        emit checkingChanged();
         return;
-    }
 
     QList<int> bubbleIds;
     QList<ChatPtr> chats;
@@ -282,11 +264,7 @@ void ChatsModel::_addUnread(QJsonArray data)
         _bubbleChat(id);
 
     if (chats.isEmpty())
-    {
-        _checking = false;
-        emit checkingChanged();
         return;
-    }
 
     beginInsertRows(QModelIndex(), 0, chats.size() - 1);
 
@@ -294,9 +272,6 @@ void ChatsModel::_addUnread(QJsonArray data)
         _chats.insert(i, chats.at(i));
 
     endInsertRows();
-    
-    _checking = false;
-    emit checkingChanged();
 }
 
 
@@ -305,7 +280,6 @@ void ChatsModel::_addChats(QJsonArray data)
 {
     qDebug() << "ChatsModel::_addChats";
 
-    _request = nullptr;
     _page++;
 
     if (data.isEmpty())
@@ -313,8 +287,6 @@ void ChatsModel::_addChats(QJsonArray data)
         _hasMore = false;
         emit hasMoreChanged();
 
-        _loading = false;
-        emit loadingChanged();
         return;
     }
 
@@ -344,7 +316,7 @@ void ChatsModel::_addChats(QJsonArray data)
 
     if (chats.isEmpty())
     {
-        _loading = false;
+        _loadRequest = nullptr;
         fetchMore(QModelIndex());
         return;
     }
@@ -355,34 +327,6 @@ void ChatsModel::_addChats(QJsonArray data)
     
     if (_chats.size() < 10) //! \todo what is this?
         emit hasMoreChanged();
-
-    _loading = false;
-    emit loadingChanged();
-}
-
-
-
-void ChatsModel::_setNotLoading(QObject* request)
-{
-    if (request != _request)
-        return;
-
-    if (_loading)
-    {
-        _loading = false;
-        emit loadingChanged();
-    }
-
-    _request = nullptr;
-}
-
-
-
-void ChatsModel::_setNotChecking(QObject* request)
-{
-    Q_UNUSED(request);
-    _checking = false;
-    emit checkingChanged();
 }
 
 
@@ -474,18 +418,4 @@ void ChatsModel::_bubbleChat(int id)
     _chats.insert(unread, chat);
 
     endMoveRows();
-}
-
-
-
-bool ChatsModel::loading() const
-{
-    return _loading;
-}
-
-
-
-bool ChatsModel::checking() const
-{
-    return _checking;
 }

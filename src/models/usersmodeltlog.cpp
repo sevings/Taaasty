@@ -85,20 +85,19 @@ bool UsersModelTlog::canFetchMore(const QModelIndex& parent) const
 
 void UsersModelTlog::fetchMore(const QModelIndex& parent)
 {
-    if (_loading || !canFetchMore(parent)
+    if (isLoading() || !canFetchMore(parent)
             || ((_mode == FollowingsMode || _mode == FollowersMode) && !_tlog))
         return;
-
-    _loading = true;
-    emit loadingChanged();
 
     QString url = _url;
     if (_lastPosition)
         url += QString("&since_position=%1").arg(_lastPosition);
 
     auto accessTokenRequired = _mode == MyFollowersMode || _mode == MyFollowingsMode || _mode == MyIgnoredMode;
-    auto request = new ApiRequest(url, accessTokenRequired);
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject)));
+    _loadRequest = new ApiRequest(url, accessTokenRequired);
+    connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject)));
+
+    _initLoad();
 }
 
 
@@ -147,8 +146,7 @@ void UsersModelTlog::setTlog(const int tlog)
     _total = 1;
     _lastPosition = 0;
 
-    _loading = false;
-    emit loadingChanged();
+    delete _loadRequest;
 
     setMode(_mode);
 
@@ -185,9 +183,6 @@ void UsersModelTlog::_addItems(QJsonObject data)
             emit downloadCompleted();
         }
 
-        _loading = false;
-        emit loadingChanged();
-
         return;
     }
 
@@ -209,7 +204,7 @@ void UsersModelTlog::_addItems(QJsonObject data)
     if (_users.size() >= _total)
         emit hasMoreChanged();
 
-    _loading = false;
+    _loadRequest = nullptr;
 
     if (!_loadAll)
     {

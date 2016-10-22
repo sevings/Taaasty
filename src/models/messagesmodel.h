@@ -21,10 +21,11 @@
 #ifndef MESSAGESMODEL_H
 #define MESSAGESMODEL_H
 
-#include <QAbstractListModel>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QSet>
+
+#include "tastylistmodel.h"
 
 class ApiRequest;
 class Conversation;
@@ -36,29 +37,23 @@ class AndroidNotifier;
 
 
 
-class MessagesModel : public QAbstractListModel
+class MessagesModel : public TastyListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(int chatId           READ chatId)
-    Q_PROPERTY(bool hasMore         READ hasMore    NOTIFY hasMoreChanged)
-    Q_PROPERTY(bool loading         READ loading    NOTIFY loadingChanged)
+    Q_PROPERTY(int chatId READ chatId)
 
 public:
     explicit MessagesModel(Conversation* chat = nullptr);
 
     void init(Conversation* chat);
 
-    Q_INVOKABLE int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    Q_INVOKABLE virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
-    Q_INVOKABLE int chatId() const { return _chatId; }
-    Q_INVOKABLE void reset();
+    int chatId() const { return _chatId; }
 
-    Q_INVOKABLE bool hasMore() const { return _messages.size() < _totalCount; }
-    Q_INVOKABLE bool loading() const { return _loading; }
-
-    Q_INVOKABLE void check();
+    virtual bool hasMore() const override;
 
     Message* lastMessage() const;
 
@@ -69,6 +64,8 @@ signals:
     void lastMessageChanged();
 
 public slots:
+    void reset();
+    void check();
     void loadMore();
 
 protected:
@@ -80,7 +77,6 @@ private slots:
     void _addMessage(const QJsonObject data);
     void _addMessage(const int chatId, const QJsonObject data);
     void _removeMessage(QObject* msg);
-    void _setNotLoading(QObject* request);
 
 private:
     void            _setTotalCount(int tc);
@@ -91,12 +87,9 @@ private:
     Conversation*   _chat;
     
     int             _chatId;
-    bool            _loading;
     int             _totalCount;
     
     const QString   _url;
-
-    ApiRequest* _request;
 
 #ifdef Q_OS_ANDROID
     AndroidNotifier* _androidNotifier;

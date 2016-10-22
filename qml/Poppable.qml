@@ -28,7 +28,7 @@ MouseArea {
     drag.axis: Drag.XAxis
     drag.minimumX: 0
     drag.maximumX: body ? body.width * 0.9 : 0
-    drag.threshold: 2 * mm
+    drag.threshold: 3 * mm
     property bool shiftable: true
     property int bodyX: 0
     property int prevBodyX: 0

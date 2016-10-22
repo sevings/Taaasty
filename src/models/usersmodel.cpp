@@ -32,10 +32,16 @@
 
 
 UsersModel::UsersModel(QObject* parent)
-    : QAbstractListModel(parent)
-    , _loading(false)
+    : TastyListModel(parent)
 {
     setMode(FollowingsMode);
+}
+
+
+
+bool UsersModel::hasMore() const
+{
+    return canFetchMore(QModelIndex());
 }
 
 
@@ -46,9 +52,3 @@ QHash<int, QByteArray> UsersModel::roleNames() const
     roles[Qt::UserRole] = "user";
     return roles;
 }
-
-bool UsersModel::loading() const
-{
-    return _loading;
-}
-

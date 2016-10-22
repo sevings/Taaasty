@@ -38,10 +38,8 @@
 
 
 NotificationsModel::NotificationsModel(Tasty* tasty)
-    : QAbstractListModel(tasty)
+    : TastyListModel(tasty)
     , _url("v2/messenger/notifications.json?limit=2")
-    , _loading(false)
-    , _checking(false)
     , _totalCount(1)
 #ifdef Q_OS_ANDROID
     , _androidNotifier(new AndroidNotifier(this))
@@ -108,12 +106,9 @@ bool NotificationsModel::canFetchMore(const QModelIndex& parent) const
 
 void NotificationsModel::fetchMore(const QModelIndex& parent)
 {
-    if (_loading || parent.isValid() || _notifs.size() >= _totalCount
+    if (isLoading() || parent.isValid() || _notifs.size() >= _totalCount
             || !Tasty::instance()->isAuthorized())
         return;
-
-    _loading = true;
-    emit loadingChanged();
 
     QString url = _url;
     if (!_notifs.isEmpty())
@@ -122,8 +117,17 @@ void NotificationsModel::fetchMore(const QModelIndex& parent)
         url += QString("0&to_notification_id=%1").arg(lastId); // load ten times more
     }
     
-    auto request = new ApiRequest(url, true);
-    connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject)));
+    _loadRequest = new ApiRequest(url, true);
+    connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject)));
+
+    _initLoad();
+}
+
+
+
+bool NotificationsModel::hasMore() const
+{
+    return canFetchMore(QModelIndex());
 }
 
 
@@ -180,8 +184,6 @@ void NotificationsModel::_addItems(QJsonObject data)
     auto list = data.value("notifications").toArray();
     if (list.isEmpty())
     {
-        _loading = false;
-        emit loadingChanged();
         _totalCount = size;
         emit hasMoreChanged();
         return;
@@ -203,9 +205,6 @@ void NotificationsModel::_addItems(QJsonObject data)
 
     if (_notifs.size() >= _totalCount)
         emit hasMoreChanged();
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 
@@ -242,10 +241,7 @@ void NotificationsModel::_addNewest(const QJsonObject data)
 {
     auto list = data.value("notifications").toArray();
     if (list.isEmpty())
-    {
-        _checking = false;
         return;
-    }
 
     _totalCount = data.value("total_count").toInt();
 
@@ -278,8 +274,6 @@ void NotificationsModel::_addNewest(const QJsonObject data)
 
     endInsertRows();
 
-    _loading = false;
-
     emit unreadChanged();
 }
 
@@ -289,8 +283,8 @@ void NotificationsModel::_reloadAll()
 {
     beginResetModel();
 
-    _loading = false;
-    emit loadingChanged();
+    delete _loadRequest;
+    delete _checkRequest;
 
     _totalCount = 1;
     qDeleteAll(_notifs);
@@ -306,7 +300,7 @@ void NotificationsModel::_reloadAll()
 
 void NotificationsModel::_check(int actual) //! \todo test me
 {
-    if (_checking || actual <= 0 || !Tasty::instance()->isAuthorized())
+    if (isChecking() || actual <= 0 || !Tasty::instance()->isAuthorized())
         return;
 
     int unread = 0;
@@ -323,8 +317,6 @@ void NotificationsModel::_check(int actual) //! \todo test me
 
     qDebug() << "NotificationsModel::_check";
 
-    _checking = true;
-
     QString url = _url + "00"; // limit 200
     if (!_notifs.isEmpty())
     {
@@ -332,29 +324,9 @@ void NotificationsModel::_check(int actual) //! \todo test me
         url += QString("&from_notification_id=%1").arg(firstId);
     }
 
-    auto request = new ApiRequest(url, true);
-    Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject))));
-    Q_TEST(connect(request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotChecking())));
-}
+    _checkRequest = new ApiRequest(url, true);
 
+    Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject))));
 
-
-void NotificationsModel::_setNotLoading()
-{
-    _loading = false;
-    emit loadingChanged();
-}
-
-
-
-void NotificationsModel::_setNotChecking()
-{
-    _checking = false;
-}
-
-
-
-bool NotificationsModel::loading() const
-{
-    return _loading;
+    _initCheck();
 }

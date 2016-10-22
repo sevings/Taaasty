@@ -29,22 +29,20 @@ class UsersModelTlog : public UsersModel
 {
     Q_OBJECT
 
-    friend class UsersModelBayes;
-
     Q_PROPERTY(int tlog READ tlog WRITE setTlog)
 
 public:
     UsersModelTlog(QObject* parent = nullptr);
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    bool canFetchMore(const QModelIndex& parent) const override;
-    void fetchMore(const QModelIndex& parent) override;
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    virtual bool canFetchMore(const QModelIndex& parent) const override;
+    virtual void fetchMore(const QModelIndex& parent) override;
 
-    Q_INVOKABLE virtual void setMode(const Mode mode) override;
+    virtual void setMode(const Mode mode) override;
 
-    Q_INVOKABLE void setTlog(const int tlog);
-    Q_INVOKABLE int tlog() const {return _tlog; }
+    void setTlog(const int tlog);
+    int tlog() const {return _tlog; }
 
     void downloadAll();
 
@@ -55,14 +53,16 @@ private slots:
     void _addItems(QJsonObject data);
 
 private:
-    bool _loadAll;
+    bool         _loadAll;
 
     QList<User*> _users;
-    QString _url;
-    QString _field;
-    int  _tlog;
-    int  _total;
-    int  _lastPosition;
+
+    QString      _url;
+    QString      _field;
+
+    int          _tlog;
+    int          _total;
+    int          _lastPosition;
 };
 
 #endif // USERSMODELTLOG_H

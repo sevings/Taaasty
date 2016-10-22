@@ -22,27 +22,24 @@
 #define CHATSMODEL_H
 
 #include <QObject>
-#include <QAbstractListModel>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QSet>
 #include <QHash>
 
+#include "tastylistmodel.h"
+
 #include "../data/Conversation.h"
 
-class ApiRequest;
 class Tasty;
 
 
 
-class ChatsModel : public QAbstractListModel
+class ChatsModel : public TastyListModel
 {
     Q_OBJECT
 
     Q_PROPERTY(Mode mode     READ mode WRITE setMode  NOTIFY modeChanged)
-    Q_PROPERTY(bool hasMore  READ hasMore             NOTIFY hasMoreChanged)
-    Q_PROPERTY(bool loading  READ loading             NOTIFY loadingChanged)
-    Q_PROPERTY(bool checking READ checking            NOTIFY checkingChanged)
 
 public:
     enum Mode {
@@ -57,29 +54,21 @@ public:
 
     ChatsModel(Tasty* tasty = nullptr);
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    bool canFetchMore(const QModelIndex& parent) const override;
-    void fetchMore(const QModelIndex& parent) override;
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    virtual bool canFetchMore(const QModelIndex& parent) const override;
+    virtual void fetchMore(const QModelIndex& parent) override;
 
-    Q_INVOKABLE bool hasMore() const { return _hasMore; }
-
-    Q_INVOKABLE void setMode(const Mode mode);
-    Q_INVOKABLE Mode mode() const {return _mode; }
+    void setMode(const Mode mode);
+    Mode mode() const {return _mode; }
 
     void addChat(EntryPtr entry);
-
-    bool loading() const;
-    bool checking() const;
 
 public slots:
     void loadUnread();
     void reset();
 
 signals:
-    void hasMoreChanged();
-    void loadingChanged();
-    void checkingChanged();
     void modeChanged();
 
 protected:
@@ -88,27 +77,19 @@ protected:
 private slots:
     void _addUnread(QJsonArray data);
     void _addChats(QJsonArray data);
-    void _setNotLoading(QObject* request);
-    void _setNotChecking(QObject* request);
     void _removeChat(int id);
     void _checkUnread(int actual);
 
 private:
     void _bubbleChat(int id);
 
-    QList<ChatPtr>       _allChats;
-    QList<ChatPtr>       _chats;
-    QSet<int>            _ids;
-    Mode                 _mode;
+    QList<ChatPtr>  _allChats;
+    QList<ChatPtr>  _chats;
+    QSet<int>       _ids;
+    Mode            _mode;
 
-    bool    _hasMore;
-    
-    QString _url;
-    bool    _loading;
-    bool    _checking;
-    int     _page;
-
-    ApiRequest* _request;
+    QString         _url;
+    int             _page;
 };
 
 #endif // CHATSMODEL_H

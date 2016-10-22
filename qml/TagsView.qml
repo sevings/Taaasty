@@ -34,6 +34,14 @@ Pane {
     Splash {
         id: splash
         visible: !listView.visible
+        running: tagsModel.loading
+        text: 'Нет тегов'
+    }
+    TagsModel {
+        id: tagsModel
+        Component.onCompleted: {
+            setTlog(back.tlogId);
+        }
     }
     MyListView {
         id: listView
@@ -44,19 +52,7 @@ Pane {
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
-        model: TagsModel {
-            id: tagsModel
-            Component.onCompleted: {
-                setTlog(back.tlogId);
-            }
-            onLoaded: {
-                if (!listView.visible)
-                {
-                    splash.text = 'Нет тегов';
-                    splash.running = false;
-                }
-            }
-        }
+        model: tagsModel
         delegate: Rectangle {
             id: tagView
             width: window.width

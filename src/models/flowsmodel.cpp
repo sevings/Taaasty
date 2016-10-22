@@ -32,21 +32,14 @@
 
 
 FlowsModel::FlowsModel(QObject* parent)
-    : QAbstractListModel(parent)
+    : TastyListModel(parent)
     , _page(1)
-    , _hasMore(true)
-    , _loading(false)
-    , _request(nullptr)
 {
     qDebug() << "FlowsModel";
 
     setMode(Tasty::instance()->isAuthorized() ? MyMode : PopularMode);
     
-    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, [&]()
-    {
-        if (_mode == MyMode)
-            reset();
-    }));
+    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, this, &FlowsModel::_resetIfMy));
 }
 
 
@@ -88,19 +81,17 @@ bool FlowsModel::canFetchMore(const QModelIndex& parent) const
 
 void FlowsModel::fetchMore(const QModelIndex& parent)
 {
-    if (!_hasMore || _loading || parent.isValid())
+    if (!_hasMore || isLoading() || parent.isValid())
         return;
 
     qDebug() << "FlowsModel::fetchMore";
 
-    _loading = true;
-    emit loadingChanged();
-
     QString url = _url.arg(_page++);
-    _request = new ApiRequest(url);
+    _loadRequest = new ApiRequest(url);
 
-    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading(QObject*))));
+    Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
+
+    _initLoad();
 }
 
 
@@ -133,11 +124,7 @@ void FlowsModel::setMode(const FlowsModel::Mode mode)
     _hasMore = true;
     emit hasMoreChanged();
 
-    _loading = false;
-    emit loadingChanged();
-
-    delete _request;
-    _request = nullptr;
+    delete _loadRequest;
 
     endResetModel();
 }
@@ -155,11 +142,7 @@ void FlowsModel::reset()
     _hasMore = true;
     emit hasMoreChanged();
 
-    _loading = false;
-    emit loadingChanged();
-
-    delete _request;
-    _request = nullptr;
+    delete _loadRequest;
 
     endResetModel();
 }
@@ -179,8 +162,6 @@ void FlowsModel::_addItems(QJsonObject data)
 {
     qDebug() << "FlowsModel::_addItems";
 
-    _request = nullptr;
-
     auto hasMore = data.value("has_more").toBool();
     if (hasMore != _hasMore)
     {
@@ -190,11 +171,7 @@ void FlowsModel::_addItems(QJsonObject data)
 
     auto flows = data.value("items").toArray();
     if (flows.isEmpty())
-    {
-        _loading = false;
-        emit loadingChanged();
         return;
-    }
 
     beginInsertRows(QModelIndex(), _flows.size(), _flows.size() + flows.size() - 1);
 
@@ -202,37 +179,12 @@ void FlowsModel::_addItems(QJsonObject data)
         _flows << new Flow(flowData.toObject().value("flow").toObject(), this);
 
     endInsertRows();
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 
 
-void FlowsModel::_setNotLoading(QObject* request)
+void FlowsModel::_resetIfMy()
 {
-    if (request != _request)
-        return;
-
-    if (_loading)
-    {
-        _loading = false;
-        emit loadingChanged();
-    }
-
-    _request = nullptr;
-}
-
-
-
-bool FlowsModel::hasMore() const
-{
-    return _hasMore;
-}
-
-
-
-bool FlowsModel::loading() const
-{
-    return _loading;
+    if (_mode == MyMode)
+        reset();
 }

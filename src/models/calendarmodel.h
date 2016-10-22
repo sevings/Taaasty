@@ -22,10 +22,10 @@
 #define CALENDARMODEL_H
 
 #include <QObject>
-#include <QAbstractListModel>
 #include <QJsonObject>
 #include <QHash>
-#include <QPointer>
+
+#include "tastylistmodel.h"
 
 class CalendarEntry;
 class Entry;
@@ -33,18 +33,17 @@ class ApiRequest;
 
 
 
-class CalendarModel : public QAbstractListModel
+class CalendarModel : public TastyListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool loading     READ loading    NOTIFY loadingChanged)
     Q_PROPERTY(bool isPrivate   READ isPrivate  NOTIFY isPrivateChanged)
     
 public:
     CalendarModel(QObject* parent = nullptr);
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
     Q_INVOKABLE void setTlog(const int tlog);
 
@@ -53,13 +52,10 @@ public:
     CalendarEntry* at(int row) const;
 
     Q_INVOKABLE CalendarEntry* firstMonthEntry(QString month) const;
-    
-    bool loading() const;
-    bool isPrivate() const { return _isPrivate; }
 
+    bool isPrivate() const { return _isPrivate; }
     
 signals:
-    void loadingChanged();
     void isPrivateChanged();
     
     void loaded();
@@ -74,7 +70,6 @@ private slots:
 private:
     QList<CalendarEntry*>           _calendar;
     QHash<QString, CalendarEntry*>  _firstMonthEntries;
-    QPointer<ApiRequest>            _request;
     bool                            _isPrivate;
 };
 

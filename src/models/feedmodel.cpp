@@ -37,16 +37,13 @@
 
 
 FeedModel::FeedModel(QObject* parent)
-    : QAbstractListModel(parent)
+    : TastyListModel(parent)
     , _tlog(0)
     , _mode(InvalidMode)
-    , _hasMore(true)
-    , _loading(false)
     , _lastEntry(0)
     , _isPrivate(false)
     , _minRating(0)
     , _page(1)
-    , _request(nullptr)
 {
     qDebug() << "FeedModel";
 
@@ -101,15 +98,12 @@ bool FeedModel::canFetchMore(const QModelIndex& parent) const
 
 void FeedModel::fetchMore(const QModelIndex& parent)
 {
-    if (!_hasMore || _loading || parent.isValid()
+    if (!_hasMore || isLoading() || parent.isValid()
             || (_mode == TlogMode && _tlog <= 0 && _slug.isEmpty())
             || _mode == InvalidMode)
         return;
 
     qDebug() << "FeedModel::fetchMore";
-
-    _loading = true;
-    emit loadingChanged();
 
     QString url = _url;
     if (_mode == TlogMode || _mode == FavoritesMode)
@@ -145,11 +139,12 @@ void FeedModel::fetchMore(const QModelIndex& parent)
         url += QString("%1limit=%2").arg(splitter).arg(limit);
     }
 
-    _request = new ApiRequest(url);
+    _loadRequest = new ApiRequest(url);
 
-    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),  this, SLOT(_setNotLoading(QObject*))));
+    Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
+    Q_TEST(connect(_loadRequest, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
+
+    _initLoad();
 }
 
 
@@ -236,11 +231,7 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query, QString 
 
     _hasMore = true;
     _lastEntry = 0;
-    _loading = false;
-    emit loadingChanged();
-
-    delete _request;
-    _request = nullptr;
+    delete _loadRequest;
 
     _clear();
 
@@ -271,20 +262,6 @@ bool FeedModel::hideNegative() const
 {
     return hideMode()
             && Tasty::instance()->settings()->hideNegativeRated();
-}
-
-
-
-bool FeedModel::hasMore() const
-{
-    return _hasMore;
-}
-
-
-
-bool FeedModel::loading() const
-{
-    return _loading;
 }
 
 
@@ -372,8 +349,6 @@ void FeedModel::_addItems(QJsonObject data)
 {
     qDebug() << "FeedModel::_addItems";
 
-    _request = nullptr;
-
     auto feed =  data.contains("items") ? data.value("items").toArray()
                                         : data.value("entries").toArray();
 
@@ -435,7 +410,7 @@ void FeedModel::_addItems(QJsonObject data)
 
     if (all.isEmpty())
     {
-        _loading = false;
+        _loadRequest = nullptr;
 
         if (_hasMore)
             fetchMore(QModelIndex());
@@ -451,7 +426,7 @@ void FeedModel::_addItems(QJsonObject data)
     else
         _addAll(all);
 
-    _loading = false;
+    _loadRequest = nullptr;
 
     if (loadMore)
         fetchMore(QModelIndex());
@@ -504,22 +479,6 @@ void FeedModel::_setPrivate(int errorCode)
         _isPrivate = true;
         emit isPrivateChanged();
     }
-}
-
-
-
-void FeedModel::_setNotLoading(QObject* request)
-{
-    if (request != _request)
-        return;
-
-    if (_loading)
-    {
-        _loading = false;
-        emit loadingChanged();
-    }
-
-    _request = nullptr;
 }
 
 

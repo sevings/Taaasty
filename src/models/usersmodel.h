@@ -21,22 +21,20 @@
 #ifndef USERSMODEL_H
 #define USERSMODEL_H
 
-#include <QObject>
-#include <QAbstractListModel>
 #include <QJsonObject>
+
+#include "tastylistmodel.h"
 
 class User;
 class Bayes;
 
 
 
-class UsersModel : public QAbstractListModel
+class UsersModel : public TastyListModel
 {
     Q_OBJECT
 
     Q_PROPERTY(Mode mode READ mode WRITE setMode)
-    Q_PROPERTY(bool hasMore READ hasMore NOTIFY hasMoreChanged)
-    Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 
 public:
     enum Mode {
@@ -51,22 +49,15 @@ public:
 
     UsersModel(QObject* parent = nullptr);
 
-    Q_INVOKABLE virtual bool hasMore() const { return canFetchMore(QModelIndex()); }
+    virtual bool hasMore() const override;
 
-    Q_INVOKABLE virtual void setMode(const Mode mode) { _mode = mode; }
-    Q_INVOKABLE Mode mode() const {return _mode; }
-
-    bool loading() const;
-
-signals:
-    void hasMoreChanged();
-    void loadingChanged();
+    virtual void setMode(const Mode mode) { _mode = mode; }
+    Mode mode() const {return _mode; }
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
     Mode _mode;
-    bool _loading;
 };
 
 #endif // USERSMODEL_H

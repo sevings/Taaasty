@@ -40,12 +40,10 @@
 
 
 MessagesModel::MessagesModel(Conversation* chat)
-    : QAbstractListModel(chat)
+    : TastyListModel(chat)
     , _chat(chat)
     , _chatId(0)
-    , _loading(false)
     , _url("v2/messenger/conversations/by_id/%1/messages.json?limit=20&order=desc")
-    , _request(nullptr)
 #ifdef Q_OS_ANDROID
     , _androidNotifier(new AndroidNotifier(this))
 #endif
@@ -97,49 +95,9 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
 
 
 
-void MessagesModel::reset()
+bool MessagesModel::hasMore() const
 {
-    auto reset = !_messages.isEmpty();
-    if (reset)
-        beginResetModel();
-
-    _chatId = _chat->id();
-
-    qDeleteAll(_messages);
-    _messages.clear();
-
-    emit lastMessageChanged();
-
-    _loading = false;
-    emit loadingChanged();
-
-    _setTotalCount(_chat->totalCount());
-    emit hasMoreChanged();
-
-    delete _request;
-    _request = nullptr;
-
-    if (reset)
-        endResetModel();
-}
-
-
-
-void MessagesModel::check()
-{
-    if (_loading || !_chatId)
-        return;
-
-    _loading = true;
-    emit loadingChanged();
-
-    QString url = _url.arg(_chatId);
-    if (!_messages.isEmpty())
-        url += QString("&from_message_id=%1").arg(_messages.last()->id());
-
-    _request = new ApiRequest(url);
-    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addLastMessages(QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),   this, SLOT(_setNotLoading(QObject*))));
+    return _messages.size() < _totalCount;
 }
 
 
@@ -154,6 +112,48 @@ Message* MessagesModel::lastMessage() const
 
 
 
+void MessagesModel::reset()
+{
+    auto reset = !_messages.isEmpty();
+    if (reset)
+        beginResetModel();
+
+    _chatId = _chat->id();
+
+    qDeleteAll(_messages);
+    _messages.clear();
+
+    emit lastMessageChanged();
+
+    delete _loadRequest;
+    delete _checkRequest;
+
+    _setTotalCount(_chat->totalCount());
+    emit hasMoreChanged();
+
+    if (reset)
+        endResetModel();
+}
+
+
+
+void MessagesModel::check()
+{
+    if (isChecking() || !_chatId)
+        return;
+
+    QString url = _url.arg(_chatId);
+    if (!_messages.isEmpty())
+        url += QString("&from_message_id=%1").arg(_messages.last()->id());
+
+    _checkRequest = new ApiRequest(url);
+    Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addLastMessages(QJsonObject))));
+
+    _initCheck();
+}
+
+
+
 void MessagesModel::loadMore()
 {
     if (!hasMore())
@@ -162,19 +162,17 @@ void MessagesModel::loadMore()
         return;
     }
 
-    if (_loading || !_chatId)
+    if (isLoading() || !_chatId)
         return;
-
-    _loading = true;
-    emit loadingChanged();
 
     QString url = _url.arg(_chatId);
     if (!_messages.isEmpty())
         url += QString("&to_message_id=%1").arg(_messages.first()->id());
 
-    _request = new ApiRequest(url);
-    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),  this, SLOT(_addMessages(QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),   this, SLOT(_setNotLoading(QObject*))));
+    _loadRequest = new ApiRequest(url);
+    Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addMessages(QJsonObject))));
+
+    _initLoad();
 }
 
 
@@ -195,18 +193,12 @@ void MessagesModel::_addMessages(const QJsonObject data)
     {
         _setTotalCount(_messages.size());
         emit hasMoreChanged();
-        _loading = false;
-        emit loadingChanged();
         return;
     }
 
     auto msgs = _messagesList(feed);
     if (msgs.isEmpty())
-    {
-        _loading = false;
-        emit loadingChanged();
-        return;    
-    }
+        return;
     
     beginInsertRows(QModelIndex(), 0, msgs.size() - 1);
 
@@ -221,9 +213,6 @@ void MessagesModel::_addMessages(const QJsonObject data)
 
     if (_messages.size() >= _totalCount)
         emit hasMoreChanged();
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 
@@ -232,19 +221,11 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
 {
     auto feed = data.value("messages").toArray();
     if (feed.isEmpty())
-    {
-        _loading = false;
-        emit loadingChanged();
         return;
-    }
 
     auto msgs = _messagesList(feed);
     if (msgs.isEmpty())
-    {
-        _loading = false;
-        emit loadingChanged();
-        return;    
-    }
+        return;
     
     beginInsertRows(QModelIndex(), _messages.size(), _messages.size() + msgs.size() - 1);
 
@@ -258,9 +239,6 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
 
     if (_messages.size() >= _totalCount)
         emit hasMoreChanged();
-
-    _loading = false;
-    emit loadingChanged();
 }
 
 
@@ -329,17 +307,6 @@ void MessagesModel::_removeMessage(QObject* msg)
 
     if (i == _messages.size())
         emit lastMessageChanged();
-}
-
-
-
-void MessagesModel::_setNotLoading(QObject* request)
-{
-    if (request == _request)
-    {
-        _loading = false;
-        _request = nullptr;
-    }
 }
 
 

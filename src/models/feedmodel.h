@@ -21,26 +21,23 @@
 #ifndef FEEDMODEL_H
 #define FEEDMODEL_H
 
-#include <QObject>
-#include <QAbstractListModel>
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include "tastylistmodel.h"
 #include "../data/Entry.h"
 
 class ApiRequest;
 
 
 
-class FeedModel : public QAbstractListModel
+class FeedModel : public TastyListModel
 {
     Q_OBJECT
 
     Q_PROPERTY(Mode     mode        READ mode       WRITE setMode)
     Q_PROPERTY(int      tlog        READ tlog       WRITE setTlog)
     Q_PROPERTY(QString  slug        READ slug       WRITE setSlug)
-    Q_PROPERTY(bool     hasMore     READ hasMore                    NOTIFY hasMoreChanged)
-    Q_PROPERTY(bool     loading     READ loading                    NOTIFY loadingChanged)
     Q_PROPERTY(bool     isPrivate   READ isPrivate                  NOTIFY isPrivateChanged)
     Q_PROPERTY(int      minRating   READ minRating  WRITE setMinRating)
     Q_PROPERTY(QString  query       READ query      WRITE setQuery  NOTIFY queryChanged)
@@ -79,10 +76,10 @@ public:
     FeedModel(QObject* parent = nullptr);
     ~FeedModel();
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    bool canFetchMore(const QModelIndex& parent) const override;
-    void fetchMore(const QModelIndex& parent) override;
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    virtual bool canFetchMore(const QModelIndex& parent) const override;
+    virtual void fetchMore(const QModelIndex& parent) override;
 
     void setMode(const Mode mode);
     Mode mode() const {return _mode; }
@@ -112,7 +109,6 @@ public:
     bool hideShort() const;
     bool hideNegative() const;
     bool loading() const;
-    bool hasMore() const;
 
     void postText(const QString title, const QString content, Privacy privacy = Public);
     void postAnonymous(const QString title, const QString content);
@@ -121,8 +117,6 @@ public:
     Q_INVOKABLE void setSinceDate(const QString date);
 
 signals:
-    void hasMoreChanged();
-    void loadingChanged();
     void isPrivateChanged();
     void queryChanged();
     void tagChanged();
@@ -136,7 +130,6 @@ private slots:
     void _addNewPost(QJsonObject data);
     void _changeHideSome();
     void _setPrivate(int errorCode);
-    void _setNotLoading(QObject* request);
     void _resetOrReloadRatings();
     void _reloadRatings();
     void _setRatings(const QJsonArray data);
@@ -150,21 +143,18 @@ private:
 
     QList<EntryPtr> _entries;
     QList<EntryPtr> _allEntries;
-    QString _url;
-    int _tlog;
-    QString _slug;
-    Mode _mode;
-    bool _hasMore;
-    bool _loading;
-    int _lastEntry;
-    bool _isPrivate;
-    int _minRating;
-    QString _query;
-    QString _tag;
-    int     _page;
-    QString _prevDate;
 
-    ApiRequest* _request;
+    QString         _url;
+    int             _tlog;
+    QString         _slug;
+    Mode            _mode;
+    int             _lastEntry;
+    bool            _isPrivate;
+    int             _minRating;
+    QString         _query;
+    QString         _tag;
+    int             _page;
+    QString         _prevDate;
 };
 
 #endif // FEEDMODEL_H

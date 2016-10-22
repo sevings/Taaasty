@@ -30,7 +30,7 @@
 
 
 TagsModel::TagsModel(QObject* parent)
-    : QAbstractListModel(parent)
+    : TastyListModel(parent)
 {
     qDebug() << "TagsModel";
 }
@@ -70,8 +70,10 @@ void TagsModel::setTlog(const int tlog)
     if (tlog <= 0)
         return;
 
-    auto request = new ApiRequest(QString("v1/tlog/%1/tags.json").arg(tlog));
-    Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_setData(QJsonArray))));
+    _loadRequest = new ApiRequest(QString("v1/tlog/%1/tags.json").arg(tlog));
+    Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonArray)), this, SLOT(_setData(QJsonArray))));
+
+    _initLoad();
 
     beginResetModel();
 
@@ -104,6 +106,4 @@ void TagsModel::_setData(QJsonArray data)
     }
     
     endResetModel();
-
-    emit loaded();
 }

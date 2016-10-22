@@ -21,8 +21,6 @@
 #include "TastyData.h"
 
 #include "../defines.h"
-
-#include "../tasty.h"
 #include "../apirequest.h"
 
 
