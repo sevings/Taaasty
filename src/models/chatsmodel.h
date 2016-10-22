@@ -63,6 +63,7 @@ public:
     Mode mode() const {return _mode; }
 
     void addChat(EntryPtr entry);
+    void bubbleChat(int id);
 
 public slots:
     void loadUnread();
@@ -81,8 +82,6 @@ private slots:
     void _checkUnread(int actual);
 
 private:
-    void _bubbleChat(int id);
-
     QList<ChatPtr>  _allChats;
     QList<ChatPtr>  _chats;
     QSet<int>       _ids;

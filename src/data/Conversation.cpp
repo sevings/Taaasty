@@ -392,6 +392,8 @@ void Conversation::sendMessage(const QString text)
         Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),   this, SLOT(readAll())));
     
     _initRequest(false);
+
+    ChatsModel::instance()->bubbleChat(_id);
 }
 
 

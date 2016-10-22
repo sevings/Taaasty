@@ -155,7 +155,7 @@ void ChatsModel::addChat(EntryPtr entry)
     auto chat = entry->chat()->sharedFromThis();
     if (_ids.contains(chat->id()))
     {
-        _bubbleChat(chat->id());
+        bubbleChat(chat->id());
         return;
     }
 
@@ -168,6 +168,40 @@ void ChatsModel::addChat(EntryPtr entry)
     Q_TEST(connect(chat.data(), SIGNAL(left(int)), this, SLOT(_removeChat(int))));
 
     endInsertRows();
+}
+
+
+
+void ChatsModel::bubbleChat(int id)
+{
+    if (!_ids.contains(id))
+        return;
+
+    int i = 0;
+    for (; i < _chats.size(); i++)
+        if (id == _chats.at(i)->id())
+            break;
+
+    if (i >= _chats.size())
+        return;
+
+    _chats.at(i)->update(); //! \todo why?
+
+    int unread = 0;
+    for (; unread < _chats.size(); unread++)
+        if (_chats.at(unread)->unreadCount() <= 0) //! \todo newly created
+            break;
+
+    if (i <= unread)
+        return;
+
+    if (!beginMoveRows(QModelIndex(), i, i, QModelIndex(), unread))
+        return;
+
+    auto chat = _chats.takeAt(i);
+    _chats.insert(unread, chat);
+
+    endMoveRows();
 }
 
 
@@ -261,7 +295,7 @@ void ChatsModel::_addUnread(QJsonArray data)
     }
 
     foreach (auto id, bubbleIds)
-        _bubbleChat(id);
+        bubbleChat(id);
 
     if (chats.isEmpty())
         return;
@@ -380,42 +414,8 @@ void ChatsModel::_checkUnread(int actual)
     }
 
     foreach (auto id, bubbleIds)
-        _bubbleChat(id);
+        bubbleChat(id);
 
     if (found < actual)
         loadUnread();
-}
-
-
-
-void ChatsModel::_bubbleChat(int id)
-{
-    if (!_ids.contains(id))
-        return;
-
-    int i = 0;
-    for (; i < _chats.size(); i++)
-        if (id == _chats.at(i)->id())
-            break;
-
-    if (i >= _chats.size())
-        return;
-
-    _chats.at(i)->update(); //! \todo why?
-
-    int unread = 0;
-    for (; unread < _chats.size(); unread++)
-        if (_chats.at(unread)->unreadCount() <= 0) //! \todo newly created
-            break;
-
-    if (i <= unread)
-        return;
-
-    if (!beginMoveRows(QModelIndex(), i, i, QModelIndex(), unread))
-        return;
-
-    auto chat = _chats.takeAt(i);
-    _chats.insert(unread, chat);
-
-    endMoveRows();
 }
