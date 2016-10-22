@@ -136,6 +136,9 @@ void Message::_init(const QJsonObject data)
     _correctHtml();
     _setTruncatedText();
 
+    if (_attachedImagesModel)
+        _containsImage = true;
+
     auto reply = data.value("reply_message").toObject();
     _replyUserId = reply.value("user_id").toInt();
 

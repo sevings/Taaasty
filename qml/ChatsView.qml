@@ -118,7 +118,7 @@ PopupFill {
                 }
                 font.pointSize: window.fontSmallest
                 color: window.secondaryTextColor
-                text: model.chat.lastMessage.truncatedText
+                text: model.chat.lastMessage.truncatedText || (model.chat.lastMessage.containsImage ? '(изображение)' : '')
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 textFormat: Text.PlainText
