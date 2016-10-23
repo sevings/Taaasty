@@ -76,9 +76,9 @@ ApiRequest::ApiRequest(const QString url,
 
 void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 {
-#ifdef QT_DEBUG
     auto reply = qobject_cast<QNetworkReply*>(sender());
 
+#ifdef QT_DEBUG
     if (reply)
         qDebug() << code << reply->errorString(); //AuthenticationRequiredError 204, UnknownContentError 299
     else
@@ -86,6 +86,9 @@ void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 #endif
 
     emit error(code);
+
+    if (reply)
+        emit error(code, reply->errorString());
 
     deleteLater();
 }
