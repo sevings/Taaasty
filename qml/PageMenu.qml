@@ -464,6 +464,23 @@ Q.Drawer {
                 enabled: visible && !page.tlog.changingRelation
             }
             MenuSeparator {
+                visible: tlogMessage.visible
+                         && page.tlog.myRelationship !== Tlog.Me
+            }
+            MenuItem {
+                id: tlogMessage
+                text: 'Написать сообщение'
+                onTriggered: {
+                    window.pushMessages(page.tlog.chat);
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && page.isProfileView === true
+                         && !page.author.isFlow
+                         && Tasty.isAuthorized
+                enabled: visible
+            }
+            MenuSeparator {
                 visible: tlogCalendar.visible
                          && Tasty.isAuthorized
             }

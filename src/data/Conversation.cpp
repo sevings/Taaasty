@@ -85,14 +85,14 @@ void Conversation::setId(int id)
 
 
 
-void Conversation::setUserId(int id)
+void Conversation::setRecipientId(int id)
 {
-    if (isLoading() || id <= 0 || id == _userId)
+    if (isLoading() || id <= 0 || id == _recipientId)
         return;
 
-    _userId = id;
+    _recipientId = id;
 
-    _request = new ApiRequest(QString("v2/messenger/conversations/by_user_id/%1.json").arg(_userId),
+    _request = new ApiRequest(QString("v2/messenger/conversations/by_user_id/%1.json").arg(_recipientId),
                               ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                               QNetworkAccessManager::PostOperation);
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
@@ -558,6 +558,14 @@ int Conversation::userId() const
 {
     return _userId;
 }
+
+
+
+int Conversation::recipientId() const
+{
+    return _recipientId;
+}
+
 
 
 

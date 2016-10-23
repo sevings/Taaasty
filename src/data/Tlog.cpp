@@ -24,6 +24,9 @@
 
 #include "../tasty.h"
 #include "../apirequest.h"
+#include "../pusherclient.h"
+
+#include "../models/chatsmodel.h"
 
 #include "Author.h"
 
@@ -49,6 +52,30 @@ Tlog::Tlog(const QJsonObject data, QObject *parent)
 
 
 
+Conversation* Tlog::chat()
+{
+    if (_chat)
+        return _chat.data();
+
+    if (_id > 0)
+    {
+        _chat = Tasty::instance()->pusher()->chatByTlog(_id);
+        if (_chat)
+            return _chat.data();
+    }
+
+    _chat = ChatPtr::create(nullptr);
+
+    if (_id > 0)
+        _chat->setRecipientId(_id);
+
+    ChatsModel::instance()->addChat(_chat);
+
+    return _chat.data();
+}
+
+
+
 bool Tlog::changingRelation() const
 {
     return _relationRequest;
@@ -63,6 +90,9 @@ void Tlog::setId(const int id)
 
     _id = id;
     emit idChanged();
+
+    if (_chat)
+        _chat->setRecipientId(_id);
 
     _slug.clear();
 
@@ -138,6 +168,9 @@ void Tlog::init(const QJsonObject data)
         _author->init(authorData);
     else
         _author = new Author(authorData, this);
+
+    if (_chat)
+        _chat->setRecipientId(_id);
 
     emit idChanged();
     emit updated();

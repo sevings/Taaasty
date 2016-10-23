@@ -24,6 +24,7 @@
 #include <QJsonObject>
 
 #include "TastyData.h"
+#include "Conversation.h"
 
 class Author;
 
@@ -33,23 +34,24 @@ class Tlog: public TastyData
 {
     Q_OBJECT
 
-    Q_PROPERTY(int          tlogId              READ tlogId   WRITE setId   NOTIFY updated) //! \todo remove
-    Q_PROPERTY(QString      slug                READ slug   WRITE setSlug   NOTIFY updated)
-    Q_PROPERTY(QString      title               MEMBER _title               NOTIFY updated)
-    Q_PROPERTY(QString      entriesCount        MEMBER _entriesCount        NOTIFY updated)
-    Q_PROPERTY(QString      publicEntriesCount  MEMBER _publicEntriesCount  NOTIFY updated)
-    Q_PROPERTY(QString      privateEntriesCount MEMBER _privateEntriesCount NOTIFY updated)
-    Q_PROPERTY(QString      favoritesCount      MEMBER _favoritesCount      NOTIFY updated)
-    Q_PROPERTY(QString      commentsCount       MEMBER _commentsCount       NOTIFY updated)
-    Q_PROPERTY(QString      tagsCount           MEMBER _tagsCount           NOTIFY updated)
-    Q_PROPERTY(QString      daysCount           MEMBER _daysCount           NOTIFY updated)
-    Q_PROPERTY(QString      followersCount      MEMBER _followersCount      NOTIFY updated)
-    Q_PROPERTY(QString      followingsCount     MEMBER _followingsCount     NOTIFY updated)
-    Q_PROPERTY(QString      ignoredCount        MEMBER _ignoredCount        NOTIFY updated)
-    Q_PROPERTY(Relationship myRelationship      MEMBER _myRelation          NOTIFY myRelationChanged)
-    Q_PROPERTY(Relationship hisRelationship     MEMBER _hisRelation         NOTIFY hisRelationChanged)
-    Q_PROPERTY(Author*      author              READ author                 NOTIFY updated)
-    Q_PROPERTY(bool         changingRelation    READ changingRelation       NOTIFY changingRelationChanged)
+    Q_PROPERTY(int              tlogId              READ tlogId   WRITE setId   NOTIFY updated) //! \todo remove
+    Q_PROPERTY(QString          slug                READ slug   WRITE setSlug   NOTIFY updated)
+    Q_PROPERTY(QString          title               MEMBER _title               NOTIFY updated)
+    Q_PROPERTY(QString          entriesCount        MEMBER _entriesCount        NOTIFY updated)
+    Q_PROPERTY(QString          publicEntriesCount  MEMBER _publicEntriesCount  NOTIFY updated)
+    Q_PROPERTY(QString          privateEntriesCount MEMBER _privateEntriesCount NOTIFY updated)
+    Q_PROPERTY(QString          favoritesCount      MEMBER _favoritesCount      NOTIFY updated)
+    Q_PROPERTY(QString          commentsCount       MEMBER _commentsCount       NOTIFY updated)
+    Q_PROPERTY(QString          tagsCount           MEMBER _tagsCount           NOTIFY updated)
+    Q_PROPERTY(QString          daysCount           MEMBER _daysCount           NOTIFY updated)
+    Q_PROPERTY(QString          followersCount      MEMBER _followersCount      NOTIFY updated)
+    Q_PROPERTY(QString          followingsCount     MEMBER _followingsCount     NOTIFY updated)
+    Q_PROPERTY(QString          ignoredCount        MEMBER _ignoredCount        NOTIFY updated)
+    Q_PROPERTY(Relationship     myRelationship      MEMBER _myRelation          NOTIFY myRelationChanged)
+    Q_PROPERTY(Relationship     hisRelationship     MEMBER _hisRelation         NOTIFY hisRelationChanged)
+    Q_PROPERTY(Author*          author              READ author                 NOTIFY updated)
+    Q_PROPERTY(Conversation*    chat                READ chat                   CONSTANT)
+    Q_PROPERTY(bool             changingRelation    READ changingRelation       NOTIFY changingRelationChanged)
 
 public:
     enum Relationship {
@@ -67,6 +69,8 @@ public:
     Tlog(const QJsonObject data, QObject* parent = nullptr);
 
     Author* author() const { return _author; }
+
+    Conversation* chat();
 
     bool changingRelation() const;
 
@@ -95,7 +99,6 @@ signals:
     void updated();
     void myRelationChanged();
     void hisRelationChanged();
-    void loadingChanged();
     void changingRelationChanged();
 
 private slots:
@@ -123,6 +126,7 @@ private:
     Relationship    _myRelation;
     Relationship    _hisRelation;
     Author*         _author;
+    ChatPtr         _chat;
 
     QPointer<ApiRequest> _relationRequest;
 };

@@ -49,6 +49,7 @@ public:
 
     ChatPtr chat(int id) const;
     ChatPtr chatByEntry(int entryId) const;
+    ChatPtr chatByTlog(int tlogId) const;
 
     void addEntry(EntryPtr entry);
     void removeEntry(int id);
@@ -102,6 +103,7 @@ private:
 
     QHash<int, QWeakPointer<Conversation>>  _chats;
     QHash<int, QWeakPointer<Conversation>>  _chatsByEntry;
+    QHash<int, QWeakPointer<Conversation>>  _chatsByTlog;
     QHash<int, QWeakPointer<Entry>>         _entries;
     QHash<int, Message*>                    _messages;
     QHash<int, Comment*>                    _comments;

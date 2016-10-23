@@ -63,6 +63,7 @@ public:
     Mode mode() const {return _mode; }
 
     void addChat(EntryPtr entry);
+    void addChat(ChatPtr chat);
     void bubbleChat(int id);
 
 public slots:
@@ -80,6 +81,7 @@ private slots:
     void _addChats(QJsonArray data);
     void _removeChat(int id);
     void _checkUnread(int actual);
+    void _addChat();
 
 private:
     QList<ChatPtr>  _allChats;

@@ -38,23 +38,32 @@ Pane {
         chat.messages.check();
         listView.positionViewAtEnd();
     }
+    Connections {
+        target: chat
+        onLoadingChanged: {
+            console.log(chat.loading)
+            if (!chat.loading)
+                chat.messages.check();
+        }
+    }
     Poppable {
         body: back
     }
     Splash {
-        visible: !listView.visible
-        running: listView.model.loading || listView.model.checking
-        text: listView.model.errorString || 'Нет сообщений'
+        visible: !listView.visible || !listView.count
+        running: !listView.visible && (chat.loading || chat.messages.loading
+                                       || chat.messages.checking)
+        text: chat.messages.errorString || 'Нет сообщений'
     }
     MyListView {
         id: listView
         anchors {
-            top: parent.top
+            bottom: parent.bottom
             left: parent.left
             right: parent.right
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
-        visible: count > 0 || !model.hasMore
+        visible: !chat.loading && (count > 0 || !model.hasMore)
         model: chat.messages
         onCountChanged: {
             if (back.wasEmpty) {

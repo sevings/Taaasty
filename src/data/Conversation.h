@@ -50,7 +50,7 @@ class Conversation: public TastyData, public QEnableSharedFromThis<Conversation>
     Q_PROPERTY(int              unreceivedCount MEMBER _unreceivedCount NOTIFY updated)
     Q_PROPERTY(int              totalCount      MEMBER _totalCount      NOTIFY updated)
     Q_PROPERTY(int              userId          MEMBER _userId          NOTIFY updated)
-    Q_PROPERTY(int              recipientId     MEMBER _recipientId     NOTIFY updated)
+    Q_PROPERTY(int              recipientId     READ recipientId        NOTIFY updated)
     Q_PROPERTY(bool             isDisabled      MEMBER _isDisabled      NOTIFY updated)
     Q_PROPERTY(bool             notDisturb      MEMBER _notDisturb      NOTIFY updated)
     Q_PROPERTY(bool             canTalk         MEMBER _canTalk         NOTIFY updated)
@@ -61,7 +61,7 @@ class Conversation: public TastyData, public QEnableSharedFromThis<Conversation>
 //    Q_PROPERTY(QList<User*>     users           MEMBER _users           NOTIFY updated)
 //    Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
     Q_PROPERTY(Author*          recipient       MEMBER _recipient       NOTIFY updated)
-    Q_PROPERTY(MessagesModel*   messages        MEMBER _messages        CONSTANT)
+    Q_PROPERTY(MessagesModel*   messages        READ messages           CONSTANT)
     Q_PROPERTY(bool  isMyLastMessageUnread   READ isMyLastMessageUnread NOTIFY updated)
     Q_PROPERTY(MessageBase*     lastMessage     READ lastMessage        NOTIFY lastMessageChanged)
     Q_PROPERTY(bool             isInvolved      READ isInvolved         NOTIFY isInvolvedChanged)
@@ -82,7 +82,7 @@ public:
     ~Conversation();
 
     void setId(int id);
-    void setUserId(int id);
+    void setRecipientId(int id);
     void setSlug(const QString slug);
     void setEntryId(int entryId);
 
@@ -109,12 +109,13 @@ public:
     int entryId() const;
 
     int userId() const;
+    int recipientId() const;
 
     QString typedUsers();
     bool isTyped() const;
     void addTyped(int userId);
     void removeTyped(int userId);
-    
+
 public slots:
     void init(const QJsonObject data);
 
@@ -129,7 +130,6 @@ public slots:
 signals:
     void updated();
     void unreadCountChanged();
-    void loadingChanged();
     void messageSent(const QJsonObject);
     void messageReceived(const QJsonObject);
     void allMessagesRead(const QJsonObject data);

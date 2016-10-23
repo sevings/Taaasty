@@ -71,6 +71,9 @@ void PusherClient::addChat(ChatPtr chat)
 
     if (chat->entryId())
         _chatsByEntry.insert(chat->entryId(), chat.toWeakRef());
+
+    if (chat->type() == Conversation::PrivateConversation)
+        _chatsByTlog.insert(chat->recipientId(), chat.toWeakRef());
 }
 
 
@@ -96,6 +99,13 @@ ChatPtr PusherClient::chat(int id) const
 ChatPtr PusherClient::chatByEntry(int entryId) const
 {
     return _chatsByEntry.value(entryId).toStrongRef();
+}
+
+
+
+ChatPtr PusherClient::chatByTlog(int tlogId) const
+{
+    return _chatsByTlog.value(tlogId).toStrongRef();
 }
 
 
