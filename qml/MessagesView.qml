@@ -43,7 +43,7 @@ Pane {
     }
     Splash {
         visible: !listView.visible
-        running: listView.model.loading
+        running: listView.model.loading || listView.model.checking
         text: listView.model.errorString || 'Нет сообщений'
     }
     MyListView {
