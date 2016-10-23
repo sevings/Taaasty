@@ -138,7 +138,9 @@ void FeedModel::fetchMore(const QModelIndex& parent)
         url += QString("%1limit=%2").arg(splitter).arg(limit);
     }
 
-    _loadRequest = new ApiRequest(url);
+    auto opt = _optionsForFetchMore(_mode == MyTlogMode || _mode == MyFavoritesMode
+                                    || _mode == MyPrivateMode || _mode == FriendsMode);
+    _loadRequest = new ApiRequest(url, opt);
 
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
 
@@ -295,7 +297,7 @@ void FeedModel::postText(const QString title, const QString content, FeedModel::
 
     qDebug() << data;
 
-    auto request = new ApiRequest("v1/entries/text.json", true,
+    auto request = new ApiRequest("v1/entries/text.json", ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                   QNetworkAccessManager::PostOperation, data);
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_addNewPost(QJsonObject))));
@@ -311,7 +313,7 @@ void FeedModel::postAnonymous(const QString title, const QString content)
 
     qDebug() << data;
 
-    auto request = new ApiRequest("v1/entries/anonymous.json", true,
+    auto request = new ApiRequest("v1/entries/anonymous.json", ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                   QNetworkAccessManager::PostOperation, data);
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_addNewPost(const QJsonObject))));

@@ -31,7 +31,7 @@ Pane {
         body: back
     }
     Splash {
-        visible: !listView.visible && flowsModel.hasMore
+        visible: !listView.visible
         running: flowsModel.loading
         text: flowsModel.errorString || 'Нет потоков'
     }

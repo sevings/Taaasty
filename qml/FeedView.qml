@@ -70,7 +70,7 @@ Pane {
         body: back
     }
     Splash {
-        visible: !listView.visible && feedModel.hasMore
+        visible: !listView.visible
         running: feedModel.loading
         text: feedModel.errorString || 'Нет записей'
     }

@@ -216,7 +216,7 @@ void Tasty::authorize(const QString login, const QString password, bool save)
             .arg(login)
             .arg(password);
 
-    auto request = new ApiRequest("v1/sessions.json", false,
+    auto request = new ApiRequest("v1/sessions.json", ApiRequest::ShowMessageOnError,
                                   QNetworkAccessManager::PostOperation, data);
 
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readAccessToken(const QJsonObject)));

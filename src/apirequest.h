@@ -33,8 +33,17 @@ class ApiRequest : public QObject
 {
     Q_OBJECT
 public:
+    enum Option
+    {
+        NoOptions           = 0x0,
+        AccessTokenRequired = 0x1,
+        ShowMessageOnError  = 0x2
+    };
+
+    Q_DECLARE_FLAGS(Options, Option)
+
     ApiRequest(const QString url,
-               const bool accessTokenRequired = false,
+               const ApiRequest::Options options = ShowMessageOnError,
                const QNetworkAccessManager::Operation method = QNetworkAccessManager::GetOperation,
                const QString data = QString());
 
@@ -59,5 +68,7 @@ private:
 
     void _start(const QNetworkAccessManager::Operation method);
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ApiRequest::Options)
 
 #endif // APIREQUEST_H

@@ -29,7 +29,7 @@
 
 
 ApiRequest::ApiRequest(const QString url,
-                       const bool accessTokenRequired,
+                       const ApiRequest::Options options,
                        const QNetworkAccessManager::Operation method,
                        const QString data)
     : _readyData(data.toUtf8())
@@ -38,7 +38,8 @@ ApiRequest::ApiRequest(const QString url,
 {
     qDebug() << "ApiRequest to" << url;
 
-    if (accessTokenRequired && (!Tasty::instance()->isAuthorized()))// || expiresAt <= QDateTime::currentDateTime()))
+    if ((options & AccessTokenRequired)
+            && (!Tasty::instance()->isAuthorized()))// || expiresAt <= QDateTime::currentDateTime()))
     {
         qDebug() << "authorization needed for" << url;
         emit Tasty::instance()->authorizationNeeded();
@@ -46,7 +47,9 @@ ApiRequest::ApiRequest(const QString url,
         return;
     }
 
-    Q_TEST(connect(this, SIGNAL(error(int,QString)), Tasty::instance(), SIGNAL(error(int,QString))));
+    if (options & ShowMessageOnError)
+        Q_TEST(connect(this, SIGNAL(error(int,QString)),
+                       Tasty::instance(), SIGNAL(error(int,QString))));
 
     _start(method);
 }

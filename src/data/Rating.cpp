@@ -114,7 +114,7 @@ void Rating::setId(int entryId)
     _id = entryId;
     
     auto url = QString("v1/ratings.json?ids=%1").arg(_id);
-    _request = new ApiRequest(url, true);
+    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
     
     Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_reinit(QJsonArray))));
     
@@ -133,7 +133,7 @@ void Rating::vote()
     auto url = QString("v1/entries/%1/votes.json").arg(_id);
     auto operation = (_isVoted ? QNetworkAccessManager::DeleteOperation
                                : QNetworkAccessManager::PostOperation);
-    auto request = new ApiRequest(url, true, operation);
+    auto request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError, operation);
 
     Q_TEST(connect(request, SIGNAL(success(const QJsonObject)),
                    this, SLOT(init(const QJsonObject))));

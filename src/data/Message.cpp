@@ -102,7 +102,8 @@ void Message::read()
 
     auto url  = QString("v2/messenger/conversations/by_id/%1/messages/read.json").arg(_conversationId);
     auto data = QString("ids=%1").arg(_id);
-    _request  = new ApiRequest(url, true, QNetworkAccessManager::PutOperation, data);
+    _request  = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
+                               QNetworkAccessManager::PutOperation, data);
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
     

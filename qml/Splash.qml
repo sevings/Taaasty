@@ -30,13 +30,15 @@ ColumnLayout {
     anchors.centerIn: parent
     Q.BusyIndicator {
         running: parent.visible && parent.running
-        Layout.alignment: Qt.AlignCenter
+        Layout.alignment: Qt.AlignHCenter
     }
     Q.Label {
         id: loadingText
-        Layout.alignment: Qt.AlignCenter
+        Layout.alignment: Qt.AlignHCenter
+        Layout.maximumWidth: window.width - 3 * mm
         font.pointSize: window.fontBigger
         wrapMode: Text.Wrap
+        horizontalAlignment: Text.AlignHCenter
         text: parent.running ? 'Загрузка…' : parent.text
     }
 }

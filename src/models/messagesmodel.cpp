@@ -146,7 +146,7 @@ void MessagesModel::check()
     if (!_messages.isEmpty())
         url += QString("&from_message_id=%1").arg(_messages.last()->id());
 
-    _checkRequest = new ApiRequest(url);
+    _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
     Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addLastMessages(QJsonObject))));
 
     _initCheck();
@@ -169,7 +169,7 @@ void MessagesModel::loadMore()
     if (!_messages.isEmpty())
         url += QString("&to_message_id=%1").arg(_messages.first()->id());
 
-    _loadRequest = new ApiRequest(url);
+    _loadRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addMessages(QJsonObject))));
 
     _initLoad();

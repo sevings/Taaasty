@@ -101,7 +101,7 @@ void ChatsModel::fetchMore(const QModelIndex& parent)
     qDebug() << "ChatsModel::fetchMore";
 
     QString url = _url.arg(_page);
-    _loadRequest = new ApiRequest(url, true);
+    _loadRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
 
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonArray)), this, SLOT(_addChats(QJsonArray))));
 
@@ -214,7 +214,7 @@ void ChatsModel::loadUnread()
     qDebug() << "ChatsModel::loadUnread";
 
     QString url("v2/messenger/conversations.json?unread=true");
-    _checkRequest = new ApiRequest(url, true);
+    _checkRequest = new ApiRequest(url, _optionsForFetchMore());
 
     Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonArray)), this, SLOT(_addUnread(QJsonArray))));
 

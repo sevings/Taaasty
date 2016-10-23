@@ -42,22 +42,11 @@ QString TastyListModel::errorString() const
 
 
 
-void TastyListModel::_setErrorString(int errorCode)
+void TastyListModel::_setErrorString(int errorCode, QString str)
 {
-    switch (errorCode)
-    {
-    case 403:
-        _errorString = "Доступ запрещен";
-        break;
-    case 404:
-        _errorString = "Страница не найдена";
-        break;
-    default:
-        qDebug() << "TastyListModel error code" << errorCode;
-        _errorString = QString("При загрузке проиошла ошибка %1").arg(errorCode);
-        break;
-    }
+    qDebug() << "TastyListModel error code" << errorCode;
 
+    _errorString = str;
     emit errorStringChanged();
 }
 
@@ -72,12 +61,13 @@ void TastyListModel::_initLoad(bool emitting)
         return;
 
     _errorString.clear();
+    emit errorStringChanged();
 
     Q_TEST(connect(_loadRequest, &QObject::destroyed,
             this, &TastyListModel::loadingChanged, Qt::QueuedConnection));
 
     Q_TEST(connect(_loadRequest, SIGNAL(error(int,QString)),
-                   this, SLOT(_setErrorString(int))));
+                   this, SLOT(_setErrorString(int,QString))));
 }
 
 
@@ -91,5 +81,16 @@ void TastyListModel::_initCheck(bool emitting)
         return;
 
     Q_TEST(connect(_checkRequest, &QObject::destroyed,
-            this, &TastyListModel::checkingChanged, Qt::QueuedConnection));
+                   this, &TastyListModel::checkingChanged, Qt::QueuedConnection));
+}
+
+
+
+ApiRequest::Options TastyListModel::_optionsForFetchMore(bool accessTokenRequired) const
+{
+    ApiRequest::Options options = accessTokenRequired ? ApiRequest::AccessTokenRequired
+                                                      : ApiRequest::NoOptions;
+    if (rowCount())
+        options |= ApiRequest::ShowMessageOnError;
+    return options;
 }

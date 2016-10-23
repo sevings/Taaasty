@@ -86,8 +86,9 @@ void FlowsModel::fetchMore(const QModelIndex& parent)
 
     qDebug() << "FlowsModel::fetchMore";
 
-    QString url = _url.arg(_page++);
-    _loadRequest = new ApiRequest(url);
+    auto url = _url.arg(_page++);
+    auto opt = _optionsForFetchMore(_mode == MyMode);
+    _loadRequest = new ApiRequest(url, opt);
 
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
 

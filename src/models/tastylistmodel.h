@@ -5,7 +5,7 @@
 #include <QAbstractListModel>
 #include <QPointer>
 
-class ApiRequest;
+#include "../apirequest.h"
 
 
 
@@ -35,11 +35,13 @@ signals:
     void errorStringChanged();
 
 protected slots:
-    void _setErrorString(int errorCode);
+    void _setErrorString(int errorCode, QString str);
 
 protected:
-    void _initLoad(bool emitting = true);
-    void _initCheck(bool emitting = true);
+    void                 _initLoad(bool emitting = true);
+    void                 _initCheck(bool emitting = true);
+
+    ApiRequest::Options  _optionsForFetchMore(bool accessTokenRequired = true) const;
 
     QPointer<ApiRequest> _loadRequest;
     QPointer<ApiRequest> _checkRequest;

@@ -70,7 +70,7 @@ void TagsModel::setTlog(const int tlog)
     if (tlog <= 0)
         return;
 
-    _loadRequest = new ApiRequest(QString("v1/tlog/%1/tags.json").arg(tlog));
+    _loadRequest = new ApiRequest(QString("v1/tlog/%1/tags.json").arg(tlog), ApiRequest::NoOptions);
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonArray)), this, SLOT(_setData(QJsonArray))));
 
     _initLoad();

@@ -37,8 +37,6 @@ class CalendarModel : public TastyListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool isPrivate   READ isPrivate  NOTIFY isPrivateChanged)
-    
 public:
     CalendarModel(QObject* parent = nullptr);
 
@@ -53,11 +51,7 @@ public:
 
     Q_INVOKABLE CalendarEntry* firstMonthEntry(QString month) const;
 
-    bool isPrivate() const { return _isPrivate; }
-    
 signals:
-    void isPrivateChanged();
-    
     void loaded();
 
 protected:
@@ -65,12 +59,10 @@ protected:
 
 private slots:
     void _setCalendar(QJsonObject data);
-    void _setPrivate(int errorCode);
 
 private:
     QList<CalendarEntry*>           _calendar;
     QHash<QString, CalendarEntry*>  _firstMonthEntries;
-    bool                            _isPrivate;
 };
 
 #endif // CALENDARMODEL_H

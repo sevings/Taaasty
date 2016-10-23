@@ -32,7 +32,6 @@
 
 CalendarModel::CalendarModel(QObject* parent)
     : TastyListModel(parent)
-    , _isPrivate(false)
 {
     qDebug() << "CalendarModel";
 }
@@ -71,10 +70,6 @@ void CalendarModel::setTlog(const int tlog)
     QString url = QString("v1/tlog/%1/calendar.json").arg(tlog);
     _loadRequest = new ApiRequest(url);
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
-    Q_TEST(connect(_loadRequest, SIGNAL(error(int,QString)),   this, SLOT(_setPrivate(int))));
-    
-    Q_TEST(connect(_loadRequest, &QObject::destroyed,
-        this, &CalendarModel::loadingChanged, Qt::QueuedConnection));
 
     _initLoad();
 
@@ -152,15 +147,4 @@ void CalendarModel::_setCalendar(QJsonObject data)
     endResetModel();
 
     emit loaded();
-}
-
-
-
-void CalendarModel::_setPrivate(int errorCode)
-{
-    if (errorCode == 403)
-    {
-        _isPrivate = true;
-        emit isPrivateChanged();
-    }
 }
