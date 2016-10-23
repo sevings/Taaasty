@@ -93,7 +93,7 @@ Pane {
                     left: isMyMessage ? undefined : parent.left
                     right: isMyMessage ? parent.right : undefined
                 }
-                width: 7 * mm
+                width: 6.5 * mm
                 user: message.user
                 popBody: back
                 acceptClick: !chat.isAnonymous
