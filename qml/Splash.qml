@@ -23,23 +23,32 @@ import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 import QtQuick.Layouts 1.3
 
-ColumnLayout {
-    spacing: 2 * mm
+Item {
     property bool running: true
     property string text: ''
     anchors.centerIn: parent
+    width: window.width - 3 * mm
+    height: busy.height + loadingText.height + 1.5 * mm
     Q.BusyIndicator {
+        id: busy
+        anchors {
+            top: parent.top
+            horizontalCenter: parent.horizontalCenter
+        }
         running: parent.visible && parent.running
-        Layout.alignment: Qt.AlignHCenter
     }
     Q.Label {
         id: loadingText
-        Layout.alignment: Qt.AlignHCenter
-        Layout.maximumWidth: window.width - 3 * mm
+        anchors {
+            top: busy.bottom
+            horizontalCenter: parent.horizontalCenter
+            margins: 1.5 * mm
+        }
+        width: window.width - 3 * mm
         font.pointSize: window.fontBigger
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
         text: parent.running ? 'Загрузка…' : parent.text
     }
-}
 
+}
