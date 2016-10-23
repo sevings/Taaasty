@@ -20,6 +20,8 @@
 
 #include "TastyData.h"
 
+#include <QDebug>
+
 #include "../defines.h"
 #include "../apirequest.h"
 
@@ -55,22 +57,11 @@ QString TastyData::errorString() const
 
 
 
-void TastyData::_setErrorString(int errorCode)
-{
-    switch (errorCode)
-    {
-    case 403:
-        _errorString = "Доступ запрещен";
-        break;
-    case 404:
-        _errorString = "Страница не найдена";
-        break;
-    default:
-        qDebug() << "TastyData error code" << errorCode;
-        _errorString = QString("При загрузке проиошла ошибка %1").arg(errorCode);
-        break;
-    }
+void TastyData::_setErrorString(int errorCode, QString str)
+{    
+    qDebug() << "TastyData error code" << errorCode;
 
+    _errorString = str;
     emit errorStringChanged();
 }
 
@@ -90,5 +81,5 @@ void TastyData::_initRequest(bool emitting)
             this, &TastyData::loadingChanged, Qt::QueuedConnection));
 
     Q_TEST(connect(_request, SIGNAL(error(int,QString)),
-                   this, SLOT(_setErrorString(int))));
+                   this, SLOT(_setErrorString(int,QString))));
 }

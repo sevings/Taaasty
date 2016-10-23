@@ -48,7 +48,7 @@ signals:
     void errorStringChanged();
 
 protected slots:
-    void _setErrorString(int errorCode);
+    void _setErrorString(int errorCode, QString str);
 
 protected:
     int _id;
