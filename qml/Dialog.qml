@@ -44,50 +44,62 @@ import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 import QtQuick.Controls.Material.impl 2.0
 
-MouseArea {
-    id: area
-    anchors.fill: parent
-    visible: page.opacity > 0
-    onClicked: close()
+Rectangle {
+    id: page
+    visible: opacity > 0
     property bool info: false
+    property bool permanent: false
     signal opened
     signal closed
+    width: dialogText.contentWidth + 3 * mm
+    height: dialogText.contentHeight + 3 * mm
+    anchors {
+        horizontalCenter: parent.horizontalCenter
+        bottomMargin: 60 * sp
+        bottom: parent.bottom
+    }
+    color: window.backgroundColor
+    border.width: 0.2 * mm
+    border.color: info ? window.greenColor : window.redColor
+    opacity: 0
+    layer.enabled: visible
+    layer.effect: ElevationEffect {
+        elevation: 24
+    }
+    Behavior on opacity {
+        NumberAnimation { duration: 300 }
+    }
     function close() {
         if(page.opacity == 0)
-            return; //already closed
+            return;
+
         closed();
         page.opacity = 0;
     }
-    function show(txt, info) {
+    function show(txt, info, permanent) {
         opened();
         dialogText.text = txt;
         page.opacity = 1;
-        area.info = info === true;
+        page.info = info === true;
+        page.permanent = permanent === true;
+        if (permanent !== true)
+            timer.start()
+        else
+            timer.stop();
     }
-    Rectangle {
-        id: page
-        width: Math.min(window.width - 4 * mm, dialogText.contentWidth + 5 * mm)
-        height: dialogText.contentHeight + 5 * mm
+    Timer {
+        id: timer
+        interval: 5000
+        repeat: false
+        onTriggered: page.close()
+    }
+    Q.Label {
+        id: dialogText
         anchors.centerIn: parent
-        color: window.backgroundColor
-        border.width: 0.2 * mm
-        border.color: area.info ? window.greenColor : window.redColor
-        opacity: 0
-        layer.enabled: visible
-        layer.effect: ElevationEffect {
-            elevation: 24
-        }
-        Behavior on opacity {
-            NumberAnimation { duration: 300 }
-        }
-        Q.Label {
-            id: dialogText
-            anchors.centerIn: parent
-            width: window.width - 8 * mm
-            text: "Hello World!"
-            font.pointSize: window.fontBigger
-            wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignHCenter
-        }
+        width: window.width - 6 * mm
+        text: "Hello World!"
+        font.pointSize: window.fontSmaller
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignHCenter
     }
 }

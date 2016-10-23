@@ -85,6 +85,7 @@ signals:
     void htmlRecorrectionNeeded();
 
     void networkAccessible();
+    void networkNotAccessible();
 
 public slots:
     void authorize(const QString login, const QString password, bool save);

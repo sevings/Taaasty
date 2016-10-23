@@ -534,6 +534,13 @@ ApplicationWindow {
             onInfo: {
                 dialog.show(text, true);
             }
+            onNetworkAccessible: {
+                id (dialog.permanent)
+                    dialog.close();
+            }
+            onNetworkNotAccessible: {
+                dialog.show('Сеть недоступна', false, true)
+            }
         }
     }
 }

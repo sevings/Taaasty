@@ -393,7 +393,7 @@ void Tasty::_readAccessToken(const QJsonObject data)
 void Tasty::_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility accessible)
 {
     if (accessible == QNetworkAccessManager::NotAccessible)
-        emit error(0, "Сеть недоступна");
+        emit networkNotAccessible();
     else if (accessible == QNetworkAccessManager::Accessible)
         emit networkAccessible();
 }
