@@ -37,11 +37,11 @@ Pane {
         back.wasEmpty = !listView.visible;
         chat.messages.check();
         listView.positionViewAtEnd();
+        listView.atYBegin = listView.atYBeginning;
     }
     Connections {
         target: chat
         onLoadingChanged: {
-            console.log(chat.loading)
             if (!chat.loading)
                 chat.messages.check();
         }
@@ -65,10 +65,29 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: !chat.loading && (count > 0 || !model.hasMore)
         model: chat.messages
+        readonly property int headerHeight: headerItem.visibleHeight
+        property bool atYBegin
         onCountChanged: {
             if (back.wasEmpty) {
                 positionViewAtEnd();
                 back.wasEmpty = false;
+            }
+        }
+        Connections {
+            target: chat.messages
+            onItemsAboutToBePrepended: {
+                if (listView.atYBegin === undefined)
+                    return;
+
+                listView.atYBegin = listView.indexAt(0, listView.contentY) <= 0;
+            }
+            onItemsPrepended: {
+                if (!listView.atYBegin)
+                    return;
+
+                listView.positionViewAtIndex(prependedCount, ListView.Beginning);
+                listView.contentY -= listView.headerHeight;
+                listView.returnToBounds();
             }
         }
         header: ListBusyIndicator {

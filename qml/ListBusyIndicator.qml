@@ -24,8 +24,9 @@ import QtQuick.Controls 2.0 as Q
 Item {
     property alias running: busy.running
     property bool footer: true
-    height: visible ? footer ? busy.height + 3 * mm
-                             : busy.height : 0
+    readonly property int visibleHeight: footer ? busy.height + 3 * mm
+                                                : busy.height
+    height: visible ? visibleHeight : 0
     width: window.width
 //    visible: running
     Q.BusyIndicator {

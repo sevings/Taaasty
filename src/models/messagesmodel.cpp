@@ -200,6 +200,8 @@ void MessagesModel::_addMessages(const QJsonObject data)
     if (msgs.isEmpty())
         return;
     
+    emit itemsAboutToBePrepended();
+
     beginInsertRows(QModelIndex(), 0, msgs.size() - 1);
 
     _setTotalCount(data.value("total_count").toInt());
@@ -213,6 +215,8 @@ void MessagesModel::_addMessages(const QJsonObject data)
 
     if (_messages.size() >= _totalCount)
         emit hasMoreChanged();
+
+    emit itemsPrepended(msgs.size());
 }
 
 

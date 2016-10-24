@@ -63,6 +63,9 @@ signals:
     void totalCountChanged(int tc);
     void lastMessageChanged();
 
+    void itemsAboutToBePrepended();
+    void itemsPrepended(int prependedCount);
+
 public slots:
     void reset();
     void check();
