@@ -74,7 +74,7 @@ Pane {
                 id: bigAvatar
                 width: window.width
                 height: width
-                url: author.largePic
+                url: Settings.maxImageWidth > 800 ? author.originalPic : author.largePic
                 savable: true
                 popBody: profileView
             }
