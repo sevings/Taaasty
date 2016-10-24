@@ -535,7 +535,7 @@ ApplicationWindow {
                 dialog.show(text, true);
             }
             onNetworkAccessible: {
-                id (dialog.permanent)
+                if (dialog.permanent)
                     dialog.close();
             }
             onNetworkNotAccessible: {
