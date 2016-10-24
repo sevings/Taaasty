@@ -98,7 +98,7 @@ Pane {
             right: parent.right
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
-        visible: !entry.loading
+        visible: !entry.loading && !entry.errorString
         model: commentsModel
 //        interactive: back.x == 0
         delegate: Item {

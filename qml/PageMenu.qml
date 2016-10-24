@@ -346,6 +346,7 @@ Q.Drawer {
             MenuSeparator {
                 visible: !window.chatsShows
                          && page.isFullEntryView === true
+                         && !page.entry.loading
                          && Tasty.isAuthorized
             }
             MenuItem {
@@ -356,6 +357,7 @@ Q.Drawer {
                 }
                 visible: !window.chatsShows
                          && page.isFullEntryView === true
+                         && !page.entry.loading
             }
 
             // FLOWS SECTION
@@ -476,6 +478,7 @@ Q.Drawer {
                 }
                 visible: !window.chatsShows
                          && page.isProfileView === true
+                         && !page.tlog.errorString
                          && !page.author.isFlow
                          && Tasty.isAuthorized
                 enabled: visible
@@ -493,6 +496,7 @@ Q.Drawer {
                 }
                 visible: !window.chatsShows
                          && page.isProfileView === true
+                         && !page.tlog.errorString
                          && (!page.author.isPrivacy
                              || page.tlog.myRelationship === Tlog.Friend
                              || page.tlog.myRelationship === Tlog.Me)

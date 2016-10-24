@@ -69,7 +69,7 @@ Pane {
             id: column
             width: window.width
             spacing: 1.5 * mm
-            visible: !tlog.loading
+            visible: !tlog.loading && !tlog.errorString
             MyImage {
                 id: bigAvatar
                 width: window.width
