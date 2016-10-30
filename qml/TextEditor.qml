@@ -21,16 +21,107 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.0
+import org.binque.taaasty 1.0
 
+TextArea {
+    id: textEdit
+    property Flickable flickable
+    property TextHandler handler
+    property alias popBody: pop.body
+    property bool canCopyPaste: false
+    readonly property bool richEditing: textFormat === TextEdit.RichText
+    readonly property bool hasSelection: selectedText
+    font.pointSize: window.fontNormal
+    padding: 1.5 * mm
+    text: handler.text
+    textFormat:  TextEdit.PlainText
+    wrapMode: TextEdit.Wrap
+    activeFocusOnPress: false
+    selectByMouse: false
+    function addGreeting(slug) {
+        insert(0, '@' + slug + ', ');
+        forceActiveFocus();
+    }
+    function clear() {
+        text = '';
+    }
+    function ensureVisible(cursor)
+    {
+        if (flickable.contentY >= cursor.y - cursor.height)
+            flickable.contentY = Math.max(cursor.y - cursor.height, 0);
+        else if (flickable.contentY + height <= cursor.y + cursor.height * 2)
+            flickable.contentY = Math.min(cursor.y + cursor.height * 2 - flickable.height,
+                                          flickable.contentHeight - flickable.height);
+    }
+    function setHandlePositions() {
+        leftSelectionHandle.setPosition();
+        rightSelectionHandle.setPosition();
+    }
+    onHasSelectionChanged: {
+        if (hasSelection)
+            canCopyPaste = true;
+    }
+    onCursorPositionChanged: {
+        if (!hasSelection) {
+            canCopyPaste = false;
+            ensureVisible(cursorRectangle);
+        }
+    }
+    Poppable {
+        id: pop
+        function moveCursor(x, y) {
+            textEdit.deselect();
+            textEdit.cursorPosition = textEdit.positionAt(x, y);
+            textEdit.forceActiveFocus();
+        }
+        onPressed: {
+            mouse.accepted = true
+        }
+        onReleased: {
+            if (flickable.movingVertically || mouse.wasHeld)
+                return;
+
+            moveCursor(mouse.x, mouse.y);
+            textEdit.canCopyPaste = true;
+        }
+        onPressAndHold: {
+            moveCursor(mouse.x, mouse.y);
+            textEdit.selectWord();
+            textEdit.setHandlePositions();
+
+            mouse.accepted = true;
+        }
+    }
+    property SelectionHandle leftSelectionHandle: SelectionHandle {
+        textEdit: textEdit
+        textPosition: textEdit.selectionStart
+        onMoved: {
+            if (currentPosition >= textEdit.selectionEnd)
+                return;
+
+            textEdit.select(currentPosition, textEdit.selectionEnd);
+            textEdit.ensureVisible(textEdit.positionToRectangle(textPosition));
+        }
+    }
+    property SelectionHandle rightSelectionHandle: SelectionHandle {
+        textEdit: textEdit
+        textPosition: textEdit.selectionEnd
+        onMoved: {
+            if (currentPosition <= textEdit.selectionStart)
+                return;
+
+            textEdit.select(textEdit.selectionStart, currentPosition);
+            textEdit.ensureVisible(textEdit.positionToRectangle(textPosition));
+        }
+    }
+}
+
+/*
 Flickable {
     id: flickText
     anchors.margins: 1.5 * mm
     flickableDirection: Flickable.VerticalFlick
     property alias text: input.text
-    function addGreeting(slug) {
-        input.insert(0, '@' + slug + ', ');
-        input.forceActiveFocus();
-    }
     function insertTags(opening, closing) {
         if (!input.focus)
             return;
@@ -40,17 +131,15 @@ Flickable {
         if (closing)
             input.insert(input.cursorPosition, closing);
     }
-    function clear() {
-        input.text = '';
-    }
     TextArea.flickable: TextArea {
         id: input
         font.pointSize: window.fontNormal
-        wrapMode: TextEdit.Wrap
-        textFormat: Text.PlainText
         padding: 1.5 * mm
         implicitHeight: contentHeight + 3 * mm
+        wrapMode: TextEdit.Wrap
+        textFormat: Text.PlainText
         implicitWidth: 30 * mm
         focus: true
     }
 }
+*/

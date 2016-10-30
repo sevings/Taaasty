@@ -100,7 +100,6 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: !entry.loading && !entry.errorString
         model: commentsModel
-//        interactive: back.x == 0
         delegate: Item {
             width: window.width
             readonly property int textHeight: nameText.height + commentText.height - 1.5 * mm
@@ -378,6 +377,7 @@ Pane {
         }
         footer: MessageEditor {
             id: commentEditor
+            popBody: back
             visible: Tasty.isAuthorized
             height: visible ? implicitHeight : - 1.5 * mm
             onSent: {

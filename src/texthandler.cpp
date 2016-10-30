@@ -227,6 +227,9 @@ void TextHandler::_reset()
 
 QTextCursor TextHandler::_textCursor() const
 {
+    if (!_doc)
+        return QTextCursor();
+
     QTextCursor cursor(_doc);
 
     if (_selectionStart != _selectionEnd)

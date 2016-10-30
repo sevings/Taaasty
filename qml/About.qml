@@ -19,7 +19,6 @@
  */
 
 import QtQuick 2.7
-import TextReader 1.0
 
 Pane {
     id: back
@@ -28,7 +27,6 @@ Pane {
         id: flick
         anchors.fill: parent
         contentHeight: item.height
-//        interactive: back.x == 0
         Item {
             id: item
             width: window.width
@@ -46,11 +44,10 @@ Pane {
                 }
                 onLinkActivated: window.openLink(link)
                 text: Qt.application.name + ' ' + Qt.application.version + ' (' + builtAt + ').<br>'
-                      + reader.read()
-            }
-            TextReader {
-                id: reader
-                source: ':/other/about.html'
+                      + '<p>Программа доступна на <a href="https://play.google.com/store/apps/details?id=org.binque.taaasty">Google Play</a>. Исходный код под лицензией <a href="http://www.gnu.org/licenses/gpl.html">GNU&nbsp;GPLv3</a> (и частично — BSD) доступен на GitHub. </p>'
+                      + '<p>Программа распространяется <b>как&nbsp;есть</b> безо всяких гарантий и условий, явных и подразумеваемых, в надежде, что она кому-то окажется полезной.</p>'
+                      + '<p>Со всеми вопросами, сообщениями о проблемах, пожеланиями, а также с благодарностями вы можете <a href="http://taaasty.com/~1409820">обращаться к автору.</a></p>'
+                      + '<p>Иконки сделаны <a href="http://www.flaticon.com/authors/catalin-fertu">Catalin Fertu</a> и <a href="http://www.flaticon.com/authors/freepik">Freepik</a> с www.flaticon.com под лицензией CC&nbsp;BY&nbsp;3.0.</p>'
             }
         }
     }

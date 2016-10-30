@@ -50,7 +50,6 @@
         <file>icons/left-arrow-white-128.png</file>
         <file>icons/menu-rounded-white-128.png</file>
         <file>icons/menu-white-128.png</file>
-        <file>other/about.html</file>
         <file>qml/TagsView.qml</file>
         <file>icons/comment-dark-128.png</file>
         <file>icons/comment-light-128.png</file>
@@ -58,5 +57,26 @@
         <file>icons/send-light-128.png</file>
         <file>qml/HelpPage.qml</file>
         <file>qml/HelpPageItem.qml</file>
+        <file>qml/SelectionHandle.qml</file>
+        <file>qml/TextEditorMenu.qml</file>
+        <file>qml/VerticalMenuSeparator.qml</file>
+        <file>icons/copy-black-128.png</file>
+        <file>icons/copy-white-128.png</file>
+        <file>icons/cut-black-128.png</file>
+        <file>icons/cut-white-128.png</file>
+        <file>icons/italics-black-128.png</file>
+        <file>icons/italics-white-128.png</file>
+        <file>icons/paste-black-128.png</file>
+        <file>icons/paste-white-128.png</file>
+        <file>icons/redo-black-128.png</file>
+        <file>icons/redo-white-128.png</file>
+        <file>icons/undo-black-128.png</file>
+        <file>icons/undo-white-128.png</file>
+        <file>icons/all-black-128.png</file>
+        <file>icons/all-white-128.png</file>
+        <file>icons/lock-black-128.png</file>
+        <file>icons/lock-white-128.png</file>
+        <file>icons/unlock-black-128.png</file>
+        <file>icons/unlock-white-128.png</file>
     </qresource>
 </RCC>

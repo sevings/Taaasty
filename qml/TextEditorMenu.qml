@@ -1,0 +1,122 @@
+import QtQuick 2.7
+import QtQuick.Controls.Material 2.0
+import org.binque.taaasty 1.0
+
+Rectangle {
+    id: editMenu
+    x: visible ? xCoordinate() : 0
+    y: visible ? yCoordinate() : 0
+    property int spaceAtTop: 0
+    property int margin: 1.5 * mm
+    property TextEditor textEdit
+    property Flickable flickable
+    property TextHandler handler
+    visible: opacity > 0
+    opacity: (!flickable.movingVertically
+              && !textEdit.leftSelectionHandle.pressed
+              && !textEdit.rightSelectionHandle.pressed
+              && (textEdit.hasSelection || textEdit.canCopyPaste)) ? 1 : 0
+    width: menuRow.width
+    height: menuRow.height
+    color: Material.primary
+    function xCoordinate() {
+        var start  = textEdit.positionToRectangle(textEdit.selectionStart).left;
+        var end    = textEdit.positionToRectangle(textEdit.selectionEnd).right;
+        var x      = (end + start - width) / 2;
+        var maxX   = textEdit.width - width - margin;
+        return Math.min(Math.max(margin, x), maxX);
+    }
+    function yCoordinate() {
+        var top = textEdit.positionToRectangle(textEdit.selectionStart).top - flickable.contentY;
+        if (top > height + margin * 2 - spaceAtTop)
+            return top - height - margin;
+
+        var bottom = textEdit.positionToRectangle(textEdit.selectionEnd).top - flickable.contentY
+                + textEdit.rightSelectionHandle.height;
+        var bottomMargin = Math.max(margin, textEdit.cursorRectangle.height * 1.5);
+        if (bottom < textEdit.height - height - margin - bottomMargin)
+            return bottom + margin;
+
+        return textEdit.height - height - bottomMargin;
+    }
+    Behavior on opacity {
+        NumberAnimation {
+            duration: 200
+        }
+    }
+    Row {
+        id: menuRow
+        spacing: 1.5 * mm
+        height: undoButton.height
+        IconButton {
+            id: undoButton
+            icon: (window.darkTheme ? '../icons/undo-white-'
+                                    : '../icons/undo-black-')
+                  + '128.png'
+            enabled: textEdit.canUndo
+            visible: textEdit.richEditing && textEdit.hasSelection
+            onClicked: textEdit.undo()
+        }
+        IconButton {
+            icon: (window.darkTheme ? '../icons/redo-white-'
+                                    : '../icons/redo-black-')
+                  + '128.png'
+            enabled: textEdit.canRedo
+            visible: textEdit.richEditing && textEdit.hasSelection
+            onClicked: textEdit.redo()
+        }
+        VerticalMenuSeparator {
+            visible: textEdit.richEditing && textEdit.hasSelection
+        }
+        IconButton {
+            icon: (window.darkTheme ? '../icons/cut-white-'
+                                    : '../icons/cut-black-')
+                  + '128.png'
+            enabled: textEdit.hasSelection
+            visible: textEdit.canCopyPaste && textEdit.hasSelection
+            onClicked: textEdit.cut()
+        }
+        IconButton {
+            icon: (window.darkTheme ? '../icons/copy-white-'
+                                    : '../icons/copy-black-')
+                  + '128.png'
+            enabled: textEdit.hasSelection
+            visible: textEdit.canCopyPaste && textEdit.hasSelection
+            onClicked: textEdit.copy()
+        }
+        IconButton {
+            icon: (window.darkTheme ? '../icons/paste-white-'
+                                    : '../icons/paste-black-')
+                  + '128.png'
+            enabled: textEdit.canPaste
+            visible: textEdit.canCopyPaste
+            onClicked: {
+                textEdit.paste();
+                textEdit.forceActiveFocus();
+            }
+        }
+        IconButton {
+            icon: (window.darkTheme ? '../icons/all-white-'
+                                    : '../icons/all-black-')
+                  + '128.png'
+            enabled: textEdit.length
+            visible: textEdit.canCopyPaste && textEdit.selectedText.length < textEdit.length
+            onClicked: {
+                textEdit.selectAll();
+                textEdit.setHandlePositions();
+            }
+        }
+        VerticalMenuSeparator {
+            visible: textEdit.richEditing && textEdit.hasSelection
+        }
+        IconButton {
+            icon: (window.darkTheme ? '../icons/italics-white-'
+                                    : '../icons/italics-black-')
+                  + '128.png'
+            checkable: true
+            checked: handler.italic
+            visible: textEdit.richEditing && textEdit.hasSelection
+            onClicked: handler.italic = !handler.italic
+        }
+    }
+}

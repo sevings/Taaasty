@@ -233,6 +233,7 @@ Pane {
                     right: parent.right
                     top: typedText.bottom
                 }
+                popBody: back
                 visible: chat.canTalk
                 height: visible ? implicitHeight : - 1.5 * mm
                 onSent: {

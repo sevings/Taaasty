@@ -20,17 +20,21 @@
 
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
+import org.binque.taaasty 1.0
 
 FocusScope {
     id: editor
     implicitWidth: window.width
     implicitHeight: 18 * mm
+    property alias popBody: input.popBody
     property alias message: input.text
     property bool uploading: false
     signal sent
     onActiveFocusChanged: {
-        if (focus)
-            window.hideFooter();
+        if (!focus)
+            return;
+
+        window.hideFooter();
     }
     function clear() {
         input.clear();
@@ -40,15 +44,43 @@ FocusScope {
         input.addGreeting(slug);
         editor.focus = true;
     }
-    TextEditor {
-        id: input
+    MyFlickable {
+        id: flickable
         anchors {
+            top: parent.top
             bottom: parent.bottom
             left: parent.left
             right: button.left
+            margins: 1.5 * mm
         }
-        height: 15 * mm
-        focus: true
+        clip: true
+        flickableDirection: Flickable.VerticalFlick
+        contentWidth: input.contentWidth
+        contentHeight: input.height
+        TextEditor {
+            id: input
+            width: flickable.width
+            height: Math.max(contentHeight, flickable.height)
+            flickable: flickable
+            handler: handler
+        }
+    }
+    TextHandler {
+        id: handler
+        target: input
+        cursorPosition: input.cursorPosition
+        selectionStart: input.selectionStart
+        selectionEnd: input.selectionEnd
+        onError: {
+            console.error(message);
+        }
+    }
+    TextEditorMenu {
+        id: editMenu
+        textEdit: input
+        flickable: flickable
+        handler: handler
+        spaceAtTop: 400
     }
     IconButton {
         id: button
