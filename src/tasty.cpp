@@ -34,7 +34,7 @@
 #include "apirequest.h"
 #include "settings.h"
 #include "pusherclient.h"
-#include "textreader.h"
+#include "texthandler.h"
 #include "cache/cachemanager.h"
 #include "cache/cachedimage.h"
 #include "models/feedmodel.h"
@@ -304,9 +304,9 @@ void Tasty::_init()
     qmlRegisterType<Conversation>   ("org.binque.taaasty", 1, 0, "Chat");
     qmlRegisterType<Flow>           ("org.binque.taaasty", 1, 0, "Flow");
 
-    qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");
+    qmlRegisterType<TextHandler>    ("org.binque.taaasty", 1, 0, "TextHandler");
 
-    qmlRegisterType<TextReader>("TextReader", 1, 0, "TextReader");
+    qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");
 
     auto root = _engine->rootContext();
     root->setContextProperty("Tasty", this);

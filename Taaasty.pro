@@ -42,11 +42,11 @@ SOURCES += src/main.cpp \
     src/pusherclient.cpp \
     src/models/flowsmodel.cpp \
     src/data/Flow.cpp \
-    src/textreader.cpp \
     src/data/MessageBase.cpp \
     src/data/TastyData.cpp \
     src/models/tagsmodel.cpp \
-    src/models/tastylistmodel.cpp
+    src/models/tastylistmodel.cpp \
+    src/texthandler.cpp
 
 RESOURCES += qml.qrc
 
@@ -93,11 +93,11 @@ HEADERS += \
     src/pusherclient.h \
     src/models/flowsmodel.h \
     src/data/Flow.h \
-    src/textreader.h \
     src/data/MessageBase.h \
     src/data/TastyData.h \
     src/models/tagsmodel.h \
-    src/models/tastylistmodel.h
+    src/models/tastylistmodel.h \
+    src/texthandler.h
 
 DISTFILES += \
     android/AndroidManifest.xml \
