@@ -38,7 +38,7 @@ MouseArea {
         width: 0.5 * mm
         height: parent.height
         radius: width / 2
-        color: Material.accent
+        color: Material.primary
         Rectangle {
             width: 2 * mm
             height: width

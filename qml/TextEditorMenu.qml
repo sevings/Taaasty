@@ -50,17 +50,13 @@ Rectangle {
         height: undoButton.height
         IconButton {
             id: undoButton
-            icon: (window.darkTheme ? '../icons/undo-white-'
-                                    : '../icons/undo-black-')
-                  + '128.png'
+            icon: '../icons/undo-white-128.png'
             enabled: textEdit.canUndo
             visible: textEdit.richEditing && textEdit.hasSelection
             onClicked: textEdit.undo()
         }
         IconButton {
-            icon: (window.darkTheme ? '../icons/redo-white-'
-                                    : '../icons/redo-black-')
-                  + '128.png'
+            icon: '../icons/redo-white-128.png'
             enabled: textEdit.canRedo
             visible: textEdit.richEditing && textEdit.hasSelection
             onClicked: textEdit.redo()
@@ -69,25 +65,19 @@ Rectangle {
             visible: textEdit.richEditing && textEdit.hasSelection
         }
         IconButton {
-            icon: (window.darkTheme ? '../icons/cut-white-'
-                                    : '../icons/cut-black-')
-                  + '128.png'
+            icon: '../icons/cut-white-128.png'
             enabled: textEdit.hasSelection
             visible: textEdit.canCopyPaste && textEdit.hasSelection
             onClicked: textEdit.cut()
         }
         IconButton {
-            icon: (window.darkTheme ? '../icons/copy-white-'
-                                    : '../icons/copy-black-')
-                  + '128.png'
+            icon: '../icons/copy-white-128.png'
             enabled: textEdit.hasSelection
             visible: textEdit.canCopyPaste && textEdit.hasSelection
             onClicked: textEdit.copy()
         }
         IconButton {
-            icon: (window.darkTheme ? '../icons/paste-white-'
-                                    : '../icons/paste-black-')
-                  + '128.png'
+            icon: '../icons/paste-white-128.png'
             enabled: textEdit.canPaste
             visible: textEdit.canCopyPaste
             onClicked: {
@@ -96,9 +86,7 @@ Rectangle {
             }
         }
         IconButton {
-            icon: (window.darkTheme ? '../icons/all-white-'
-                                    : '../icons/all-black-')
-                  + '128.png'
+            icon: '../icons/all-white-128.png'
             enabled: textEdit.length
             visible: textEdit.canCopyPaste && textEdit.selectedText.length < textEdit.length
             onClicked: {
@@ -110,9 +98,7 @@ Rectangle {
             visible: textEdit.richEditing && textEdit.hasSelection
         }
         IconButton {
-            icon: (window.darkTheme ? '../icons/italics-white-'
-                                    : '../icons/italics-black-')
-                  + '128.png'
+            icon: '../icons/italics-white-128.png'
             checkable: true
             checked: handler.italic
             visible: textEdit.richEditing && textEdit.hasSelection
