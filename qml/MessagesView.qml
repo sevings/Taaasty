@@ -215,6 +215,7 @@ Pane {
         footer: Item {
             height: typedText.height + messageEditor.height + 1.5 * mm
             width: window.width
+            z: listView.count + 10
             ThemedText {
                 id: typedText
                 anchors {
@@ -262,6 +263,10 @@ Pane {
                         if (messageEditor.focus)
                             listView.positionViewAtEnd();
                     }
+                }
+                Connections {
+                    target: listView
+                    onMovingVerticallyChanged: messageEditor.hideMenu()
                 }
             }
         }

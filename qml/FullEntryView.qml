@@ -380,6 +380,7 @@ Pane {
             popBody: back
             visible: Tasty.isAuthorized
             height: visible ? implicitHeight : - 1.5 * mm
+            z: fullEntry.count + 10
             onSent: {
                 entry.addComment(commentEditor.message);
             }
@@ -402,6 +403,10 @@ Pane {
                     if (commentEditor.focus)
                         fullEntry.positionViewAtEnd();
                 }
+            }
+            Connections {
+                target: fullEntry
+                onMovingVerticallyChanged: commentEditor.hideMenu()
             }
         }
     }

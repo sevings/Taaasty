@@ -11,11 +11,12 @@ Rectangle {
     property TextEditor textEdit
     property Flickable flickable
     property TextHandler handler
+    readonly property bool show: (!flickable.movingVertically
+                                  && !textEdit.leftSelectionHandle.pressed
+                                  && !textEdit.rightSelectionHandle.pressed
+                                  && (textEdit.hasSelection || textEdit.canCopyPaste))
     visible: opacity > 0
-    opacity: (!flickable.movingVertically
-              && !textEdit.leftSelectionHandle.pressed
-              && !textEdit.rightSelectionHandle.pressed
-              && (textEdit.hasSelection || textEdit.canCopyPaste)) ? 1 : 0
+    opacity: 0
     width: menuRow.width
     height: menuRow.height
     color: Material.primary
@@ -41,7 +42,24 @@ Rectangle {
     }
     Behavior on opacity {
         NumberAnimation {
-            duration: 200
+            duration: 400
+        }
+    }
+    onShowChanged: {
+        if (visible) {
+            timer.stop();
+            opacity = 0;
+        }
+        else
+            timer.start();
+    }
+    Timer {
+        id: timer
+        interval: 1000
+        repeat: false
+        onTriggered: {
+            if (show)
+                opacity = 1;
         }
     }
     Row {
@@ -53,13 +71,19 @@ Rectangle {
             icon: '../icons/undo-white-128.png'
             enabled: textEdit.canUndo
             visible: textEdit.richEditing && textEdit.hasSelection
-            onClicked: textEdit.undo()
+            onClicked: {
+                textEdit.undo();
+                textEdit.forceActiveFocus();
+            }
         }
         IconButton {
             icon: '../icons/redo-white-128.png'
             enabled: textEdit.canRedo
             visible: textEdit.richEditing && textEdit.hasSelection
-            onClicked: textEdit.redo()
+            onClicked: {
+                textEdit.redo();
+                textEdit.forceActiveFocus();
+        }
         }
         VerticalMenuSeparator {
             visible: textEdit.richEditing && textEdit.hasSelection
@@ -68,13 +92,19 @@ Rectangle {
             icon: '../icons/cut-white-128.png'
             enabled: textEdit.hasSelection
             visible: textEdit.canCopyPaste && textEdit.hasSelection
-            onClicked: textEdit.cut()
+            onClicked: {
+                textEdit.cut();
+                textEdit.forceActiveFocus();
+            }
         }
         IconButton {
             icon: '../icons/copy-white-128.png'
             enabled: textEdit.hasSelection
             visible: textEdit.canCopyPaste && textEdit.hasSelection
-            onClicked: textEdit.copy()
+            onClicked: {
+                textEdit.copy();
+                textEdit.forceActiveFocus();
+            }
         }
         IconButton {
             icon: '../icons/paste-white-128.png'
@@ -92,6 +122,7 @@ Rectangle {
             onClicked: {
                 textEdit.selectAll();
                 textEdit.setHandlePositions();
+                textEdit.forceActiveFocus();
             }
         }
         VerticalMenuSeparator {
@@ -102,7 +133,10 @@ Rectangle {
             checkable: true
             checked: handler.italic
             visible: textEdit.richEditing && textEdit.hasSelection
-            onClicked: handler.italic = !handler.italic
+            onClicked: {
+                handler.italic = !handler.italic;
+                textEdit.forceActiveFocus();
+            }
         }
     }
 }

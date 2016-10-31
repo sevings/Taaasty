@@ -25,7 +25,8 @@ MouseArea {
         setPosition();
     }
     function move() {
-        var currentPosition = textEdit.positionAt(x + width / 2, y)
+        textEdit.canCopyPaste = true;
+        var currentPosition = textEdit.positionAt(x + width / 2, y);
         moved(currentPosition);
     }
     function setPosition() {

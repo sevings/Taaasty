@@ -31,7 +31,7 @@ FocusScope {
     property bool uploading: false
     signal sent
     onActiveFocusChanged: {
-        if (!focus)
+        if (!activeFocus)
             return;
 
         window.hideFooter();
@@ -43,6 +43,9 @@ FocusScope {
     function addGreeting(slug) {
         input.addGreeting(slug);
         editor.focus = true;
+    }
+    function hideMenu() {
+        input.canCopyPaste = false;
     }
     MyFlickable {
         id: flickable
