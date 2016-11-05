@@ -19,39 +19,143 @@
  */
 
 import QtQuick 2.0
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
-Rectangle {
+Pane {
     id: back
-    color: window.backgroundColor
-    onPopped: window.popFromStack()
-    signal popped
-    property bool poppable
     property string where: ''
     Component.onCompleted: {
         titleInput.text = Settings.lastTitle;
         textInput.text  = Settings.lastText;
+
+        titleInput.forceActiveFocus()
     }
-    Poppable {
-        body: back
+    Component.onDestruction: {
+        save();
     }
-    LineInput {
-        id: titleInput
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
+    Timer {
+        running: back.visible
+        interval: 30000
+        repeat: true
+        onTriggered: {
+            save();
         }
     }
-    TextEditor {
-        id: textInput
-        anchors {
-            top: titleInput.bottom
-            bottom: formatButtons.top
-            left: parent.left
-            right: parent.right
+    function save() {
+        Settings.lastTitle = titleInput.text;
+        Settings.lastText  = textInput.text;
+    }
+    MyFlickable {
+        id: flick
+        anchors.fill: parent
+        contentWidth: Math.max(Math.max(titleInput.contentWidth, textInput.contentWidth), window.width)
+        contentHeight: postButton.y + postButton.height + 1.5 * mm
+        Poppable {
+            body: back
+        }
+        TextEditor {
+            id: titleInput
+            height: contentHeight + topPadding + bottomPadding
+            flickable: flick
+            handler: titleHandler
+            placeholderText: 'Заголовок'
+            font.pointSize: window.fontBigger
+            popBody: back
+            onActiveFocusChanged: {
+                if (!activeFocus)
+                    return;
+
+                editMenu.textEdit = titleInput;
+                editMenu.handler  = titleHandler;
+            }
+        }
+        Rectangle {
+            id: titleLine
+            anchors {
+                bottom: titleInput.bottom
+                left: titleInput.left
+                right: titleInput.right
+                leftMargin: 1.5 * mm
+                rightMargin: anchors.leftMargin
+            }
+            height: titleInput.activeFocus ? 2 * sp : 1 * sp
+            color: titleInput.activeFocus ? Material.accentColor : Material.hintTextColor
+        }
+        TextEditor {
+            id: textInput
+            anchors {
+                top: titleLine.bottom
+            }
+            height: Math.max(contentHeight + topPadding + bottomPadding,
+                             flick.height - titleInput.height - postButton.height - 3 * mm)
+            flickable: flick
+            handler: textHandler
+            textFormat: TextEdit.RichText
+            placeholderText: 'Текст поста'
+            popBody: back
+            onActiveFocusChanged: {
+                if (!activeFocus)
+                    return;
+
+                editMenu.textEdit = textInput;
+                editMenu.handler  = textHandler;
+            }
+        }
+        Rectangle {
+            id: textLine
+            anchors {
+                bottom: textInput.bottom
+                left: textInput.left
+                right: textInput.right
+                leftMargin: 1.5 * mm
+                rightMargin: anchors.leftMargin
+            }
+            height: textInput.activeFocus ? 2 * sp : 1 * sp
+            color: textInput.activeFocus ? Material.accentColor : Material.hintTextColor
+        }
+        ThemedButton {
+            id: postButton
+            anchors {
+                top: textLine.bottom
+                horizontalCenter: parent.horizontalCenter
+            }
+            implicitWidth: 40 * mm
+            highlighted: true
+            text: 'Отправить ' + back.where
+            onClicked: {
+                titleInput.clear();
+                textInput.clear();
+            }
         }
     }
+    TextHandler {
+        id: titleHandler
+        target: titleInput
+        cursorPosition: titleInput.cursorPosition
+        selectionStart: titleInput.selectionStart
+        selectionEnd: titleInput.selectionEnd
+        onError: {
+            console.error(message);
+        }
+    }
+    TextHandler {
+        id: textHandler
+        target: textInput
+        cursorPosition: textInput.cursorPosition
+        selectionStart: textInput.selectionStart
+        selectionEnd: textInput.selectionEnd
+        onError: {
+            console.error(message);
+        }
+    }
+    TextEditorMenu {
+        id: editMenu
+        flickable: flick
+        textEdit: titleInput
+        handler: titleHandler
+    }
+    /*
     Row {
         id: formatButtons
         anchors {
@@ -88,19 +192,6 @@ Rectangle {
         }
     }
     ThemedButton {
-        id: post
-        anchors {
-            bottom: notNow.top
-            left: parent.left
-            right: parent.right
-        }
-        text: 'Отправить ' + back.where
-        onClicked: {
-//            Settings.lastTitle = '';
-//            Settings.lastText  = '';
-        }
-    }
-    ThemedButton {
         id: notNow
         anchors {
             bottom: parent.bottom
@@ -114,4 +205,5 @@ Rectangle {
             back.popped();
         }
     }
+*/
 }

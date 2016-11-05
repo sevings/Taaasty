@@ -313,6 +313,12 @@ ApplicationWindow {
                        poppable: true
                    })
     }
+    function pushEntryEditor() {
+        stack.push(stack.entryEditor,
+                   {
+                       poppable: true
+                   })
+    }
     function popFromStack() {
         stack.pop();
     }

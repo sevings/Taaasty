@@ -65,6 +65,7 @@ FocusScope {
         contentHeight: input.height
         TextEditor {
             id: input
+            height: Math.max(contentHeight + topPadding + bottomPadding, flickable.height)
             bottomPadding: 5 * mm
             flickable: flickable
             handler: handler

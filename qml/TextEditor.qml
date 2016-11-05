@@ -27,11 +27,11 @@ TextEdit {
     property Flickable flickable
     property TextHandler handler
     property alias popBody: pop.body
+    property string placeholderText: ''
     property bool canCopyPaste: false
     readonly property bool richEditing: textFormat === TextEdit.RichText
     readonly property bool hasSelection: selectedText
     width: flickable.width
-    height: Math.max(contentHeight + topPadding + bottomPadding, flickable.height)
     font.pointSize: window.fontNormal
     padding: 1.5 * mm
     text: handler.text
@@ -116,5 +116,17 @@ TextEdit {
             textEdit.select(textEdit.selectionStart, currentPosition);
             textEdit.ensureVisible(textEdit.positionToRectangle(textPosition));
         }
+    }
+    Text {
+        id: placeholder
+        x: textEdit.leftPadding
+        y: textEdit.topPadding
+        width: textEdit.width - (textEdit.leftPadding + textEdit.rightPadding)
+        height: textEdit.height - (textEdit.topPadding + textEdit.bottomPadding)
+        text: textEdit.placeholderText
+        font: textEdit.font
+        color: Material.hintTextColor
+        wrapMode: Text.Wrap
+        visible: !textEdit.length && !textEdit.activeFocus
     }
 }

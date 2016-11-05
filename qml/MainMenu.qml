@@ -48,6 +48,17 @@ Item {
             width: parent.width
             spacing: 1.5 * mm
             MenuItem {
+                text: 'Новая запись'
+                onTriggered:  {
+                    backAnimation.start();
+                    window.pushEntryEditor();
+                }
+                visible: Tasty.isAuthorized
+            }
+            MenuSeparator {
+                visible: Tasty.isAuthorized
+            }
+            MenuItem {
                 text: 'Мой тлог'
                 onTriggered: { changeMode(FeedModel.MyTlogMode) }
                 visible: Tasty.isAuthorized
