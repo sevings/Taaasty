@@ -19,12 +19,12 @@
  */
 
 import QtQuick 2.0
+import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    property string where: ''
     Component.onCompleted: {
         titleInput.text = Settings.lastTitle;
         textInput.text  = Settings.lastText;
@@ -51,6 +51,7 @@ Pane {
         anchors.fill: parent
         contentWidth: Math.max(Math.max(titleInput.contentWidth, textInput.contentWidth), window.width)
         contentHeight: postButton.y + postButton.height + 1.5 * mm
+        onVerticalVelocityChanged: editMenu.hideMenu()
         Poppable {
             body: back
         }
@@ -91,7 +92,7 @@ Pane {
                              flick.height - titleInput.height - postButton.height - 3 * mm)
             flickable: flick
             handler: textHandler
-            textFormat: TextEdit.RichText
+//            textFormat: TextEdit.RichText
             placeholderText: 'Текст поста'
             popBody: back
             onActiveFocusChanged: {
@@ -114,16 +115,75 @@ Pane {
             height: textInput.activeFocus ? 2 * sp : 1 * sp
             color: textInput.activeFocus ? Material.accentColor : Material.hintTextColor
         }
-        ThemedButton {
+        Q.ComboBox {
+            id: whereBox
+            anchors {
+                verticalCenter: postButton.verticalCenter
+                left: parent.left
+                right: lockButton.left
+            }
+            model: ListModel {
+                ListElement { tlog: 0;  text: "В мой тлог" }
+                ListElement { tlog: -1; text: "В анонимки" }
+            }
+            delegate: Q.MenuItem {
+                width: whereBox.width
+                text: model[whereBox.textRole]
+                Material.foreground: whereBox.currentIndex === index ? whereBox.Material.accent : whereBox.Material.foreground
+                highlighted: whereBox.highlightedIndex === index
+                font.pointSize: window.fontSmaller
+            }
+            textRole: "text"
+            readonly property int tlog: model.get(currentIndex).tlog
+            font.pointSize: window.fontSmaller
+        }
+        IconButton {
+            id: lockButton
+            property bool locked: false
+            anchors {
+                top: textLine.bottom
+                right: fireButton.left
+            }
+            visible: whereBox.tlog == 0
+            icon: (locked ? (window.darkTheme ? '../icons/lock-white-'
+                                              : '../icons/lock-black-')
+                          : (window.darkTheme ? '../icons/unlock-white-'
+                                              : '../icons/unlock-black-'))
+                  + '128.png'
+            onClicked: {
+                editMenu.hideMenu();
+                locked = !locked;
+            }
+        }
+        IconButton {
+            id: fireButton
+            property bool voting: true
+            anchors {
+                top: textLine.bottom
+                right: postButton.left
+            }
+            visible: whereBox.tlog >= 0
+            icon: (voting ? '../icons/flame-solid-'
+                          : '../icons/flame-outline-')
+                  + '72.png'
+            onClicked: {
+                editMenu.hideMenu();
+                voting = !voting;
+            }
+        }
+        IconButton {
             id: postButton
             anchors {
                 top: textLine.bottom
-                horizontalCenter: parent.horizontalCenter
+                right: parent.right
             }
-            implicitWidth: 40 * mm
-            highlighted: true
-            text: 'Отправить ' + back.where
+            enabled: titleInput.length || textInput.length
+            icon: (window.darkTheme ? '../icons/send-light-'
+                                    : '../icons/send-dark-')
+                  + '128.png'
             onClicked: {
+                editMenu.hideMenu();
+
                 titleInput.clear();
                 textInput.clear();
             }
@@ -155,55 +215,4 @@ Pane {
         textEdit: titleInput
         handler: titleHandler
     }
-    /*
-    Row {
-        id: formatButtons
-        anchors {
-            left: parent.left
-            right: parent.right
-            bottom: post.top
-            margins: 1.5 * mm
-        }
-        spacing: 1.5 * mm
-        ThemedButton {
-            id: italic
-            width: (parent.width - 5 * 3) / 4
-            height: 6 * mm
-            text: '<i>I</i>'
-            onClicked: textInput.insertTags('<i>', '</i>')
-        }
-        ThemedButton {
-            width: italic.width
-            height: italic.height
-            text: '<b>B</b>'
-            onClicked: textInput.insertTags('<b>', '</b>')
-        }
-        ThemedButton {
-            width: italic.width
-            height: italic.height
-            text: '<u>U</u>'
-            onClicked: textInput.insertTags('<u>', '</u>')
-        }
-        ThemedButton {
-            width: italic.width
-            height: italic.height
-            text: 'http'
-            onClicked: textInput.insertTags('<a href=\"', '\"></a>')
-        }
-    }
-    ThemedButton {
-        id: notNow
-        anchors {
-            bottom: parent.bottom
-            left: parent.left
-            right: parent.right
-        }
-        text: 'Позже'
-        onClicked: {
-            Settings.lastTitle = titleInput.text;
-            Settings.lastText  = textInput.text;
-            back.popped();
-        }
-    }
-*/
 }
