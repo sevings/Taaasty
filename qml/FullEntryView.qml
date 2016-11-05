@@ -64,6 +64,9 @@ Pane {
             checkComments();
             scrollWhereNeed();
         }
+        onEntryDeleted: {
+            window.popFromStack();
+        }
     }
     Component.onCompleted: {
         checkComments();

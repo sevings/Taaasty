@@ -87,6 +87,9 @@ signals:
     void networkAccessible();
     void networkNotAccessible();
 
+    void entryCreated(int entry, int tlog);
+    void entryDeleted(int entry);
+
 public slots:
     void authorize(const QString login, const QString password, bool save);
     void swapProfiles();

@@ -60,6 +60,8 @@ void Poster::postText(QString title, QString content, Poster::Privacy privacy, i
         return;
     }
 
+    _tlogId = tlogId;
+
     _prepareText(title, content);
 
     QString privacyValue;
@@ -99,6 +101,8 @@ void Poster::postText(QString title, QString content, Poster::Privacy privacy, i
 
 void Poster::postAnonymous(QString title, QString content)
 {
+    _tlogId = -1;
+
     _prepareText(title, content);
 
     QString data;
@@ -125,6 +129,8 @@ void Poster::_createPostedEntry(QJsonObject data)
     _entry->init(data);
 
     emit posted(_entry);
+
+    emit Tasty::instance()->entryCreated(_entry->id(), _tlogId);
 }
 
 

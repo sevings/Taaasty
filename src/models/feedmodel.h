@@ -114,6 +114,9 @@ private slots:
     void _resetOrReloadRatings();
     void _reloadRatings();
     void _setRatings(const QJsonArray data);
+
+    void _prependEntry(int id, int tlogId);
+    void _removeEntry(int id);
     
 private:
     void _addAll(QList<EntryPtr>& all);

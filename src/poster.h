@@ -68,6 +68,7 @@ private slots:
 private:
     void _prepareText(QString& title, QString& content) const;
 
+    int                  _tlogId;
     EntryPtr             _entry;
     QPointer<ApiRequest> _request;
     QString              _errorString;

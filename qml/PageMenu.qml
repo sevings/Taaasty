@@ -297,6 +297,16 @@ Q.Drawer {
                          && page.entry.isFavoritable
             }
             MenuItem {
+                text: 'Перезагрузить'
+                onTriggered: {
+                    page.entry.reload();
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && page.isFullEntryView === true
+                         && !page.entry.loading
+            }
+            MenuItem {
                 text: 'Открыть в браузере'
                 onTriggered: {
                     var url = page.entry.url;
@@ -306,6 +316,12 @@ Q.Drawer {
                 visible: !window.chatsShows
                          && page.isFullEntryView === true
                          && page.entry.url.length > 0
+            }
+            MenuSeparator {
+                visible: !window.chatsShows
+                         && page.isFullEntryView === true
+                         && !page.entry.loading
+                         && Tasty.isAuthorized
             }
             MenuItem {
                 text: 'Перейти к беседе'
@@ -347,17 +363,18 @@ Q.Drawer {
                 visible: !window.chatsShows
                          && page.isFullEntryView === true
                          && !page.entry.loading
-                         && Tasty.isAuthorized
+                         && page.entry.isDeletable
             }
             MenuItem {
-                text: 'Перезагрузить'
+                text: 'Удалить запись'
                 onTriggered: {
-                    page.entry.reload();
+                    page.entry.deleteEntry();
                     drawer.close();
                 }
                 visible: !window.chatsShows
                          && page.isFullEntryView === true
-                         && !page.entry.loading
+                         && page.entry.chat
+                         && page.entry.isDeletable
             }
 
             // FLOWS SECTION

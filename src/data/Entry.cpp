@@ -198,6 +198,11 @@ void Entry::init(const QJsonObject data)
     _isPrivate       = data.value("is_private").toBool();
     _isFixed         = data.value("fixed_state").toString("not_fixed") != "not_fixed";
 
+    auto me = Tasty::instance()->me();
+    auto isMy = me && _author->id() == me->id();
+    _isDeletable     = data.value("can_delete").toBool(isMy);
+    _isEditable      = data.value("can_edit").toBool(isMy);
+
     auto tlogData = data.value("tlog").toObject();
     if (_tlog && tlogData.contains("slug"))
         _tlog->init(tlogData);
@@ -371,6 +376,22 @@ void Entry::favorite()
 
 
 
+void Entry::deleteEntry()
+{
+    if (isLoading() || _id <= 0 || !_isDeletable)
+        return;
+
+    auto url = QString("v1/entries/%1.json").arg(_id);
+    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
+                              QNetworkAccessManager::DeleteOperation);
+
+    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_deleteEntry(QJsonObject))));
+
+    _initRequest(false);
+}
+
+
+
 void Entry::_changeWatched(const QJsonObject data)
 {
     if (data.value("status").toString() != "success")
@@ -438,6 +459,22 @@ void Entry::_setChatId()
     auto chat = dynamic_cast<Conversation*>(sender());
     if (chat)
         _chatId = chat->id();
+}
+
+
+
+void Entry::_deleteEntry(QJsonObject data)
+{
+    if (data.value("status") == "success")
+    {
+        emit entryDeleted();
+        emit Tasty::instance()->entryDeleted(_id);
+        emit Tasty::instance()->info("Запись удалена");
+
+        _chat.clear();
+    }
+    else
+        qDebug() << data;
 }
 
 

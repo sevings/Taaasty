@@ -33,6 +33,7 @@
 #include "../apirequest.h"
 
 #include "../data/Rating.h"
+#include "../data/User.h"
 
 
 
@@ -49,7 +50,9 @@ FeedModel::FeedModel(QObject* parent)
     Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideShortPostsChanged,    this, &FeedModel::_changeHideSome));
     Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideNegativeRatedChanged, this, &FeedModel::_changeHideSome));
 
-    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, this, &FeedModel::_resetOrReloadRatings));
+    Q_TEST(connect(Tasty::instance(), &Tasty::authorized,   this, &FeedModel::_resetOrReloadRatings));
+    Q_TEST(connect(Tasty::instance(), &Tasty::entryCreated, this, &FeedModel::_prependEntry));
+    Q_TEST(connect(Tasty::instance(), &Tasty::entryDeleted, this, &FeedModel::_removeEntry));
 }
 
 
@@ -456,6 +459,42 @@ void FeedModel::_setRatings(const QJsonArray data)
                 break;
             }
     }
+}
+
+
+
+void FeedModel::_prependEntry(int id, int tlogId)
+{
+    if (!(tlogId == 0 && (_mode == MyTlogMode || _mode == FriendsMode
+                          || (_mode == TlogMode && Tasty::instance()->me()
+                              && _tlog == Tasty::instance()->me()->id())))
+            && !(tlogId == -1 && _mode == AnonymousMode))
+        return;
+
+    auto entry = Tasty::instance()->pusher()->entry(id);
+    if (!entry)
+        return;
+
+    beginInsertRows(QModelIndex(), 0, 0);
+    _entries.prepend(entry);
+    _allEntries.prepend(entry);
+    endInsertRows();
+}
+
+
+
+void FeedModel::_removeEntry(int id)
+{
+    for (int i = 0; i < _entries.size(); i++)
+        if (_entries.at(i)->id() == id)
+        {
+            beginRemoveRows(QModelIndex(), i, i);
+            auto entry = _entries.takeAt(i);
+            _allEntries.removeOne(entry);
+            endRemoveRows();
+
+            break;
+        }
 }
 
 
