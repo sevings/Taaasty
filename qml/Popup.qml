@@ -29,7 +29,6 @@ Rectangle {
         left: parent.left
         right: parent.right
     }
-    y: 0
     z: 20
     visible: y < window.height || !closable
     enabled: visible

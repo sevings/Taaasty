@@ -51,10 +51,10 @@ TextEdit {
     }
     function ensureVisible(cursor)
     {
-        if (flickable.contentY >= cursor.top)
-            flickable.contentY = cursor.top;
-        else if (flickable.contentY + flickable.height <= cursor.bottom)
-            flickable.contentY = cursor.bottom - flickable.height;
+        if (flickable.contentY >= textEdit.y + cursor.top)
+            flickable.contentY = textEdit.y + cursor.top;
+        else if (flickable.contentY + flickable.height <= textEdit.y + cursor.bottom)
+            flickable.contentY = textEdit.y + cursor.bottom - flickable.height;
     }
     function setHandlePositions() {
         leftSelectionHandle.setPosition();
@@ -127,6 +127,6 @@ TextEdit {
         font: textEdit.font
         color: Material.hintTextColor
         wrapMode: Text.Wrap
-        visible: !textEdit.length && !textEdit.activeFocus
+        visible: !textEdit.length && !textEdit.preeditText && !textEdit.activeFocus
     }
 }

@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls.Material 2.0
+import QtQuick.Controls.Material.impl 2.0
 import org.binque.taaasty 1.0
 
 Rectangle {
@@ -20,6 +21,10 @@ Rectangle {
     width: menuRow.width
     height: menuRow.height
     color: Material.primary
+    layer.enabled: visible
+    layer.effect: ElevationEffect {
+        elevation: 24
+    }
     function xCoordinate() {
         var left   = parent.mapToItem(boundItem, 0, 0).x;
         var start  = textEdit.positionToRectangle(textEdit.selectionStart).left + left;
@@ -34,13 +39,13 @@ Rectangle {
         var topMarg = flickable.mapToItem(boundItem, 0, 0).y;
 
         var top = textEdit.positionToRectangle(textEdit.selectionStart).top
-                - flickable.contentY + topMarg;
+                - flickable.contentY + topMarg + textEdit.y;
         if (top > height + margin * 2)
             return top - height - margin - topMarg;
 
         var bottom = textEdit.positionToRectangle(textEdit.selectionEnd).top
                 + textEdit.rightSelectionHandle.height
-                - flickable.contentY + topMarg;
+                - flickable.contentY + topMarg + textEdit.y;
         var bHeight = boundItem ? boundItem.height : window.height;
         if (bottom < bHeight - height - margin * 2)
             return bottom + margin - topMarg;

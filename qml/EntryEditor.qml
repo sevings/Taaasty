@@ -29,7 +29,7 @@ Pane {
         titleInput.text = Settings.lastTitle;
         textInput.text  = Settings.lastText;
 
-        titleInput.forceActiveFocus()
+        titleInput.forceActiveFocus();
     }
     Component.onDestruction: {
         save();
@@ -57,6 +57,7 @@ Pane {
         }
         TextEditor {
             id: titleInput
+            z: 6
             height: contentHeight + topPadding + bottomPadding
             flickable: flick
             handler: titleHandler
@@ -69,6 +70,8 @@ Pane {
 
                 editMenu.textEdit = titleInput;
                 editMenu.handler  = titleHandler;
+
+                window.hideFooter();
             }
         }
         Rectangle {
@@ -85,6 +88,7 @@ Pane {
         }
         TextEditor {
             id: textInput
+            z: 5
             anchors {
                 top: titleLine.bottom
             }
@@ -101,6 +105,8 @@ Pane {
 
                 editMenu.textEdit = textInput;
                 editMenu.handler  = textHandler;
+
+                window.hideFooter();
             }
         }
         Rectangle {
@@ -120,7 +126,7 @@ Pane {
             anchors {
                 verticalCenter: postButton.verticalCenter
                 left: parent.left
-                right: lockButton.left
+                right: fireButton.left
             }
             model: ListModel {
                 ListElement { tlog: 0;  text: "В мой тлог" }
@@ -138,11 +144,27 @@ Pane {
             font.pointSize: window.fontSmaller
         }
         IconButton {
+            id: fireButton
+            property bool voting: true
+            anchors {
+                top: textLine.bottom
+                right: lockButton.left
+            }
+            visible: whereBox.tlog >= 0 && !lockButton.locked
+            icon: (voting ? '../icons/flame-solid-'
+                          : '../icons/flame-outline-')
+                  + '72.png'
+            onClicked: {
+                editMenu.hideMenu();
+                voting = !voting;
+            }
+        }
+        IconButton {
             id: lockButton
             property bool locked: false
             anchors {
                 top: textLine.bottom
-                right: fireButton.left
+                right: postButton.left
             }
             visible: whereBox.tlog == 0
             icon: (locked ? (window.darkTheme ? '../icons/lock-white-'
@@ -153,22 +175,6 @@ Pane {
             onClicked: {
                 editMenu.hideMenu();
                 locked = !locked;
-            }
-        }
-        IconButton {
-            id: fireButton
-            property bool voting: true
-            anchors {
-                top: textLine.bottom
-                right: postButton.left
-            }
-            visible: whereBox.tlog >= 0
-            icon: (voting ? '../icons/flame-solid-'
-                          : '../icons/flame-outline-')
-                  + '72.png'
-            onClicked: {
-                editMenu.hideMenu();
-                voting = !voting;
             }
         }
         IconButton {
@@ -211,8 +217,16 @@ Pane {
     }
     TextEditorMenu {
         id: editMenu
+        z: 7
         flickable: flick
         textEdit: titleInput
         handler: titleHandler
+        boundItem: bound
+    }
+    Item {
+        id: bound
+        width: parent.width
+        height: window.footerY
+        enabled: false
     }
 }
