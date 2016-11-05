@@ -41,7 +41,8 @@ public:
     {
         PopularMode,
         NewestMode,
-        MyMode
+        MyMode,
+        AvailableMode
     };
 
     Q_ENUMS(Mode)

@@ -87,7 +87,7 @@ void FlowsModel::fetchMore(const QModelIndex& parent)
     qDebug() << "FlowsModel::fetchMore";
 
     auto url = _url.arg(_page++);
-    auto opt = _optionsForFetchMore(_mode == MyMode);
+    auto opt = _optionsForFetchMore(_mode == MyMode || _mode == AvailableMode);
     _loadRequest = new ApiRequest(url, opt);
 
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
@@ -113,6 +113,9 @@ void FlowsModel::setMode(const FlowsModel::Mode mode)
         break;
     case MyMode:
         _url = "v1/flows.json?sort=my&page=%1&limit=20";
+        break;
+    case AvailableMode:
+        _url = "v1/flows/available.json&page=%1&limit=20";
         break;
     default:
         qDebug() << "Flows mode:" << _mode;
@@ -186,6 +189,6 @@ void FlowsModel::_addItems(QJsonObject data)
 
 void FlowsModel::_resetIfMy()
 {
-    if (_mode == MyMode)
+    if (_mode == MyMode || _mode == AvailableMode)
         reset();
 }
