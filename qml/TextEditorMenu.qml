@@ -6,7 +6,7 @@ Rectangle {
     id: editMenu
     x: visible ? xCoordinate() : 0
     y: visible ? yCoordinate() : 0
-    property int spaceAtTop: 0
+    property Item boundItem
     property int margin: 1.5 * mm
     property TextEditor textEdit
     property Flickable flickable
@@ -14,41 +14,49 @@ Rectangle {
     readonly property bool show: (!flickable.movingVertically
                                   && !textEdit.leftSelectionHandle.pressed
                                   && !textEdit.rightSelectionHandle.pressed
-                                  && (textEdit.hasSelection || textEdit.canCopyPaste))
-    visible: opacity > 0
+                                  && (textEdit.canCopyPaste || (textEdit.hasSelection && textEdit.richEditing)))
+    visible: false
     opacity: 0
     width: menuRow.width
     height: menuRow.height
     color: Material.primary
     function xCoordinate() {
-        var start  = textEdit.positionToRectangle(textEdit.selectionStart).left;
-        var end    = textEdit.positionToRectangle(textEdit.selectionEnd).right;
-        var x      = (end + start - width) / 2;
-        var maxX   = textEdit.width - width - margin;
-        return Math.min(Math.max(margin, x), maxX);
+        var left   = parent.mapToItem(boundItem, 0, 0).x;
+        var start  = textEdit.positionToRectangle(textEdit.selectionStart).left + left;
+        var end    = textEdit.positionToRectangle(textEdit.selectionEnd).right  + left;
+        var bX     = (end + start - width) / 2;
+        var bWidth = boundItem ? boundItem.width : window.width;
+        var maxBX  = bWidth - width - margin;
+            bX     =  Math.min(Math.max(margin, bX), maxBX);
+        return bX - left;
     }
     function yCoordinate() {
-        var top = textEdit.positionToRectangle(textEdit.selectionStart).top - flickable.contentY;
-        if (top > height + margin * 2 - spaceAtTop)
-            return top - height - margin;
+        var topMarg = flickable.mapToItem(boundItem, 0, 0).y;
 
-        var bottom = textEdit.positionToRectangle(textEdit.selectionEnd).top - flickable.contentY
-                + textEdit.rightSelectionHandle.height;
-        var bottomMargin = Math.max(margin, textEdit.cursorRectangle.height * 1.5);
-        if (bottom < textEdit.height - height - margin - bottomMargin)
-            return bottom + margin;
+        var top = textEdit.positionToRectangle(textEdit.selectionStart).top
+                - flickable.contentY + topMarg;
+        if (top > height + margin * 2)
+            return top - height - margin - topMarg;
 
-        return textEdit.height - height - bottomMargin;
+        var bottom = textEdit.positionToRectangle(textEdit.selectionEnd).top
+                + textEdit.rightSelectionHandle.height
+                - flickable.contentY + topMarg;
+        var bHeight = boundItem ? boundItem.height : window.height;
+        if (bottom < bHeight - height - margin * 2)
+            return bottom + margin - topMarg;
+
+        return bHeight - height - margin - topMarg;
     }
-    Behavior on opacity {
-        NumberAnimation {
-            duration: 400
-        }
+    function hideMenu() {
+        state = "hidden";
+    }
+    function showMenu() {
+        state = "shown";
     }
     onShowChanged: {
         if (visible) {
             timer.stop();
-            opacity = 0;
+            hideMenu();
         }
         else
             timer.start();
@@ -59,9 +67,39 @@ Rectangle {
         repeat: false
         onTriggered: {
             if (show)
-                opacity = 1;
+                showMenu();
         }
     }
+    state: "hidden"
+    states: [
+        State {
+            name: "shown"
+            PropertyChanges {
+                target: editMenu
+                opacity: 1
+                visible: true
+            }
+        },
+        State {
+            name: "hidden"
+            PropertyChanges {
+                target: editMenu
+                opacity: 0
+                visible: false
+            }
+        }
+    ]
+    transitions: [
+        Transition {
+            from: "hidden"
+            to: "shown"
+            NumberAnimation {
+                target: editMenu
+                property: "opacity"
+                duration: 200
+            }
+        }
+    ]
     Row {
         id: menuRow
         spacing: 1.5 * mm

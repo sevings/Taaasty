@@ -52,7 +52,7 @@ Pane {
     Splash {
         visible: !listView.visible || !listView.count
         running: !listView.visible && (chat.loading || chat.messages.loading
-                                       || chat.messages.checking)
+                                       || (!listView.count && chat.messages.checking))
         text: chat.messages.errorString || 'Нет сообщений'
     }
     MyListView {
@@ -267,6 +267,10 @@ Pane {
                 Connections {
                     target: listView
                     onMovingVerticallyChanged: messageEditor.hideMenu()
+                }
+                Connections {
+                    target: menu
+                    onOpened: messageEditor.hideMenu()
                 }
             }
         }

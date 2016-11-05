@@ -20,6 +20,7 @@
 
 import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
+import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
 FocusScope {
@@ -45,9 +46,9 @@ FocusScope {
         editor.focus = true;
     }
     function hideMenu() {
-        input.canCopyPaste = false;
+        editMenu.hideMenu();
     }
-    MyFlickable {
+    Flickable {
         id: flickable
         anchors {
             top: parent.top
@@ -58,15 +59,25 @@ FocusScope {
         }
         clip: true
         flickableDirection: Flickable.VerticalFlick
+        interactive: parent.x <= 0
+        boundsBehavior: Flickable.DragOverBounds
         contentWidth: input.contentWidth
         contentHeight: input.height
         TextEditor {
             id: input
-            width: flickable.width
-            height: Math.max(contentHeight, flickable.height)
+            bottomPadding: 5 * mm
             flickable: flickable
             handler: handler
         }
+    }
+    Rectangle {
+        anchors {
+            bottom: flickable.bottom
+            left: flickable.left
+            right: flickable.right
+        }
+        height: input.activeFocus ? 2 * sp : 1 * sp
+        color: input.activeFocus ? Material.accentColor : Material.hintTextColor
     }
     TextHandler {
         id: handler
@@ -83,7 +94,6 @@ FocusScope {
         textEdit: input
         flickable: flickable
         handler: handler
-        spaceAtTop: 400
     }
     IconButton {
         id: button

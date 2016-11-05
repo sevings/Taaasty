@@ -19,11 +19,10 @@
  */
 
 import QtQuick 2.7
-import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
-TextArea {
+TextEdit {
     id: textEdit
     property Flickable flickable
     property TextHandler handler
@@ -31,6 +30,8 @@ TextArea {
     property bool canCopyPaste: false
     readonly property bool richEditing: textFormat === TextEdit.RichText
     readonly property bool hasSelection: selectedText
+    width: flickable.width
+    height: Math.max(contentHeight + topPadding + bottomPadding, flickable.height)
     font.pointSize: window.fontNormal
     padding: 1.5 * mm
     text: handler.text
@@ -38,6 +39,9 @@ TextArea {
     wrapMode: TextEdit.Wrap
     activeFocusOnPress: false
     selectByMouse: false
+    color: enabled ? Material.primaryTextColor : Material.hintTextColor
+    selectionColor: Material.accentColor
+    selectedTextColor: Material.primaryHighlightedTextColor
     function addGreeting(slug) {
         insert(0, '@' + slug + ', ');
         forceActiveFocus();
@@ -47,11 +51,10 @@ TextArea {
     }
     function ensureVisible(cursor)
     {
-        if (flickable.contentY >= cursor.y - cursor.height)
-            flickable.contentY = Math.max(cursor.y - cursor.height, 0);
-        else if (flickable.contentY + height <= cursor.y + cursor.height * 2)
-            flickable.contentY = Math.min(cursor.y + cursor.height * 2 - flickable.height,
-                                          flickable.contentHeight - flickable.height);
+        if (flickable.contentY >= cursor.top)
+            flickable.contentY = cursor.top;
+        else if (flickable.contentY + flickable.height <= cursor.bottom)
+            flickable.contentY = cursor.bottom - flickable.height;
     }
     function setHandlePositions() {
         leftSelectionHandle.setPosition();
@@ -115,31 +118,3 @@ TextArea {
         }
     }
 }
-
-/*
-Flickable {
-    id: flickText
-    anchors.margins: 1.5 * mm
-    flickableDirection: Flickable.VerticalFlick
-    property alias text: input.text
-    function insertTags(opening, closing) {
-        if (!input.focus)
-            return;
-
-        input.insert(input.cursorPosition, opening);
-        input.cursorPosition += opening.length;
-        if (closing)
-            input.insert(input.cursorPosition, closing);
-    }
-    TextArea.flickable: TextArea {
-        id: input
-        font.pointSize: window.fontNormal
-        padding: 1.5 * mm
-        implicitHeight: contentHeight + 3 * mm
-        wrapMode: TextEdit.Wrap
-        textFormat: Text.PlainText
-        implicitWidth: 30 * mm
-        focus: true
-    }
-}
-*/

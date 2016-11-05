@@ -34,6 +34,7 @@ Rectangle {
     visible: y < window.height || !closable
     enabled: visible
     property bool closable: true
+    signal opened
     signal closing
     color: Material.primary
     onVisibleChanged: {
@@ -41,6 +42,7 @@ Rectangle {
             return;
 
         if (visible) {
+            opened();
             enabled = true;
             popup.forceActiveFocus();
         }
