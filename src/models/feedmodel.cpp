@@ -266,61 +266,6 @@ bool FeedModel::hideNegative() const
 
 
 
-void FeedModel::postText(const QString title, const QString content, FeedModel::Privacy privacy)
-{
-    if (_mode == AnonymousMode)
-    {
-        postAnonymous(title, content);
-        return;
-    }
-
-    QString privacyValue;
-    switch (privacy) {
-    case Private:
-        privacyValue = "private";
-        break;
-    case Public:
-        privacyValue = "public";
-        break;
-    case Voting:
-        privacyValue = "public_with_voting";
-        break;
-    }
-
-    auto data = QString("title=%1&text=%2&privacy=%3")
-            .arg(title)
-            .arg(content)
-            .arg(privacyValue);
-
-    if (_mode == TlogMode)
-        data += QString("&tlog_id=%1").arg(_tlog);
-
-    qDebug() << data;
-
-    auto request = new ApiRequest("v1/entries/text.json", ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                                  QNetworkAccessManager::PostOperation, data);
-
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_addNewPost(QJsonObject))));
-}
-
-
-
-void FeedModel::postAnonymous(const QString title, const QString content)
-{
-    auto data = QString("title=%1&text=%2")
-            .arg(title)
-            .arg(content);
-
-    qDebug() << data;
-
-    auto request = new ApiRequest("v1/entries/anonymous.json", ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                                  QNetworkAccessManager::PostOperation, data);
-
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_addNewPost(const QJsonObject))));
-}
-
-
-
 void FeedModel::setSinceEntryId(int id)
 {
     if (id > 0)
@@ -432,20 +377,6 @@ void FeedModel::_addItems(QJsonObject data)
         fetchMore(QModelIndex());
     else
         emit loadingChanged();
-}
-
-
-
-void FeedModel::_addNewPost(QJsonObject data)
-{
-    auto entry = EntryPtr::create((QObject*)nullptr);
-    entry->init(data);
-
-    beginInsertRows(QModelIndex(), 0, 0);
-    _entries.prepend(entry);
-    endInsertRows();
-
-    emit entryCreated(entry);
 }
 
 

@@ -434,3 +434,41 @@ void Settings::setLastText(const QString text)
 
     emit lastTextChanged();
 }
+
+
+
+int Settings::lastPrivacy() const
+{
+    return _settings.value("last_privacy").toInt();
+}
+
+
+
+void Settings::setLastPrivacy(int privacy)
+{
+    if (privacy == lastPrivacy())
+        return;
+
+    _settings.setValue("last_privacy", privacy);
+
+    emit lastPrivacyChanged();
+}
+
+
+
+int Settings::lastPostingTlog() const
+{
+    return _settings.value("last_posting_tlog").toInt();
+}
+
+
+
+void Settings::setLastPostingTlog(int tlog)
+{
+    if (tlog == lastPostingTlog())
+        return;
+
+    _settings.setValue("last_posting_tlog", tlog);
+
+    emit lastPostingTlogChanged();
+}

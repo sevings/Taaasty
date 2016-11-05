@@ -63,15 +63,6 @@ public:
 
     Q_ENUMS(Mode)
 
-    enum Privacy
-    {
-        Private,
-        Public,
-        Voting
-    };
-
-    Q_ENUMS(Privacy)
-
     FeedModel(QObject* parent = nullptr);
     ~FeedModel();
 
@@ -107,23 +98,18 @@ public:
     bool hideNegative() const;
     bool loading() const;
 
-    void postText(const QString title, const QString content, Privacy privacy = Public);
-    void postAnonymous(const QString title, const QString content);
-
     Q_INVOKABLE void setSinceEntryId(int id);
     Q_INVOKABLE void setSinceDate(const QString date);
 
 signals:
     void queryChanged();
     void tagChanged();
-    void entryCreated(EntryPtr entry);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
     void _addItems(QJsonObject data);
-    void _addNewPost(QJsonObject data);
     void _changeHideSome();
     void _resetOrReloadRatings();
     void _reloadRatings();

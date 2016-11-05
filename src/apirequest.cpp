@@ -123,7 +123,8 @@ void ApiRequest::_finished()
     else
     {
         auto jsonObject = json.object();
-        auto errorString = jsonObject.value("error").toString();
+        auto errorString = jsonObject.contains("long_message") ? jsonObject.value("long_message").toString()
+                                                               : jsonObject.value("error").toString();
         auto code = jsonObject.value("response_code").toInt();
 
         emit error(code, errorString);

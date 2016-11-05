@@ -25,14 +25,37 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    readonly property int privacy: lockButton.locked
+                                   ? Poster.Private : fireButton.voting
+                                     ? Poster.Voting : Poster.Public;
     Component.onCompleted: {
-        titleInput.text = Settings.lastTitle;
-        textInput.text  = Settings.lastText;
+        titleInput.text   = Settings.lastTitle;
+        textInput.text    = Settings.lastText;
+        fireButton.voting = Settings.lastPrivacy == Poster.Voting;
+        lockButton.locked = Settings.lastPrivacy == Poster.Private;
+
+        var last = Settings.lastPostingTlog;
+        while (whereBox.tlog !== last && whereBox.currentIndex < whereBox.count)
+            whereBox.incrementCurrentIndex();
+        if (whereBox.currentIndex == whereBox.count)
+            whereBox.currentIndex = 0;
 
         titleInput.forceActiveFocus();
     }
     Component.onDestruction: {
         save();
+    }
+    onHeightChanged: {
+        if (titleInput.activeFocus)
+            titleInput.ensureVisible(titleInput.cursorRectangle);
+        else if (textInput.activeFocus)
+            textInput.ensureVisible(textInput.cursorRectangle);
+    }
+    function save() {
+        Settings.lastTitle       = titleInput.text;
+        Settings.lastText        = textInput.text;
+        Settings.lastPrivacy     = back.privacy;
+        Settings.lastPostingTlog = whereBox.tlog;
     }
     Timer {
         running: back.visible
@@ -42,13 +65,13 @@ Pane {
             save();
         }
     }
-    function save() {
-        Settings.lastTitle = titleInput.text;
-        Settings.lastText  = textInput.text;
+    Splash {
+        visible: poster.loading
     }
     MyFlickable {
         id: flick
         anchors.fill: parent
+        visible: !poster.loading
         contentWidth: Math.max(Math.max(titleInput.contentWidth, textInput.contentWidth), window.width)
         contentHeight: postButton.y + postButton.height + 1.5 * mm
         onVerticalVelocityChanged: editMenu.hideMenu()
@@ -127,6 +150,7 @@ Pane {
                 verticalCenter: postButton.verticalCenter
                 left: parent.left
                 right: fireButton.left
+                margins: 1.5 * mm
             }
             model: ListModel {
                 ListElement { tlog: 0;  text: "В мой тлог" }
@@ -145,7 +169,7 @@ Pane {
         }
         IconButton {
             id: fireButton
-            property bool voting: true
+            property bool voting
             anchors {
                 top: textLine.bottom
                 right: lockButton.left
@@ -161,7 +185,7 @@ Pane {
         }
         IconButton {
             id: lockButton
-            property bool locked: false
+            property bool locked
             anchors {
                 top: textLine.bottom
                 right: postButton.left
@@ -189,9 +213,7 @@ Pane {
                   + '128.png'
             onClicked: {
                 editMenu.hideMenu();
-
-                titleInput.clear();
-                textInput.clear();
+                poster.postText(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
             }
         }
     }
@@ -228,5 +250,14 @@ Pane {
         width: parent.width
         height: window.footerY
         enabled: false
+    }
+    Poster {
+        id: poster
+        onPosted: {
+            titleInput.clear();
+            textInput.clear();
+            window.popFromStack();
+            window.showMessage('Запись опубликована', true);
+        }
     }
 }

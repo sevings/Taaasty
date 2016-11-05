@@ -45,8 +45,11 @@ class Settings : public QObject
     Q_PROPERTY(bool     hideNegativeRated   READ hideNegativeRated      WRITE setHideNegativeRated      NOTIFY hideNegativeRatedChanged)
     Q_PROPERTY(bool     darkTheme           READ darkTheme              WRITE setDarkTheme              NOTIFY darkThemeChanged)
     Q_PROPERTY(bool     systemNotifications READ systemNotifications    WRITE setSystemNotifications    NOTIFY systemNotificationsChanged)
+
     Q_PROPERTY(QString  lastTitle           READ lastTitle              WRITE setLastTitle              NOTIFY lastTitleChanged)
     Q_PROPERTY(QString  lastText            READ lastText               WRITE setLastText               NOTIFY lastTextChanged)
+    Q_PROPERTY(int      lastPrivacy         READ lastPrivacy            WRITE setLastPrivacy            NOTIFY lastPrivacyChanged)
+    Q_PROPERTY(int      lastPostingTlog     READ lastPostingTlog        WRITE setLastPostingTlog        NOTIFY lastPostingTlogChanged)
 
 public:
     explicit Settings(QObject *parent = 0);
@@ -111,6 +114,12 @@ public:
     QString lastText() const;
     void setLastText(const QString text);
 
+    int lastPrivacy() const;
+    void setLastPrivacy(int privacy);
+
+    int lastPostingTlog() const;
+    void setLastPostingTlog(int tlog);
+
 signals:
     void loginChanged();
     void accessTokenChanged();
@@ -126,14 +135,16 @@ signals:
     void hideNegativeRatedChanged();
     void darkThemeChanged();
     void systemNotificationsChanged();
+
     void lastTitleChanged();
     void lastTextChanged();
+    void lastPrivacyChanged();
+    void lastPostingTlogChanged();
 
 public slots:
 
 private:
     QSettings _settings;
-
 };
 
 #endif // SETTINGS_H

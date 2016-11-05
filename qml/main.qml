@@ -85,6 +85,9 @@ ApplicationWindow {
         }
         return true;
     }
+    function showMessage(txt, info, permanent) {
+        dialog.show(txt, info, permanent);
+    }
     function showNotifs() {
         notifsView.item.show();
     }
