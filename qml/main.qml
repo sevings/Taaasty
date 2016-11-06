@@ -549,7 +549,7 @@ ApplicationWindow {
                     dialog.close();
             }
             onNetworkNotAccessible: {
-                dialog.show('Сеть недоступна', false, true)
+                dialog.show('Сеть недоступна', false)
             }
         }
     }
