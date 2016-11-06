@@ -407,6 +407,7 @@ Q.Drawer {
                 highlighted: page.mode === FlowsModel.MyMode
                 visible: !window.chatsShows
                          && page.isFlowsView === true
+                         && Tasty.isAuthorized
             }
 
             // PROFILE SECTION

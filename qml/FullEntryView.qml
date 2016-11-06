@@ -112,7 +112,8 @@ Pane {
             height: (textHeight > commentAvatar.height ? textHeight : commentAvatar.height) + 4 * mm
 //            color: pop.pressed ? Material.primary : 'transparent'
             Component.onCompleted: {
-                entry.chat.readAll();
+                if (entry.chat)
+                    entry.chat.readAll();
             }
             Poppable {
                 id: pop
@@ -299,9 +300,10 @@ Pane {
                     top: fullEntryDate.bottom
                     right: parent.right
                 }
-                icon: (((entry.rating.isVotable === entry.rating.isVoted)
+                readonly property bool votable: entry.rating.isVotable && Tasty.isAuthorized
+                icon: (((votable === entry.rating.isVoted)
                        && (entry.rating.isBayesVoted || entry.rating.isVotedAgainst)
-                       && (entry.rating.isVotable || entry.rating.isBayesVoted))
+                       && (votable || entry.rating.isBayesVoted))
                        ? '../icons/flame-solid-' : '../icons/flame-outline-')
                       + '72.png'
                 enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable
@@ -385,7 +387,7 @@ Pane {
             id: commentEditor
             popBody: back
             visible: Tasty.isAuthorized
-            height: visible ? implicitHeight : - 1.5 * mm
+            height: visible ? implicitHeight : 1.5 * mm
             z: fullEntry.count + 10
             onSent: {
                 entry.addComment(commentEditor.message);

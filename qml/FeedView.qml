@@ -327,9 +327,10 @@ Pane {
                     top: wc.bottom
                     right: parent.right
                 }
-                icon: (((entry.rating.isVotable === entry.rating.isVoted)
+                readonly property bool votable: entry.rating.isVotable && Tasty.isAuthorized
+                icon: (((votable === entry.rating.isVoted)
                        && (entry.rating.isBayesVoted || entry.rating.isVotedAgainst)
-                       && (entry.rating.isVotable || entry.rating.isBayesVoted))
+                       && (votable || entry.rating.isBayesVoted))
                        ? '../icons/flame-solid-' : '../icons/flame-outline-')
                       + '72.png'
                 enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable

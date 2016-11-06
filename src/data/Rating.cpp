@@ -114,7 +114,7 @@ void Rating::setId(int entryId)
     _id = entryId;
     
     auto url = QString("v1/ratings.json?ids=%1").arg(_id);
-    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
+    _request = new ApiRequest(url, ApiRequest::ShowMessageOnError);
     
     Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_reinit(QJsonArray))));
     
