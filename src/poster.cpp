@@ -20,6 +20,8 @@
 
 #include "poster.h"
 
+#include <QUrl>
+
 #include "data/Entry.h"
 
 
@@ -150,6 +152,8 @@ void Poster::_prepareText(QString& title, QString& content) const
     if (title.isEmpty())
         title = "&nbsp;";
 
-    if (content.isEmpty())
-        content = "&nbsp;"; //! \todo: insert paragraphs
+    //! \todo: insert paragraphs
+
+    title = QUrl::toPercentEncoding(title);
+    content = QUrl::toPercentEncoding(content);
 }

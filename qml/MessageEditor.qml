@@ -61,21 +61,23 @@ FocusScope {
         flickableDirection: Flickable.VerticalFlick
         interactive: parent.x <= 0
         boundsBehavior: Flickable.DragOverBounds
-        contentWidth: input.contentWidth
-        contentHeight: input.height
+        contentWidth: width
+        contentHeight: Math.max(input.implicitHeight, height)
         TextEditor {
             id: input
-            height: Math.max(contentHeight + topPadding + bottomPadding, flickable.height)
+            anchors.fill: parent
             bottomPadding: 5 * mm
             flickable: flickable
             handler: handler
+            background: Item { }
         }
     }
     Rectangle {
         anchors {
-            bottom: flickable.bottom
+            bottom: parent.bottom
             left: flickable.left
             right: flickable.right
+            bottomMargin: 1 * mm
         }
         height: input.activeFocus ? 2 * sp : 1 * sp
         color: input.activeFocus ? Material.accentColor : Material.hintTextColor

@@ -73,15 +73,20 @@ Pane {
         anchors.fill: parent
         visible: !poster.loading
         contentWidth: Math.max(Math.max(titleInput.contentWidth, textInput.contentWidth), window.width)
-        contentHeight: postButton.y + postButton.height + 1.5 * mm
+        contentHeight: Math.max(parent.height, titleInput.implicitHeight + textInput.implicitHeight + postButton.height + 6 * mm)
         onVerticalVelocityChanged: editMenu.hideMenu()
         Poppable {
             body: back
         }
         TextEditor {
             id: titleInput
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+                margins: 1.5 * mm
+            }
             z: 6
-            height: contentHeight + topPadding + bottomPadding
             flickable: flick
             handler: titleHandler
             placeholderText: 'Заголовок'
@@ -97,26 +102,16 @@ Pane {
                 window.hideFooter();
             }
         }
-        Rectangle {
-            id: titleLine
-            anchors {
-                bottom: titleInput.bottom
-                left: titleInput.left
-                right: titleInput.right
-                leftMargin: 1.5 * mm
-                rightMargin: anchors.leftMargin
-            }
-            height: titleInput.activeFocus ? 2 * sp : 1 * sp
-            color: titleInput.activeFocus ? Material.accentColor : Material.hintTextColor
-        }
         TextEditor {
             id: textInput
             z: 5
             anchors {
-                top: titleLine.bottom
+                top: titleInput.bottom
+                bottom: postButton.top
+                left: parent.left
+                right: parent.right
+                margins: 1.5 * mm
             }
-            height: Math.max(contentHeight + topPadding + bottomPadding,
-                             flick.height - titleInput.height - postButton.height - 3 * mm)
             flickable: flick
             handler: textHandler
 //            textFormat: TextEdit.RichText
@@ -131,18 +126,6 @@ Pane {
 
                 window.hideFooter();
             }
-        }
-        Rectangle {
-            id: textLine
-            anchors {
-                bottom: textInput.bottom
-                left: textInput.left
-                right: textInput.right
-                leftMargin: 1.5 * mm
-                rightMargin: anchors.leftMargin
-            }
-            height: textInput.activeFocus ? 2 * sp : 1 * sp
-            color: textInput.activeFocus ? Material.accentColor : Material.hintTextColor
         }
         Q.ComboBox {
             id: whereBox
@@ -171,7 +154,7 @@ Pane {
             id: fireButton
             property bool voting
             anchors {
-                top: textLine.bottom
+                bottom: parent.bottom
                 right: lockButton.left
             }
             visible: whereBox.tlog >= 0 && !lockButton.locked
@@ -187,7 +170,7 @@ Pane {
             id: lockButton
             property bool locked
             anchors {
-                top: textLine.bottom
+                bottom: parent.bottom
                 right: postButton.left
             }
             visible: whereBox.tlog == 0
@@ -204,7 +187,7 @@ Pane {
         IconButton {
             id: postButton
             anchors {
-                top: textLine.bottom
+                bottom: parent.bottom
                 right: parent.right
             }
             enabled: titleInput.length || textInput.length

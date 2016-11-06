@@ -71,7 +71,7 @@ Rectangle {
         interval: 1000
         repeat: false
         onTriggered: {
-            if (show)
+            if (show && textEdit.activeFocus)
                 showMenu();
         }
     }

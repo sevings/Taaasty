@@ -19,29 +19,24 @@
  */
 
 import QtQuick 2.7
+import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
 
-TextEdit {
+TextArea {
     id: textEdit
     property Flickable flickable
     property TextHandler handler
     property alias popBody: pop.body
-    property string placeholderText: ''
     property bool canCopyPaste: false
     readonly property bool richEditing: textFormat === TextEdit.RichText
     readonly property bool hasSelection: selectedText
-    width: flickable.width
     font.pointSize: window.fontNormal
-    padding: 1.5 * mm
     text: handler.text
     textFormat:  TextEdit.PlainText
     wrapMode: TextEdit.Wrap
     activeFocusOnPress: false
     selectByMouse: false
-    color: enabled ? Material.primaryTextColor : Material.hintTextColor
-    selectionColor: Material.accentColor
-    selectedTextColor: Material.primaryHighlightedTextColor
     function addGreeting(slug) {
         insert(0, '@' + slug + ', ');
         forceActiveFocus();
@@ -116,17 +111,5 @@ TextEdit {
             textEdit.select(textEdit.selectionStart, currentPosition);
             textEdit.ensureVisible(textEdit.positionToRectangle(textPosition));
         }
-    }
-    Text {
-        id: placeholder
-        x: textEdit.leftPadding
-        y: textEdit.topPadding
-        width: textEdit.width - (textEdit.leftPadding + textEdit.rightPadding)
-        height: textEdit.height - (textEdit.topPadding + textEdit.bottomPadding)
-        text: textEdit.placeholderText
-        font: textEdit.font
-        color: Material.hintTextColor
-        wrapMode: Text.Wrap
-        visible: !textEdit.length && !textEdit.preeditText && !textEdit.activeFocus
     }
 }
