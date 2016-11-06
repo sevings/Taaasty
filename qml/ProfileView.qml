@@ -80,47 +80,68 @@ Pane {
             }
             ThemedText {
                 id: name
-                width: window.width
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
                 font.pointSize: window.fontBiggest
                 horizontalAlignment: Text.AlignHCenter
                 text: author.name
                 height: text.length > 0 ? paintedHeight : 0
             }
             ThemedText {
-                width: window.width
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
                 horizontalAlignment: Text.AlignHCenter
                 text: author.title
                 height: text.length > 0 ? paintedHeight : 0
             }
             ThemedText {
-                width: window.width
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
                 horizontalAlignment: Text.AlignHCenter
                 text: author.isFemale ? 'Девушка' : 'Парень'
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
             }
             ThemedText {
-                width: window.width
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
                 horizontalAlignment: Text.AlignHCenter
                 text: author.lastSeenAt
                 height: text.length > 0 ? paintedHeight : 0
                 visible: !author.isFlow
             }
             ThemedText {
-                width: window.width
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
                 horizontalAlignment: Text.AlignHCenter
                 text: (author.isPrivacy ? 'Закрытый ' : 'Открытый ')
                       + (author.isFlow ? 'поток' : 'тлог')
                 height: text.length > 0 ? paintedHeight : 0
             }
             ThemedText {
-                width: window.width
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
                 horizontalAlignment: Text.AlignHCenter
                 text: author.daysCount
                 height: text.length > 0 ? paintedHeight : 0
             }
             ThemedText {
-                width: window.width
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
                 horizontalAlignment: Text.AlignHCenter
                 text: {
                     switch (tlog.myRelationship) {
@@ -143,7 +164,10 @@ Pane {
                          && Tasty.isAuthorized
             }
             ThemedText {
-                width: window.width
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
                 horizontalAlignment: Text.AlignHCenter
                 text: {
                     switch (tlog.hisRelationship) {
