@@ -6,7 +6,7 @@ import org.binque.taaasty 1.0
 Rectangle {
     id: editMenu
     x: visible ? xCoordinate() : 0
-    y: visible ? yCoordinate() : 0
+    y: 0
     property Item boundItem
     property int margin: 1.5 * mm
     property TextEditor textEdit
@@ -38,14 +38,22 @@ Rectangle {
     function yCoordinate() {
         var topMarg = flickable.mapToItem(boundItem, 0, 0).y;
 
-        var top = textEdit.positionToRectangle(textEdit.selectionStart).top
-                - flickable.contentY + topMarg + textEdit.y;
-        if (top > height + margin * 2)
-            return top - height - margin - topMarg;
+        var top    = textEdit.positionToRectangle(textEdit.selectionStart).top  + textEdit.y;
+        var bottom = textEdit.positionToRectangle(textEdit.selectionEnd).bottom + textEdit.y;
 
-        var bottom = textEdit.positionToRectangle(textEdit.selectionEnd).top
-                + textEdit.rightSelectionHandle.height
-                - flickable.contentY + topMarg + textEdit.y;
+        if (top > flickable.contentY + flickable.height || bottom < flickable.contentY)
+        {
+            console.log("outside");
+            return false;
+        }
+
+        top    += (- flickable.contentY + topMarg);
+        bottom += (- flickable.contentY + topMarg
+                   + textEdit.rightSelectionHandle.height - textEdit.cursorRectangle.height);
+
+        if (top > height + margin * 2)
+            return Math.max(top - height - margin - topMarg, -height - margin);
+
         var bHeight = boundItem ? boundItem.height : window.height;
         if (bottom < bHeight - height - margin * 2)
             return bottom + margin - topMarg;
@@ -56,7 +64,11 @@ Rectangle {
         state = "hidden";
     }
     function showMenu() {
-        state = "shown";
+        var y = yCoordinate();
+        if (y !== false) {
+            editMenu.y = y;
+            state = "shown";
+        }
     }
     onShowChanged: {
         if (visible) {
@@ -71,7 +83,7 @@ Rectangle {
         interval: 1000
         repeat: false
         onTriggered: {
-            if (show && textEdit.activeFocus)
+            if (textEdit.activeFocus && show)
                 showMenu();
         }
     }
