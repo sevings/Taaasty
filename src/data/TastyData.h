@@ -55,5 +55,5 @@ protected:
     QPointer<ApiRequest> _request;
     QString              _errorString;
     
-    void _initRequest(bool emitting = true);
+    void _initRequest();
 };

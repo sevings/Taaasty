@@ -67,10 +67,9 @@ void TastyData::_setErrorString(int errorCode, QString str)
 
 
 
-void TastyData::_initRequest(bool emitting)
+void TastyData::_initRequest()
 {
-    if (emitting)
-        emit loadingChanged();
+    emit loadingChanged();
     
     if (!_request)
         return;

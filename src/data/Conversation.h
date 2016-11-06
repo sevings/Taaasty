@@ -132,6 +132,7 @@ signals:
     void unreadCountChanged();
     void messageSent(const QJsonObject);
     void messageReceived(const QJsonObject);
+    void sendingMessageError();
     void allMessagesRead(const QJsonObject data);
     void lastMessageChanged();
     void left(int id);
@@ -173,5 +174,6 @@ private:
     bool                 _hadTyped;
     QPointer<ApiRequest> _typedRequest;
     
+    QPointer<ApiRequest> _sendRequest;
     QPointer<ApiRequest> _reading;
 };

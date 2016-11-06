@@ -465,7 +465,7 @@ void FeedModel::_setRatings(const QJsonArray data)
 
 void FeedModel::_prependEntry(int id, int tlogId)
 {
-    if (!(tlogId == 0 && (_mode == MyTlogMode || _mode == FriendsMode
+    if (!(tlogId == 0 && (_mode == MyTlogMode //! \todo || _mode == FriendsMode && not is private
                           || (_mode == TlogMode && Tasty::instance()->me()
                               && _tlog == Tasty::instance()->me()->id())))
             && !(tlogId == -1 && _mode == AnonymousMode))

@@ -45,6 +45,9 @@ Pane {
             if (!chat.loading)
                 chat.messages.check();
         }
+        onMessageSent: {
+            listView.positionViewAtEnd();
+        }
     }
     Poppable {
         body: back
@@ -252,6 +255,9 @@ Pane {
                     target: chat
                     onMessageSent: {
                         messageEditor.clear();
+                    }
+                    onSendingMessageError: {
+                        messageEditor.uploading = false;
                     }
                 }
                 Connections {

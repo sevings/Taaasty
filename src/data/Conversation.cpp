@@ -380,7 +380,7 @@ void Conversation::update()
 
 void Conversation::sendMessage(const QString text)
 {
-    if (isLoading() || _id <= 0)
+    if (_sendRequest || _id <= 0)
         return;
 
     _hadTyped = false;
@@ -391,15 +391,15 @@ void Conversation::sendMessage(const QString text)
     auto uuid    = QUuid::createUuid().toString().remove('{').remove('}');
     auto data    = QString("uuid=%1&content=%2").arg(uuid).arg(QString::fromUtf8(content));
     auto url     = QString("v2/messenger/conversations/by_id/%1/messages.json").arg(_id);
-    _request     = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
+    _sendRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                   QNetworkAccessManager::PostOperation, data);
 
-    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SIGNAL(messageSent(const QJsonObject))));
+    Q_TEST(connect(_sendRequest, SIGNAL(success(const QJsonObject)), this, SIGNAL(messageSent(const QJsonObject))));
+    Q_TEST(connect(_sendRequest, SIGNAL(error(QNetworkReply::NetworkError)),   this,   SIGNAL(sendingMessageError())));
+    Q_TEST(connect(_sendRequest, SIGNAL(error(const int, const QString)),      this,   SIGNAL(sendingMessageError())));
 
     if (_unreadCount > 0)
-        Q_TEST(connect(_request, SIGNAL(success(QJsonObject)),   this, SLOT(readAll())));
-    
-    _initRequest(false);
+        Q_TEST(connect(_sendRequest, SIGNAL(success(QJsonObject)),   this, SLOT(readAll())));
 
     ChatsModel::instance()->bubbleChat(_id);
 }
@@ -448,7 +448,7 @@ void Conversation::remove()
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
     
-    _initRequest(false);
+    _initRequest();
 }
 
 

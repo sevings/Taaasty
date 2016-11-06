@@ -148,6 +148,7 @@ signals:
     void watchedChanged();
     void favoritedChanged();
     void commentAdded(const QJsonObject data);
+    void addingCommentError();
 
     void entryDeleted();
 
@@ -188,4 +189,6 @@ private:
     CommentsModel*       _commentsModel;
     AttachedImagesModel* _attachedImagesModel;
     ChatPtr              _chat;
+
+    QPointer<ApiRequest> _entryRequest;
 };

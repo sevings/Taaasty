@@ -305,20 +305,20 @@ void Entry::reload()
 
 void Entry::addComment(const QString text)
 {
-    if (isLoading() || _id <= 0 || !Tasty::instance()->isAuthorized())
+    if (_entryRequest || _id <= 0 || !Tasty::instance()->isAuthorized())
         return;
 
-    auto content = QUrl::toPercentEncoding(text.trimmed());
-    auto data    = QString("entry_id=%1&text=%2").arg(_id).arg(QString::fromUtf8(content));
-    _request     = new ApiRequest("v1/comments.json", ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
+    auto content  = QUrl::toPercentEncoding(text.trimmed());
+    auto data     = QString("entry_id=%1&text=%2").arg(_id).arg(QString::fromUtf8(content));
+    _entryRequest = new ApiRequest("v1/comments.json", ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                   QNetworkAccessManager::PostOperation, data);
 
-    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this,   SIGNAL(commentAdded(const QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this,   SLOT(_setWatched())));
-    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), chat(), SLOT(readAll())));
+    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)),           this,   SIGNAL(commentAdded(const QJsonObject))));
+    Q_TEST(connect(_entryRequest, SIGNAL(error(QNetworkReply::NetworkError)),   this,   SIGNAL(addingCommentError())));
+    Q_TEST(connect(_entryRequest, SIGNAL(error(const int, const QString)),      this,   SIGNAL(addingCommentError())));
+    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)),           this,   SLOT(_setWatched())));
+    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)),           chat(), SLOT(readAll())));
 
-    _initRequest(false);
-    
     ChatsModel::instance()->addChat(sharedFromThis());
 }
 
@@ -326,52 +326,48 @@ void Entry::addComment(const QString text)
 
 void Entry::watch()
 {
-    if (isLoading() || _id <= 0)
+    if (_entryRequest || _id <= 0)
         return;
 
     if (_isWatched)
     {
-        auto url = QString("v1/watching.json?entry_id=%1").arg(_id);
-        _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
+        auto url      = QString("v1/watching.json?entry_id=%1").arg(_id);
+        _entryRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                   QNetworkAccessManager::DeleteOperation);
     }
     else
     {
-        auto url  = QString("v1/watching.json");
-        auto data = QString("entry_id=%1").arg(_id);
-        _request  = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
+        auto url      = QString("v1/watching.json");
+        auto data     = QString("entry_id=%1").arg(_id);
+        _entryRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                    QNetworkAccessManager::PostOperation, data);
     }
 
-    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeWatched(QJsonObject))));
-    
-    _initRequest(false);
+    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_changeWatched(QJsonObject))));
 }
 
 
 
 void Entry::favorite()
 {
-    if (isLoading() || _id <= 0)
+    if (_entryRequest || _id <= 0)
         return;
 
     if (_isFavorited)
     {
-        auto url = QString("v1/favorites.json?entry_id=%1").arg(_id);
-        _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
+        auto url      = QString("v1/favorites.json?entry_id=%1").arg(_id);
+        _entryRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                   QNetworkAccessManager::DeleteOperation);
     }
     else
     {
-        auto url  = QString("v1/favorites.json");
-        auto data = QString("entry_id=%1").arg(_id);
-        _request  = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
+        auto url      = QString("v1/favorites.json");
+        auto data     = QString("entry_id=%1").arg(_id);
+        _entryRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                    QNetworkAccessManager::PostOperation, data);
     }
 
-    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_changeFavorited(QJsonObject))));
-    
-    _initRequest(false);
+    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_changeFavorited(QJsonObject))));
 }
 
 
@@ -387,7 +383,7 @@ void Entry::deleteEntry()
 
     Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_deleteEntry(QJsonObject))));
 
-    _initRequest(false);
+    _initRequest();
 }
 
 

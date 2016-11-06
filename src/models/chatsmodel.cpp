@@ -198,7 +198,7 @@ void ChatsModel::bubbleChat(int id)
     if (i >= _chats.size())
         return;
 
-    _chats.at(i)->update(); //! \todo why?
+//    _chats.at(i)->update(); //! \todo why?
 
     int unread = 0;
     for (; unread < _chats.size(); unread++)

@@ -67,6 +67,9 @@ Pane {
         onEntryDeleted: {
             window.popFromStack();
         }
+        onCommentAdded: {
+            fullEntry.positionViewAtEnd();
+        }
     }
     Component.onCompleted: {
         checkComments();
@@ -395,6 +398,9 @@ Pane {
                 target: entry
                 onCommentAdded: {
                     commentEditor.clear();
+                }
+                onAddingCommentError: {
+                    commentEditor.uploading = false;
                 }
             }
             Connections {
