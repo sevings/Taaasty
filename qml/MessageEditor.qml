@@ -84,10 +84,10 @@ FocusScope {
     }
     TextHandler {
         id: handler
-        target: input
-        cursorPosition: input.cursorPosition
-        selectionStart: input.selectionStart
-        selectionEnd: input.selectionEnd
+//        target: input
+//        cursorPosition: input.cursorPosition
+//        selectionStart: input.selectionStart
+//        selectionEnd: input.selectionEnd
         onError: {
             console.error(message);
         }

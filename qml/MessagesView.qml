@@ -266,7 +266,14 @@ Pane {
                         messageEditor.addGreeting(slug);
                     }
                     onHeightChanged: { // keyboard shown
-                        if (messageEditor.focus)
+                        if (!messageEditor.focus)
+                            return;
+
+                        if (!listView.count) {
+                            listView.contentY = listView.contentHeight;
+                            listView.returnToBounds();
+                        }
+                        else
                             listView.positionViewAtEnd();
                     }
                 }

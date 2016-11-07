@@ -127,8 +127,8 @@ Rectangle {
             enabled: textEdit.canUndo
             visible: textEdit.richEditing && textEdit.hasSelection
             onClicked: {
-                textEdit.undo();
                 textEdit.forceActiveFocus();
+                textEdit.undo();
             }
         }
         IconButton {
@@ -136,8 +136,8 @@ Rectangle {
             enabled: textEdit.canRedo
             visible: textEdit.richEditing && textEdit.hasSelection
             onClicked: {
-                textEdit.redo();
                 textEdit.forceActiveFocus();
+                textEdit.redo();
         }
         }
         VerticalMenuSeparator {
@@ -148,8 +148,8 @@ Rectangle {
             enabled: textEdit.hasSelection
             visible: textEdit.canCopyPaste && textEdit.hasSelection
             onClicked: {
-                textEdit.cut();
                 textEdit.forceActiveFocus();
+                textEdit.cut();
             }
         }
         IconButton {
@@ -157,17 +157,16 @@ Rectangle {
             enabled: textEdit.hasSelection
             visible: textEdit.canCopyPaste && textEdit.hasSelection
             onClicked: {
-                textEdit.copy();
                 textEdit.forceActiveFocus();
+                textEdit.copy();
             }
         }
         IconButton {
             icon: '../icons/paste-white-128.png'
-            enabled: textEdit.canPaste
-            visible: textEdit.canCopyPaste
+            visible: textEdit.canCopyPaste && textEdit.canPaste
             onClicked: {
-                textEdit.paste();
                 textEdit.forceActiveFocus();
+                textEdit.paste();
             }
         }
         IconButton {
@@ -175,9 +174,9 @@ Rectangle {
             enabled: textEdit.length
             visible: textEdit.canCopyPaste && textEdit.selectedText.length < textEdit.length
             onClicked: {
+                textEdit.forceActiveFocus();
                 textEdit.selectAll();
                 textEdit.setHandlePositions();
-                textEdit.forceActiveFocus();
             }
         }
         VerticalMenuSeparator {
@@ -189,8 +188,8 @@ Rectangle {
             checked: handler.italic
             visible: textEdit.richEditing && textEdit.hasSelection
             onClicked: {
-                handler.italic = !handler.italic;
                 textEdit.forceActiveFocus();
+                handler.italic = !handler.italic;
             }
         }
     }

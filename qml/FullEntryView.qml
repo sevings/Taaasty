@@ -411,7 +411,14 @@ Pane {
                     commentEditor.addGreeting(slug);
                 }
                 onHeightChanged: { // keyboard shown
-                    if (commentEditor.focus)
+                    if (!commentEditor.focus)
+                        return;
+
+                    if (!fullEntry.count) {
+                        fullEntry.contentY = fullEntry.contentHeight;
+                        fullEntry.returnToBounds();
+                    }
+                    else
                         fullEntry.positionViewAtEnd();
                 }
             }

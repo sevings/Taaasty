@@ -32,10 +32,11 @@ TextArea {
     readonly property bool richEditing: textFormat === TextEdit.RichText
     readonly property bool hasSelection: selectedText
     font.pointSize: window.fontNormal
-    text: handler.text
+//    text: handler.text
     textFormat:  TextEdit.PlainText
     wrapMode: TextEdit.Wrap
-    activeFocusOnPress: false
+    activeFocusOnPress: true
+    persistentSelection: true
     selectByMouse: false
     function addGreeting(slug) {
         insert(0, '@' + slug + ', ');
