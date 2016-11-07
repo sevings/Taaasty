@@ -49,6 +49,10 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
     , _kbytesTotal(0)
     , _available(false)
 {
+    Q_ASSERT(_man);
+    
+    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, &CachedImage::downloadingChanged));
+    
     if (!_man || _url.isEmpty())
         return;
 
@@ -59,7 +63,6 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
     if (_exists())
     {
         _available = true;
-        emit available();
         return;
     }
 
@@ -89,7 +92,7 @@ QString CachedImage::sourceFileName() const
 
 bool CachedImage::isDownloading() const
 {
-    return _reply && _reply->isRunning();
+    return (_reply && _reply->isRunning()) || _saveWatcher.isRunning();
 }
 
 
@@ -113,10 +116,10 @@ void CachedImage::setExtension(QString format)
         _format = GifFormat;
         _extension = "gif";
     }
-    else if (format.isEmpty())
+    else if (format.isEmpty() && !_url.isEmpty())
     {
         auto ext = _url.split(".").last();
-        if (!ext.isEmpty())
+        if (!ext.isEmpty() && ext.size() != _url.size())
             setExtension(ext);
         return;
     }
@@ -172,6 +175,7 @@ void CachedImage::download()
 
     if (_headReply)
     {
+        _headReply->abort();
         _headReply->deleteLater();
         _headReply = nullptr;
     }
@@ -179,8 +183,8 @@ void CachedImage::download()
     _reply = _man->web()->get(QNetworkRequest(_url));
 
     Q_TEST(connect(_reply, SIGNAL(finished()),                         this, SLOT(_saveData())));
-    Q_TEST(connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(_printError(QNetworkReply::NetworkError))));
     Q_TEST(connect(_reply, SIGNAL(downloadProgress(qint64,qint64)),    this, SLOT(_changeBytes(qint64,qint64))));
+    Q_TEST(connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(_printError(QNetworkReply::NetworkError))));
     Q_TEST(connect(_reply, SIGNAL(sslErrors(QList<QSslError>)),        this, SLOT(_printErrors(QList<QSslError>))));
 
     emit downloadingChanged();
@@ -190,11 +194,10 @@ void CachedImage::download()
 
 void CachedImage::abortDownload()
 {
-    if (!isDownloading())
+    if (!_reply || !_reply->isRunning())
         return;
 
     _reply->abort();
-    _reply->deleteLater();
     _reply = nullptr;
 
     emit downloadingChanged();
@@ -277,7 +280,11 @@ void CachedImage::_setProperties()
 
 void CachedImage::_saveData()
 {
-    if (_reply->error() != QNetworkReply::NoError ) {
+    Q_ASSERT(_reply);
+    if (!_reply)
+        return;
+
+    if (_reply->error() != QNetworkReply::NoError) {
 
         _reply->deleteLater();
         _reply = nullptr;
@@ -294,13 +301,17 @@ void CachedImage::_saveData()
     else if (_data.startsWith((char)0x47))
         setExtension("gif");
 
-    QtConcurrent::run(this, &CachedImage::_saveFile);
+    auto future = QtConcurrent::run(this, &CachedImage::_saveFile);
+    _saveWatcher.setFuture(future);
 }
 
 
 
 void CachedImage::_changeBytes(qint64 bytesReceived, qint64 bytesTotal)
 {
+    if (_reply->error() != QNetworkReply::NoError ) 
+        return;
+
     _kbytesReceived = bytesReceived / 1024;
     emit receivedChanged();
 
@@ -352,7 +363,6 @@ bool CachedImage::_exists()
         setExtension("png");
         return true;
     }
-
     if (QFile::exists(path.arg("gif")))
     {
         setExtension("gif");
@@ -373,7 +383,7 @@ QString CachedImage::_path() const
 
 void CachedImage::_saveFile()
 {
-    auto path = QString("%1/%2.%3").arg(_man->path()).arg(_hash).arg(_extension);
+    auto path = _path();
 
     qDebug() << "Saving image from" << _url << "to" << path;
 
@@ -396,7 +406,8 @@ void CachedImage::_saveFile()
 
     _data.clear();
 
-    _reply->deleteLater();
+    if (_reply)
+        _reply->deleteLater();
     _reply = nullptr;
 
     _available = true;

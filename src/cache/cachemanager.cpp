@@ -111,7 +111,7 @@ CachedImage* CacheManager::image(QString url)
 {
     if (_images.contains(url))
     {
-        auto image = _images[url];
+        auto image = _images.value(url);
         if (_autoload && !image->isAvailable())
             image->download();
         return image;
@@ -142,7 +142,7 @@ void CacheManager::_clearUnusedImages()
         images << image->sourceFileName();
 
     QDir dir(_path);
-    auto files = dir.entryList(QDir::Files | QDir::NoDotAndDotDot, QDir::Size);
+    auto files = dir.entryList(QDir::Files, QDir::Size);
     foreach (auto file, files)
     {
         if (images.contains(file))

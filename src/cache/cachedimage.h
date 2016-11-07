@@ -23,6 +23,7 @@
 
 #include <QNetworkReply>
 #include <QSslError>
+#include <QFutureWatcher>
 
 class CacheManager;
 
@@ -38,7 +39,7 @@ class CachedImage : public QObject
     Q_PROPERTY(bool         available           READ isAvailable                    NOTIFY available)
     Q_PROPERTY(QString      extension           READ extension   WRITE setExtension NOTIFY extensionChanged)
     Q_PROPERTY(ImageFormat  format              READ format                         NOTIFY extensionChanged)
-    Q_PROPERTY(QString      fileName            READ fileName)
+    Q_PROPERTY(QString      fileName            READ fileName                       CONSTANT)
 
 public:
     enum ImageFormat { UnknownFormat, GifFormat, JpegFormat, PngFormat };
@@ -61,6 +62,17 @@ public:
     QString fileName() const;
 
     ImageFormat format() const;
+    
+signals:
+    void available();
+    void receivedChanged();
+    void totalChanged();
+    void downloadingChanged();
+    void extensionChanged();
+
+    void savingError();
+    void fileSaved();
+
 public slots:
     void getInfo();
     void download();
@@ -74,21 +86,12 @@ private slots:
     void _printError(QNetworkReply::NetworkError code);
     void _printErrors(const QList<QSslError>& errors);
 
-signals:
-    void available();
-    void receivedChanged();
-    void totalChanged();
-    void downloadingChanged();
-    void extensionChanged();
-
-    void savingError();
-    void fileSaved();
-
 private:
-    CacheManager*  _man;
-    QNetworkReply* _headReply;
-    QNetworkReply* _reply;
-    QByteArray     _data;
+    CacheManager*        _man;
+    QNetworkReply*       _headReply;
+    QNetworkReply*       _reply;
+    QByteArray           _data;
+    QFutureWatcher<void> _saveWatcher;
 
     ImageFormat _format;
 

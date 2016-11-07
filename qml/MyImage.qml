@@ -28,12 +28,24 @@ Loader {
     asynchronous: true
     property string url: ''
     property string extension: ''
-    property color backgroundColor: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
+    property alias backgroundColor: back.color
     property bool savable: false
     property bool acceptClick: true
+    property alias popBody: pop.body
+    property CachedImage cachedImage: Cache.image()
     signal available
     signal clicked
-    property Pane popBody
+    Component.onCompleted: {
+        if (cachedImage.available)
+            showImage();
+        else if ((width > 0 && width < 12 * mm)
+                || (height > 0 && height < 12 * mm)) {
+            cachedImage.download();
+        }
+    }
+    Component.onDestruction: {
+        image.sourceComponent = undefined;
+    }
     onUrlChanged: {
         cachedImage = Cache.image(image.url);
 
@@ -48,7 +60,6 @@ Loader {
     onLoaded: {
         item.source = cachedImage.source
     }
-    property CachedImage cachedImage: Cache.image()
     function showImage() {
         back.visible = false;
         image.sourceComponent = cachedImage.format == CachedImage.GifFormat
@@ -66,17 +77,6 @@ Loader {
         onAvailable: {
             showImage();
         }
-    }
-    Component.onCompleted: {
-        if (cachedImage.available)
-            showImage();
-        else if ((width > 0 && width < 12 * mm)
-                || (height > 0 && height < 12 * mm)) {
-            cachedImage.download();
-        }
-    }
-    Component.onDestruction: {
-        image.sourceComponent = undefined;
     }
     Component {
         id: animatedImage
@@ -97,7 +97,7 @@ Loader {
         }
     }
     Poppable {
-        body: popBody
+        id: pop
         propagateComposedEvents: !acceptClick
         onClicked: {
             mouse.accepted = acceptClick;
@@ -105,20 +105,21 @@ Loader {
                 image.clicked();
         }
         onPressAndHold: {
-            if (image.savable && !back.visible)
+            if (image.savable && cachedImage.available)
                 window.saveImage(cachedImage);
         }
     }
     Rectangle {
         id: back
         anchors.fill: parent
-        color: image.backgroundColor
+        color: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
         Loader {
             active: image.url && !cachedImage.available && back.width > 12 * mm && back.height > 12 * mm
             anchors {
                 verticalCenter: parent.verticalCenter
                 horizontalCenter: parent.horizontalCenter
                 bottomMargin: 1.5 * mm
+                alignWhenCentered: false
             }
             sourceComponent: Rectangle {
                 id: downloadButton
