@@ -27,6 +27,7 @@
 #include "Conversation.h"
 
 class Author;
+class Flow;
 
 
 
@@ -126,6 +127,7 @@ private:
     Relationship    _myRelation;
     Relationship    _hisRelation;
     Author*         _author;
+    Flow*           _flow;
     ChatPtr         _chat;
 
     QPointer<ApiRequest> _relationRequest;

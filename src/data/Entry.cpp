@@ -475,6 +475,13 @@ void Entry::_deleteEntry(QJsonObject data)
 
 
 
+bool Entry::isVotable() const
+{
+    return _isVotable;
+}
+
+
+
 bool Entry::isFixed() const
 {
     return _isFixed;

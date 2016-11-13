@@ -415,7 +415,7 @@ void Trainer::_addEntriesToLoad()
     if (_trainingEntriesCount == 0)
         _finishTraining();
 
-    emit entriesCountChanged();
+    Q_TEST(QMetaObject::invokeMethod(this, "entriesCountChanged", Qt::QueuedConnection));
 
     _loadAfter = 0;
 }

@@ -323,6 +323,46 @@ void Settings::setAutoloadImages(bool load)
 
 
 
+bool Settings::loadImagesOverWifi() const
+{
+    return _settings.value("autoload_images_over_wifi", autoloadImages()).toBool();
+}
+
+
+
+void Settings::setLoadImagesOverWifi(bool load)
+{
+    if (load == loadImagesOverWifi())
+        return;
+
+    _settings.setValue("autoload_images_over_wifi", load);
+
+    emit loadImagesOverWifiChanged(load);
+}
+
+
+
+int Settings::maxLoadImageSize() const
+{
+    int def = autoloadImages() ? -1 : 0;
+    
+    return _settings.value("autoload_images_max_size", def).toInt();
+}
+
+
+
+void Settings::setMaxLoadImageSize(int size)
+{
+    if (size == maxLoadImageSize())
+        return;
+        
+    _settings.setValue("autoload_images_max_size", size);
+
+    emit maxLoadImageSizeChanged(size);
+}
+
+
+
 bool Settings::hideShortPosts() const
 {
     return _settings.value("hide_short_posts").toBool();

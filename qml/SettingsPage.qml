@@ -39,7 +39,6 @@ Pane {
         height: contentHeight > parent.height ? parent.height : contentHeight
         contentWidth: parent.width
         contentHeight: column.height
-//        interactive: back.x == 0
         Poppable {
             body: back
         }
@@ -49,14 +48,15 @@ Pane {
             spacing: 1.5 * mm
             padding: 1.5 * mm
             Component.onCompleted: {
-                imagesBox.checked = Settings.autoloadImages;
-                shortBox.checked  = Settings.hideShortPosts;
-                nbcBox.checked    = Settings.hideNegativeRated;
-                darkBox.checked   = Settings.darkTheme;
-                notiBox.checked   = Settings.systemNotifications
+                shortBox.checked      = Settings.hideShortPosts;
+                nbcBox.checked        = Settings.hideNegativeRated;
+                darkBox.checked       = Settings.darkTheme;
+                notiBox.checked       = Settings.systemNotifications;
+                imageSlider.setSize(Settings.maxLoadImageSize);
+                imageWifiBox.checked  = Settings.loadImagesOverWifi;
             }
             ThemedText {
-                text: 'Настройки'
+                text: 'Основные'
                 width: parent.width - parent.padding * 2
                 font.pointSize: window.fontBigger
                 horizontalAlignment: Text.AlignHCenter
@@ -81,10 +81,42 @@ Pane {
                 text: 'Системные уведомления'
                 onCheckedChanged: { Settings.systemNotifications = checked; }
             }
+            MenuSeparator {
+                width: implicitWidth - parent.padding * 2
+            }
+            ThemedText {
+                text: 'Изображения'
+                width: parent.width - parent.padding * 2
+                font.pointSize: window.fontBigger
+                horizontalAlignment: Text.AlignHCenter
+            }
+            ThemedText {
+                id: imageText
+                width: parent.width - parent.padding * 2
+                text: imageSlider.position < 1 
+                    ? imageSlider.position > 0
+                    ? 'Загружать до ' + imageSlider.size + ' КБ'
+                    : 'Не загружать изображения'
+                    : 'Загружать все изображения'
+            }
+            Q.Slider {
+                id: imageSlider
+                width: parent.width - parent.padding * 2
+                snapMode: Q.Slider.SnapAlways
+                onValueChanged: { Settings.maxLoadImageSize = value < 1 ? size : -1; }
+                readonly property int size: Math.pow(position, 2) * 10000
+                function setSize(v) {
+                    if (v < 0)
+                        value = 1;
+                    else
+                        value = Math.sqrt(v / 10000);
+                }
+            }
             ThemedCheckBox {
-                id: imagesBox
-                text: 'Загружать изображения'
-                onCheckedChanged: { Settings.autoloadImages = checked; }
+                id: imageWifiBox
+                text: 'Загружать все через Wi-Fi'
+                visible: imageSlider.value < 1
+                onCheckedChanged: { Settings.loadImagesOverWifi = checked; }
             }
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter

@@ -19,7 +19,6 @@
  */
 
 #include <QGuiApplication>
-#include <QQmlApplicationEngine>
 
 #include "tasty.h"
 #include "pusherclient.h"

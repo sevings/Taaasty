@@ -322,10 +322,12 @@ void Tasty::_init()
 
     auto cache = CacheManager::instance(_manager);
     cache->setMaxWidth(_settings->maxImageWidth());
-    cache->setAutoload(_settings->autoloadImages());
+    cache->setAutoloadOverWifi(_settings->loadImagesOverWifi());
+    cache->setMaxLoadSize(_settings->maxLoadImageSize());
     root->setContextProperty("Cache", cache);
 
-    Q_TEST(QObject::connect(_settings, SIGNAL(autoloadImagesChanged(bool)), cache, SLOT(setAutoload(bool))));
+    Q_TEST(QObject::connect(_settings, SIGNAL(loadImagesOverWifiChanged(bool)), cache, SLOT(setAutoloadOverWifi(bool))));
+    Q_TEST(QObject::connect(_settings, SIGNAL(maxLoadImageSizeChanged(int)),    cache, SLOT(setMaxLoadSize(int))));
 
     auto bayes = Bayes::instance();
     root->setContextProperty("Bayes", bayes);

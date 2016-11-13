@@ -180,7 +180,11 @@ void FlowsModel::_addItems(QJsonObject data)
     beginInsertRows(QModelIndex(), _flows.size(), _flows.size() + flows.size() - 1);
 
     foreach (auto flowData, flows)
-        _flows << new Flow(flowData.toObject().value("flow").toObject(), this);
+    {
+        auto flow = new Flow(this);
+        flow->init(flowData.toObject().value("flow").toObject());
+        _flows << flow;
+    }
 
     endInsertRows();
 }

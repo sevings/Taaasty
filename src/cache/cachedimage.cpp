@@ -50,8 +50,9 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
     , _available(false)
 {
     Q_ASSERT(_man);
-    
+
     Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, &CachedImage::downloadingChanged));
+    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, &CachedImage::available));
     
     if (!_man || _url.isEmpty())
         return;
@@ -63,6 +64,7 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
     if (_exists())
     {
         _available = true;
+        emit available();
         return;
     }
 
@@ -176,7 +178,6 @@ void CachedImage::download()
     if (_headReply)
     {
         _headReply->abort();
-        _headReply->deleteLater();
         _headReply = nullptr;
     }
 
@@ -274,6 +275,9 @@ void CachedImage::_setProperties()
 
     _headReply->deleteLater();
     _headReply = nullptr;
+    
+    if (_man->autoload(_kbytesTotal))
+        download();
 }
 
 
@@ -284,10 +288,12 @@ void CachedImage::_saveData()
     if (!_reply)
         return;
 
-    if (_reply->error() != QNetworkReply::NoError) {
+    if (_reply->error() != QNetworkReply::NoError ) {
 
         _reply->deleteLater();
         _reply = nullptr;
+
+        emit downloadingChanged();
 
         return;
     }
@@ -309,7 +315,7 @@ void CachedImage::_saveData()
 
 void CachedImage::_changeBytes(qint64 bytesReceived, qint64 bytesTotal)
 {
-    if (_reply->error() != QNetworkReply::NoError ) 
+    if (_reply->error() != QNetworkReply::NoError)
         return;
 
     _kbytesReceived = bytesReceived / 1024;
@@ -337,7 +343,10 @@ void CachedImage::_printErrors(const QList<QSslError>& errors)
     foreach(auto e, errors)
         qDebug() << e.errorString();
 
-    (_headReply ? _headReply : _reply)->ignoreSslErrors();
+    auto reply = qobject_cast<QNetworkReply*>(sender());
+    Q_ASSERT(reply);
+    if (reply)
+        reply->ignoreSslErrors();
 }
 
 
@@ -411,5 +420,4 @@ void CachedImage::_saveFile()
     _reply = nullptr;
 
     _available = true;
-    emit available();
 }

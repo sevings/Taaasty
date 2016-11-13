@@ -41,6 +41,9 @@ class Settings : public QObject
 
     Q_PROPERTY(int      maxImageWidth       READ maxImageWidth          WRITE setMaxImageWidth          NOTIFY maxImageWidthChanged)
     Q_PROPERTY(bool     autoloadImages      READ autoloadImages         WRITE setAutoloadImages         NOTIFY autoloadImagesChanged)
+    Q_PROPERTY(bool     loadImagesOverWifi  READ loadImagesOverWifi     WRITE setLoadImagesOverWifi     NOTIFY loadImagesOverWifiChanged)
+    Q_PROPERTY(int      maxLoadImageSize    READ maxLoadImageSize       WRITE setMaxLoadImageSize       NOTIFY maxLoadImageSizeChanged)
+    
     Q_PROPERTY(bool     hideShortPosts      READ hideShortPosts         WRITE setHideShortPosts         NOTIFY hideShortPostsChanged)
     Q_PROPERTY(bool     hideNegativeRated   READ hideNegativeRated      WRITE setHideNegativeRated      NOTIFY hideNegativeRatedChanged)
     Q_PROPERTY(bool     darkTheme           READ darkTheme              WRITE setDarkTheme              NOTIFY darkThemeChanged)
@@ -96,6 +99,12 @@ public:
     bool autoloadImages() const;
     void setAutoloadImages(bool load);
 
+    bool loadImagesOverWifi() const;
+    void setLoadImagesOverWifi(bool load);
+    
+    int maxLoadImageSize() const;
+    void setMaxLoadImageSize(int size);
+    
     bool hideShortPosts() const;
     void setHideShortPosts(bool hide);
 
@@ -131,6 +140,9 @@ signals:
 
     void maxImageWidthChanged();
     void autoloadImagesChanged(bool);
+    void loadImagesOverWifiChanged(bool);
+    void maxLoadImageSizeChanged(int);
+    
     void hideShortPostsChanged();
     void hideNegativeRatedChanged();
     void darkThemeChanged();

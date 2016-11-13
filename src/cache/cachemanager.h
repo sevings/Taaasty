@@ -45,10 +45,15 @@ public:
     int  maxWidth() const;
     void setMaxWidth(int maxWidth);
 
-    bool autoload() const;
-
+    bool autoloadOverWifi() const;
+    int  maxLoadSize() const;
+    
+    bool autoload(int size = 0) const;
+    
 public slots:
-    void setAutoload(bool autoload);
+    void setAutoloadOverWifi(bool load);
+    void setMaxLoadSize(int size);
+    
     void clearUnusedImages();
 
 private:
@@ -61,7 +66,8 @@ private:
     QString                         _path;
     
     int                             _maxWidth;
-    bool                            _autoload;
+    int                             _maxLoadSize;
+    bool                            _autoloadOverWifi;
     
     void _clearUnusedImages();    
 };

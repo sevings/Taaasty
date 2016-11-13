@@ -37,14 +37,6 @@ Flow::Flow(QObject *parent)
 
 
 
-Flow::Flow(const QJsonObject data, QObject* parent)
-    : TastyData(parent)
-{
-    _init(data);
-}
-
-
-
 void Flow::setId(const int id)
 {
     if (id <= 0 || id == _id)
@@ -61,7 +53,7 @@ void Flow::setId(const int id)
 
 
 
-void Flow::_init(const QJsonObject data)
+void Flow::init(const QJsonObject data)
 {
     _id             = data.value("id").toInt();
     _name           = data.value("name").toString();

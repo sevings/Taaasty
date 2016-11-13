@@ -43,8 +43,8 @@ Rating::Rating(QObject* parent)
     , _isBayesVoted(false)
     , _isVotedAgainst(false)
     , _parent(qobject_cast<Entry*>(parent))
-{
-
+{    
+    Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished, this, &Rating::bayesChanged));
 }
 
 
@@ -56,6 +56,8 @@ Rating::Rating(const QJsonObject data, Entry* parent)
     , _isVotedAgainst(false)
     , _parent(parent)
 {
+    Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished, this, &Rating::bayesChanged));
+
     init(data);
 }
 
@@ -176,7 +178,8 @@ void Rating::init(const QJsonObject data)
     _votes      = data.value("votes").toInt();
     _rating     = data.value("rating").toInt();
     _isVoted    = data.value("is_voted").toBool();
-    _isVotable  = data.value("is_voteable").toBool() && (!_parent || (_parent->type() != "anonymous"
+    _isVotable  = data.value("is_voteable").toBool() && (!_parent || (_parent->isVotable() 
+            && _parent->type() != "anonymous"
             && _parent->author()->id() != Tasty::instance()->settings()->userId()));
 
     emit dataChanged();
@@ -187,8 +190,6 @@ void Rating::init(const QJsonObject data)
 void Rating::_changeBayesRating(Bayes::Type type)
 {
     _bayesRating = Bayes::instance()->voteForEntry(_parent, type);
-
-    emit bayesChanged();
 }
 
 

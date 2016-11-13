@@ -80,13 +80,13 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(QString     createdAt      MEMBER _createdAt         NOTIFY updated)
     Q_PROPERTY(QString     url            MEMBER _url               NOTIFY updated)
     Q_PROPERTY(QString     type           MEMBER _type              NOTIFY updated)
-    Q_PROPERTY(bool        isVotable      MEMBER _isVotable         NOTIFY updated)
+    Q_PROPERTY(bool        isVotable      READ   isVotable          NOTIFY updated)
     Q_PROPERTY(bool        isWatchable    MEMBER _isWatchable       NOTIFY updated)
     Q_PROPERTY(bool        isWatched      MEMBER _isWatched         NOTIFY watchedChanged)
     Q_PROPERTY(bool        isFavoritable  MEMBER _isFavoritable     NOTIFY updated)
     Q_PROPERTY(bool        isFavorited    MEMBER _isFavorited       NOTIFY favoritedChanged)
     Q_PROPERTY(bool        isPrivate      MEMBER _isPrivate         NOTIFY updated)
-    Q_PROPERTY(bool        isFixed        MEMBER _isFixed           NOTIFY updated)
+    Q_PROPERTY(bool        isFixed        READ   isFixed            NOTIFY updated)
     Q_PROPERTY(bool        isDeletable    MEMBER _isDeletable       NOTIFY updated)
     Q_PROPERTY(bool        isEditable     MEMBER _isEditable        NOTIFY updated)
     Q_PROPERTY(Tlog*       tlog           READ tlog                 NOTIFY updated)
@@ -124,8 +124,9 @@ public:
 
     Conversation* chat();
 
+    bool isVotable() const;
     bool isFixed() const;
-    int chatId() const;
+    int  chatId() const;
 
 public slots:
     void init(const QJsonObject data);

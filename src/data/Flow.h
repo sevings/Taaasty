@@ -44,7 +44,6 @@ class Flow : public TastyData
 
 public:
     explicit Flow(QObject* parent = nullptr);
-    Flow(const QJsonObject data, QObject* parent = nullptr);
 
     Q_INVOKABLE int  flowId() const { return _id; } //! \todo remove
     Q_INVOKABLE void setId(const int id);
@@ -52,8 +51,8 @@ public:
 signals:
     void updated();
 
-private slots:
-    void _init(const QJsonObject data);
+public slots:
+    void init(const QJsonObject data);
 
 private:
     QString _name;

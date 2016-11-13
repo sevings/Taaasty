@@ -29,6 +29,7 @@
 #include "../models/chatsmodel.h"
 
 #include "Author.h"
+#include "Flow.h"
 
 
 
@@ -37,6 +38,7 @@ Tlog::Tlog(QObject* parent)
     , _myRelation(Undefined)
     , _hisRelation(Undefined)
     , _author(new Author(this))
+    , _flow(nullptr)
 {
 
 }
@@ -46,6 +48,7 @@ Tlog::Tlog(QObject* parent)
 Tlog::Tlog(const QJsonObject data, QObject *parent)
     : TastyData(parent)
     , _author(nullptr)
+    , _flow(nullptr)
 {
     init(data);
 }
@@ -169,6 +172,14 @@ void Tlog::init(const QJsonObject data)
     else
         _author = new Author(authorData, this);
 
+    auto myRelationObj = data.value("my_relationship_object").toObject();
+    if (myRelationObj.contains("flow"))
+    {
+        if (!_flow)
+            _flow = new Flow(this);
+        _flow->init(myRelationObj.value("flow").toObject());
+    }
+    
     if (_chat)
         _chat->setRecipientId(_id);
 

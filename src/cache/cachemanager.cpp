@@ -21,6 +21,7 @@
 #include "cachemanager.h"
 
 #include <QNetworkAccessManager>
+#include <QNetworkConfiguration>
 #include <QStandardPaths>
 #include <QDir>
 #include <QFile>
@@ -45,20 +46,14 @@ CacheManager *CacheManager::instance(QNetworkAccessManager* web)
 
 CacheManager::CacheManager(QNetworkAccessManager* web)
     : _maxWidth(0)
-    , _autoload(true)
+    , _maxLoadSize(-1)
+    , _autoloadOverWifi(true)
 {
     qDebug() << "CacheManager";
 
     _web = web ? web : new QNetworkAccessManager(this);
 
     Q_ASSERT(QSslSocket::supportsSsl());
-}
-
-
-
-QString CacheManager::path() const
-{
-    return _path;
 }
 
 
@@ -70,24 +65,9 @@ QNetworkAccessManager* CacheManager::web() const
 
 
 
-bool CacheManager::autoload() const
+QString CacheManager::path() const
 {
-    return _autoload;
-}
-
-
-
-void CacheManager::setAutoload(bool autoload)
-{
-    _autoload = autoload;
-}
-
-
-
-void CacheManager::clearUnusedImages()
-{
-    auto future = QtConcurrent::run(this, &CacheManager::_clearUnusedImages);
-    _watcher.setFuture(future);
+    return _path;
 }
 
 
@@ -107,12 +87,58 @@ void CacheManager::setMaxWidth(int maxWidth)
 
 
 
+bool CacheManager::autoloadOverWifi() const
+{
+    return _autoloadOverWifi;
+}
+
+
+
+int CacheManager::maxLoadSize() const
+{
+    return _maxLoadSize;
+}
+
+
+
+bool CacheManager::autoload(int size) const
+{
+    return _maxLoadSize < 0
+        || (size <= _maxLoadSize && size > 0)
+        || (_autoloadOverWifi && _web->activeConfiguration().bearerType()
+                                    == QNetworkConfiguration::BearerWLAN);
+}
+
+
+
+void CacheManager::setAutoloadOverWifi(bool autoload)
+{
+    _autoloadOverWifi = autoload;
+}
+
+
+
+void CacheManager::setMaxLoadSize(int size)
+{
+    _maxLoadSize = size;
+}
+
+
+
+void CacheManager::clearUnusedImages()
+{
+    auto future = QtConcurrent::run(this, &CacheManager::_clearUnusedImages);
+    _watcher.setFuture(future);
+}
+
+
+
 CachedImage* CacheManager::image(QString url)
 {
     if (_images.contains(url))
     {
         auto image = _images.value(url);
-        if (_autoload && !image->isAvailable())
+        if (!image->isAvailable() && autoload(image->total()))
             image->download();
         return image;
     }
@@ -142,7 +168,7 @@ void CacheManager::_clearUnusedImages()
         images << image->sourceFileName();
 
     QDir dir(_path);
-    auto files = dir.entryList(QDir::Files, QDir::Size);
+    auto files = dir.entryList(QDir::Files | QDir::NoDotAndDotDot, QDir::Size);
     foreach (auto file, files)
     {
         if (images.contains(file))
