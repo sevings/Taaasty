@@ -38,6 +38,7 @@ TextArea {
     activeFocusOnPress: true
     persistentSelection: true
     selectByMouse: false
+    inputMethodHints: Settings.predictiveText ? Qt.ImhNone : Qt.ImhNoPredictiveText
     function addGreeting(slug) {
         insert(0, '@' + slug + ', ');
         forceActiveFocus();

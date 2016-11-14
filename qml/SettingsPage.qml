@@ -52,6 +52,7 @@ Pane {
                 nbcBox.checked        = Settings.hideNegativeRated;
                 darkBox.checked       = Settings.darkTheme;
                 notiBox.checked       = Settings.systemNotifications;
+                textBox.checked       = Settings.predictiveText;
                 imageSlider.setSize(Settings.maxLoadImageSize);
                 imageWifiBox.checked  = Settings.loadImagesOverWifi;
             }
@@ -81,8 +82,14 @@ Pane {
                 text: 'Системные уведомления'
                 onCheckedChanged: { Settings.systemNotifications = checked; }
             }
+            ThemedCheckBox {
+                id: textBox
+                text: 'Предиктивный ввод'
+                onCheckedChanged: { Settings.predictiveText = checked; }
+            }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2
+                height: 3 * mm
             }
             ThemedText {
                 text: 'Изображения'
@@ -94,15 +101,16 @@ Pane {
                 id: imageText
                 width: parent.width - parent.padding * 2
                 text: imageSlider.position < 1 
-                    ? imageSlider.position > 0
+                    ? imageSlider.size > 0
                     ? 'Загружать до ' + imageSlider.size + ' КБ'
-                    : 'Не загружать изображения'
-                    : 'Загружать все изображения'
+                    : 'Не загружать'
+                    : 'Загружать всегда'
             }
             Q.Slider {
                 id: imageSlider
                 width: parent.width - parent.padding * 2
                 snapMode: Q.Slider.SnapAlways
+                stepSize: 0.05
                 onValueChanged: { Settings.maxLoadImageSize = value < 1 ? size : -1; }
                 readonly property int size: Math.pow(position, 2) * 10000
                 function setSize(v) {
@@ -130,6 +138,7 @@ Pane {
             }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2
+                height: 3 * mm
             }
             ThemedText {
                 width: parent.width - parent.padding * 2
@@ -163,6 +172,7 @@ Pane {
             }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2
+                height: 3 * mm
             }
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter

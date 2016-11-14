@@ -439,6 +439,25 @@ void Settings::setSystemNotifications(bool enable)
 
 
 
+bool Settings::predictiveText() const
+{
+    return _settings.value("predictive_text", true).toBool();
+}
+
+
+
+void Settings::setPredictiveText(bool enable)
+{
+    if (enable == predictiveText())
+        return;
+
+    _settings.setValue("predictive_text", enable);
+
+    emit predictiveTextChanged();
+}
+
+
+
 QString Settings::lastTitle() const
 {
     return _settings.value("last_title").toString();

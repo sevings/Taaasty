@@ -48,6 +48,7 @@ class Settings : public QObject
     Q_PROPERTY(bool     hideNegativeRated   READ hideNegativeRated      WRITE setHideNegativeRated      NOTIFY hideNegativeRatedChanged)
     Q_PROPERTY(bool     darkTheme           READ darkTheme              WRITE setDarkTheme              NOTIFY darkThemeChanged)
     Q_PROPERTY(bool     systemNotifications READ systemNotifications    WRITE setSystemNotifications    NOTIFY systemNotificationsChanged)
+    Q_PROPERTY(bool     predictiveText      READ predictiveText         WRITE setPredictiveText         NOTIFY predictiveTextChanged)
 
     Q_PROPERTY(QString  lastTitle           READ lastTitle              WRITE setLastTitle              NOTIFY lastTitleChanged)
     Q_PROPERTY(QString  lastText            READ lastText               WRITE setLastText               NOTIFY lastTextChanged)
@@ -117,6 +118,9 @@ public:
     bool systemNotifications() const;
     void setSystemNotifications(bool enable);
 
+    bool predictiveText() const;
+    void setPredictiveText(bool enable);
+
     QString lastTitle() const;
     void setLastTitle(const QString title);
 
@@ -147,6 +151,7 @@ signals:
     void hideNegativeRatedChanged();
     void darkThemeChanged();
     void systemNotificationsChanged();
+    void predictiveTextChanged();
 
     void lastTitleChanged();
     void lastTextChanged();

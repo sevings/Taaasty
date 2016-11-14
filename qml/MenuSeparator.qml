@@ -21,9 +21,14 @@
 import QtQuick 2.7
 import QtQuick.Controls.Material 2.0
 
-Rectangle {
+Item {
     implicitWidth: parent.width - 3 * mm
     implicitHeight: 0.3 * mm
-    color: Material.primary
     anchors.horizontalCenter: parent.horizontalCenter
+    Rectangle {
+        color: Material.primary
+        width: parent.width
+        height: 0.3 * mm
+        anchors.verticalCenter: parent.verticalCenter
+    }
 }
