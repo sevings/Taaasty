@@ -176,10 +176,7 @@ void CachedImage::download()
     }
 
     if (_headReply)
-    {
         _headReply->abort();
-        _headReply = nullptr;
-    }
 
     _reply = _man->web()->get(QNetworkRequest(_url));
 
@@ -199,7 +196,6 @@ void CachedImage::abortDownload()
         return;
 
     _reply->abort();
-    _reply = nullptr;
 
     emit downloadingChanged();
 
@@ -256,15 +252,20 @@ void CachedImage::_setProperties()
     if (!_headReply)
         return;
 
+    if (_headReply->error() != QNetworkReply::NoError)
+    {
+        _headReply->deleteLater();
+        _headReply = nullptr;
+
+        return;
+    }
+
     auto mime = _headReply->header(QNetworkRequest::ContentTypeHeader).toString().split('/');
     if (mime.isEmpty())
         mime << "";
 
     if (!mime.first().isEmpty() && mime.first().toLower() != "image")
-    {
         qDebug() << "mime:" << mime.first() << "\nurl:" << _url;
-        return;
-    }
 
     setExtension(mime.last());
 
@@ -275,7 +276,7 @@ void CachedImage::_setProperties()
 
     _headReply->deleteLater();
     _headReply = nullptr;
-    
+
     if (_man->autoload(_kbytesTotal))
         download();
 }
@@ -288,8 +289,8 @@ void CachedImage::_saveData()
     if (!_reply)
         return;
 
-    if (_reply->error() != QNetworkReply::NoError ) {
-
+    if (_reply->error() != QNetworkReply::NoError )
+    {
         _reply->deleteLater();
         _reply = nullptr;
 
@@ -298,16 +299,17 @@ void CachedImage::_saveData()
         return;
     }
 
-    _data = _reply->readAll();
+    auto data = new QByteArray;
+    *data = _reply->readAll();
 
-    if (_data.startsWith((char)0x89))
+    if (data->startsWith((char)0x89))
         setExtension("png");
-    else if (_data.startsWith((char)0xFF))
+    else if (data->startsWith((char)0xFF))
         setExtension("jpeg");
-    else if (_data.startsWith((char)0x47))
+    else if (data->startsWith((char)0x47))
         setExtension("gif");
 
-    auto future = QtConcurrent::run(this, &CachedImage::_saveFile);
+    auto future = QtConcurrent::run(this, &CachedImage::_saveFile, data);
     _saveWatcher.setFuture(future);
 }
 
@@ -315,7 +317,7 @@ void CachedImage::_saveData()
 
 void CachedImage::_changeBytes(qint64 bytesReceived, qint64 bytesTotal)
 {
-    if (_reply->error() != QNetworkReply::NoError)
+    if (!_reply || _reply->error() != QNetworkReply::NoError)
         return;
 
     _kbytesReceived = bytesReceived / 1024;
@@ -329,8 +331,9 @@ void CachedImage::_changeBytes(qint64 bytesReceived, qint64 bytesTotal)
 
 void CachedImage::_printError(QNetworkReply::NetworkError code)
 {
-    auto reply = _headReply ? _headReply : _reply;
-    if (code != QNetworkReply::OperationCanceledError)
+    auto reply = qobject_cast<QNetworkReply*>(sender());
+    Q_ASSERT(reply);
+    if (reply && code != QNetworkReply::OperationCanceledError)
         qDebug() << "image web error" << code << reply->errorString()
                  << "\nhttp status: " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()
                  << "\ndata: " << reply->readAll();
@@ -390,7 +393,7 @@ QString CachedImage::_path() const
 
 
 
-void CachedImage::_saveFile()
+void CachedImage::_saveFile(QByteArray* data)
 {
     auto path = _path();
 
@@ -398,11 +401,11 @@ void CachedImage::_saveFile()
 
     if (_man->maxWidth() && _format != UnknownFormat && _format != GifFormat)
     {
-        auto pic = QImage::fromData(_data);
+        auto pic = QImage::fromData(*data);
         if (pic.width() > _man->maxWidth())
         {
             pic = pic.scaledToWidth(_man->maxWidth(), Qt::SmoothTransformation);
-            QBuffer buffer(&_data);
+            QBuffer buffer(data);
             buffer.open(QIODevice::WriteOnly | QIODevice::Truncate);
             pic.save(&buffer, _extension.toLatin1().data());
         }
@@ -410,10 +413,10 @@ void CachedImage::_saveFile()
 
     QFile file(path);
     file.open(QIODevice::WriteOnly);
-    file.write(_data);
+    file.write(*data);
     file.close();
 
-    _data.clear();
+    delete data;
 
     if (_reply)
         _reply->deleteLater();

@@ -87,10 +87,13 @@ private slots:
     void _printErrors(const QList<QSslError>& errors);
 
 private:
+    bool    _exists();
+    QString _path() const;
+    void    _saveFile(QByteArray* data);
+
     CacheManager*        _man;
     QNetworkReply*       _headReply;
     QNetworkReply*       _reply;
-    QByteArray           _data;
     QFutureWatcher<void> _saveWatcher;
 
     ImageFormat _format;
@@ -102,10 +105,6 @@ private:
     int     _kbytesReceived;
     int     _kbytesTotal;
     bool    _available;
-
-    bool _exists();
-    QString _path() const;
-    void _saveFile();
 };
 
 #endif // CACHEDIMAGE_H
