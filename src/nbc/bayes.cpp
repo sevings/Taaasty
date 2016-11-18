@@ -85,31 +85,24 @@ int Bayes::classify(const EntryBase* entry, const int minLength) const
     if (length <= 0)
         return length;
 
-    float wordValues[Unclassified];
-//    float featureValues[Unclassified];
+    double wordValues[Unclassified];
     for (int type = 0; type < Unclassified; type++)
     {
-        auto k = (_total[Water] + _total[Fire]) / (float) _total[type];
+        auto k = (_total[Water] + _total[Fire]) / (double) _total[type];
 
         wordValues[type] = 0;
-//        featureValues[type] = 0;
         foreach (auto word, features.keys())
         {
             int cnt = _wordCounts[type][word].count;
-            if (cnt <= 0)
+            if (cnt == 0)
                 continue;
 
             auto value = qLn(cnt * k);
-//            if (word.startsWith('.'))
-//                featureValues[type] += value;
-//            else
-                wordValues[type] += value;
-
+            wordValues[type] += value;
         }
     }
 
     auto result = (wordValues[Fire] - wordValues[Water]) / length * 50;
-//    result += (featureValues[Fire] - featureValues[Water]) / 5;
     return qRound(result);
 }
 
