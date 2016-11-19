@@ -47,7 +47,7 @@ Pane {
         if (!scrollToBottom && !scrollToFirst)
             return;
 
-        if (fullEntry.count <= 0) {
+        if (fullEntry.count == 0) {
             //fullEntry.positionViewAtEnd();
             fullEntry.contentY = fullEntry.contentHeight;
             fullEntry.returnToBounds();
@@ -387,8 +387,12 @@ Pane {
             id: commentEditor
             popBody: back
             visible: Tasty.isAuthorized
-            height: visible ? implicitHeight : 1.5 * mm
+            height: visible ? (fullEntry.count ? implicitHeight : 18 * mm) : 1.5 * mm
             z: fullEntry.count + 10
+            onHeightChanged: {
+                if (commentEditor.focus)
+                    fullEntry.positionViewAtEnd();
+            }
             onSent: {
                 entry.addComment(commentEditor.message);
             }

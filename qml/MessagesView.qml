@@ -53,6 +53,7 @@ Pane {
         body: back
     }
     Splash {
+        id: splash
         visible: !listView.visible || !listView.count
         running: !listView.visible && (chat.loading || chat.messages.loading
                                        || (!listView.count && chat.messages.checking))
@@ -219,6 +220,10 @@ Pane {
             height: typedText.height + messageEditor.height + 1.5 * mm
             width: window.width
             z: listView.count + 10
+            onHeightChanged: {
+                if (messageEditor.focus)
+                    listView.positionViewAtEnd();
+            }
             ThemedText {
                 id: typedText
                 anchors {
@@ -229,6 +234,11 @@ Pane {
                 text: chat.typedUsers
                 font.pointSize: window.fontSmallest
                 color: window.secondaryTextColor
+            }
+            Rectangle {
+                anchors.fill: messageEditor
+                visible: splash.visible
+                color: back.color
             }
             MessageEditor {
                 id: messageEditor

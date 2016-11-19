@@ -26,7 +26,7 @@ import org.binque.taaasty 1.0
 FocusScope {
     id: editor
     implicitWidth: window.width
-    implicitHeight: 18 * mm
+    implicitHeight: Math.min(flickable.contentHeight + 3 * mm, window.height * 2 / 3)
     property alias popBody: input.popBody
     property alias message: input.text
     property bool uploading: false
@@ -62,7 +62,7 @@ FocusScope {
         interactive: parent.x <= 0
         boundsBehavior: Flickable.DragOverBounds
         contentWidth: width
-        contentHeight: Math.max(input.implicitHeight, height)
+        contentHeight: input.implicitHeight
         TextEditor {
             id: input
             anchors.fill: parent
