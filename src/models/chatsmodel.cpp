@@ -152,6 +152,9 @@ void ChatsModel::setMode(ChatsModel::Mode mode)
 
 void ChatsModel::addChat(EntryPtr entry)
 {
+    if (!entry)
+        return;
+
     auto chat = entry->chat()->sharedFromThis();
     addChat(chat);
 }
@@ -160,9 +163,14 @@ void ChatsModel::addChat(EntryPtr entry)
 
 void ChatsModel::addChat(ChatPtr chat)
 {
+    if (!chat)
+        return;
+
     if (chat->id() <= 0)
     {
-        Q_TEST(connect(chat.data(), SIGNAL(loadingChanged()), this, SLOT(_addChat())));
+        Q_ASSERT(chat->isLoading());
+
+        Q_TEST(connect(chat.data(), &Conversation::updated, this, &ChatsModel::_addChat));
         return;
     }
 
@@ -197,8 +205,6 @@ void ChatsModel::bubbleChat(int id)
 
     if (i >= _chats.size())
         return;
-
-//    _chats.at(i)->update(); //! \todo why?
 
     int unread = 0;
     for (; unread < _chats.size(); unread++)
@@ -438,10 +444,10 @@ void ChatsModel::_checkUnread(int actual)
 void ChatsModel::_addChat()
 {
     auto chat = qobject_cast<Conversation*>(sender());
-    if (!chat)
+    if (!chat || chat->id() <= 0)
         return;
 
-    disconnect(chat, SIGNAL(loadingChanged()), this, SLOT(_addChat()));
+    disconnect(chat, &Conversation::updated, this, &ChatsModel::_addChat);
 
     addChat(chat->sharedFromThis());
 }

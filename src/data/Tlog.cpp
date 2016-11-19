@@ -70,9 +70,10 @@ Conversation* Tlog::chat()
     _chat = ChatPtr::create(nullptr);
 
     if (_id > 0)
+    {
         _chat->setRecipientId(_id);
-
-    ChatsModel::instance()->addChat(_chat);
+//        ChatsModel::instance()->addChat(_chat);
+    }
 
     return _chat.data();
 }

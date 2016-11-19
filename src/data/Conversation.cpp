@@ -394,14 +394,14 @@ void Conversation::sendMessage(const QString text)
     _sendRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                   QNetworkAccessManager::PostOperation, data);
 
-    Q_TEST(connect(_sendRequest, SIGNAL(success(const QJsonObject)), this, SIGNAL(messageSent(const QJsonObject))));
-    Q_TEST(connect(_sendRequest, SIGNAL(error(QNetworkReply::NetworkError)),   this,   SIGNAL(sendingMessageError())));
-    Q_TEST(connect(_sendRequest, SIGNAL(error(const int, const QString)),      this,   SIGNAL(sendingMessageError())));
+    Q_TEST(connect(_sendRequest, SIGNAL(success(const QJsonObject)),           this, SIGNAL(messageSent(const QJsonObject))));
+    Q_TEST(connect(_sendRequest, SIGNAL(error(QNetworkReply::NetworkError)),   this, SIGNAL(sendingMessageError())));
+    Q_TEST(connect(_sendRequest, SIGNAL(error(const int, const QString)),      this, SIGNAL(sendingMessageError())));
 
     if (_unreadCount > 0)
         Q_TEST(connect(_sendRequest, SIGNAL(success(QJsonObject)),   this, SLOT(readAll())));
 
-    ChatsModel::instance()->bubbleChat(_id);
+    ChatsModel::instance()->addChat(sharedFromThis());
 }
 
 

@@ -84,7 +84,8 @@ Q.Drawer {
                 id: pageProfile
                 visible: !window.chatsShows
                          && tlog && tlog.tlogId > 0
-                         && tlog.type !== 'anonymous'
+                         && (!page.isFullEntryView
+                             || page.entry.type !== 'anonymous')
                 height: 6 * mm
                 width: parent.width
                 property Tlog tlog: page.isFullEntryView
