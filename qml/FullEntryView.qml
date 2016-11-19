@@ -110,11 +110,6 @@ Pane {
             width: window.width
             readonly property int textHeight: nameText.height + commentText.height - 1.5 * mm
             height: (textHeight > commentAvatar.height ? textHeight : commentAvatar.height) + 4 * mm
-//            color: pop.pressed ? Material.primary : 'transparent'
-            Component.onCompleted: {
-                if (entry.chat)
-                    entry.chat.readAll();
-            }
             Poppable {
                 id: pop
                 body: back
