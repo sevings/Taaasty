@@ -79,7 +79,7 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated) //! \todo remove 
     Q_PROPERTY(QString     createdAt      MEMBER _createdAt         NOTIFY updated)
     Q_PROPERTY(QString     url            MEMBER _url               NOTIFY updated)
-    Q_PROPERTY(QString     type           MEMBER _type              NOTIFY updated)
+    Q_PROPERTY(QString     type           MEMBER _type              NOTIFY updated) //! \todo enum
     Q_PROPERTY(bool        isVotable      READ   isVotable          NOTIFY updated)
     Q_PROPERTY(bool        isWatchable    MEMBER _isWatchable       NOTIFY updated)
     Q_PROPERTY(bool        isWatched      MEMBER _isWatched         NOTIFY watchedChanged)

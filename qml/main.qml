@@ -46,7 +46,6 @@ ApplicationWindow {
     property int fontSmallest: 14
     readonly property bool notifsShows: notifsView && notifsView.item && notifsView.item.showing
     readonly property bool chatsShows: chatsView && chatsView.item && chatsView.item.showing
-    readonly property int anonymousId: 4409
     readonly property int stackSize: stack ? stack.depth : 0
     readonly property int footerY: footer.y
     readonly property bool canShowPageMenu: pageMenu && !pageMenu.autoclose

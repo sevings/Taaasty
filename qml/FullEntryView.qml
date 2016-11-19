@@ -32,7 +32,7 @@ Pane {
     }
     readonly property Tlog tlog: entry.tlog
     property CommentsModel commentsModel: entry.comments
-    property bool showProfiles: tlog.tlogId !== window.anonymousId
+    property bool showProfiles: entry.type !== 'anonymous'
     property bool scrollToBottom: false
     property bool scrollToFirst: false
     readonly property bool isFullEntryView: true
@@ -130,9 +130,9 @@ Pane {
                 }
                 user: comment.user
                 popBody: back
+                acceptClick: back.showProfiles
                 onClicked: {
-                    if (back.showProfiles)
-                        window.pushProfileById(comment.user.id);
+                    window.pushProfileById(comment.user.id);
                 }
             }
             Q.Label {

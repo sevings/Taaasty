@@ -60,7 +60,7 @@ Q.Drawer {
                          && page.entry.author
                          && page.entry.author.id > 0
                          && page.tlog.tlogId !== page.entry.author.id
-                         && page.entry.author.id !== window.anonymousId
+                         && page.entry.type !== 'anonymous'
                 height: 6 * mm
                 width: parent.width
                 SmallAvatar {
@@ -84,7 +84,7 @@ Q.Drawer {
                 id: pageProfile
                 visible: !window.chatsShows
                          && tlog && tlog.tlogId > 0
-                         && tlog.tlogId !== window.anonymousId
+                         && tlog.type !== 'anonymous'
                 height: 6 * mm
                 width: parent.width
                 property Tlog tlog: page.isFullEntryView
