@@ -35,12 +35,12 @@ class FeedModel : public TastyListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(Mode     mode        READ mode       WRITE setMode)
-    Q_PROPERTY(int      tlog        READ tlog       WRITE setTlog)
-    Q_PROPERTY(QString  slug        READ slug       WRITE setSlug)
-    Q_PROPERTY(int      minRating   READ minRating  WRITE setMinRating)
-    Q_PROPERTY(QString  query       READ query      WRITE setQuery  NOTIFY queryChanged)
-    Q_PROPERTY(QString  tag         READ tag        WRITE setTag    NOTIFY tagChanged)
+    Q_PROPERTY(Mode     mode        READ mode       WRITE setMode       NOTIFY modeChanged)
+    Q_PROPERTY(int      tlog        READ tlog       WRITE setTlog       NOTIFY tlogChanged)
+    Q_PROPERTY(QString  slug        READ slug       WRITE setSlug       NOTIFY slugChanged)
+    Q_PROPERTY(int      minRating   READ minRating  WRITE setMinRating  NOTIFY minRatingChanged )
+    Q_PROPERTY(QString  query       READ query      WRITE setQuery      NOTIFY queryChanged)
+    Q_PROPERTY(QString  tag         READ tag        WRITE setTag        NOTIFY tagChanged)
 
 public:
     enum Mode {
@@ -102,6 +102,10 @@ public:
     Q_INVOKABLE void setSinceDate(const QString date);
 
 signals:
+    void modeChanged();
+    void tlogChanged();
+    void slugChanged();
+    void minRatingChanged();
     void queryChanged();
     void tagChanged();
 

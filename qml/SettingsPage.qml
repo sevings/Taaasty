@@ -158,7 +158,7 @@ Pane {
                 }
                 Connections {
                     target: Tasty
-                    onAuthorized: {
+                    onAuthorizedChanged: {
                         prevLoginButton.enabled = true;
                     }
                 }
@@ -169,6 +169,14 @@ Pane {
                 highlighted: true
                 text: Tasty.isAuthorized ? 'Сменить тлог' : 'Войти'
                 onClicked: window.pushLoginDialog()
+            }
+            ThemedButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                implicitWidth: 40 * mm
+                highlighted: true
+                visible: Tasty.isAuthorized
+                text: 'Выйти'
+                onClicked: Tasty.logout()
             }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2

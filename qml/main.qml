@@ -482,7 +482,7 @@ ApplicationWindow {
                     }))
                         window.pushLoginDialog();
                 }
-                onAuthorized: {
+                onAuthorizedChanged: {
                     if (stack.currentItem.isLoginDialog)
                         window.popFromStack();
                 }

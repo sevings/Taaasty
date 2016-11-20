@@ -38,7 +38,7 @@ class Tasty : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool isAuthorized         READ isAuthorized         NOTIFY authorized)
+    Q_PROPERTY(bool isAuthorized         READ isAuthorized         NOTIFY authorizedChanged)
     Q_PROPERTY(int  unreadChats          READ unreadChats          NOTIFY unreadChatsChanged)
     Q_PROPERTY(int  unreadNotifications  READ unreadNotifications  NOTIFY unreadNotificationsChanged)
     Q_PROPERTY(int  unreadFriendsEntries READ unreadFriendsEntries NOTIFY unreadFriendsEntriesChanged)
@@ -73,7 +73,7 @@ public:
 
 signals:
     void authorizationNeeded();
-    void authorized();
+    void authorizedChanged();
 
     void unreadChatsChanged();
     void unreadNotificationsChanged();
@@ -92,6 +92,7 @@ signals:
 
 public slots:
     void authorize(const QString login, const QString password, bool save);
+    void logout();
     void swapProfiles();
     void reconnectToPusher();
 
@@ -111,9 +112,9 @@ private slots:
 
 private:
     QQmlApplicationEngine* _engine;
-    Settings* _settings;
+    Settings*              _settings;
     QNetworkAccessManager* _manager;
-    PusherClient* _pusher;
+    PusherClient*          _pusher;
 
     int _entryImageWidth;
     int _commentImageWidth;

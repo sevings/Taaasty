@@ -226,6 +226,19 @@ void Tasty::authorize(const QString login, const QString password, bool save)
 
 
 
+void Tasty::logout()
+{
+    if (!isAuthorized())
+        return;
+
+    qDebug() << "log out";
+
+    _settings->clearProfile();
+    emit authorizedChanged();
+}
+
+
+
 void Tasty::swapProfiles()
 {
     auto token = _settings->prevAccessToken();
@@ -365,6 +378,13 @@ void Tasty::_init()
 
 void Tasty::_swapProfiles()
 {
+    auto request = qobject_cast<ApiRequest*>(sender());
+    if (request)
+    {
+        disconnect(request, SIGNAL(error(int,QString)),   this, SLOT(_swapProfiles()));
+        disconnect(request, SIGNAL(success(QJsonObject)), this, SLOT(_swapProfiles()));
+    }
+
     _settings->swapProfiles();
 
     _finishLogin();
@@ -458,5 +478,5 @@ void Tasty::_finishLogin()
     if (_me)
         _me->setId(_settings->userId());
 
-    emit authorized();
+    emit authorizedChanged();
 }

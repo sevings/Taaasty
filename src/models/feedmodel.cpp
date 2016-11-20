@@ -50,9 +50,9 @@ FeedModel::FeedModel(QObject* parent)
     Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideShortPostsChanged,    this, &FeedModel::_changeHideSome));
     Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideNegativeRatedChanged, this, &FeedModel::_changeHideSome));
 
-    Q_TEST(connect(Tasty::instance(), &Tasty::authorized,   this, &FeedModel::_resetOrReloadRatings));
-    Q_TEST(connect(Tasty::instance(), &Tasty::entryCreated, this, &FeedModel::_prependEntry));
-    Q_TEST(connect(Tasty::instance(), &Tasty::entryDeleted, this, &FeedModel::_removeEntry));
+    Q_TEST(connect(Tasty::instance(), &Tasty::authorizedChanged, this, &FeedModel::_resetOrReloadRatings));
+    Q_TEST(connect(Tasty::instance(), &Tasty::entryCreated,      this, &FeedModel::_prependEntry));
+    Q_TEST(connect(Tasty::instance(), &Tasty::entryDeleted,      this, &FeedModel::_removeEntry));
 }
 
 
@@ -179,9 +179,11 @@ void FeedModel::setSlug(const QString slug)
 
 void FeedModel::setMinRating(const int rating)
 {
-    if (rating > 0)
+    if (rating > 0 && rating != _minRating)
     {
         _minRating = rating;
+        emit minRatingChanged();
+
         reset();
     }
 }
@@ -206,11 +208,17 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query, QString 
 {
     beginResetModel();
 
-    if (tlog > 0)
+    if (tlog > 0 && tlog != _tlog)
+    {
         _tlog = tlog;
+        emit tlogChanged();
+    }
 
-    if (!slug.isEmpty())
+    if (!slug.isEmpty() && slug != _slug)
+    {
         _slug = slug;
+        emit slugChanged();
+    }
 
     _page = 1;
     _query = QUrl::toPercentEncoding(query);
@@ -219,8 +227,11 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query, QString 
     _tag = QUrl::toPercentEncoding(tag);
     emit tagChanged();
 
-    if (mode != InvalidMode)
+    if (mode != InvalidMode && mode != _mode)
+    {
         _mode = mode;
+        emit modeChanged();
+    }
 
     if (_mode == FriendsMode)
         Tasty::instance()->clearUnreadFriendsEntries();
@@ -412,7 +423,12 @@ void FeedModel::_resetOrReloadRatings()
             || _mode == MyFavoritesMode
             || _mode == MyPrivateMode
             || _mode == FriendsMode)
-        reset();
+    {
+        if (Tasty::instance()->isAuthorized())
+            reset();
+        else
+            setMode(LiveMode);
+    }
     else
         _reloadRatings();
 }

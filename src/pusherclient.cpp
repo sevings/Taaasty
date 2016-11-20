@@ -51,11 +51,10 @@ PusherClient::PusherClient(Tasty* tasty)
 
     Q_TEST(QObject::connect(&_readyTimer, SIGNAL(timeout()), this, SLOT(_sendReady())));
 
-    if (tasty->isAuthorized())
-        _addPrivateChannels();
+    _addPrivateChannels();
 
-    Q_TEST(QObject::connect(tasty, SIGNAL(authorized()),         this, SLOT(_resubscribe())));
-    Q_TEST(QObject::connect(tasty, SIGNAL(networkAccessible()),  this, SLOT(connect())));
+    Q_TEST(QObject::connect(tasty, &Tasty::authorizedChanged, this, &PusherClient::_resubscribe));
+    Q_TEST(QObject::connect(tasty, &Tasty::networkAccessible, this, &PusherClient::connect));
 }
 
 
@@ -400,7 +399,10 @@ void PusherClient::_handleFriendsEvent(const QString event, const QString data)
 
 
 void PusherClient::_addPrivateChannels()
-{
+{    
+    if (!_tasty->isAuthorized())
+        return;
+
     _messagingChannel = QString("private-%1-messaging").arg(_tasty->settings()->userId());
     auto mc = _pusher->subscribe(_messagingChannel, false);
 

@@ -88,7 +88,7 @@ private slots:
         
     void _handleMessagingEvent(const QString event, const QString data);
     void _handleFriendsEvent(const QString event, const QString data);
-        
+
 private:
     void        _addPrivateChannels();
     ApiRequest* _getPusherAuth(const QString channel);

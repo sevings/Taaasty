@@ -51,9 +51,9 @@ ChatsModel::ChatsModel(Tasty* tasty)
 {
     qDebug() << "ChatsModel";
 
-    Q_TEST(connect(tasty,           SIGNAL(authorized()),       this, SLOT(reset())));
-    Q_TEST(connect(tasty->pusher(), SIGNAL(unreadChat()),       this, SLOT(loadUnread())));
-    Q_TEST(connect(tasty->pusher(), SIGNAL(unreadChats(int)),   this, SLOT(_checkUnread(int))));
+    Q_TEST(connect(tasty,           &Tasty::authorizedChanged,  this, &ChatsModel::reset));
+    Q_TEST(connect(tasty->pusher(), &PusherClient::unreadChat,  this, &ChatsModel::loadUnread));
+    Q_TEST(connect(tasty->pusher(), &PusherClient::unreadChats, this, &ChatsModel::_checkUnread));
 }
 
 

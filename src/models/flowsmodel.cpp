@@ -39,7 +39,7 @@ FlowsModel::FlowsModel(QObject* parent)
 
     setMode(Tasty::instance()->isAuthorized() ? MyMode : PopularMode);
     
-    Q_TEST(connect(Tasty::instance(), &Tasty::authorized, this, &FlowsModel::_resetIfMy));
+    Q_TEST(connect(Tasty::instance(), &Tasty::authorizedChanged, this, &FlowsModel::_resetIfMy));
 }
 
 
@@ -193,6 +193,11 @@ void FlowsModel::_addItems(QJsonObject data)
 
 void FlowsModel::_resetIfMy()
 {
-    if (_mode == MyMode || _mode == AvailableMode)
+    if (_mode != MyMode && _mode != AvailableMode)
+        return;
+
+    if (Tasty::instance()->isAuthorized())
         reset();
+    else
+        setMode(PopularMode);
 }

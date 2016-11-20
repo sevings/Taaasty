@@ -47,10 +47,10 @@ NotificationsModel::NotificationsModel(Tasty* tasty)
 {
     qDebug() << "NotificationsModel";
 
-    Q_TEST(connect(tasty,           SIGNAL(unreadNotificationsChanged()), this, SIGNAL(unreadChanged())));
-    Q_TEST(connect(tasty,           SIGNAL(authorized()),                 this, SLOT(_reloadAll())));
-    Q_TEST(connect(tasty->pusher(), SIGNAL(notification(QJsonObject)),    this, SLOT(_addPush(QJsonObject))));
-    Q_TEST(connect(tasty->pusher(), SIGNAL(unreadNotifications(int)),     this, SLOT(_check(int))));
+    Q_TEST(connect(tasty,           &Tasty::unreadNotificationsChanged, this, &NotificationsModel::unreadChanged));
+    Q_TEST(connect(tasty,           &Tasty::authorizedChanged,          this, &NotificationsModel::_reloadAll));
+    Q_TEST(connect(tasty->pusher(), &PusherClient::notification,        this, &NotificationsModel::_addPush));
+    Q_TEST(connect(tasty->pusher(), &PusherClient::unreadNotifications, this, &NotificationsModel::_check));
 }
 
 
