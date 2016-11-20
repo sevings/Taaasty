@@ -30,6 +30,7 @@
 #include "../tasty.h"
 #include "../apirequest.h"
 #include "../pusherclient.h"
+#include "../tastydatacache.h"
 #include "../data/Author.h"
 #include "../data/Entry.h"
 
@@ -285,7 +286,7 @@ void ChatsModel::_addUnread(QJsonArray data)
     foreach(auto item, data)
     {
         auto id = item.toObject().value("id").toInt();
-        auto chat = Tasty::instance()->pusher()->chat(id);
+        auto chat = pTasty->dataCache()->chat(id);
         if (!chat)
         {
             chat = ChatPtr::create((QObject*)nullptr);
@@ -350,7 +351,7 @@ void ChatsModel::_addChats(QJsonArray data)
         if (_ids.contains(id))
             continue;
 
-        auto chat = Tasty::instance()->pusher()->chat(id);
+        auto chat = pTasty->dataCache()->chat(id);
         if (!chat)
             chat = ChatPtr::create((QObject*)nullptr);
 

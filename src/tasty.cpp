@@ -36,6 +36,7 @@
 #include "pusherclient.h"
 #include "texthandler.h"
 #include "poster.h"
+#include "tastydatacache.h"
 #include "cache/cachemanager.h"
 #include "cache/cachedimage.h"
 #include "models/feedmodel.h"
@@ -73,6 +74,7 @@ Tasty::Tasty()
     , _settings(nullptr)
     , _manager(nullptr)
     , _pusher(nullptr)
+    , _dataCache(nullptr)
     , _entryImageWidth(0)
     , _commentImageWidth(0)
     , _unreadChats(0)
@@ -276,6 +278,7 @@ void Tasty::_init()
     _settings   = new Settings(this);
     _manager    = _engine->networkAccessManager();
     _pusher     = new PusherClient(this);
+    _dataCache  = new TastyDataCache;
 
     _entryImageWidth   = _settings->maxImageWidth();
     _commentImageWidth = _entryImageWidth;

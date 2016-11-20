@@ -25,7 +25,7 @@
 #include "Entry.h"
 
 #include "../tasty.h"
-#include "../pusherclient.h"
+#include "../tastydatacache.h"
 
 
 
@@ -78,7 +78,7 @@ EntryPtr CalendarEntry::full()
     if (_entry)
         return _entry;
 
-    _entry = Tasty::instance()->pusher()->entry(_id);
+    _entry = pTasty->dataCache()->entry(_id);
     if (_entry)
         return _entry;
 

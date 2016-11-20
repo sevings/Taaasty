@@ -24,7 +24,7 @@
 #include <QDebug>
 
 #include "../apirequest.h"
-#include "../pusherclient.h"
+#include "../tastydatacache.h"
 #include "../tasty.h"
 #include "../settings.h"
 
@@ -65,7 +65,7 @@ Conversation::Conversation(QObject* parent)
 
 Conversation::~Conversation()
 {
-    Tasty::instance()->pusher()->removeChat(this);
+    pTasty->dataCache()->removeChat(this);
 }
 
 
@@ -78,7 +78,7 @@ void Conversation::setId(int id)
     _id = id;
     emit idChanged();
 
-    Tasty::instance()->pusher()->addChat(sharedFromThis());
+    pTasty->dataCache()->addChat(sharedFromThis());
 
     update();
 }
@@ -125,7 +125,7 @@ void Conversation::setEntryId(int entryId)
     _entryId = entryId;
     _entry.clear();
 
-    Tasty::instance()->pusher()->addChat(sharedFromThis());
+    pTasty->dataCache()->addChat(sharedFromThis());
 
     auto data = QString("id=%1").arg(entryId);
     _request = new ApiRequest(QString("v2/messenger/conversations/by_entry_id.json"),
@@ -290,7 +290,7 @@ void Conversation::init(const QJsonObject data)
      _canDelete         = data.value("can_delete").toBool(true);
      _isAnonymous       = data.value("is_anonymous").toBool();
 
-     Tasty::instance()->pusher()->addChat(sharedFromThis());
+     pTasty->dataCache()->addChat(sharedFromThis());
 
      messages()->init(this);
 
@@ -298,14 +298,14 @@ void Conversation::init(const QJsonObject data)
      {
          auto entryData = data.value("entry").toObject();
          _entryId = entryData.value("id").toInt();
-         _entry = Tasty::instance()->pusher()->entry(_entryId);
+         _entry = pTasty->dataCache()->entry(_entryId);
          if (!_entry)
          {
              _entry = EntryPtr::create(this);
              _entry->init(entryData);
          }
 
-         Tasty::instance()->pusher()->addChat(sharedFromThis());
+         pTasty->dataCache()->addChat(sharedFromThis());
 
          Q_TEST(connect(_entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
      }
@@ -351,7 +351,7 @@ void Conversation::init(const QJsonObject data)
 
      auto last = data.value("last_message").toObject();
      auto lastId = last.value("id").toInt();
-     _lastMessage = Tasty::instance()->pusher()->message(lastId);
+     _lastMessage = pTasty->dataCache()->message(lastId);
      if (!_lastMessage)
          _lastMessage   = new Message(last, this, this);
 

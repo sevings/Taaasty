@@ -24,7 +24,7 @@
 
 #include "../tasty.h"
 #include "../apirequest.h"
-#include "../pusherclient.h"
+#include "../tastydatacache.h"
 
 #include "../models/chatsmodel.h"
 
@@ -62,7 +62,7 @@ Conversation* Tlog::chat()
 
     if (_id > 0)
     {
-        _chat = Tasty::instance()->pusher()->chatByTlog(_id);
+        _chat = pTasty->dataCache()->chatByTlog(_id);
         if (_chat)
             return _chat.data();
     }

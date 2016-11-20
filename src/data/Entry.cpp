@@ -32,7 +32,7 @@
 
 #include "../tasty.h"
 #include "../apirequest.h"
-#include "../pusherclient.h"
+#include "../tastydatacache.h"
 #include "../models/commentsmodel.h"
 #include "../models/messagesmodel.h"
 #include "../models/attachedimagesmodel.h"
@@ -162,7 +162,7 @@ Entry::Entry(Conversation* chat)
 
 Entry::~Entry()
 {
-    Tasty::instance()->pusher()->removeEntry(_id);
+    pTasty->dataCache()->removeEntry(_id);
 }
 
 
@@ -251,7 +251,7 @@ void Entry::init(const QJsonObject data)
 
     _correctHtml();
 
-    Tasty::instance()->pusher()->addEntry(sharedFromThis());
+    pTasty->dataCache()->addEntry(sharedFromThis());
 
     _commentsData    = data.value("comments").toArray();
     if (_commentsModel && _commentsModel->entryId() == _id)
@@ -511,7 +511,7 @@ Conversation* Entry::chat()
     if (_id <= 0 || !Tasty::instance()->isAuthorized())
         return nullptr;
 
-    _chat = Tasty::instance()->pusher()->chatByEntry(_id);
+    _chat = pTasty->dataCache()->chatByEntry(_id);
     if (_chat)
         return _chat.data();
 

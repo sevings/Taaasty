@@ -47,7 +47,8 @@ SOURCES += src/main.cpp \
     src/models/tagsmodel.cpp \
     src/models/tastylistmodel.cpp \
     src/texthandler.cpp \
-    src/poster.cpp
+    src/poster.cpp \
+    src/tastydatacache.cpp
 
 RESOURCES += qml.qrc
 
@@ -99,7 +100,8 @@ HEADERS += \
     src/models/tagsmodel.h \
     src/models/tastylistmodel.h \
     src/texthandler.h \
-    src/poster.h
+    src/poster.h \
+    src/tastydatacache.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

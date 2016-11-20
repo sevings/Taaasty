@@ -21,7 +21,7 @@
 #include <QGuiApplication>
 
 #include "tasty.h"
-#include "pusherclient.h"
+#include "tastydatacache.h"
 
 
 
@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
 
     int res = app.exec();
 
-    auto pusher = tasty->pusher();
+    auto cache = tasty->dataCache();
     delete tasty;
-    delete pusher;
+    delete cache;
 
     return res;
 }

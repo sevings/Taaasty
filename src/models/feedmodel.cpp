@@ -28,7 +28,7 @@
 #include "../defines.h"
 
 #include "../tasty.h"
-#include "../pusherclient.h"
+#include "../tastydatacache.h"
 #include "../settings.h"
 #include "../apirequest.h"
 
@@ -332,7 +332,7 @@ void FeedModel::_addItems(QJsonObject data)
         auto json = obj.contains("entry") ? obj.value("entry").toObject()
                                           : obj;
         auto id = json.value("id").toInt();
-        auto entry = Tasty::instance()->pusher()->entry(id);
+        auto entry = pTasty->dataCache()->entry(id);
         if (!entry)
             entry = EntryPtr::create((QObject*)nullptr);
 
@@ -487,7 +487,7 @@ void FeedModel::_prependEntry(int id, int tlogId)
             && !(tlogId == -1 && _mode == AnonymousMode))
         return;
 
-    auto entry = Tasty::instance()->pusher()->entry(id);
+    auto entry = pTasty->dataCache()->entry(id);
     if (!entry)
         return;
 

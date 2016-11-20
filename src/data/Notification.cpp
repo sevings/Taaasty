@@ -25,7 +25,7 @@
 #include "Entry.h"
 
 #include "../tasty.h"
-#include "../pusherclient.h"
+#include "../tastydatacache.h"
 #include "../apirequest.h"
 
 
@@ -70,7 +70,7 @@ Notification::Notification(const QJsonObject data, QObject *parent)
     _parentId   = data.value("parent_id").toInt();
     _parentType = data.value("parent_type").toString();
 
-    Tasty::instance()->pusher()->addNotification(this);
+    pTasty->dataCache()->addNotification(this);
 
     emit idChanged();
 }
@@ -79,7 +79,7 @@ Notification::Notification(const QJsonObject data, QObject *parent)
 
 Notification::~Notification()
 {
-    Tasty::instance()->pusher()->removeNotification(_id);
+    pTasty->dataCache()->removeNotification(_id);
 }
 
 
@@ -147,7 +147,7 @@ Entry* Notification::entry()
     if (id <= 0)
         return nullptr;
 
-    _entry = Tasty::instance()->pusher()->entry(id);
+    _entry = pTasty->dataCache()->entry(id);
     if (_entry)
         return _entry.data();
 

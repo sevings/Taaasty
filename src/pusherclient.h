@@ -44,27 +44,6 @@ class PusherClient : public QObject
 public:
     explicit PusherClient(Tasty* tasty = nullptr);
 
-    void addChat(ChatPtr chat);
-    void removeChat(Conversation* chat);
-
-    ChatPtr chat(int id) const;
-    ChatPtr chatByEntry(int entryId) const;
-    ChatPtr chatByTlog(int tlogId) const;
-
-    void addEntry(EntryPtr entry);
-    void removeEntry(int id);
-    EntryPtr entry(int id) const;
-
-    void addMessage(Message* msg);
-    void removeMessage(int id);
-    Message* message(int id) const;
-
-    void addComment(Comment* cmt);
-    void removeComment(int id);
-
-    void addNotification(Notification* notif);
-    void removeNotification(int id);
-
 signals:
     void notification(const QJsonObject data);
     void unreadChat();
@@ -100,14 +79,6 @@ private:
     Tasty* _tasty;
 
     QTimer _readyTimer;
-
-    QHash<int, QWeakPointer<Conversation>>  _chats;
-    QHash<int, QWeakPointer<Conversation>>  _chatsByEntry;
-    QHash<int, QWeakPointer<Conversation>>  _chatsByTlog;
-    QHash<int, QWeakPointer<Entry>>         _entries;
-    QHash<int, Message*>                    _messages;
-    QHash<int, Comment*>                    _comments;
-    QHash<int, Notification*>               _notifications;
 };
 
 #endif // PUSHERCLIENT_H

@@ -26,7 +26,7 @@
 #include "User.h"
 
 #include "../tasty.h"
-#include "../pusherclient.h"
+#include "../tastydatacache.h"
 #include "../apirequest.h"
 
 
@@ -56,7 +56,7 @@ Comment::Comment(const QJsonObject data, QObject *parent)
 
 Comment::~Comment()
 {
-    Tasty::instance()->pusher()->removeComment(_id);
+    pTasty->dataCache()->removeComment(_id);
 }
 
 
@@ -117,7 +117,7 @@ void Comment::_init(const QJsonObject data)
     emit baseUpdated();
     emit updated();
 
-    Tasty::instance()->pusher()->addComment(this);
+   pTasty->dataCache()->addComment(this);
 }
 
 

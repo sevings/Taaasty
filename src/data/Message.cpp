@@ -25,7 +25,7 @@
 #include "../apirequest.h"
 #include "../tasty.h"
 #include "../settings.h"
-#include "../pusherclient.h"
+#include "../tastydatacache.h"
 #include "../models/chatsmodel.h"
 #include "../models/attachedimagesmodel.h"
 
@@ -70,7 +70,7 @@ Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
 
 Message::~Message()
 {
-    Tasty::instance()->pusher()->removeMessage(_id);
+    pTasty->dataCache()->removeMessage(_id);
 }
 
 
@@ -143,7 +143,7 @@ void Message::_init(const QJsonObject data)
     auto reply = data.value("reply_message").toObject();
     _replyUserId = reply.value("user_id").toInt();
 
-    Tasty::instance()->pusher()->addMessage(this);
+    pTasty->dataCache()->addMessage(this);
 
     emit idChanged();
     emit userUpdated();

@@ -21,6 +21,7 @@
 #include "pusherclient.h"
 
 #include "tasty.h"
+#include "tastydatacache.h"
 #include "apirequest.h"
 
 #include "qpusher/pusher.h"
@@ -55,129 +56,6 @@ PusherClient::PusherClient(Tasty* tasty)
 
     Q_TEST(QObject::connect(tasty, &Tasty::authorizedChanged, this, &PusherClient::_resubscribe));
     Q_TEST(QObject::connect(tasty, &Tasty::networkAccessible, this, &PusherClient::connect));
-}
-
-
-
-void PusherClient::addChat(ChatPtr chat)
-{
-    if (!chat)
-        return;
-
-    Q_ASSERT(!chat->parent());
-
-    _chats.insert(chat->id(), chat.toWeakRef());
-
-    if (chat->entryId())
-        _chatsByEntry.insert(chat->entryId(), chat.toWeakRef());
-
-    if (chat->type() == Conversation::PrivateConversation)
-        _chatsByTlog.insert(chat->recipientId(), chat.toWeakRef());
-}
-
-
-
-void PusherClient::removeChat(Conversation* chat)
-{
-    if (!chat)
-        return;
-
-    _chats.remove(chat->id());
-    _chatsByEntry.remove(chat->entryId());
-}
-
-
-
-ChatPtr PusherClient::chat(int id) const
-{
-    return _chats.value(id).toStrongRef();
-}
-
-
-
-ChatPtr PusherClient::chatByEntry(int entryId) const
-{
-    return _chatsByEntry.value(entryId).toStrongRef();
-}
-
-
-
-ChatPtr PusherClient::chatByTlog(int tlogId) const
-{
-    return _chatsByTlog.value(tlogId).toStrongRef();
-}
-
-
-
-void PusherClient::addEntry(EntryPtr entry)
-{
-    Q_ASSERT(!entry || !entry->parent());
-
-    if (entry)
-        _entries.insert(entry->entryId(), entry.toWeakRef());
-}
-
-
-
-void PusherClient::removeEntry(int id)
-{
-    _entries.remove(id);
-}
-
-
-
-EntryPtr PusherClient::entry(int id) const
-{
-    return _entries.value(id).toStrongRef();
-}
-
-
-
-void PusherClient::addMessage(Message* msg)
-{
-    _messages.insert(msg->id(), msg);
-}
-
-
-
-void PusherClient::removeMessage(int id)
-{
-    _messages.remove(id);
-}
-
-
-
-Message*PusherClient::message(int id) const
-{
-    return _messages.value(id);
-}
-
-
-
-void PusherClient::addComment(Comment* cmt)
-{
-    _comments.insert(cmt->id(), cmt);
-}
-
-
-
-void PusherClient::removeComment(int id)
-{
-    _comments.remove(id);
-}
-
-
-
-void PusherClient::addNotification(Notification* notif)
-{
-    _notifications.insert(notif->id(), notif);
-}
-
-
-
-void PusherClient::removeNotification(int id)
-{
-    _notifications.remove(id);
 }
 
 
@@ -291,7 +169,7 @@ void PusherClient::_handleMessagingEvent(const QString event, const QString data
     {
         auto chatId = json.value("conversation_id").toInt();
         auto userId = json.value("user_id").toInt();
-        auto chat = _chats.value(chatId);
+        auto chat = pTasty->dataCache()->chat(chatId);
         if (chat)
             chat.data()->addTyped(userId);
         return;
@@ -300,7 +178,7 @@ void PusherClient::_handleMessagingEvent(const QString event, const QString data
     if (event.endsWith("update_conversation"))
     {
         auto chatId = json.value("id").toInt();
-        auto chat = _chats.value(chatId);
+        auto chat = pTasty->dataCache()->chat(chatId);
         if (chat)
             chat.data()->init(json);
         return;
@@ -309,7 +187,7 @@ void PusherClient::_handleMessagingEvent(const QString event, const QString data
     if (event.endsWith("push_message"))
     {
         auto chatId = json.value("conversation_id").toInt();
-        auto chat = _chats.value(chatId);
+        auto chat = pTasty->dataCache()->chat(chatId);
         if (chat)
             emit chat.data()->messageReceived(json);
         else
@@ -320,14 +198,15 @@ void PusherClient::_handleMessagingEvent(const QString event, const QString data
     if (event.endsWith("update_messages"))
     {
         auto chatId = json.value("conversation_id").toInt();
-        if (!_chats.contains(chatId))
+        auto chat = pTasty->dataCache()->chat(chatId);
+        if (!chat)
             return;
 
         auto messages = json.value("messages").toArray();
         foreach (auto msgData, messages)
         {
             auto msgId = msgData.toObject().value("id").toInt();
-            auto msg = _messages.value(msgId);
+            auto msg = pTasty->dataCache()->message(msgId);
             if (msg)
                 msg->_updateRead(msgData.toObject());
         }
@@ -338,14 +217,15 @@ void PusherClient::_handleMessagingEvent(const QString event, const QString data
     if (event.endsWith("delete_user_messages"))
     {
         auto chatId = json.value("conversation_id").toInt();
-        if (!_chats.contains(chatId))
+        auto chat = pTasty->dataCache()->chat(chatId);
+        if (!chat)
             return;
 
         auto messages = json.value("messages").toArray();
         foreach (auto msgData, messages)
         {
             auto msgId = msgData.toObject().value("id").toInt();
-            auto msg = _messages.value(msgId);
+            auto msg = pTasty->dataCache()->message(msgId);
             if (msg)
                 msg->_markRemoved(msgData.toObject());
         }
@@ -359,8 +239,9 @@ void PusherClient::_handleMessagingEvent(const QString event, const QString data
         foreach (auto notifData, notifs)
         {
             auto notifId = notifData.toObject().value("id").toInt();
-            if (_notifications.contains(notifId))
-                _notifications.value(notifId)->_updateRead(notifData.toObject());
+            auto notif = pTasty->dataCache()->notification(notifId);
+            if (notif)
+                notif->_updateRead(notifData.toObject());
         }
 
         return;

@@ -28,9 +28,12 @@
 
 #include "settings.h"
 
+#define pTasty Tasty::instance()
+
 class ApiRequest;
 class PusherClient;
 class User;
+class TastyDataCache;
 
 
 
@@ -49,9 +52,10 @@ public:
 
     static Tasty* instance();
 
-    Settings*               settings() const { return _settings; }
-    QNetworkAccessManager*  manager() const { return _manager; }
-    PusherClient*           pusher() const { return _pusher; }
+    Settings*               settings()  const { return _settings; }
+    QNetworkAccessManager*  manager()   const { return _manager; }
+    PusherClient*           pusher()    const { return _pusher; }
+    TastyDataCache*         dataCache() const { return _dataCache; }
 
     bool isAuthorized() const;
 
@@ -115,6 +119,7 @@ private:
     Settings*              _settings;
     QNetworkAccessManager* _manager;
     PusherClient*          _pusher;
+    TastyDataCache*        _dataCache;
 
     int _entryImageWidth;
     int _commentImageWidth;
