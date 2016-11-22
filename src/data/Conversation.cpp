@@ -196,10 +196,16 @@ MessagesModel* Conversation::messages()
 
 
 
-User* Conversation::user(int id)
+User* Conversation::user(int id, bool reloadUsers)
 {
     if (_users.contains(id))
         return _users.value(id);
+
+    if (_leftUsers.contains(id))
+        return _leftUsers.value(id);
+
+    if (_deletedUsers.contains(id))
+        return _deletedUsers.value(id);
 
     if (id == _recipientId && _recipient)
         return _recipient;
@@ -219,6 +225,9 @@ User* Conversation::user(int id)
         _users[id] = user;
         return user;
     }
+
+    if (reloadUsers)
+        updateUsers();
 
     if (!_users.contains(0))
         _users[0] = new User(this);
@@ -329,11 +338,7 @@ void Conversation::init(const QJsonObject data)
          _topic.clear();
 
      auto users = data.value("users").toArray();
-     foreach(auto userData, users)
-     {
-        auto user = new User(userData.toObject(), this); //! \todo isOnline
-        _users.insert(user->id(), user);
-     }
+     _initUsers(users);
 
      users = data.value("users_deleted").toArray();
      foreach(auto userData, users)
@@ -408,15 +413,15 @@ void Conversation::sendMessage(const QString text)
 
 void Conversation::readAll()
 {
-    if (_reading || _unreadCount <= 0 || _id <= 0)// || !isInvolved())
+    if (_readRequest || _unreadCount <= 0 || _id <= 0)// || !isInvolved())
         return;
 
     auto url = QString("v2/messenger/conversations/by_id/%1/messages/read_all.json").arg(_id);
-    _reading = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
+    _readRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                               QNetworkAccessManager::PutOperation);
 
-    Q_TEST(connect(_reading, SIGNAL(success(const QJsonObject)), this, SIGNAL(allMessagesRead(const QJsonObject))));
-    Q_TEST(connect(_reading, SIGNAL(success(QJsonObject)),       this, SLOT(_markRead(QJsonObject))));
+    Q_TEST(connect(_readRequest, SIGNAL(success(const QJsonObject)), this, SIGNAL(allMessagesRead(const QJsonObject))));
+    Q_TEST(connect(_readRequest, SIGNAL(success(QJsonObject)),       this, SLOT(_markRead(QJsonObject))));
 }
 
 
@@ -554,6 +559,23 @@ void Conversation::_sendTyped()
 
 
 
+void Conversation::_initUsers(const QJsonArray data)
+{
+    foreach(auto userData, data)
+    {
+        auto id = userData.toObject().value("id").toInt();
+        if (_users.contains(id))
+            continue;
+
+        auto user = new User(userData.toObject(), this); //! \todo isOnline
+        _users.insert(user->id(), user);
+    }
+
+    emit usersUpdated();
+}
+
+
+
 int Conversation::userId() const
 {
     return _userId;
@@ -582,7 +604,7 @@ QString Conversation::typedUsers()
     QStringList userNames;
     foreach (auto userId, _typedUsers.keys())
     {
-        auto user = this->user(userId);
+        auto user = this->user(userId, false);
         if (!user->name().isEmpty())
             userNames << user->name();
     }
@@ -637,6 +659,20 @@ void Conversation::removeTyped(int userId)
 {
     _typedUsers.remove(userId);
     emit typedUsersChanged();
+}
+
+
+
+void Conversation::updateUsers()
+{
+    if (_usersRequest || _id <= 0
+            || (_type != GroupConversation && _type != PublicConversation))
+        return;
+
+    auto url = QString("v2/messenger/conversations/by_id/%1/users.json").arg(_id);
+    _usersRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
+
+    Q_TEST(connect(_usersRequest, SIGNAL(success(QJsonArray)), this, SLOT(_initUsers(QJsonArray))));
 }
 
 

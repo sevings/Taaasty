@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QHash>
 #include <QEnableSharedFromThis>
 #include <QTimer>
@@ -92,7 +93,7 @@ public:
 
     MessagesModel* messages();
 
-    User* user(int id);
+    User* user(int id, bool reloadUsers = true);
 
     MessageBase* lastMessage();
 
@@ -116,6 +117,8 @@ public:
     void addTyped(int userId);
     void removeTyped(int userId);
 
+    void updateUsers();
+
 public slots:
     void init(const QJsonObject data);
 
@@ -129,14 +132,20 @@ public slots:
 
 signals:
     void updated();
+    void usersUpdated();
+
     void unreadCountChanged();
+
     void messageSent(const QJsonObject);
     void messageReceived(const QJsonObject);
     void sendingMessageError();
+
     void allMessagesRead(const QJsonObject data);
     void lastMessageChanged();
+
     void left(int id);
     void isInvolvedChanged();
+
     void typedUsersChanged();
 
 private slots:
@@ -145,6 +154,7 @@ private slots:
     void _decUnread(bool read);
     void _removeTypedUser();
     void _sendTyped();
+    void _initUsers(const QJsonArray data);
 
 private:
     ConversationType    _type;
@@ -175,5 +185,6 @@ private:
     QPointer<ApiRequest> _typedRequest;
     
     QPointer<ApiRequest> _sendRequest;
-    QPointer<ApiRequest> _reading;
+    QPointer<ApiRequest> _readRequest;
+    QPointer<ApiRequest> _usersRequest;
 };

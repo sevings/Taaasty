@@ -63,7 +63,7 @@ Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
         Q_TEST(connect(chat, SIGNAL(allMessagesRead(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
     
     if (_user->slug().isEmpty())
-        Q_TEST(connect(chat, SIGNAL(updated()), this, SLOT(_updateUser())));
+        Q_TEST(connect(chat, &Conversation::usersUpdated, this, &Message::_updateUser));
 }
 
 
@@ -179,10 +179,12 @@ void Message::_markRead(const QJsonObject data)
 
 void Message::_updateUser()
 {
+    if (!_chat)
+        return;
+
     if (!_user->slug().isEmpty())
     {
-        if (_chat)
-        disconnect(_chat, SIGNAL(updated()), this, SLOT(_updateUser()));
+        disconnect(_chat, &Conversation::usersUpdated, this, &Message::_updateUser);
         return;
     }
     
@@ -191,8 +193,8 @@ void Message::_updateUser()
     
     Q_ASSERT(_user);
 
-    if (!_user->slug().isEmpty() && _chat)
-        disconnect(_chat, SIGNAL(updated()), this, SLOT(_updateUser()));
+    if (!_user->slug().isEmpty())
+        disconnect(_chat, &Conversation::usersUpdated, this, &Message::_updateUser);
 }
 
 
