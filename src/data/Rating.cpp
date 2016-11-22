@@ -44,7 +44,7 @@ Rating::Rating(QObject* parent)
     , _isVotedAgainst(false)
     , _parent(qobject_cast<Entry*>(parent))
 {    
-    Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished, this, &Rating::bayesChanged));
+    Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished, this, &Rating::bayesChanged, Qt::QueuedConnection));
 }
 
 
@@ -56,7 +56,7 @@ Rating::Rating(const QJsonObject data, Entry* parent)
     , _isVotedAgainst(false)
     , _parent(parent)
 {
-    Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished, this, &Rating::bayesChanged));
+    Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished, this, &Rating::bayesChanged, Qt::QueuedConnection));
 
     init(data);
 }
@@ -200,4 +200,6 @@ void Rating::_reinit(const QJsonArray data)
         return;
     
     init(data.first().toObject());
+
+    reCalcBayes();
 }
