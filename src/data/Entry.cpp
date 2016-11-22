@@ -73,8 +73,10 @@ void EntryBase::_initBase(QJsonObject data)
     auto authorData = data.value("author").toObject();
     if (_author && authorData.contains("slug"))
         _author->init(authorData);
-    else
+    else if (!authorData.isEmpty())
         _author = new Author(authorData, this);
+    else
+        _author = new Author(this);
 
     _type   = data.value("type").toString();
     _text   = data.value("text").toString().trimmed();

@@ -222,6 +222,9 @@ void ChatsModel::bubbleChat(int id)
     _chats.insert(unread, chat);
 
     endMoveRows();
+
+    // load new users
+    chat->update();
 }
 
 
