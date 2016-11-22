@@ -51,8 +51,12 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
 {
     Q_ASSERT(_man);
 
-    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, &CachedImage::downloadingChanged));
-    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, &CachedImage::available));
+    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, &CachedImage::downloadingChanged, Qt::QueuedConnection));
+    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, [&]()
+    {
+        _available = true;
+        emit available();
+    }, Qt::QueuedConnection));
     
     if (!_man || _url.isEmpty())
         return;
@@ -311,6 +315,9 @@ void CachedImage::_saveData()
 
     auto future = QtConcurrent::run(this, &CachedImage::_saveFile, data);
     _saveWatcher.setFuture(future);
+
+    _reply->deleteLater();
+    _reply = nullptr;
 }
 
 
@@ -393,7 +400,7 @@ QString CachedImage::_path() const
 
 
 
-void CachedImage::_saveFile(QByteArray* data)
+void CachedImage::_saveFile(QByteArray* data) const
 {
     auto path = _path();
 
@@ -412,15 +419,13 @@ void CachedImage::_saveFile(QByteArray* data)
     }
 
     QFile file(path);
-    file.open(QIODevice::WriteOnly);
-    file.write(*data);
-    file.close();
+    if (file.open(QIODevice::WriteOnly))
+    {
+        file.write(*data);
+        file.close();
+    }
+    else
+        qDebug() << "Cannot open file for writing:" << path;
 
     delete data;
-
-    if (_reply)
-        _reply->deleteLater();
-    _reply = nullptr;
-
-    _available = true;
 }

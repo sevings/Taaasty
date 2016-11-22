@@ -89,7 +89,7 @@ private slots:
 private:
     bool    _exists();
     QString _path() const;
-    void    _saveFile(QByteArray* data);
+    void    _saveFile(QByteArray* data) const;
 
     CacheManager*        _man;
     QNetworkReply*       _headReply;
