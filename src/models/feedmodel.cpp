@@ -363,7 +363,8 @@ void FeedModel::_addItems(QJsonObject data)
         return left->fixedAt() > right->fixedAt();
     });
 
-    if (data.contains("next_since_entry_id"))
+    // in live modes next_since_entry_id may be incorrect
+    if (fixed.isEmpty() && data.contains("next_since_entry_id"))
         _lastEntry = data.value("next_since_entry_id").toInt();
     else if (_prevDate.isEmpty() && !all.isEmpty())
         _lastEntry = all.last()->entryId();
