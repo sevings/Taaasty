@@ -96,6 +96,7 @@ public:
     bool hideMode() const;
     bool hideShort() const;
     bool hideNegative() const;
+    bool showFixed() const;
     bool loading() const;
 
     Q_INVOKABLE void setSinceEntryId(int id);
@@ -123,14 +124,16 @@ private slots:
     void _removeEntry(int id);
     
 private:
-    void _addAll(QList<EntryPtr>& all);
-    bool _addSome(QList<EntryPtr>& all);
+    void _addAll(QList<EntryPtr>& all, int& from);
+    bool _addSome(QList<EntryPtr>& all, int& from, int& allFrom);
     void _clear();
 
     void _setUrl(Mode mode);
 
     QList<EntryPtr> _entries;
     QList<EntryPtr> _allEntries;
+    int             _fixedCount;
+    int             _allFixedCount;
 
     QString         _url;
     int             _tlog;

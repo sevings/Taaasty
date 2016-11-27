@@ -198,7 +198,10 @@ void Entry::init(const QJsonObject data)
     _isWatchable     = data.value("can_watch").toBool();
     _isWatched       = data.value("is_watching").toBool();
     _isPrivate       = data.value("is_private").toBool();
-    _isFixed         = data.value("fixed_state").toString("not_fixed") != "not_fixed";
+    _isFixed         = data.value("fixed_state").toString() == "fixed";
+
+    auto fixDate = data.value("fixed_up_at").toString();
+    _fixedAt         = QDateTime::fromString(fixDate.left(19), "yyyy-MM-ddTHH:mm:ss");
 
     auto me = Tasty::instance()->me();
     auto isMy = me && _author->id() == me->id();
@@ -488,6 +491,14 @@ bool Entry::isFixed() const
 {
     return _isFixed;
 }
+
+
+
+QDateTime Entry::fixedAt() const
+{
+    return _fixedAt;
+}
+
 
 
 int Entry::chatId() const

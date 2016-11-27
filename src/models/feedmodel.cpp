@@ -39,6 +39,8 @@
 
 FeedModel::FeedModel(QObject* parent)
     : TastyListModel(parent)
+    , _fixedCount(0)
+    , _allFixedCount(0)
     , _tlog(0)
     , _mode(InvalidMode)
     , _lastEntry(0)
@@ -280,6 +282,15 @@ bool FeedModel::hideNegative() const
 
 
 
+bool FeedModel::showFixed() const
+{
+    return (_mode == LiveMode || _mode == BestMode || _mode == ExcellentMode
+            || _mode == GoodMode || _mode == WellMode || _mode == BetterThanMode
+            || _mode == FriendsMode);
+}
+
+
+
 void FeedModel::setSinceEntryId(int id)
 {
     if (id > 0)
@@ -325,7 +336,9 @@ void FeedModel::_addItems(QJsonObject data)
     }
 
     QList<EntryPtr> all;
+    QList<EntryPtr> fixed;
     all.reserve(feed.size());
+    auto fixMode = showFixed();
     foreach(auto item, feed)
     {
         auto obj = item.toObject();
@@ -338,25 +351,22 @@ void FeedModel::_addItems(QJsonObject data)
 
         entry->init(json);
 
-        all << entry;
+        if (fixMode && entry->isFixed())
+            fixed << entry;
+        else
+            all << entry;
     }
+
+    std::sort(fixed.begin(), fixed.end(),
+              [](const EntryPtr left, const EntryPtr right)
+    {
+        return left->fixedAt() > right->fixedAt();
+    });
 
     if (data.contains("next_since_entry_id"))
-    {
         _lastEntry = data.value("next_since_entry_id").toInt();
-    }
-    else if (_prevDate.isEmpty())
-    {
-        for (int i = all.size() - 1; i >= 0; i--)
-            if (!all.at(i)->isFixed())
-            {
-                _lastEntry = all.at(i)->entryId();
-                break;
-            }
-
-        if (_lastEntry <= 0)
-            _lastEntry = all.last()->entryId();
-    }
+    else if (_prevDate.isEmpty() && !all.isEmpty())
+        _lastEntry = all.last()->entryId();
 
     if (data.contains("prev_date"))
     {
@@ -381,9 +391,17 @@ void FeedModel::_addItems(QJsonObject data)
 
     bool loadMore = false;
     if (hideShort() || hideNegative())
-        loadMore = _addSome(all);
+    {
+        _addSome(fixed, _fixedCount, _allFixedCount);
+        int fc = -1, afc = -1;
+        loadMore = _addSome(all, fc, afc);
+    }
     else
-        _addAll(all);
+    {
+        _addAll(fixed, _allFixedCount);
+        int afc = -1;
+        _addAll(all, afc);
+    }
 
     _loadRequest = nullptr;
 
@@ -404,13 +422,23 @@ void FeedModel::_changeHideSome()
 
     _entries.clear();
 
+    _fixedCount = 0;
+
     bool s = hideShort();
     bool n = hideNegative();
 
-    foreach (auto e, _allEntries)
+    for (int i = 0; i < _allEntries.size(); i++)
+    {
+        const auto& e = _allEntries.at(i);
         if ((!s || e->wordCount() >= 100)
             && (!n || e->rating()->bayesRating() >= 0))
+        {
             _entries << e;
+
+            if (i < _allFixedCount)
+                _fixedCount++;
+        }
+    }
 
     endResetModel();
 }
@@ -492,8 +520,12 @@ void FeedModel::_prependEntry(int id, int tlogId)
         return;
 
     beginInsertRows(QModelIndex(), 0, 0);
-    _entries.prepend(entry);
-    _allEntries.prepend(entry);
+
+    _entries.insert(_fixedCount, entry);
+
+    if (!_allEntries.isEmpty())
+        _allEntries.insert(_allFixedCount, entry);
+
     endInsertRows();
 }
 
@@ -515,24 +547,33 @@ void FeedModel::_removeEntry(int id)
 
 
 
-void FeedModel::_addAll(QList<EntryPtr>& all)
+void FeedModel::_addAll(QList<EntryPtr>& all, int& from)
 {
-    beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + all.size() - 1);
-    _entries << all;
+    if (from < 0)
+        from = _entries.size();
+
+    beginInsertRows(QModelIndex(), from, from + all.size() - 1);
+
+    foreach (auto e, all)
+        _entries.insert(from++, e);
+
     endInsertRows();
 }
 
 
 
-bool FeedModel::_addSome(QList<EntryPtr>& all)
+bool FeedModel::_addSome(QList<EntryPtr>& all, int& from, int& allFrom)
 {
+    if (allFrom < 0)
+        allFrom = _allEntries.size();
+
     bool s = hideShort();
     bool n = hideNegative();
 
     QList<EntryPtr> some;
     foreach (auto e, all)
     {
-        _allEntries << e;
+        _allEntries.insert(allFrom++, e);
 
         if ((!s || e->wordCount() >= 100)
             && (!n || e->rating()->bayesRating() >= 0))
@@ -542,9 +583,7 @@ bool FeedModel::_addSome(QList<EntryPtr>& all)
     if (some.isEmpty())
         return true;
 
-    beginInsertRows(QModelIndex(), _entries.size(), _entries.size() + some.size() - 1);
-    _entries << some;
-    endInsertRows();
+    _addAll(some, from);
 
     return false;
 }
@@ -556,6 +595,8 @@ void FeedModel::_clear()
     _entries.clear();
     _allEntries.clear();
 
+    _fixedCount = 0;
+    _allFixedCount = 0;
 }
 
 

@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QDateTime>
 #include <QEnableSharedFromThis>
 
 #include "../defines.h"
@@ -124,9 +125,10 @@ public:
 
     Conversation* chat();
 
-    bool isVotable() const;
-    bool isFixed() const;
-    int  chatId() const;
+    bool      isVotable() const;
+    bool      isFixed() const;
+    QDateTime fixedAt() const;
+    int       chatId() const;
 
 public slots:
     void init(const QJsonObject data);
@@ -172,6 +174,7 @@ private:
     bool        _isFavorited;
     bool        _isPrivate;
     bool        _isFixed;
+    QDateTime   _fixedAt;
     bool        _isDeletable;
     bool        _isEditable;
     Tlog*       _tlog;
