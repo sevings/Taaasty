@@ -165,12 +165,26 @@ Pane {
                         window.pushProfileById(entry.author.id);
                 }
             }
+            Image {
+                id: pin
+                anchors {
+                    top: parent.top
+                    right: parent.right
+                    margins: 1.5 * mm
+                }
+                visible: entry.isFixed && feedModel.showFixed
+                height: 20 * sp
+                fillMode: Image.PreserveAspectFit
+                source: (window.darkTheme ? '../icons/pin-white-'
+                                          : '../icons/pin-black-')
+                      + '128.png'
+            }
             ThemedText {
                 id: nick
                 anchors {
                     top: repostText.bottom
                     left: entryAvatar.right
-                    right: parent.right
+                    right: pin.visible ? pin.left : parent.right
                 }
                 text: entry.author.name
                 font.pointSize: window.fontSmaller
@@ -184,7 +198,7 @@ Pane {
                 anchors {
                     top: nick.visible ? nick.bottom : repostText.bottom
                     left: entryAvatar.visible ? entryAvatar.right : parent.left
-                    right: parent.right
+                    right: pin.visible ? pin.left : parent.right
                 }
                 text: entry.createdAt
                 color: window.secondaryTextColor

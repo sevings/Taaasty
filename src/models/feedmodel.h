@@ -41,6 +41,7 @@ class FeedModel : public TastyListModel
     Q_PROPERTY(int      minRating   READ minRating  WRITE setMinRating  NOTIFY minRatingChanged )
     Q_PROPERTY(QString  query       READ query      WRITE setQuery      NOTIFY queryChanged)
     Q_PROPERTY(QString  tag         READ tag        WRITE setTag        NOTIFY tagChanged)
+    Q_PROPERTY(bool     showFixed   READ showFixed                      NOTIFY modeChanged)
 
 public:
     enum Mode {
