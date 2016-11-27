@@ -152,8 +152,15 @@ void Poster::_prepareText(QString& title, QString& content) const
     if (title.isEmpty())
         title = "&nbsp;";
 
-    //! \todo: insert paragraphs
-
     title = QUrl::toPercentEncoding(title);
+
+    auto ps = content.split('\n');
+    for (auto it = ps.begin(); it != ps.end(); ++it)
+        if (it->isEmpty())
+            *it = QString("</br>");
+        else
+            it->prepend("<p>").append("</p>");
+
+    content = ps.join(QString());
     content = QUrl::toPercentEncoding(content);
 }
