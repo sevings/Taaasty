@@ -81,6 +81,9 @@ TextArea {
             if (flickable.movingVertically || mouse.wasHeld)
                 return;
 
+            if (!Qt.inputMethod.visible)
+                Qt.inputMethod.show()
+
             moveCursor(mouse.x, mouse.y);
             textEdit.canCopyPaste = true;
         }
