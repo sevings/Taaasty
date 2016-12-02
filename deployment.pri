@@ -11,3 +11,6 @@ unix:!android {
 }
 
 export(INSTALLS)
+
+DISTFILES += \
+    $$PWD/PVS-Studio.pri

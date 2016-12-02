@@ -124,3 +124,23 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
 }
 
 DEFINES += BUILDDATE=\\\"$$system("date +%d.%m.%Y")\\\"
+
+unix:{
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtConcurrent/
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtCore/
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtGui/
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtNetwork/
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtQml/
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtQuick/
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtQuickControls2/
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtSql/
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtWebSockets/
+
+    pvs_studio.target = Taaasty
+    pvs_studio.output = true
+    pvs_studio.sources = $${SOURCES}
+    pvs_studio.cxxflags = -fPIC
+    pvs_studio.cfg = "$$PWD/PVS-Studio.cfg"
+    include(PVS-Studio.pri)
+}
