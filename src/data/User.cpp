@@ -44,6 +44,29 @@ User::User(const QJsonObject data, QObject *parent)
 
 
 
+User::User(const User& other)
+    : TastyData()
+{
+    _id         = other._id;
+    _tlogUrl    = other._tlogUrl;
+    _name       = other._name;
+    _slug       = other._slug;
+
+    _originalPic     = other._originalPic;
+    _largePic        = other._largePic;
+    _thumb128        = other._thumb128;
+    _thumb64         = other._thumb64;
+    _symbol          = other._symbol;
+    _backgroundColor = other._backgroundColor;
+    _nameColor       = other._nameColor;
+
+    _request = other._request;
+    if (_request)
+        Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
+}
+
+
+
 void User::setId(int id)
 {
     if (id <= 0 || id == _id)
@@ -74,32 +97,34 @@ QString User::slug() const
 
 
 
-User& User::operator=(const User& other)
+void User::swap(User& other)
 {
-    if (&other == this)
-        return *this;
+    std::swap(_id, other._id);
 
-    _id         = other._id;
-    _tlogUrl    = other._tlogUrl;
-    _name       = other._name;
-    _slug       = other._slug;
+    _tlogUrl.swap(other._tlogUrl);
+    _name.swap(other._name);
+    _slug.swap(other._slug);
 
-    _originalPic     = other._originalPic    ;
-    _largePic        = other._largePic       ;
-    _thumb128        = other._thumb128       ;
-    _thumb64         = other._thumb64        ;
-    _symbol          = other._symbol         ;
-    _backgroundColor = other._backgroundColor;
-    _nameColor       = other._nameColor      ;
+    _originalPic.swap(other._originalPic);
+    _largePic.swap(other._largePic);
+    _thumb128.swap(other._thumb128);
+    _thumb64.swap(other._thumb64);
+    _symbol.swap(other._symbol);
+    _backgroundColor.swap(other._backgroundColor);
+    _nameColor.swap(other._nameColor);
 
-    _request = other._request;
+    _request.swap(other._request);
     if (_request)
-    {
         Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
-    }
 
     emit idChanged();
+}
 
+
+
+User& User::operator=(User other)
+{
+    swap(other);
     return *this;
 }
 

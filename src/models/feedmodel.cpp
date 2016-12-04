@@ -349,7 +349,7 @@ void FeedModel::_addItems(QJsonObject data)
         auto id = json.value("id").toInt();
         auto entry = pTasty->dataCache()->entry(id);
         if (!entry)
-            entry = EntryPtr::create((QObject*)nullptr);
+            entry = EntryPtr::create(nullptr);
 
         entry->init(json);
 

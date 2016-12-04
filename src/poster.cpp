@@ -28,7 +28,9 @@
 
 
 
-Poster::Poster(QObject* parent) : QObject(parent)
+Poster::Poster(QObject* parent)
+    : QObject(parent)
+    , _tlogId(0)
 {
 
 }
@@ -129,7 +131,7 @@ void Poster::postAnonymous(QString title, QString content)
 
 void Poster::_createPostedEntry(QJsonObject data)
 {
-    _entry = EntryPtr::create((QObject*)nullptr);
+    _entry = EntryPtr::create(nullptr);
     _entry->init(data);
 
     emit posted(_entry);

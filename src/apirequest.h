@@ -69,6 +69,6 @@ private:
     void _start(const QNetworkAccessManager::Operation method);
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(ApiRequest::Options)
+Q_DECLARE_OPERATORS_FOR_FLAGS(ApiRequest::Options) //-V813
 
 #endif // APIREQUEST_H

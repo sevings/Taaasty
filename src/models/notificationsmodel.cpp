@@ -167,11 +167,11 @@ QHash<int, QByteArray> NotificationsModel::roleNames() const
 
  void NotificationsModel::_readSuccess()
  {
-     for (int i = 0; i < _notifs.size(); i++)
-         if (!_notifs.at(i)->isRead())
+     for (auto it = _notifs.constBegin(); it != _notifs.constEnd(); ++it)
+         if (!(*it)->isRead())
          {
-             _notifs.at(i)->_read = true;
-             emit _notifs.at(i)->readChanged();
+             (*it)->_read = true;
+             emit (*it)->readChanged();
          }
          else
              break;

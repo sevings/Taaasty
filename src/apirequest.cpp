@@ -90,7 +90,7 @@ void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
     emit error(code);
 
     if (reply)
-        emit error(code, reply->errorString());
+        emit error(code, reply->errorString()); //-V2006
 
     deleteLater();
 }

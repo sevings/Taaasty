@@ -108,7 +108,7 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel READ attachedImagesModel NOTIFY updated)
 
 public:
-    Entry(QObject* parent = nullptr);
+    Entry();
     Entry(Conversation* chat);
     ~Entry();
 

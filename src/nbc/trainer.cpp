@@ -143,7 +143,7 @@ Trainer::Mode Trainer::typeOfTlog(int id) const
     if (i < 0)
         return UndefinedMode;
 
-    return (Trainer::Mode)type;
+    return (Trainer::Mode)type; //-V2005
 }
 
 
@@ -273,7 +273,7 @@ void Trainer::_trainEntry()
     if (!entry)
         return;
 
-    auto future = QtConcurrent::run(_bayes, &Bayes::_addEntry, entry, (Bayes::Type)_curMode);
+    auto future = QtConcurrent::run(_bayes, &Bayes::_addEntry, entry, (Bayes::Type)_curMode); //-V2005
     _sync.addFuture(future);
 
     _incTrainedCount();

@@ -291,7 +291,7 @@ void ChatsModel::_addUnread(QJsonArray data)
         auto chat = pTasty->dataCache()->chat(id);
         if (!chat)
         {
-            chat = ChatPtr::create((QObject*)nullptr);
+            chat = ChatPtr::create(nullptr);
             chat->init(item.toObject());
         }
 
@@ -355,7 +355,7 @@ void ChatsModel::_addChats(QJsonArray data)
 
         auto chat = pTasty->dataCache()->chat(id);
         if (!chat)
-            chat = ChatPtr::create((QObject*)nullptr);
+            chat = ChatPtr::create(nullptr);
 
         chat->init(item.toObject());
 

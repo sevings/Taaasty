@@ -308,11 +308,11 @@ void CachedImage::_saveData()
     auto data = new QByteArray;
     *data = _reply->readAll();
 
-    if (data->startsWith((char)0x89))
+    if (data->startsWith((char)0x89))      //-V2005
         setExtension("png");
-    else if (data->startsWith((char)0xFF))
+    else if (data->startsWith((char)0xFF)) //-V2005
         setExtension("jpeg");
-    else if (data->startsWith((char)0x47))
+    else if (data->startsWith((char)0x47)) //-V2005
         setExtension("gif");
 
     auto future = QtConcurrent::run(this, &CachedImage::_saveFile, data);

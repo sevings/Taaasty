@@ -126,8 +126,8 @@ Author* EntryBase::author() const
 
 
 
-Entry::Entry(QObject* parent)
-    : EntryBase(parent)
+Entry::Entry()
+    : EntryBase()
     , _isVotable(false)
     , _isWatchable(false)
     , _isWatched(false)

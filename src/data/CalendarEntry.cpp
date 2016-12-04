@@ -84,7 +84,7 @@ EntryPtr CalendarEntry::full()
     if (_entry)
         return _entry;
 
-    _entry = EntryPtr::create((QObject*)nullptr);
+    _entry = EntryPtr::create(nullptr);
     _entry->setId(_id);
     return _entry;
 }

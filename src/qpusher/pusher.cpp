@@ -359,7 +359,7 @@ void Pusher::_emitDisconnected()
 
     qDebug() << "Disconnected:" << code << reason;
 
-    emit disconnected(code, reason);
+    emit disconnected(code, reason); //-V2006
     
     if (_imReconnect)
         connect();

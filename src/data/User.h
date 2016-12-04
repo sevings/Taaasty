@@ -49,12 +49,15 @@ public:
     User(QObject* parent = nullptr);
     User(const QJsonObject data, QObject* parent = nullptr);
 
+    User(const User& other);
+
     void    setId(int id);
 
     QString name() const;
     QString slug() const;
 
-    User& operator=(const User& other);
+    void  swap(User& other);
+    User& operator=(User other);
 
 signals:
     void updated();

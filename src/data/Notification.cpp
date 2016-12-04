@@ -37,6 +37,7 @@ Notification::Notification(QObject* parent)
     , _sender(new User(this))
     , _read(false)
     , _entityId(0)
+    , _entityType(UnknownType)
     , _parentId(0)
 {
 
@@ -153,7 +154,7 @@ Entry* Notification::entry()
     if (_entry)
         return _entry.data();
 
-    _entry = EntryPtr::create((QObject*)nullptr);
+    _entry = EntryPtr::create(nullptr);
     _entry->setId(id);
     return _entry.data();
 }

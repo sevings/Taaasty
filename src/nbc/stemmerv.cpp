@@ -47,7 +47,7 @@ QString StemmerV::stemWord(const QString word)
     stem.remove(_reflexive);
     auto test = stem;
     test.remove(_suffix);
-    if (_pvre.match(test).hasMatch())
+    if (_pvre.match(test).hasMatch()) //-V807
         stem = test;
     else
         return stem;

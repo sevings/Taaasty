@@ -87,7 +87,7 @@ double AttachedImagesModel::listRatio() const
 {
     double h = 0;
     foreach (auto img, _images)
-        h += img->_height / (double)img->_width;
+        h += img->_height / (double)img->_width; //-V2005
 
     return h;
 }

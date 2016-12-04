@@ -72,7 +72,6 @@ private:
     QString      _url;
     Mode         _mode;
     int          _page;
-    bool         _hasMore;
 };
 
 #endif // FLOWSMODEL_H

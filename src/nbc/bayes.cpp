@@ -90,7 +90,7 @@ int Bayes::classify(const EntryBase* entry, const int minLength) const
     double wordValues[Unclassified];
     for (int type = 0; type < Unclassified; type++)
     {
-        auto k = (_total[Water] + _total[Fire]) / (double) _total[type];
+        auto k = (_total[Water] + _total[Fire]) / (double) _total[type]; //-V2005
 
         wordValues[type] = 0;
         foreach (auto word, features.keys())
@@ -216,7 +216,7 @@ void Bayes::_loadDb()
     QSqlQuery query;
     Q_TEST(query.exec("SELECT type, word, total FROM bayes"));
     while (query.next())
-        _wordCounts[query.value(0).toInt()][query.value(1).toString()]
+        _wordCounts[query.value(0).toInt()][query.value(1).toString()] //-V807
                 = FeatureCount(query.value(2).toInt());
 
     Q_TEST(query.exec("SELECT type, sum(total) AS \"total\" FROM bayes GROUP BY type"));
@@ -306,25 +306,27 @@ int Bayes::_calcEntry(const EntryBase* entry, QHash<QString, FeatureCount>& word
     else
         ++wordCounts[".short"];
 
-    ++wordCounts[QString(".type_%1").arg(entry->type())];
-    ++wordCounts[QString(".author_%1").arg(entry->author()->slug())];
+    const auto author = entry->author();
 
-    if (entry->author()->isFemale())
+    ++wordCounts[QString(".type_%1").arg(entry->type())];
+    ++wordCounts[QString(".author_%1").arg(author->slug())];
+
+    if (author->isFemale())
         ++wordCounts[".female"];
     else
         ++wordCounts[".male"];
 
-    if (entry->author()->isDaylog())
+    if (author->isDaylog())
         ++wordCounts[".daylog"];
     else
         ++wordCounts[".wholelog"];
 
-    if (entry->author()->isFlow())
+    if (author->isFlow())
         ++wordCounts[".flow"];
     else
         ++wordCounts[".tlog"];
 
-    if (entry->author()->isPremium())
+    if (author->isPremium())
         ++wordCounts[".premium"];
     else
         ++wordCounts[".free"];
@@ -341,7 +343,7 @@ void Bayes::_addEntry(const EntryBase* entry, const Bayes::Type type)
 
     QWriteLocker locker(&_lock);
 
-    _entriesChanged[type][entry->entryId()] = true;
+    _entriesChanged[type][entry->entryId()] = true; //-V108
     _total[type] +=  _calcEntry(entry, _wordCounts[type]);
 }
 

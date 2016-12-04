@@ -53,6 +53,8 @@ Conversation::Conversation(QObject* parent)
     , _recipientId(0)
     , _isDisabled(false)
     , _notDisturb(false)
+    , _canTalk(false)
+    , _canDelete(false)
     , _isAnonymous(false)
     , _entryId(0)
     , _recipient(nullptr)
@@ -224,7 +226,7 @@ User* Conversation::user(int id, bool reloadUsers)
     {
         auto user = new User(this);
         user->setId(id);
-        _users[id] = user;
+        _users.insert(id, user);
         return user;
     }
 
@@ -301,7 +303,8 @@ void Conversation::init(const QJsonObject data)
      _canDelete         = data.value("can_delete").toBool(true);
      _isAnonymous       = data.value("is_anonymous").toBool();
 
-     pTasty->dataCache()->addChat(sharedFromThis());
+     auto dataCache = pTasty->dataCache();
+     dataCache->addChat(sharedFromThis());
 
      messages()->init(this);
 
@@ -309,14 +312,14 @@ void Conversation::init(const QJsonObject data)
      {
          auto entryData = data.value("entry").toObject();
          _entryId = entryData.value("id").toInt();
-         _entry = pTasty->dataCache()->entry(_entryId);
+         _entry = dataCache->entry(_entryId);
          if (!_entry)
          {
              _entry = EntryPtr::create(this);
              _entry->init(entryData);
          }
 
-         pTasty->dataCache()->addChat(sharedFromThis());
+         dataCache->addChat(sharedFromThis());
 
          Q_TEST(connect(_entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
      }
@@ -358,7 +361,7 @@ void Conversation::init(const QJsonObject data)
 
      auto last = data.value("last_message").toObject();
      auto lastId = last.value("id").toInt();
-     _lastMessage = pTasty->dataCache()->message(lastId);
+     _lastMessage = dataCache->message(lastId);
      if (!_lastMessage)
          _lastMessage   = new Message(last, this, this);
 
