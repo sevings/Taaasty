@@ -25,9 +25,6 @@
 #include <QDateTime>
 #include <QJsonArray>
 #include <QDebug>
-#include <QQmlEngine>
-
-#include "../defines.h"
 
 #include "../tasty.h"
 #include "../tastydatacache.h"
@@ -36,6 +33,8 @@
 
 #include "../data/Rating.h"
 #include "../data/User.h"
+#include "../data/Tlog.h"
+#include "../data/Flow.h"
 
 
 
@@ -43,7 +42,7 @@ FeedModel::FeedModel(QObject* parent)
     : TastyListModel(parent)
     , _fixedCount(0)
     , _allFixedCount(0)
-    , _tlog(0)
+    , _tlog(new Tlog(this))
     , _mode(InvalidMode)
     , _lastEntry(0)
     , _minRating(0)
@@ -68,7 +67,7 @@ FeedModel::~FeedModel()
 
 
 
-int FeedModel::rowCount(const QModelIndex &parent) const
+int FeedModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
 
@@ -77,13 +76,17 @@ int FeedModel::rowCount(const QModelIndex &parent) const
 
 
 
-QVariant FeedModel::data(const QModelIndex &index, int role) const
+QVariant FeedModel::data(const QModelIndex& index, int role) const
 {
     if (index.row() < 0 || index.row() >= _entries.size())
         return QVariant();
 
+    auto entry = _entries.at(index.row());
+
     if (role == Qt::UserRole)
-        return QVariant::fromValue<Entry*>(_entries.at(index.row()).data());
+        return QVariant::fromValue<Entry*>(entry.data());
+    else if (role == Qt::UserRole + 1)
+        return isUnrepostable(entry->id());
 
     qDebug() << "role" << role;
 
@@ -105,7 +108,7 @@ bool FeedModel::canFetchMore(const QModelIndex& parent) const
 void FeedModel::fetchMore(const QModelIndex& parent)
 {
     if (!_hasMore || isLoading() || parent.isValid()
-            || (_mode == TlogMode && _tlog <= 0 && _slug.isEmpty())
+            || (_mode == TlogMode && _tlog->id() <= 0 && _tlog->slug().isEmpty())
             || _mode == InvalidMode)
         return;
 
@@ -114,10 +117,10 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     QString url = _url;
     if (_mode == TlogMode || _mode == FavoritesMode)
     {
-        if (_tlog > 0)
-            url = url.arg(_tlog);
-        else if (!_slug.isEmpty())
-            url = url.arg(_slug);
+        if (_tlog->id() > 0)
+            url = url.arg(_tlog->id());
+        else if (!_tlog->slug().isEmpty())
+            url = url.arg(_tlog->slug());
         else
         {
             qDebug() << "No tlog set in feed model";
@@ -159,16 +162,23 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 void FeedModel::setMode(const FeedModel::Mode mode)
 {
     reset(mode);
-    if (mode == TlogMode && _tlog <= 0 && _slug.isEmpty())
+    if (_mode == TlogMode && _tlog->id() <= 0 && _tlog->slug().isEmpty())
         _hasMore = false;
 }
 
 
 
-void FeedModel::setTlog(const int tlog)
+void FeedModel::setTlogId(const int tlog)
 {
     if (tlog > 0)
         reset(_mode, tlog);
+}
+
+
+
+int FeedModel::tlogId() const
+{
+    return _tlog->id();
 }
 
 
@@ -177,6 +187,13 @@ void FeedModel::setSlug(const QString slug)
 {
     if (!slug.isEmpty())
         reset(_mode, -1, slug);
+}
+
+
+
+QString FeedModel::slug() const
+{
+    return _tlog->slug();
 }
 
 
@@ -212,15 +229,15 @@ void FeedModel::reset(Mode mode, int tlog, QString slug, QString query, QString 
 {
     beginResetModel();
 
-    if (tlog > 0 && tlog != _tlog)
+    if (tlog > 0)
     {
-        _tlog = tlog;
-        emit tlogChanged();
+        _tlog->setId(tlog);
+        emit tlogIdChanged();
     }
 
-    if (!slug.isEmpty() && slug != _slug)
+    if (!slug.isEmpty())
     {
-        _slug = slug;
+        _tlog->setSlug(slug);
         emit slugChanged();
     }
 
@@ -293,6 +310,27 @@ bool FeedModel::showFixed() const
 
 
 
+bool FeedModel::isUnrepostable(int entryId) const
+{
+    EntryPtr entry;
+    for (auto it = _entries.constBegin(); it != _entries.constEnd(); ++it)
+        if ((*it)->id() == entryId)
+        {
+            entry = *it;
+            break;
+        }
+
+    if (!entry)
+        return false;
+
+    return entry && entry->tlog()->id() != tlogId()
+            && (_mode == MyTlogMode
+                || (_mode == TlogMode && ((_tlog->flow() && _tlog->flow()->isWritable())
+                    || (pTasty->me() && pTasty->me()->id() == tlogId()))));
+}
+
+
+
 void FeedModel::setSinceEntryId(int id)
 {
     if (id > 0)
@@ -308,10 +346,37 @@ void FeedModel::setSinceDate(const QString date)
 
 
 
+void FeedModel::unrepost(int entryId)
+{
+    if (_unrepostRequest || !isUnrepostable(entryId))
+        return;
+
+    EntryPtr entry;
+    for (auto it = _entries.constBegin(); it != _entries.constEnd(); ++it)
+        if ((*it)->id() == entryId)
+        {
+            entry = *it;
+            break;
+        }
+
+    if (!entry)
+        return;
+
+    int tlog = _mode == MyTlogMode ? (pTasty->me() ? pTasty->me()->id() : 0) : tlogId();
+    auto url = QString("v1/reposts.json?tlog_id=%1&entry_id=%2").arg(tlog).arg(entry->id());
+    _unrepostRequest = new ApiRequest(url, ApiRequest::ShowMessageOnError | ApiRequest::AccessTokenRequired,
+                                      QNetworkAccessManager::DeleteOperation);
+
+    Q_TEST(connect(_unrepostRequest, SIGNAL(success(QJsonObject)), this, SLOT(_removeRepost(QJsonObject))));
+}
+
+
+
 QHash<int, QByteArray> FeedModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[Qt::UserRole] = "entry";
+    roles[Qt::UserRole]   = "entry";
+    roles[Qt::UserRole+1] = "isUnrepostable";
     return roles;
 }
 
@@ -510,11 +575,24 @@ void FeedModel::_setRatings(const QJsonArray data)
 
 
 
+void FeedModel::_removeRepost(const QJsonObject& data)
+{
+    if (data.value("status").toString() == "success")
+        emit pTasty->info("Репост удален"); //! \todo remove entry from feed
+    else
+    {
+        emit pTasty->error(0, "При удалении репоста произошла ошибка");
+        qDebug() << data;
+    }
+}
+
+
+
 void FeedModel::_prependEntry(int id, int tlogId)
 {
     if (!(tlogId == 0 && (_mode == MyTlogMode //! \todo || _mode == FriendsMode && not is private
-                          || (_mode == TlogMode && Tasty::instance()->me()
-                              && _tlog == Tasty::instance()->me()->id())))
+                          || (_mode == TlogMode && pTasty->me()
+                              && _tlog->id() == pTasty->me()->id())))
             && !(tlogId == -1 && _mode == AnonymousMode))
         return;
 

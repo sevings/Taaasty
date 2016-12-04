@@ -24,10 +24,13 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include "../defines.h"
+
 #include "tastylistmodel.h"
 #include "../data/Entry.h"
 
 class ApiRequest;
+class Tlog;
 
 
 
@@ -36,7 +39,8 @@ class FeedModel : public TastyListModel
     Q_OBJECT
 
     Q_PROPERTY(Mode     mode        READ mode       WRITE setMode       NOTIFY modeChanged)
-    Q_PROPERTY(int      tlog        READ tlog       WRITE setTlog       NOTIFY tlogChanged)
+    Q_PROPERTY(Tlog*    tlog        READ tlog                           CONSTANT)
+    Q_PROPERTY(int      tlogId      READ tlogId     WRITE setTlogId     NOTIFY tlogIdChanged)
     Q_PROPERTY(QString  slug        READ slug       WRITE setSlug       NOTIFY slugChanged)
     Q_PROPERTY(int      minRating   READ minRating  WRITE setMinRating  NOTIFY minRatingChanged )
     Q_PROPERTY(QString  query       READ query      WRITE setQuery      NOTIFY queryChanged)
@@ -75,11 +79,13 @@ public:
     void setMode(const Mode mode);
     Mode mode() const {return _mode; }
 
-    void setTlog(const int tlog);
-    int tlog() const {return _tlog; }
+    Tlog* tlog() const { return _tlog; }
+
+    void setTlogId(const int tlogId);
+    int tlogId() const;
 
     void setSlug(const QString slug);
-    QString slug() const { return _slug; }
+    QString slug() const;
 
     void setMinRating(const int rating);
     int minRating() const { return _minRating; }
@@ -90,7 +96,7 @@ public:
     void setTag(const QString tag);
     QString tag() const { return _tag; }
 
-    Q_INVOKABLE void reset(Mode mode = InvalidMode, int tlog = -1,
+    Q_INVOKABLE void reset(Mode mode = InvalidMode, int tlogId = -1,
                            QString slug = QString(), QString query = QString(),
                            QString tag = QString());
 
@@ -100,19 +106,24 @@ public:
     bool showFixed() const;
     bool loading() const;
 
+    Q_INVOKABLE bool isUnrepostable(int etryId) const;
+
     Q_INVOKABLE void setSinceEntryId(int id);
     Q_INVOKABLE void setSinceDate(const QString date);
 
 signals:
     void modeChanged();
-    void tlogChanged();
+    void tlogIdChanged();
     void slugChanged();
     void minRatingChanged();
     void queryChanged();
     void tagChanged();
 
+public slots:
+    void unrepost(int entryId);
+
 protected:
-    QHash<int, QByteArray> roleNames() const override;
+    virtual QHash<int, QByteArray> roleNames() const override;
 
 private slots:
     void _addItems(QJsonObject data);
@@ -120,6 +131,7 @@ private slots:
     void _resetOrReloadRatings();
     void _reloadRatings();
     void _setRatings(const QJsonArray data);
+    void _removeRepost(const QJsonObject& data);
 
     void _prependEntry(int id, int tlogId);
     void _removeEntry(int id);
@@ -137,8 +149,7 @@ private:
     int             _allFixedCount;
 
     QString         _url;
-    int             _tlog;
-    QString         _slug;
+    Tlog*           _tlog;
     Mode            _mode;
     int             _lastEntry;
     int             _minRating;
@@ -146,6 +157,8 @@ private:
     QString         _tag;
     int             _page;
     QString         _prevDate;
+
+    ApiRequestPtr   _unrepostRequest;
 };
 
 #endif // FEEDMODEL_H

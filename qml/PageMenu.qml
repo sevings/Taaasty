@@ -364,7 +364,7 @@ Q.Drawer {
                 visible: !window.chatsShows
                          && page.isFullEntryView === true
                          && !page.entry.loading
-                         && page.entry.isDeletable
+                         && (page.entry.isDeletable || page.isUnrepostable)
             }
             MenuItem {
                 text: 'Удалить запись'
@@ -374,8 +374,18 @@ Q.Drawer {
                 }
                 visible: !window.chatsShows
                          && page.isFullEntryView === true
-                         && page.entry.chat
                          && page.entry.isDeletable
+            }
+            MenuItem {
+                text: 'Удалить репост'
+                onTriggered: {
+                    if (page.feedModel)
+                        page.feedModel.unrepost(page.entry.entryId);
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && page.isFullEntryView === true
+                         && page.isUnrepostable
             }
 
             // FLOWS SECTION

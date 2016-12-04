@@ -36,6 +36,8 @@ Pane {
     property bool scrollToBottom: false
     property bool scrollToFirst: false
     readonly property bool isFullEntryView: true
+    property FeedModel feedModel
+    readonly property bool isUnrepostable: feedModel && feedModel.isUnrepostable(entry.entryId)
     signal addGreeting(string slug)
     function checkComments() {
         if (fullEntry.count > 0 || !commentsModel.hasMore)

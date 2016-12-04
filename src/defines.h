@@ -36,4 +36,7 @@ typedef QSharedPointer<Entry> EntryPtr;
 class Conversation;
 typedef QSharedPointer<Conversation> ChatPtr;
 
+class ApiRequest;
+typedef QPointer<ApiRequest> ApiRequestPtr;
+
 #endif // DEFINES_H

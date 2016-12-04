@@ -51,6 +51,7 @@ class Tlog: public TastyData
     Q_PROPERTY(Relationship     myRelationship      MEMBER _myRelation          NOTIFY myRelationChanged)
     Q_PROPERTY(Relationship     hisRelationship     MEMBER _hisRelation         NOTIFY hisRelationChanged)
     Q_PROPERTY(Author*          author              READ author                 NOTIFY updated)
+    Q_PROPERTY(Flow*            flow                READ flow                   NOTIFY updated)
     Q_PROPERTY(Conversation*    chat                READ chat                   CONSTANT)
     Q_PROPERTY(bool             changingRelation    READ changingRelation       NOTIFY changingRelationChanged)
 
@@ -70,6 +71,8 @@ public:
     Tlog(const QJsonObject data, QObject* parent = nullptr);
 
     Author* author() const { return _author; }
+
+    Flow* flow() const { return _flow; }
 
     Conversation* chat();
 

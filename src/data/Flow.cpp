@@ -33,6 +33,8 @@ Flow::Flow(QObject *parent)
     : TastyData(parent)
     , _isPrivate(false)
     , _isPremoderate(false)
+    , _isEditable(false)
+    , _isWritable(false)
 {
 
 }
@@ -55,6 +57,20 @@ void Flow::setId(const int id)
 
 
 
+bool Flow::isWritable() const
+{
+    return _isWritable;
+}
+
+
+
+bool Flow::isEditable() const
+{
+    return _isEditable;
+}
+
+
+
 void Flow::init(const QJsonObject data)
 {
     _id             = data.value("id").toInt();
@@ -65,6 +81,8 @@ void Flow::init(const QJsonObject data)
     _pic            = data.value("flowpic").toObject().value("original_url").toString();
     _isPrivate      = data.value("is_privacy").toBool();
     _isPremoderate  = data.value("is_premoderate").toBool();
+    _isEditable     = data.value("can_edit").toBool();
+    _isWritable     = data.value("can_write").toBool();
     _followersCount = Tasty::num2str(data.value("followers_count").toInt(),
                                      "подписчик", "подписчика", "подписчиков");
     _entriesCount   = Tasty::num2str(data.value("public_tlog_entries_count").toInt(),

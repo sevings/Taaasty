@@ -38,10 +38,7 @@ Pane {
     property int minRating: 0
     property string query: ''
     property string tag: ''
-    property Tlog tlog: Tlog {
-        tlogId: back.tlogId
-        slug: back.slug
-    }
+    property Tlog tlog: feedModel.tlog
     readonly property bool isFeedView: true
     function setMode(m, t, s) {
         query = '';
@@ -96,7 +93,7 @@ Pane {
         model: FeedModel {
             id: feedModel
             mode: back.mode
-            tlog: back.tlogId
+            tlogId: back.tlogId
             slug: back.slug
             minRating: back.minRating
             query: back.query
@@ -115,7 +112,7 @@ Pane {
                     }
 
                     mouse.accepted = true;
-                    window.pushFullEntry(entry);
+                    window.pushFullEntry(entry, false, false, feedModel);
                 }
             }
             ThemedText {

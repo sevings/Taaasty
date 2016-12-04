@@ -39,14 +39,18 @@ class Flow : public TastyData
     Q_PROPERTY(QString picUrl         MEMBER  _pic            NOTIFY updated)
     Q_PROPERTY(bool    isPrivate      MEMBER  _isPrivate      NOTIFY updated)
     Q_PROPERTY(bool    isPremoderate  MEMBER  _isPremoderate  NOTIFY updated)
+    Q_PROPERTY(bool    isEditable     MEMBER  _isEditable     NOTIFY updated)
+    Q_PROPERTY(bool    isWritable     MEMBER  _isWritable     NOTIFY updated)
     Q_PROPERTY(QString followersCount MEMBER  _followersCount NOTIFY updated)
     Q_PROPERTY(QString entriesCount   MEMBER  _entriesCount   NOTIFY updated)
 
 public:
     explicit Flow(QObject* parent = nullptr);
 
-    Q_INVOKABLE int  flowId() const { return _id; } //! \todo remove
     Q_INVOKABLE void setId(const int id);
+
+    bool isEditable() const;
+    bool isWritable() const;
 
 signals:
     void updated();
@@ -62,6 +66,8 @@ private:
     QString _pic;
     bool    _isPrivate;
     bool    _isPremoderate;
+    bool    _isEditable;
+    bool    _isWritable;
     QString _followersCount;
     QString _entriesCount;
 };
