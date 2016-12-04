@@ -52,11 +52,13 @@ PopupFill {
                 if (fullEntry)
                 {
                     back.hide();
+                    window.showNotifsOnPop = window.stackSize;
                     window.pushFullEntry(fullEntry);
                 }
                 else if (model.notification.entityType == 3)//Notification.RelationshipType)
                 {
                     back.hide();
+                    window.showNotifsOnPop = window.stackSize;
                     window.pushTlog(model.notification.sender.id);
                 }
             }
@@ -72,6 +74,7 @@ PopupFill {
                 acceptClick: back.y <= 0 && model.notification.parentType !== 'AnonymousEntry'
                 onClicked: {
                     back.hide();
+                    window.showNotifsOnPop = window.stackSize;
                     window.pushProfileById(model.notification.sender.id);
                 }
             }

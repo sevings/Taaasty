@@ -54,7 +54,8 @@ PopupFill {
                         model.chat.readAll();
 
                     back.hide();
-                    window.pushMessages(model.chat);
+                    window.showChatsOnPop = window.stackSize;
+                    window.pushMessages(model.chat, true);
                 }
             }
             SmallAvatar {
@@ -67,6 +68,7 @@ PopupFill {
                 acceptClick: !model.chat.isAnonymous && (model.chat.recipient || model.chat.entry)
                 onClicked: {
                     back.hide();
+                    window.showChatsOnPop = window.stackSize;
                     window.pushProfileById(chatAvatar.user.id);
                 }
             }

@@ -49,6 +49,8 @@ ApplicationWindow {
     readonly property int stackSize: stack ? stack.depth : 0
     readonly property int footerY: footer.y
     readonly property bool canShowPageMenu: pageMenu && !pageMenu.autoclose
+    property int showChatsOnPop: 0
+    property int showNotifsOnPop: 0
     property CachedImage savingImage
 
     property StackView stack: stackLoader.item
@@ -325,6 +327,17 @@ ApplicationWindow {
     }
     function popFromStack() {
         stack.pop();
+
+        if (stackSize <= showChatsOnPop)
+        {
+            showChats();
+            showChatsOnPop = 0;
+        }
+        else if (stackSize <= showNotifsOnPop)
+        {
+            showNotifs();
+            showNotifsOnPop = 0;
+        }
     }
     function handleInputLine(mode, text) {
         if (!text)
