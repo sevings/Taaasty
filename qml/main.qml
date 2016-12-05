@@ -77,7 +77,7 @@ ApplicationWindow {
         }
         if (stack.depth > 1) {
             if (!stack.currentItem.isTrainingProgress)
-                stack.pop();
+                popFromStack();
             return false;
         }
         if (!menu.visible) {
@@ -328,12 +328,12 @@ ApplicationWindow {
     function popFromStack() {
         stack.pop();
 
-        if (stackSize <= showChatsOnPop)
+        if (stackSize === showChatsOnPop)
         {
             showChats();
             showChatsOnPop = 0;
         }
-        else if (stackSize <= showNotifsOnPop)
+        else if (stackSize === showNotifsOnPop)
         {
             showNotifs();
             showNotifsOnPop = 0;
