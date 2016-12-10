@@ -106,7 +106,7 @@ void Conversation::setRecipientId(int id)
 
 
 
-void Conversation::setSlug(const QString slug)
+void Conversation::setSlug(const QString& slug)
 {
     if (isLoading() || slug.isEmpty())
         return;
@@ -142,7 +142,7 @@ void Conversation::setEntryId(int entryId)
 
 
 
-void Conversation::_markRead(const QJsonObject data)
+void Conversation::_markRead(const QJsonObject& data)
 {
     if (data.value("status").toString() != "success")
     {
@@ -275,7 +275,7 @@ int Conversation::totalCount() const
 
 
 
-void Conversation::init(const QJsonObject data)
+void Conversation::init(const QJsonObject& data)
 {
      _id                = data.value("id").toInt();
 
@@ -388,7 +388,7 @@ void Conversation::update()
 
 
 
-void Conversation::sendMessage(const QString text)
+void Conversation::sendMessage(const QString& text)
 {
     if (_sendRequest || _id <= 0)
         return;
@@ -489,7 +489,7 @@ void Conversation::sendTyped()
 
 
 
-void Conversation::_emitLeft(const QJsonObject data)
+void Conversation::_emitLeft(const QJsonObject& data)
 {
     if (data.value("status").toString() != "success")
     {
@@ -552,8 +552,8 @@ void Conversation::_sendTyped()
                                    QNetworkAccessManager::PostOperation);
     
 #ifdef QT_DEBUG    
-    Q_TEST(connect(_typedRequest, static_cast<void(ApiRequest::*)(QJsonObject)>(&ApiRequest::success),
-                   [](const QJsonObject data)
+    Q_TEST(connect(_typedRequest, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
+                   [](const QJsonObject& data)
     {
         auto status = data.value("status").toString();
         if (status != "success")
@@ -564,7 +564,7 @@ void Conversation::_sendTyped()
 
 
 
-void Conversation::_initUsers(const QJsonArray data)
+void Conversation::_initUsers(const QJsonArray& data)
 {
     foreach(auto userData, data)
     {

@@ -43,7 +43,7 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void _setData(QJsonArray data);
+    void _setData(const QJsonArray& data);
 
 private:
     QList<QString>  _names;

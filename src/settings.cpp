@@ -96,7 +96,7 @@ QString Settings::login() const
 
 
 
-void Settings::setLogin(const QString login)
+void Settings::setLogin(const QString& login)
 {
     if (login == this->login())
         return;
@@ -115,7 +115,7 @@ QString Settings::accessToken() const
 
 
 
-void Settings::setAccessToken(const QString token)
+void Settings::setAccessToken(const QString& token)
 {
     if (token == accessToken())
         return;
@@ -134,7 +134,7 @@ QDateTime Settings::expiresAt() const
 
 
 
-void Settings::setExpiresAt(const QDateTime date)
+void Settings::setExpiresAt(const QDateTime& date)
 {
     if (date == expiresAt())
         return;
@@ -144,7 +144,7 @@ void Settings::setExpiresAt(const QDateTime date)
 
 
 
-void Settings::setExpiresAt(const QString date)
+void Settings::setExpiresAt(const QString& date)
 {
     auto at = QDateTime::fromString(date.left(19), "yyyy-MM-ddTHH:mm:ss");
     setExpiresAt(at);
@@ -195,7 +195,7 @@ QString Settings::prevLogin() const
 
 
 
-void Settings::setPrevLogin(const QString login)
+void Settings::setPrevLogin(const QString& login)
 {
     if (login == this->prevLogin())
         return;
@@ -214,7 +214,7 @@ QString Settings::prevAccessToken() const
 
 
 
-void Settings::setPrevAccessToken(const QString token)
+void Settings::setPrevAccessToken(const QString& token)
 {
     if (token == prevAccessToken())
         return;
@@ -233,7 +233,7 @@ QDateTime Settings::prevExpiresAt() const
 
 
 
-void Settings::setPrevExpiresAt(const QDateTime date)
+void Settings::setPrevExpiresAt(const QDateTime& date)
 {
     if (date == prevExpiresAt())
         return;
@@ -243,7 +243,7 @@ void Settings::setPrevExpiresAt(const QDateTime date)
 
 
 
-void Settings::setPrevExpiresAt(const QString date)
+void Settings::setPrevExpiresAt(const QString& date)
 {
     auto at = QDateTime::fromString(date.left(19), "yyyy-MM-ddTHH:mm:ss");
     setPrevExpiresAt(at);
@@ -467,7 +467,7 @@ QString Settings::lastTitle() const
 
 
 
-void Settings::setLastTitle(const QString title)
+void Settings::setLastTitle(const QString& title)
 {
     if (title == lastTitle())
         return;
@@ -486,7 +486,7 @@ QString Settings::lastText() const
 
 
 
-void Settings::setLastText(const QString text)
+void Settings::setLastText(const QString& text)
 {
     if (text == lastText())
         return;

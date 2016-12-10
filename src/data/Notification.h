@@ -62,7 +62,7 @@ public:
     Q_ENUMS(EntityType)
 
     Notification(QObject* parent = nullptr);
-    Notification(const QJsonObject data, QObject* parent = nullptr);
+    Notification(const QJsonObject& data, QObject* parent = nullptr);
     ~Notification();
     
     int entityId() const;
@@ -86,7 +86,7 @@ signals:
     void readChanged();
 
 private slots:
-    void _updateRead(const QJsonObject data);
+    void _updateRead(const QJsonObject& data);
 
 private:
     QString     _createdAt;

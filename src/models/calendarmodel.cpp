@@ -122,7 +122,7 @@ QHash<int, QByteArray> CalendarModel::roleNames() const
 
 
 
-void CalendarModel::_setCalendar(QJsonObject data)
+void CalendarModel::_setCalendar(const QJsonObject& data)
 {
     beginResetModel();
 

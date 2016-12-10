@@ -47,7 +47,7 @@ class User: public TastyData
 
 public:
     User(QObject* parent = nullptr);
-    User(const QJsonObject data, QObject* parent = nullptr);
+    User(const QJsonObject& data, QObject* parent = nullptr);
 
     User(const User& other);
 
@@ -63,8 +63,8 @@ signals:
     void updated();
 
 protected slots:
-    void _init(const QJsonObject data);
-    void _initFromTlog(const QJsonObject data);
+    void _init(const QJsonObject& data);
+    void _initFromTlog(const QJsonObject& data);
 
 private:
     QString _tlogUrl;

@@ -84,16 +84,16 @@ public:
     void setTlogId(const int tlogId);
     int tlogId() const;
 
-    void setSlug(const QString slug);
+    void setSlug(const QString& slug);
     QString slug() const;
 
     void setMinRating(const int rating);
     int minRating() const { return _minRating; }
 
-    void setQuery(const QString query);
+    void setQuery(const QString& query);
     QString query() const { return _query; }
 
-    void setTag(const QString tag);
+    void setTag(const QString& tag);
     QString tag() const { return _tag; }
 
     Q_INVOKABLE void reset(Mode mode = InvalidMode, int tlogId = -1,
@@ -109,7 +109,7 @@ public:
     Q_INVOKABLE bool isUnrepostable(int etryId) const;
 
     Q_INVOKABLE void setSinceEntryId(int id);
-    Q_INVOKABLE void setSinceDate(const QString date);
+    Q_INVOKABLE void setSinceDate(const QString& date);
 
 signals:
     void modeChanged();
@@ -126,11 +126,11 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void _addItems(QJsonObject data);
+    void _addItems(const QJsonObject& data);
     void _changeHideSome();
     void _resetOrReloadRatings();
     void _reloadRatings();
-    void _setRatings(const QJsonArray data);
+    void _setRatings(const QJsonArray& data);
     void _removeRepost(const QJsonObject& data);
 
     void _prependEntry(int id, int tlogId);

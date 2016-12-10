@@ -41,7 +41,7 @@ Media::Media(QObject* parent)
 
 
 
-Media::Media(const QJsonObject data, QObject* parent)
+Media::Media(const QJsonObject& data, QObject* parent)
     : QObject(parent)
 {
     auto meta = data.value("meta").toObject();

@@ -77,7 +77,7 @@ public slots:
     void getInfo();
     void download();
     void abortDownload();
-    void saveToFile(const QString filename);
+    void saveToFile(const QString& filename);
 
 private slots:
     void _setProperties();

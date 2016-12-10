@@ -37,7 +37,7 @@
 
 
 
-Pusher::Pusher(const QString appKey, QObject *parent)
+Pusher::Pusher(const QString& appKey, QObject *parent)
     : QObject(parent)
     , _socket(new QWebSocket)
     , _imReconnect(false)
@@ -126,14 +126,14 @@ QString Pusher::socketId() const
 
 
 
-Channel* Pusher::channel(const QString name) const
+Channel* Pusher::channel(const QString& name) const
 {
     return _channels.value(name);
 }
 
 
 
-Channel* Pusher::subscribe(const QString channelName, bool isPublic)
+Channel* Pusher::subscribe(const QString& channelName, bool isPublic)
 {
     Channel* ch;
     if (_channels.contains(channelName))
@@ -153,7 +153,7 @@ Channel* Pusher::subscribe(const QString channelName, bool isPublic)
 
 
 
-void Pusher::unsubscribe(const QString channelName)
+void Pusher::unsubscribe(const QString& channelName)
 {
     auto ch = _channels.take(channelName);
     if (ch)
@@ -369,7 +369,7 @@ void Pusher::_emitDisconnected()
 
 
 
-bool Pusher::_send(const QString channel, const QString event, const QString data)
+bool Pusher::_send(const QString& channel, const QString& event, const QString& data)
 {
     QJsonObject json;
     json["event"] = event;
@@ -382,7 +382,7 @@ bool Pusher::_send(const QString channel, const QString event, const QString dat
 
 
 
-bool Pusher::_send(const QJsonObject json)
+bool Pusher::_send(const QJsonObject& json)
 {
     if (!isConnected())
         return false;

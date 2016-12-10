@@ -58,7 +58,7 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void _setCalendar(QJsonObject data);
+    void _setCalendar(const QJsonObject& data);
 
 private:
     QList<CalendarEntry*>           _calendar;

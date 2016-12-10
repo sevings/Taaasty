@@ -153,7 +153,7 @@ void ChatsModel::setMode(ChatsModel::Mode mode)
 
 
 
-void ChatsModel::addChat(EntryPtr entry)
+void ChatsModel::addChat(const EntryPtr& entry)
 {
     if (!entry)
         return;
@@ -164,7 +164,7 @@ void ChatsModel::addChat(EntryPtr entry)
 
 
 
-void ChatsModel::addChat(ChatPtr chat)
+void ChatsModel::addChat(const ChatPtr& chat)
 {
     if (!chat)
         return;
@@ -274,7 +274,7 @@ QHash<int, QByteArray> ChatsModel::roleNames() const
 
 
 
-void ChatsModel::_addUnread(QJsonArray data)
+void ChatsModel::_addUnread(const QJsonArray& data)
 {
     qDebug() << "ChatsModel::_addUnread";
 
@@ -332,7 +332,7 @@ void ChatsModel::_addUnread(QJsonArray data)
 
 
 
-void ChatsModel::_addChats(QJsonArray data)
+void ChatsModel::_addChats(const QJsonArray& data)
 {
     qDebug() << "ChatsModel::_addChats";
 

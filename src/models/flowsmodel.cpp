@@ -164,7 +164,7 @@ QHash<int, QByteArray> FlowsModel::roleNames() const
 
 
 
-void FlowsModel::_addItems(QJsonObject data)
+void FlowsModel::_addItems(const QJsonObject& data)
 {
     qDebug() << "FlowsModel::_addItems";
 

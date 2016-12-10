@@ -29,7 +29,7 @@ class AndroidNotifier : public QObject
 public:
     explicit AndroidNotifier(QObject *parent = 0);
 
-    void setNotification(const QString &notification);
+    void setNotification(const QString& notification);
 
 signals:
 

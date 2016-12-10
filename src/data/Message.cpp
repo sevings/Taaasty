@@ -51,7 +51,7 @@ Message::Message(QObject* parent)
 
 
 
-Message::Message(const QJsonObject data, Conversation* chat, QObject *parent)
+Message::Message(const QJsonObject& data, Conversation* chat, QObject *parent)
     : MessageBase(parent)
     , _replyTo(nullptr)
     , _chat(chat)
@@ -114,7 +114,7 @@ void Message::read()
 
 
 
-void Message::_init(const QJsonObject data)
+void Message::_init(const QJsonObject& data)
 {
     _id             = data.value("id").toInt();
     _userId         = data.value("user_id").toInt();
@@ -165,7 +165,7 @@ void Message::_correctHtml()
 
 
 
-void Message::_markRead(const QJsonObject data)
+void Message::_markRead(const QJsonObject& data)
 {
     if (data.value("status").toString() != "success")
     {
@@ -201,7 +201,7 @@ void Message::_updateUser()
 
 
 
-void Message::_updateRead(const QJsonObject data)
+void Message::_updateRead(const QJsonObject& data)
 {
     if (_read || data.value("id").toInt() != _id)
         return;
@@ -212,7 +212,7 @@ void Message::_updateRead(const QJsonObject data)
 
 
 
-void Message::_markRemoved(const QJsonObject data)
+void Message::_markRemoved(const QJsonObject& data)
 {
     if (data.value("id").toInt() != _id)
         return;

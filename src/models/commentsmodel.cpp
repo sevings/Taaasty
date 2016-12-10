@@ -60,7 +60,7 @@ CommentsModel::CommentsModel(Entry *entry)
 
 
 
-void CommentsModel::init(const QJsonArray feed, int totalCount)
+void CommentsModel::init(const QJsonArray& feed, int totalCount)
 {
     auto reset = _comments.size() != feed.size();
     if (reset)
@@ -185,7 +185,7 @@ QHash<int, QByteArray> CommentsModel::roleNames() const
 
 
 
-void CommentsModel::_addComments(const QJsonObject data)
+void CommentsModel::_addComments(const QJsonObject& data)
 {
     auto feed = data.value("comments").toArray();
     if (feed.isEmpty())
@@ -202,7 +202,7 @@ void CommentsModel::_addComments(const QJsonObject data)
 
 
 
-void CommentsModel::_addComments(const QJsonArray feed)
+void CommentsModel::_addComments(const QJsonArray& feed)
 {
     auto cmts = _commentsList(feed);
     if (cmts.isEmpty())
@@ -223,7 +223,7 @@ void CommentsModel::_addComments(const QJsonArray feed)
 
 
 
-void CommentsModel::_addLastComments(const QJsonObject data)
+void CommentsModel::_addLastComments(const QJsonObject& data)
 {
     auto feed = data.value("comments").toArray();
     if (feed.isEmpty())
@@ -249,7 +249,7 @@ void CommentsModel::_addLastComments(const QJsonObject data)
 
 
 
-void CommentsModel::_addComment(const QJsonObject data)
+void CommentsModel::_addComment(const QJsonObject& data)
 {
     auto cmt = new Comment(data, this);
 
@@ -309,7 +309,7 @@ void CommentsModel::_setTotalCount(int tc)
 
 
 
-QList<Comment*> CommentsModel::_commentsList(QJsonArray feed)
+QList<Comment*> CommentsModel::_commentsList(const QJsonArray& feed)
 {
     QList<Comment*> cmts;
     for (int i = 0; i < feed.size(); i++)

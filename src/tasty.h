@@ -65,9 +65,9 @@ public:
 
     void clearUnreadFriendsEntries();
 
-    Q_INVOKABLE static QString num2str(const int n, const QString str1,
-                    const QString str234, const QString str5);
-    static QString parseDate(const QString d, const bool bigLetter = true);
+    Q_INVOKABLE static QString num2str(const int n, const QString& str1,
+                    const QString& str234, const QString& str5);
+    static QString parseDate(const QString& d, const bool bigLetter = true);
     static void correctHtml(QString& html, bool isEntry = true);
     static QString truncateHtml(QString html, int length = 300);
 
@@ -83,8 +83,8 @@ signals:
     void unreadNotificationsChanged();
     void unreadFriendsEntriesChanged();
 
-    void error(const int code, const QString text);
-    void info(const QString text);
+    void error(const int code, const QString& text);
+    void info(const QString& text);
 
     void htmlRecorrectionNeeded();
 
@@ -95,7 +95,7 @@ signals:
     void entryDeleted(int entry);
 
 public slots:
-    void authorize(const QString login, const QString password, bool save);
+    void authorize(const QString& login, const QString& password, bool save);
     void logout();
     void swapProfiles();
     void reconnectToPusher();
@@ -104,7 +104,7 @@ private slots:
     void _init();
 
     void _swapProfiles();
-    void _readAccessToken(const QJsonObject data);
+    void _readAccessToken(const QJsonObject& data);
 
     void _showNetAccessibility(QNetworkAccessManager::NetworkAccessibility accessible);
 

@@ -188,7 +188,7 @@ QHash<int, QByteArray> MessagesModel::roleNames() const
 
 
 
-void MessagesModel::_addMessages(const QJsonObject data)
+void MessagesModel::_addMessages(const QJsonObject& data)
 {
     auto feed = data.value("messages").toArray();
     if (feed.isEmpty())
@@ -223,7 +223,7 @@ void MessagesModel::_addMessages(const QJsonObject data)
 
 
 
-void MessagesModel::_addLastMessages(const QJsonObject data)
+void MessagesModel::_addLastMessages(const QJsonObject& data)
 {
     auto feed = data.value("messages").toArray();
     if (feed.isEmpty())
@@ -249,7 +249,7 @@ void MessagesModel::_addLastMessages(const QJsonObject data)
 
 
 
-void MessagesModel::_addMessage(const QJsonObject data)
+void MessagesModel::_addMessage(const QJsonObject& data)
 {
     auto id = data.value("id").toInt();
     if (_ids.contains(id))
@@ -285,7 +285,7 @@ void MessagesModel::_addMessage(const QJsonObject data)
 
 
 
-void MessagesModel::_addMessage(const int chatId, const QJsonObject data)
+void MessagesModel::_addMessage(const int chatId, const QJsonObject& data)
 {
     if (chatId != _chatId)
         return;
@@ -328,7 +328,7 @@ void MessagesModel::_setTotalCount(int tc)
 
 
 
-QList<Message*> MessagesModel::_messagesList(QJsonArray feed)
+QList<Message*> MessagesModel::_messagesList(const QJsonArray& feed)
 {
     QList<Message*> msgs;
     for (int i = 0; i < feed.size(); i++)

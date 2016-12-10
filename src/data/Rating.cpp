@@ -51,7 +51,7 @@ Rating::Rating(QObject* parent)
 
 
 
-Rating::Rating(const QJsonObject data, Entry* parent)
+Rating::Rating(const QJsonObject& data, Entry* parent)
     : TastyData(parent)
     , _bayesRating(0)
     , _isBayesVoted(false)
@@ -171,7 +171,7 @@ void Rating::voteAgainst()
 
 
 
-void Rating::init(const QJsonObject data)
+void Rating::init(const QJsonObject& data)
 {
     int id = data.value("entry_id").toInt();
     if (id)
@@ -196,7 +196,7 @@ void Rating::_changeBayesRating(Bayes::Type type)
 
 
 
-void Rating::_reinit(const QJsonArray data)
+void Rating::_reinit(const QJsonArray& data)
 {
     if (data.isEmpty())
         return;

@@ -75,15 +75,15 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void _addMessages(const QJsonObject data);
-    void _addLastMessages(const QJsonObject data);
-    void _addMessage(const QJsonObject data);
-    void _addMessage(const int chatId, const QJsonObject data);
+    void _addMessages(const QJsonObject& data);
+    void _addLastMessages(const QJsonObject& data);
+    void _addMessage(const QJsonObject& data);
+    void _addMessage(const int chatId, const QJsonObject& data);
     void _removeMessage(QObject* msg);
 
 private:
     void            _setTotalCount(int tc);
-    QList<Message*> _messagesList(QJsonArray feed);
+    QList<Message*> _messagesList(const QJsonArray& feed);
 
     QList<Message*> _messages;
     QSet<int>       _ids;

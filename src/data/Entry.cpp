@@ -68,7 +68,7 @@ void EntryBase::load(int id)
 
 
 
-void EntryBase::_initBase(QJsonObject data)
+void EntryBase::_initBase(const QJsonObject& data)
 {
     _id     = data.value("id").toInt();
 
@@ -188,7 +188,7 @@ CommentsModel* Entry::commentsModel()
 
 
 
-void Entry::init(const QJsonObject data)
+void Entry::init(const QJsonObject& data)
 {
     _initBase(data);
 
@@ -310,7 +310,7 @@ void Entry::reload()
 
 
 
-void Entry::addComment(const QString text)
+void Entry::addComment(const QString& text)
 {
     if (_entryRequest || _id <= 0 || !Tasty::instance()->isAuthorized())
         return;
@@ -395,7 +395,7 @@ void Entry::deleteEntry()
 
 
 
-void Entry::_changeWatched(const QJsonObject data)
+void Entry::_changeWatched(const QJsonObject& data)
 {
     if (data.value("status").toString() != "success")
     {
@@ -409,7 +409,7 @@ void Entry::_changeWatched(const QJsonObject data)
 
 
 
-void Entry::_changeFavorited(const QJsonObject data)
+void Entry::_changeFavorited(const QJsonObject& data)
 {
     if (data.value("status").toString() != "success")
     {
@@ -466,7 +466,7 @@ void Entry::_setChatId()
 
 
 
-void Entry::_deleteEntry(QJsonObject data)
+void Entry::_deleteEntry(const QJsonObject& data)
 {
     if (data.value("status") == "success")
     {

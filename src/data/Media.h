@@ -39,7 +39,7 @@ class Media: public QObject
 
 public:
     Media(QObject* parent = nullptr);
-    Media(const QJsonObject data, QObject* parent = nullptr);
+    Media(const QJsonObject& data, QObject* parent = nullptr);
 
 private:
     QString _url;

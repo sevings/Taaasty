@@ -44,7 +44,7 @@ CalendarEntry::CalendarEntry(QObject* parent)
 
 
 
-CalendarEntry::CalendarEntry(const QJsonObject data, QObject *parent)
+CalendarEntry::CalendarEntry(const QJsonObject& data, QObject *parent)
     : QObject(parent)
     , _entry(nullptr)
     , _base(nullptr)

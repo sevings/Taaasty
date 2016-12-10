@@ -47,7 +47,7 @@ Tlog::Tlog(QObject* parent)
 
 
 
-Tlog::Tlog(const QJsonObject data, QObject *parent)
+Tlog::Tlog(const QJsonObject& data, QObject *parent)
     : TastyData(parent)
     , _author(nullptr)
     , _flow(nullptr)
@@ -107,7 +107,7 @@ void Tlog::setId(const int id)
 
 
 
-void Tlog::setSlug(const QString slug)
+void Tlog::setSlug(const QString& slug)
 {
     if (slug.isEmpty() || slug == _slug)
         return;
@@ -121,7 +121,7 @@ void Tlog::setSlug(const QString slug)
 
 
 
-void Tlog::init(const QJsonObject data)
+void Tlog::init(const QJsonObject& data)
 {
     _id = data.value("id").toInt();
     _slug = data.value("slug").toString();
@@ -293,7 +293,7 @@ void Tlog::disapproveFriendRequest()
 
 
 
-void Tlog::_setMyRelation(const QJsonObject data)
+void Tlog::_setMyRelation(const QJsonObject& data)
 {
     _myRelation = _relationship(data, "state");
     emit myRelationChanged();
@@ -301,7 +301,7 @@ void Tlog::_setMyRelation(const QJsonObject data)
 
 
 
-void Tlog::_setHisRelation(const QJsonObject data)
+void Tlog::_setHisRelation(const QJsonObject& data)
 {
     _hisRelation = _relationship(data, "state");
     emit hisRelationChanged();
@@ -309,7 +309,7 @@ void Tlog::_setHisRelation(const QJsonObject data)
 
 
 
-void Tlog::_changeMyRelation(const QString url)
+void Tlog::_changeMyRelation(const QString& url)
 {
     if (_relationRequest || !Tasty::instance()->isAuthorized())
         return;
@@ -326,7 +326,7 @@ void Tlog::_changeMyRelation(const QString url)
 
 
 
-void Tlog::_handleFriendRequest(const QString url)
+void Tlog::_handleFriendRequest(const QString& url)
 {
     Q_ASSERT(_hisRelation == Requested);
     if (_hisRelation != Requested)
@@ -347,7 +347,7 @@ void Tlog::_handleFriendRequest(const QString url)
 
 
 
-Tlog::Relationship Tlog::_relationship(const QJsonObject& data, const QString field)
+Tlog::Relationship Tlog::_relationship(const QJsonObject& data, const QString& field)
 {
     if (!data.contains(field))
         return Undefined;

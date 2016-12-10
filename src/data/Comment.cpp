@@ -44,7 +44,7 @@ Comment::Comment(QObject* parent)
 
 
 
-Comment::Comment(const QJsonObject data, QObject *parent)
+Comment::Comment(const QJsonObject& data, QObject *parent)
     : MessageBase(parent)
 {
     _user = nullptr;
@@ -63,7 +63,7 @@ Comment::~Comment()
 
 
 
-void Comment::edit(const QString text)
+void Comment::edit(const QString& text)
 {
     if (isLoading())
         return;
@@ -96,7 +96,7 @@ void Comment::remove()
 
 
 
-void Comment::_init(const QJsonObject data)
+void Comment::_init(const QJsonObject& data)
 {
     _id             = data.value("id").toInt();
 
@@ -124,7 +124,7 @@ void Comment::_init(const QJsonObject data)
 
 
 
-void Comment::_update(const QJsonObject data)
+void Comment::_update(const QJsonObject& data)
 {
     auto list = data.value("comments").toArray();
     if (list.isEmpty())
@@ -144,7 +144,7 @@ void Comment::_correctHtml()
 
 
 
-void Comment::_remove(const QString data)
+void Comment::_remove(const QString& data)
 {
     if (data == "true")
         deleteLater();

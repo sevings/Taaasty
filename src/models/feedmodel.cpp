@@ -183,7 +183,7 @@ int FeedModel::tlogId() const
 
 
 
-void FeedModel::setSlug(const QString slug)
+void FeedModel::setSlug(const QString& slug)
 {
     if (!slug.isEmpty())
         reset(_mode, -1, slug);
@@ -211,14 +211,14 @@ void FeedModel::setMinRating(const int rating)
 
 
 
-void FeedModel::setQuery(const QString query)
+void FeedModel::setQuery(const QString& query)
 {
     reset(InvalidMode, 0, QString(), query);
 }
 
 
 
-void FeedModel::setTag(const QString tag)
+void FeedModel::setTag(const QString& tag)
 {
     reset (InvalidMode, 0, QString(), QString(), tag);
 }
@@ -339,7 +339,7 @@ void FeedModel::setSinceEntryId(int id)
 
 
 
-void FeedModel::setSinceDate(const QString date)
+void FeedModel::setSinceDate(const QString& date)
 {
     _prevDate = date;
 }
@@ -382,7 +382,7 @@ QHash<int, QByteArray> FeedModel::roleNames() const
 
 
 
-void FeedModel::_addItems(QJsonObject data)
+void FeedModel::_addItems(const QJsonObject& data)
 {
     qDebug() << "FeedModel::_addItems";
 
@@ -425,7 +425,7 @@ void FeedModel::_addItems(QJsonObject data)
     }
 
     std::sort(fixed.begin(), fixed.end(),
-              [](const EntryPtr left, const EntryPtr right)
+              [](const EntryPtr& left, const EntryPtr& right)
     {
         return left->fixedAt() > right->fixedAt();
     });
@@ -555,7 +555,7 @@ void FeedModel::_reloadRatings()
 
 
 
-void FeedModel::_setRatings(const QJsonArray data)
+void FeedModel::_setRatings(const QJsonArray& data)
 {
     auto entries = _allEntries.isEmpty() ? _entries : _allEntries;
     if (entries.isEmpty())

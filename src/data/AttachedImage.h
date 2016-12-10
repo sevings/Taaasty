@@ -41,8 +41,8 @@ class AttachedImage: public QObject
 
 public:
     AttachedImage(QObject* parent = nullptr);
-    AttachedImage(const QJsonObject data, QObject* parent = nullptr);
-    AttachedImage(const QJsonObject data, Media* parent);
+    AttachedImage(const QJsonObject& data, QObject* parent = nullptr);
+    AttachedImage(const QJsonObject& data, Media* parent);
 
 private:
     QString _url;

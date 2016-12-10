@@ -50,7 +50,7 @@ signals:
     void downloadCompleted();
 
 private slots:
-    void _addItems(QJsonObject data);
+    void _addItems(const QJsonObject& data);
 
 private:
     bool         _loadAll;

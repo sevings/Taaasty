@@ -48,7 +48,7 @@ class Rating: public TastyData
 
 public:
     Rating(QObject* parent = nullptr);
-    Rating(const QJsonObject data, Entry* parent = nullptr);
+    Rating(const QJsonObject& data, Entry* parent = nullptr);
     ~Rating();
 
     void reCalcBayes();
@@ -62,7 +62,7 @@ public slots:
     void voteBayes();
     void voteAgainst();
 
-    void init(const QJsonObject data);
+    void init(const QJsonObject& data);
 
 signals:
     void dataChanged();
@@ -70,7 +70,7 @@ signals:
 
 private slots:
     void _changeBayesRating(Bayes::Type type);
-    void _reinit(const QJsonArray data);
+    void _reinit(const QJsonArray& data);
 
 private:
     int  _votes;

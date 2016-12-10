@@ -67,9 +67,9 @@ protected:
 private slots:
     void _readSuccess();
 
-    void _addItems(QJsonObject data);
+    void _addItems(const QJsonObject& data);
     void _addPush(QJsonObject data);
-    void _addNewest(const QJsonObject data);
+    void _addNewest(const QJsonObject& data);
 
     void _reloadAll();
     void _check(int actual);

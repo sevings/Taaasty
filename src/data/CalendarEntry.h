@@ -48,7 +48,7 @@ class CalendarEntry: public QObject
 
 public:
     CalendarEntry(QObject* parent = nullptr);
-    CalendarEntry(const QJsonObject data, QObject* parent = nullptr);
+    CalendarEntry(const QJsonObject& data, QObject* parent = nullptr);
 
     Entry* fullEntry();
 

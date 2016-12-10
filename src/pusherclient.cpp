@@ -119,7 +119,7 @@ void PusherClient::_getFriendsAuth()
 
 
 
-void PusherClient::_subscribeToMessaging(const QJsonObject data)
+void PusherClient::_subscribeToMessaging(const QJsonObject& data)
 {
     auto auth = data.value("auth").toString();
     _pusher->channel(_messagingChannel)->subscribeToPrivate(auth);
@@ -127,7 +127,7 @@ void PusherClient::_subscribeToMessaging(const QJsonObject data)
 
 
 
-void PusherClient::_subscribeToFriends(const QJsonObject data)
+void PusherClient::_subscribeToFriends(const QJsonObject& data)
 {
     auto auth = data.value("auth").toString();
     _pusher->channel(_friendsChannel)->subscribeToPrivate(auth);
@@ -135,7 +135,7 @@ void PusherClient::_subscribeToFriends(const QJsonObject data)
 
 
 
-void PusherClient::_handleMessagingEvent(const QString event, const QString data)
+void PusherClient::_handleMessagingEvent(const QString& event, const QString& data)
 {
     qDebug() << "Messaging event:" << event;
 
@@ -254,7 +254,7 @@ void PusherClient::_handleMessagingEvent(const QString event, const QString data
 
 
 
-void PusherClient::_handleFriendsEvent(const QString event, const QString data)
+void PusherClient::_handleFriendsEvent(const QString& event, const QString& data)
 {
     qDebug() << "Friends event:" << event;
 
@@ -303,7 +303,7 @@ void PusherClient::_addPrivateChannels()
 
 
 
-ApiRequest* PusherClient::_getPusherAuth(const QString channel)
+ApiRequest* PusherClient::_getPusherAuth(const QString& channel)
 {
     auto data = QString("socket_id=%1&channel_name=%2").arg(_pusher->socketId()).arg(channel);
     return new ApiRequest("v2/messenger/auth.json",

@@ -48,7 +48,7 @@ class Author: public User
 
 public:
     Author(QObject* parent = nullptr);
-    Author(const QJsonObject data, QObject* parent = nullptr);
+    Author(const QJsonObject& data, QObject* parent = nullptr);
 
     bool isFemale() const;
     bool isFlow() const;
@@ -56,7 +56,7 @@ public:
     bool isDaylog() const;
 
 public slots:
-    void init(const QJsonObject data);
+    void init(const QJsonObject& data);
     void checkStatus();
     void reload();
 
@@ -65,9 +65,9 @@ signals:
     void statusUpdated();
 
 private slots:
-    void _initFromTlog(const QJsonObject data);
-    void _initStatus(const QJsonArray data);
-    void _initStatus(const QJsonObject data);
+    void _initFromTlog(const QJsonObject& data);
+    void _initStatus(const QJsonArray& data);
+    void _initStatus(const QJsonObject& data);
 
 private:
     bool    _isFemale;

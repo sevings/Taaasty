@@ -35,7 +35,7 @@ class Channel : public QObject
     friend class Pusher;
 
 public:
-    void subscribeToPrivate(const QString auth, const QString data = QString());
+    void subscribeToPrivate(const QString& auth, const QString& data = QString());
 
     bool isSubscribed() const;
 
@@ -53,16 +53,16 @@ signals:
     void subscribed();
     void unsubscribed();
 
-    void event(const QString event, const QString data);
+    void event(const QString& event, const QString& data);
 
-    void memberAdded(const QString id);
-    void memberRemoved(const QString id);
+    void memberAdded(const QString& id);
+    void memberRemoved(const QString& id);
 
 private:
-    Channel(const QString name, bool isPublic, Pusher* pusher);
+    Channel(const QString& name, bool isPublic, Pusher* pusher);
 
-    bool _sendSubscription(const QString auth = QString(),
-                           const QString channelData = QString());
+    bool _sendSubscription(const QString& auth = QString(),
+                           const QString& channelData = QString());
 
     bool _sendUnsubscription();
 

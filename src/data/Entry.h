@@ -61,7 +61,7 @@ signals:
     void loadingError();
 
 protected slots:
-    void _initBase(QJsonObject data);
+    void _initBase(const QJsonObject& data);
     void _maybeError();
 
 protected:
@@ -131,12 +131,12 @@ public:
     int       chatId() const;
 
 public slots:
-    void init(const QJsonObject data);
+    void init(const QJsonObject& data);
 
     void setId(const int id);
     void reload();
 
-    void addComment(const QString text);
+    void addComment(const QString& text);
     void watch();
     void favorite();
 
@@ -150,19 +150,19 @@ signals:
     void commentsCountChanged();
     void watchedChanged();
     void favoritedChanged();
-    void commentAdded(const QJsonObject data);
+    void commentAdded(const QJsonObject& data);
     void addingCommentError();
 
     void entryDeleted();
 
 private slots:
-    void _changeWatched(const QJsonObject data);
-    void _changeFavorited(const QJsonObject data);
+    void _changeWatched(const QJsonObject& data);
+    void _changeFavorited(const QJsonObject& data);
     void _setCommentsCount(int tc);
     void _setWatched();
     void _correctHtml();
     void _setChatId();
-    void _deleteEntry(QJsonObject data);
+    void _deleteEntry(const QJsonObject& data);
 
 private:
     QString     _createdAt;

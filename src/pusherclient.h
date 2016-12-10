@@ -45,7 +45,7 @@ public:
     explicit PusherClient(Tasty* tasty = nullptr);
 
 signals:
-    void notification(const QJsonObject data);
+    void notification(const QJsonObject& data);
     void unreadChat();
     void unreadChats(int count);
     void unreadNotifications(int count);
@@ -62,15 +62,15 @@ private slots:
     void _getMessagingAuth();
     void _getFriendsAuth();
     
-    void _subscribeToMessaging(const QJsonObject data);
-    void _subscribeToFriends(const QJsonObject data);
+    void _subscribeToMessaging(const QJsonObject& data);
+    void _subscribeToFriends(const QJsonObject& data);
         
-    void _handleMessagingEvent(const QString event, const QString data);
-    void _handleFriendsEvent(const QString event, const QString data);
+    void _handleMessagingEvent(const QString& event, const QString& data);
+    void _handleFriendsEvent(const QString& event, const QString& data);
 
 private:
     void        _addPrivateChannels();
-    ApiRequest* _getPusherAuth(const QString channel);
+    ApiRequest* _getPusherAuth(const QString& channel);
 
     Pusher* _pusher;
     QString _messagingChannel;

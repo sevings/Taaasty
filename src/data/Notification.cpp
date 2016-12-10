@@ -45,7 +45,7 @@ Notification::Notification(QObject* parent)
 
 
 
-Notification::Notification(const QJsonObject data, QObject *parent)
+Notification::Notification(const QJsonObject& data, QObject *parent)
     : TastyData(parent)
 {
     _id         = data.value("id").toInt();
@@ -177,7 +177,7 @@ void Notification::read()
 
 
 
-void Notification::_updateRead(const QJsonObject data)
+void Notification::_updateRead(const QJsonObject& data)
 {
     if (_read || data.value("id").toInt() != _id)
         return;

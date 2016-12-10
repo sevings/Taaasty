@@ -30,8 +30,8 @@ class StemmerV
 public:
     static StemmerV* instance();
 
-    QString stemWord(const QString word);
-    QStringList stem(const QString text);
+    QString stemWord(const QString& word);
+    QStringList stem(const QString& text);
 
 private:
     StemmerV();

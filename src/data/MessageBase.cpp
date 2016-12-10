@@ -59,7 +59,7 @@ void MessageBase::_setTruncatedText()
 
 
 
-void MessageBase::_setDate(const QString d)
+void MessageBase::_setDate(const QString& d)
 {
     _date = QDateTime::fromString(d.left(19), "yyyy-MM-ddTHH:mm:ss");
 }

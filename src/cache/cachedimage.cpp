@@ -211,7 +211,7 @@ void CachedImage::abortDownload()
 
 
 
-void CachedImage::saveToFile(const QString filename)
+void CachedImage::saveToFile(const QString& filename)
 {
     if (!_available)
         return;

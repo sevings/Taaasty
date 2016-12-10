@@ -45,7 +45,7 @@ class Message: public MessageBase
     
 public:
     Message(QObject* parent = nullptr);
-    Message(const QJsonObject data, Conversation* chat, QObject* parent = nullptr);
+    Message(const QJsonObject& data, Conversation* chat, QObject* parent = nullptr);
     ~Message();
 
     int   userId() const;
@@ -58,14 +58,14 @@ public slots:
     void read();
 
 private slots:
-    void _init(const QJsonObject data);
+    void _init(const QJsonObject& data);
     void _correctHtml();
-    void _markRead(const QJsonObject data);
+    void _markRead(const QJsonObject& data);
     void _updateUser();
 
 private:
-    void _updateRead(const QJsonObject data);
-    void _markRemoved(const QJsonObject data);
+    void _updateRead(const QJsonObject& data);
+    void _markRemoved(const QJsonObject& data);
 
     int     _userId;
     int     _recipientId;

@@ -29,7 +29,7 @@
 
 
 
-void Channel::subscribeToPrivate(const QString auth, const QString data)
+void Channel::subscribeToPrivate(const QString& auth, const QString& data)
 {
     if (_subscribed)
         return;
@@ -93,7 +93,7 @@ void Channel::unsubscribe()
 
 
 
-Channel::Channel(const QString name, bool isPublic, Pusher* pusher)
+Channel::Channel(const QString& name, bool isPublic, Pusher* pusher)
     : QObject(pusher)
     , _subscribed(false)
     , _isPublic(isPublic)
@@ -105,7 +105,7 @@ Channel::Channel(const QString name, bool isPublic, Pusher* pusher)
 
 
 
-bool Channel::_sendSubscription(const QString auth, const QString channelData)
+bool Channel::_sendSubscription(const QString& auth, const QString& channelData)
 {
     QJsonObject json;
     json["event"] = "pusher:subscribe";

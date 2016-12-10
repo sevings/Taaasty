@@ -56,7 +56,7 @@ signals:
     void updated();
 
 public slots:
-    void init(const QJsonObject data);
+    void init(const QJsonObject& data);
 
 private:
     QString _name;

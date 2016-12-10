@@ -181,7 +181,7 @@ QHash<int, QByteArray> NotificationsModel::roleNames() const
 
 
 
-void NotificationsModel::_addItems(QJsonObject data)
+void NotificationsModel::_addItems(const QJsonObject& data)
 {
     int size = _notifs.size();
     auto list = data.value("notifications").toArray();
@@ -240,7 +240,7 @@ void NotificationsModel::_addPush(QJsonObject data)
 
 
 
-void NotificationsModel::_addNewest(const QJsonObject data)
+void NotificationsModel::_addNewest(const QJsonObject& data)
 {
     auto list = data.value("notifications").toArray();
     if (list.isEmpty())

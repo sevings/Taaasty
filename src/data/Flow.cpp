@@ -71,7 +71,7 @@ bool Flow::isEditable() const
 
 
 
-void Flow::init(const QJsonObject data)
+void Flow::init(const QJsonObject& data)
 {
     _id             = data.value("id").toInt();
     _name           = data.value("name").toString();

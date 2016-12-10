@@ -62,8 +62,8 @@ public:
     void setMode(const Mode mode);
     Mode mode() const {return _mode; }
 
-    void addChat(EntryPtr entry);
-    void addChat(ChatPtr chat);
+    void addChat(const EntryPtr& entry);
+    void addChat(const ChatPtr& chat);
     void bubbleChat(int id);
 
 public slots:
@@ -77,8 +77,8 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void _addUnread(QJsonArray data);
-    void _addChats(QJsonArray data);
+    void _addUnread(const QJsonArray& data);
+    void _addChats(const QJsonArray& data);
     void _removeChat(int id);
     void _checkUnread(int actual);
     void _addChat();

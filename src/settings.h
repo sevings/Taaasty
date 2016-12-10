@@ -63,14 +63,14 @@ public:
     void clearProfile();
 
     QString login() const;
-    void setLogin(const QString login);
+    void setLogin(const QString& login);
 
     QString accessToken() const;
-    void setAccessToken(const QString token);
+    void setAccessToken(const QString& token);
 
     QDateTime expiresAt() const;
-    void setExpiresAt(const QDateTime date);
-    void setExpiresAt(const QString date);
+    void setExpiresAt(const QDateTime& date);
+    void setExpiresAt(const QString& date);
 
     int userId() const;
     void setUserId(const int id);
@@ -79,14 +79,14 @@ public:
     void setSaveProfile(const bool save);
 
     QString prevLogin() const;
-    void setPrevLogin(const QString login);
+    void setPrevLogin(const QString& login);
 
     QString prevAccessToken() const;
-    void setPrevAccessToken(const QString token);
+    void setPrevAccessToken(const QString& token);
 
     QDateTime prevExpiresAt() const;
-    void setPrevExpiresAt(const QDateTime date);
-    void setPrevExpiresAt(const QString date);
+    void setPrevExpiresAt(const QDateTime& date);
+    void setPrevExpiresAt(const QString& date);
 
     int prevUserId() const;
     void setPrevUserId(const int id);
@@ -122,10 +122,10 @@ public:
     void setPredictiveText(bool enable);
 
     QString lastTitle() const;
-    void setLastTitle(const QString title);
+    void setLastTitle(const QString& title);
 
     QString lastText() const;
-    void setLastText(const QString text);
+    void setLastText(const QString& text);
 
     int lastPrivacy() const;
     void setLastPrivacy(int privacy);

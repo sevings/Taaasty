@@ -42,7 +42,7 @@ class CommentsModel : public TastyListModel
 public:
     explicit CommentsModel(Entry* entry = nullptr);
 
-    void init(const QJsonArray feed, int totalCount);
+    void init(const QJsonArray& feed, int totalCount);
 
     Q_INVOKABLE virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -66,15 +66,15 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void _addComments(const QJsonObject data);
-    void _addComments(const QJsonArray feed);
-    void _addLastComments(const QJsonObject data);
-    void _addComment(const QJsonObject data);
+    void _addComments(const QJsonObject& data);
+    void _addComments(const QJsonArray& feed);
+    void _addLastComments(const QJsonObject& data);
+    void _addComment(const QJsonObject& data);
     void _removeComment(QObject* cmt);
 
 private:
     void            _setTotalCount(int tc);
-    QList<Comment*> _commentsList(QJsonArray feed);
+    QList<Comment*> _commentsList(const QJsonArray& feed);
 
     QList<Comment*> _comments;
     QSet<int>       _ids;

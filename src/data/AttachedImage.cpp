@@ -39,7 +39,7 @@ AttachedImage::AttachedImage(QObject* parent)
 
 
 
-AttachedImage::AttachedImage(const QJsonObject data, QObject *parent)
+AttachedImage::AttachedImage(const QJsonObject& data, QObject *parent)
     : QObject(parent)
 {
     auto image = data.contains("image") ? data.value("image").toObject() : data;
@@ -55,7 +55,7 @@ AttachedImage::AttachedImage(const QJsonObject data, QObject *parent)
 
 
 
-AttachedImage::AttachedImage(const QJsonObject data, Media* parent)
+AttachedImage::AttachedImage(const QJsonObject& data, Media* parent)
     : QObject(parent)
 {
     _url = data.value("href").toString();

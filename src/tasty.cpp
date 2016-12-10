@@ -122,7 +122,7 @@ void Tasty::clearUnreadFriendsEntries()
 
 
 
-QString Tasty::num2str(const int n, const QString str1, const QString str234, const QString str5)
+QString Tasty::num2str(const int n, const QString& str1, const QString& str234, const QString& str5)
 {
     QString res = QString("%1 %2").arg(n);
     if (n % 10 == 1 && n % 100 != 11)
@@ -136,7 +136,7 @@ QString Tasty::num2str(const int n, const QString str1, const QString str234, co
 
 
 
-QString Tasty::parseDate(const QString d, const bool bigLetter)
+QString Tasty::parseDate(const QString& d, const bool bigLetter)
 {
     auto datetime = QDateTime::fromString(d.left(19), "yyyy-MM-ddTHH:mm:ss");
     auto date = datetime.date();
@@ -211,7 +211,7 @@ User* Tasty::me()
 
 
 
-void Tasty::authorize(const QString login, const QString password, bool save)
+void Tasty::authorize(const QString& login, const QString& password, bool save)
 {
     qDebug() << "authorize";
 
@@ -397,7 +397,7 @@ void Tasty::_swapProfiles()
 
 
 
-void Tasty::_readAccessToken(const QJsonObject data)
+void Tasty::_readAccessToken(const QJsonObject& data)
 {
     if (_settings->saveProfile())
         _settings->swapProfiles();

@@ -129,7 +129,7 @@ void Poster::postAnonymous(QString title, QString content)
 
 
 
-void Poster::_createPostedEntry(QJsonObject data)
+void Poster::_createPostedEntry(const QJsonObject& data)
 {
     _entry = EntryPtr::create(nullptr);
     _entry->init(data);

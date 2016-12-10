@@ -59,7 +59,7 @@ signals:
 
 protected:
     void _setTruncatedText();
-    void _setDate(const QString d);
+    void _setDate(const QString& d);
 
     QString     _createdAt;
     QDateTime   _date;

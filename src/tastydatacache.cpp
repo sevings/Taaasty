@@ -15,7 +15,7 @@ TastyDataCache::TastyDataCache()
 
 
 
-void TastyDataCache::addChat(ChatPtr chat)
+void TastyDataCache::addChat(const ChatPtr& chat)
 {
     if (!chat)
         return;
@@ -78,7 +78,7 @@ ChatPtr TastyDataCache::chatByTlog(int tlogId) const
 
 
 
-void TastyDataCache::addEntry(EntryPtr entry)
+void TastyDataCache::addEntry(const EntryPtr& entry)
 {
     Q_ASSERT(!entry || !entry->parent());
 

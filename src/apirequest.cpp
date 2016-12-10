@@ -30,10 +30,10 @@
 
 
 
-ApiRequest::ApiRequest(const QString url,
-                       const ApiRequest::Options options,
+ApiRequest::ApiRequest(const QString& url,
+                       const ApiRequest::Options& options,
                        const QNetworkAccessManager::Operation method,
-                       const QString data)
+                       const QString& data)
     : _readyData(data.toUtf8())
     , _accessToken(Tasty::instance()->settings()->accessToken().toUtf8())
     , _fullUrl(QString("http://api.taaasty.com:80/%1").arg(url))
@@ -58,8 +58,8 @@ ApiRequest::ApiRequest(const QString url,
 
 
 
-ApiRequest::ApiRequest(const QString url,
-                       const QString accessToken)
+ApiRequest::ApiRequest(const QString& url,
+                       const QString& accessToken)
     : _accessToken(accessToken.toUtf8())
     , _fullUrl(QString("http://api.taaasty.com:80/%1").arg(url))
 {

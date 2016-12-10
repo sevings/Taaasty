@@ -62,7 +62,7 @@ public slots:
     void postAnonymous(QString title, QString content);
 
 private slots:
-    void _createPostedEntry(QJsonObject data);
+    void _createPostedEntry(const QJsonObject& data);
     void _setErrorString(int errorCode, QString str);
 
 private:

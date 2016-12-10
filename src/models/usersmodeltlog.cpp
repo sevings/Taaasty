@@ -170,7 +170,7 @@ void UsersModelTlog::downloadAll()
 
 
 
-void UsersModelTlog::_addItems(QJsonObject data)
+void UsersModelTlog::_addItems(const QJsonObject& data)
 {
     _total = data.value("total_count").toInt();
 

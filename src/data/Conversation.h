@@ -84,7 +84,7 @@ public:
 
     void setId(int id);
     void setRecipientId(int id);
-    void setSlug(const QString slug);
+    void setSlug(const QString& slug);
     void setEntryId(int entryId);
 
     int totalCount() const;
@@ -120,10 +120,10 @@ public:
     void updateUsers();
 
 public slots:
-    void init(const QJsonObject data);
+    void init(const QJsonObject& data);
 
     void update();
-    void sendMessage(const QString text);
+    void sendMessage(const QString& text);
     void readAll();
     void leave();
     void remove();
@@ -140,7 +140,7 @@ signals:
     void messageReceived(const QJsonObject);
     void sendingMessageError();
 
-    void allMessagesRead(const QJsonObject data);
+    void allMessagesRead(const QJsonObject& data);
     void lastMessageChanged();
 
     void left(int id);
@@ -149,12 +149,12 @@ signals:
     void typedUsersChanged();
 
 private slots:
-    void _markRead(const QJsonObject data);
-    void _emitLeft(const QJsonObject data);
+    void _markRead(const QJsonObject& data);
+    void _emitLeft(const QJsonObject& data);
     void _decUnread(bool read);
     void _removeTypedUser();
     void _sendTyped();
-    void _initUsers(const QJsonArray data);
+    void _initUsers(const QJsonArray& data);
 
 private:
     ConversationType    _type;

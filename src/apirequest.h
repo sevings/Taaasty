@@ -42,20 +42,20 @@ public:
 
     Q_DECLARE_FLAGS(Options, Option)
 
-    ApiRequest(const QString url,
-               const ApiRequest::Options options = ShowMessageOnError,
+    ApiRequest(const QString& url,
+               const ApiRequest::Options& options = ShowMessageOnError,
                const QNetworkAccessManager::Operation method = QNetworkAccessManager::GetOperation,
-               const QString data = QString());
+               const QString& data = QString());
 
     // get resource with another token
-    ApiRequest(const QString url, const QString accessToken);
+    ApiRequest(const QString& url, const QString& accessToken);
 
 signals:
-    void success(const QJsonObject data);
-    void success(const QJsonArray data);
-    void success(const QString data);
+    void success(const QJsonObject& data);
+    void success(const QJsonArray& data);
+    void success(const QString& data);
     void error(QNetworkReply::NetworkError code);
-    void error(const int code, const QString text);
+    void error(const int code, const QString& text);
 
 private slots:
     void _printNetworkError(QNetworkReply::NetworkError code);

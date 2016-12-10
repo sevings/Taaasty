@@ -43,7 +43,7 @@ Author::Author(QObject* parent)
 
 
 
-Author::Author(const QJsonObject data, QObject *parent)
+Author::Author(const QJsonObject& data, QObject *parent)
     : User(data, parent)
 {
     init(data);
@@ -79,7 +79,7 @@ bool Author::isDaylog() const
 
 
 
-void Author::init(const QJsonObject data)
+void Author::init(const QJsonObject& data)
 {
     User::_init(data);
 
@@ -134,7 +134,7 @@ void Author::reload()
 
 
 
-void Author::_initFromTlog(const QJsonObject data)
+void Author::_initFromTlog(const QJsonObject& data)
 {
     auto author = data.value("author").toObject();
     init(author);
@@ -142,7 +142,7 @@ void Author::_initFromTlog(const QJsonObject data)
 
 
 
-void Author::_initStatus(const QJsonArray data)
+void Author::_initStatus(const QJsonArray& data)
 {
     if (data.size())
         _initStatus(data.first().toObject());
@@ -150,7 +150,7 @@ void Author::_initStatus(const QJsonArray data)
 
 
 
-void Author::_initStatus(const QJsonObject data)
+void Author::_initStatus(const QJsonObject& data)
 {
     _isOnline  = data.value("is_online").toBool();
     auto last = data.value("last_seen_at").toString();

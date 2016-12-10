@@ -33,7 +33,7 @@ StemmerV* StemmerV::instance()
 
 
 
-QString StemmerV::stemWord(const QString word)
+QString StemmerV::stemWord(const QString& word)
 {
     if (word.isEmpty())
         return word;
@@ -82,7 +82,7 @@ QString StemmerV::stemWord(const QString word)
 
 
 
-QStringList StemmerV::stem(const QString text)
+QStringList StemmerV::stem(const QString& text)
 {
     auto words = text.split(_separators, QString::SkipEmptyParts);
     QStringList stemmed;

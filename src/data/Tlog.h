@@ -68,7 +68,7 @@ public:
     Q_ENUMS(Relationship)
 
     Tlog(QObject* parent = nullptr);
-    Tlog(const QJsonObject data, QObject* parent = nullptr);
+    Tlog(const QJsonObject& data, QObject* parent = nullptr);
 
     Author* author() const { return _author; }
 
@@ -83,9 +83,9 @@ public slots:
     void setId(const int id);
 
     QString slug() const                { return _slug; }
-    void    setSlug(const QString slug);
+    void    setSlug(const QString& slug);
 
-    void init(const QJsonObject data);
+    void init(const QJsonObject& data);
     void reload();
 
     void follow();
@@ -106,14 +106,14 @@ signals:
     void changingRelationChanged();
 
 private slots:
-    void _setMyRelation(const QJsonObject data);
-    void _setHisRelation(const QJsonObject data);
+    void _setMyRelation(const QJsonObject& data);
+    void _setHisRelation(const QJsonObject& data);
 
 private:
-    void _changeMyRelation(const QString url);
-    void _handleFriendRequest(const QString url);
+    void _changeMyRelation(const QString& url);
+    void _handleFriendRequest(const QString& url);
 
-    Relationship _relationship(const QJsonObject& data, const QString field);
+    Relationship _relationship(const QJsonObject& data, const QString& field);
 
     QString         _slug;
     QString         _title;

@@ -36,7 +36,7 @@ User::User(QObject* parent)
 
 
 
-User::User(const QJsonObject data, QObject *parent)
+User::User(const QJsonObject& data, QObject *parent)
     : TastyData(parent)
 {
     _init(data);
@@ -130,7 +130,7 @@ User& User::operator=(User other)
 
 
 
-void User::_init(const QJsonObject data)
+void User::_init(const QJsonObject& data)
 {
     _id         = data.value("id").toInt();
     _tlogUrl    = data.value("tlog_url").toString();
@@ -162,7 +162,7 @@ void User::_init(const QJsonObject data)
 
 
 
-void User::_initFromTlog(const QJsonObject data)
+void User::_initFromTlog(const QJsonObject& data)
 {
     auto author = data.value("author").toObject();
     _init(author);

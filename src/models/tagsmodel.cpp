@@ -97,7 +97,7 @@ QHash<int, QByteArray> TagsModel::roleNames() const
 
 
 
-void TagsModel::_setData(QJsonArray data)
+void TagsModel::_setData(const QJsonArray& data)
 {
     beginResetModel();
 
