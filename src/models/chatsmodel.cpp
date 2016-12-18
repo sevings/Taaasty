@@ -290,10 +290,9 @@ void ChatsModel::_addUnread(const QJsonArray& data)
         auto id = item.toObject().value("id").toInt();
         auto chat = pTasty->dataCache()->chat(id);
         if (!chat)
-        {
             chat = ChatPtr::create(nullptr);
-            chat->init(item.toObject());
-        }
+        
+        chat->init(item.toObject());
 
         if (_ids.contains(id))
         {
