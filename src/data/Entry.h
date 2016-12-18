@@ -53,7 +53,6 @@ public:
     QString title() const;
     QString type() const;
 
-public slots:
     int entryId() const { return _id; }
 
 signals:
@@ -65,7 +64,7 @@ protected slots:
     void _maybeError();
 
 protected:
-    Author*     _author;
+    Author*     _author; //-V122
     QString     _text;
     QString     _title;
     QString     _type;
@@ -177,22 +176,23 @@ private:
     QDateTime   _fixedAt;
     bool        _isDeletable;
     bool        _isEditable;
-    Tlog*       _tlog;
-    Rating*     _rating;
+    Tlog*       _tlog; //-V122
+    Rating*     _rating; //-V122
     int         _commentsCount;
     QString     _truncatedTitle;
     QString     _truncatedText;
     QString     _source;
-    Media*      _media;
+    Media*      _media; //-V122
 //    QJsonObject _imagePreview;
     int         _wordCount;
     int         _chatId;
 
     QJsonArray _commentsData;
 
-    CommentsModel*       _commentsModel;
-    AttachedImagesModel* _attachedImagesModel;
+    CommentsModel*       _commentsModel; //-V122
+    AttachedImagesModel* _attachedImagesModel; //-V122
     ChatPtr              _chat;
 
     QPointer<ApiRequest> _entryRequest;
+    QPointer<ApiRequest> _repostRequest;
 };
