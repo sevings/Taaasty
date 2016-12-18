@@ -80,5 +80,6 @@
         <file>icons/unlock-white-128.png</file>
         <file>icons/pin-black-128.png</file>
         <file>icons/pin-white-128.png</file>
+        <file>qml/TruncatedEntry.qml</file>
     </qresource>
 </RCC>

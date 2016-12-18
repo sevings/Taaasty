@@ -55,6 +55,7 @@ Q.Drawer {
             // PROFILES SECTION
             Item {
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFullEntryView === true
                          && page.entry
                          && page.entry.author
@@ -83,6 +84,7 @@ Q.Drawer {
             Item {
                 id: pageProfile
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && tlog && tlog.tlogId > 0
                          && (!page.isFullEntryView
                              || page.entry.type !== 'anonymous')
@@ -121,7 +123,9 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FeedModel.MyTlogMode
-                visible: !window.chatsShows && page.isFeedView === true
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isFeedView === true
                          && (   page.mode === FeedModel.MyTlogMode
                              || page.mode === FeedModel.MyPrivateMode)
             }
@@ -132,12 +136,16 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.mode === FeedModel.MyPrivateMode
-                visible: !window.chatsShows && page.isFeedView === true
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isFeedView === true
                          && (   page.mode === FeedModel.MyTlogMode
                              || page.mode === FeedModel.MyPrivateMode)
             }
             MenuSeparator {
-                visible: !window.chatsShows && page.isFeedView === true
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isFeedView === true
                          && (   page.mode === FeedModel.MyTlogMode
                              || page.mode === FeedModel.MyPrivateMode)
             }
@@ -151,6 +159,7 @@ Q.Drawer {
                 }
                 highlighted: page.mode === FeedModel.LiveMode
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && (   page.mode === FeedModel.LiveMode
                              || page.mode === FeedModel.FlowsMode)
             }
@@ -162,11 +171,13 @@ Q.Drawer {
                 }
                 highlighted: page.mode === FeedModel.FlowsMode
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && (   page.mode === FeedModel.LiveMode
                              || page.mode === FeedModel.FlowsMode)
             }
             MenuSeparator {
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && (   page.mode === FeedModel.LiveMode
                              || page.mode === FeedModel.FlowsMode)
             }
@@ -181,6 +192,7 @@ Q.Drawer {
                 }
                 highlighted: page.mode === FeedModel.BestMode
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.bestMode === true
             }
             MenuItem {
@@ -191,6 +203,7 @@ Q.Drawer {
                 }
                 highlighted: page.mode === FeedModel.ExcellentMode
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.bestMode === true
             }
             MenuItem {
@@ -201,6 +214,7 @@ Q.Drawer {
                 }
                 highlighted: page.mode === FeedModel.WellMode
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.bestMode === true
             }
             MenuItem {
@@ -211,6 +225,7 @@ Q.Drawer {
                 }
                 highlighted: page.mode === FeedModel.GoodMode
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.bestMode === true
             }
             MenuItem {
@@ -221,10 +236,12 @@ Q.Drawer {
                 }
                 highlighted: page.mode === FeedModel.BetterThanMode
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.bestMode === true
             }
             MenuSeparator {
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.bestMode === true
             }
 
@@ -237,6 +254,7 @@ Q.Drawer {
                 }
                 highlighted: visible && page.query.length > 0
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFeedView === true
             }
 
@@ -269,6 +287,26 @@ Q.Drawer {
                 visible: window.chatsShows
             }
 
+            // NOTIFICATIONS SECTION
+            MenuItem {
+                text: 'Уведомления'
+                onTriggered: {
+                    window.friendActivity = false;
+                    drawer.close();
+                }
+                highlighted: !window.friendActivity
+                visible: window.notifsShows
+            }
+            MenuItem {
+                text: 'Активность'
+                onTriggered: {
+                    window.friendActivity = true;
+                    drawer.close();
+                }
+                highlighted: window.friendActivity
+                visible: window.notifsShows
+            }
+                        
             // MESSAGES SECTION
             MenuItem {
                 id: chatTopic
@@ -278,6 +316,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isMessagesView === true
                          && page.chat.entry //&& page.chat.isInvolved
             }
@@ -294,6 +333,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFullEntryView === true
                          && page.entry.isFavoritable
             }
@@ -304,6 +344,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFullEntryView === true
                          && !page.entry.loading
             }
@@ -315,11 +356,13 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFullEntryView === true
                          && page.entry.url.length > 0
             }
             MenuSeparator {
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFullEntryView === true
                          && !page.entry.loading
                          && Tasty.isAuthorized
@@ -331,6 +374,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFullEntryView === true
                          && page.entry.chat
                          && page.entry.chat.canTalk
@@ -353,6 +397,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && (page.isFullEntryView === true
                              && page.entry.chat
                              && page.entry.chat.isInvolved)
@@ -362,6 +407,7 @@ Q.Drawer {
             }
             MenuSeparator {
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFullEntryView === true
                          && !page.entry.loading
                          && (page.entry.isDeletable || page.isUnrepostable)
@@ -373,6 +419,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFullEntryView === true
                          && page.entry.isDeletable
             }
@@ -384,6 +431,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFullEntryView === true
                          && page.isUnrepostable
             }
@@ -397,6 +445,7 @@ Q.Drawer {
                 }
                 highlighted: page.mode === FlowsModel.PopularMode
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFlowsView === true
             }
             MenuItem {
@@ -407,6 +456,7 @@ Q.Drawer {
                 }
                 highlighted: page.mode === FlowsModel.NewestMode
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFlowsView === true
             }
             MenuItem {
@@ -417,6 +467,7 @@ Q.Drawer {
                 }
                 highlighted: page.mode === FlowsModel.MyMode
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isFlowsView === true
                          && Tasty.isAuthorized
             }
@@ -438,6 +489,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isProfileView === true
                          && (page.tlog.myRelationship === Tlog.Friend
                              || page.tlog.myRelationship === Tlog.Requested
@@ -452,6 +504,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isProfileView === true
                          && (page.tlog.hisRelationship === Tlog.Friend)
                 enabled: visible && !page.tlog.changingRelation
@@ -467,6 +520,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isProfileView === true
                          && (page.tlog.myRelationship === Tlog.Ignored
                              || page.tlog.myRelationship === Tlog.None)
@@ -479,6 +533,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isProfileView === true
                          && page.tlog.hisRelationship === Tlog.Requested
                 enabled: visible && !page.tlog.changingRelation
@@ -490,6 +545,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isProfileView === true
                          && page.tlog.hisRelationship === Tlog.Requested
                 enabled: visible && !page.tlog.changingRelation
@@ -506,6 +562,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isProfileView === true
                          && !page.tlog.errorString
                          && !page.author.isFlow
@@ -524,6 +581,7 @@ Q.Drawer {
                     drawer.close();
                 }
                 visible: !window.chatsShows
+                         && !window.notifsShows
                          && page.isProfileView === true
                          && !page.tlog.errorString
                          && (!page.author.isPrivacy

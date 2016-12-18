@@ -28,44 +28,57 @@ PopupFill {
     onStateChanged: {
         if (state == "opened")
             Tasty.reconnectToPusher();
-        else if (state == "closed")
+        else if (!friendActivity && state == "closed")
             NotifsModel.markAsRead();
+    }
+    function hideNotifs() {
+        back.hide();
+        window.showNotifsOnPop = window.stackSize;
     }
     Splash {
         visible: !notifsView.visible
-        running: NotifsModel.loading
-        text: NotifsModel.errorString || 'Нет уведомлений'
+        running: notifsView.model.loading
+        text: notifsView.model.errorString || 'Нет уведомлений'
     }
     MyListView {
         id: notifsView
         anchors.fill: parent
         visible: count > 0
-        model: NotifsModel
-        spacing: 2 * mm
+        model: window.friendActivity ? FriendActivityModel : NotifsModel
+        spacing: 3 * mm
         cacheBuffer: back.visible ? 2 * window.height : 0
         delegate: MouseArea {
             id: notif
             width: window.width
-            height: Math.max(notifName.paintedHeight + notifText.paintedHeight + 1.5 * mm, notifAvatar.height) + 3 * mm
+            height: (window.friendActivity ? notifAvatar.height + 6 * mm
+                                           : Math.max(notifAvatar.height, notifName.height + notifAction.height))
+                    + notifContent.height
             onClicked: {
                 var fullEntry = model.notification.entry;
                 if (fullEntry)
                 {
-                    back.hide();
-                    window.showNotifsOnPop = window.stackSize;
+                    back.hideNotifs();
                     window.pushFullEntry(fullEntry);
                 }
                 else if (model.notification.entityType == 3)//Notification.RelationshipType)
                 {
-                    back.hide();
-                    window.showNotifsOnPop = window.stackSize;
-                    window.pushTlog(model.notification.sender.id);
+                    back.hideNotifs();
+                    
+                    var entityUser = model.notification.entityUser;
+                    var entityTlogId = entityUser ? entityUser.id
+                                                  : model.notification.sender.id;
+                    window.pushTlog(entityTlogId);
                 }
             }
             Rectangle {
-                anchors.fill: parent
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                    bottom: window.friendActivity ? notifContent.top : parent.bottom
+                }
                 color: Material.primary
-                visible: notif.pressed
+                visible: notif.pressed || window.friendActivity
             }
             SmallAvatar {
                 id: notifAvatar
@@ -73,31 +86,49 @@ PopupFill {
                 user: model.notification.sender
                 acceptClick: back.y <= 0 && model.notification.parentType !== 'AnonymousEntry'
                 onClicked: {
-                    back.hide();
-                    window.showNotifsOnPop = window.stackSize;
+                    back.hideNotifs();
                     window.pushProfileById(model.notification.sender.id);
                 }
             }
-            Q.Label {
+            ThemedText {
                 id: notifName
-                text: '<b>' + model.notification.sender.name + '</b> '
-                        + model.notification.actionText
+                text: model.notification.sender.name
                 anchors {
-                    top: notifAvatar.top
+                    top: parent.top
                     left: notifAvatar.right
-                    right: unreadNotice.left
-                    leftMargin: 1.5 * mm
-                    rightMargin: 1.5 * mm
+                    right: notifDate.left
+                    bottomMargin: 0
                 }
-                wrapMode: Text.Wrap
                 font.pointSize: window.fontSmaller
-                style: Text.Raised
-                styleColor: 'lightblue'
+                elide: Text.ElideRight
+                wrapMode: Text.NoWrap
+            }
+            ThemedText {
+                id: notifDate
+                anchors {
+                    verticalCenter: notifName.verticalCenter
+                    right: parent.right
+                }
+                text: notification.createdAt
+                color: window.secondaryTextColor
+                font.pointSize: window.fontSmallest
+                wrapMode: Text.NoWrap
+            }
+            ThemedText {
+                id: notifAction
+                text: model.notification.actionText
+                anchors {
+                    top: notifName.bottom
+                    left: notifAvatar.right
+                    right: unreadNotice.visible ? unreadNotice.left : parent.right
+                    topMargin: 0
+                }
+                font.pointSize: window.fontSmaller
             }
             Rectangle {
                 id: unreadNotice
                 anchors {
-                    verticalCenter: notifAvatar.verticalCenter
+                    verticalCenter: notifAction.verticalCenter
                     right: parent.right
                     margins: 2 * mm
                 }
@@ -107,20 +138,84 @@ PopupFill {
                 color: Material.primary
                 visible: !model.notification.isRead
             }
-            ThemedText {
-                id: notifText
-                text: model.notification.text
+            Loader {
+                id: notifContent
                 anchors {
-                    top: notifName.bottom
-                    left: notifName.left
-                    right: notifName.right
+                    top:   window.friendActivity ? notifAvatar.bottom : notifAction.bottom
+                    left:  window.friendActivity ? parent.left        : notifName.left
+                    right: window.friendActivity ? parent.right       : notifDate.right
+                    topMargin: window.friendActivity ? 1.5 * mm : 0
+                    leftMargin: window.friendActivity ? 3 * mm : 0
+                    rightMargin: anchors.leftMargin
                 }
-                font.pointSize: window.fontSmaller
+                readonly property string textContent: notification.text
+                readonly property User notificationUser: notification.entityUser
+                readonly property TlogEntry notificationEntry: notification.entry
+                sourceComponent: {
+                    if (!window.friendActivity)
+                        notifText;
+                    else if (notificationEntry)
+                        notifEntry;
+                    else if (notificationUser)
+                        notifTlog;
+                    else
+                        undefined;
+                }
             }
         }
         footer: ListBusyIndicator {
-            running: NotifsModel.loading
-            visible: NotifsModel.hasMore
+            running: notifsView.model.loading
+            visible: notifsView.model.hasMore
+        }
+    }
+    Component {
+        id: notifText
+        ThemedText {
+            text: textContent
+            font.pointSize: window.fontSmaller
+            font.italic: true
+        }
+    }
+    Component {
+        id: notifTlog
+        Item {
+            height: tlogAvatar.height + 3 * mm
+            SmallAvatar {
+                id: tlogAvatar
+                anchors {
+                    top: undefined
+                    verticalCenter: parent.verticalCenter
+                    margins: 1.5 * mm
+                }
+                user: notificationUser
+                onClicked: {
+                    back.hideNotifs();
+                    window.pushProfileById(user.id);
+                }
+            }
+            Q.Label {
+                id: tlogName
+                font.pointSize: window.fontBigger
+                text: notificationUser.name
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    left: tlogAvatar.right
+                    right: parent.right
+                    leftMargin: 1.5 * mm
+                    rightMargin: 1.5 * mm
+                }
+                elide: Text.ElideRight
+            }
+        }
+    }
+    Component {
+        id: notifEntry
+        TruncatedEntry {
+            entry: notificationEntry
+            pinVisible: false
+            onAvatarClicked: {
+                back.hideNotifs();
+            }
         }
     }
 }

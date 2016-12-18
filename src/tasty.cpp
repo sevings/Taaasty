@@ -293,7 +293,7 @@ void Tasty::_init()
 
     Q_TEST(connect(_pusher, SIGNAL(unreadChats(int)),          this, SLOT(_setUnreadChats(int))));
     Q_TEST(connect(_pusher, SIGNAL(unreadNotifications(int)),  this, SLOT(_setUnreadNotifications(int))));
-    Q_TEST(connect(_pusher, SIGNAL(unreadFriendsEntry(int)), this, SLOT(_incUnreadFriendsEntries())));
+    Q_TEST(connect(_pusher, SIGNAL(unreadFriendsEntry(int)),   this, SLOT(_incUnreadFriendsEntries())));
 
     QQuickStyle::setStyle("Material");
 
@@ -301,7 +301,7 @@ void Tasty::_init()
     qmlRegisterType<CalendarModel>      ("org.binque.taaasty", 1, 0, "CalendarModel");
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
     qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
-    qmlRegisterType<UsersModel>         ("org.binque.taaasty", 1, 0, "UsersModelTlog");
+    qmlRegisterType<UsersModel>         ("org.binque.taaasty", 1, 0, "UsersModel");
     qmlRegisterType<MessagesModel>      ("org.binque.taaasty", 1, 0, "MessagesModel");
     qmlRegisterType<FlowsModel>         ("org.binque.taaasty", 1, 0, "FlowsModel");
     qmlRegisterType<TagsModel>          ("org.binque.taaasty", 1, 0, "TagsModel");

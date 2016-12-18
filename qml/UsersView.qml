@@ -48,7 +48,7 @@ Pane {
         }
         visible: count > 0
         height: contentHeight > parent.height ? parent.height : contentHeight
-        model: UsersModelTlog {
+        model: UsersModel {
             mode: back.mode
             tlog: back.tlogId
         }
@@ -64,7 +64,7 @@ Pane {
                 }
                 width: parent.width
                 color: Material.primary
-                visible: usersMouse.pressed || removing.running
+                visible: usersMouse.pressed
             }
             Poppable {
                 id: usersMouse
@@ -73,7 +73,6 @@ Pane {
                 onClicked: {
                     mouse.accepted = true;
                     window.pushTlog(user.id);
-                    removing.stop();
                 }
             }
             SmallAvatar {
@@ -101,21 +100,6 @@ Pane {
                     rightMargin: 1.5 * mm
                 }
                 elide: Text.ElideRight
-            }
-            NumberAnimation {
-                id: removing
-                target: fillRect
-                property: "width"
-                easing.type: Easing.OutQuad
-                from: window.width
-                to: 0
-                duration: 4000
-                onStopped: {
-                    if (fillRect.width > 0)
-                        fillRect.width = window.width;
-                    else
-                        users.model.removeUser(user.id);
-                }
             }
         }
         header: Item {

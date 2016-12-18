@@ -34,7 +34,8 @@ Item {
         window.setFeedMode(mode);
     }
     onVisibleChanged: {
-        window.hideFooter();
+        if (visible)
+            window.hideFooter();
     }
     Flickable {
         anchors.fill: parent

@@ -48,6 +48,7 @@ Notification::Notification(QObject* parent)
 
 Notification::Notification(const QJsonObject& data, QObject *parent)
     : TastyData(parent)
+    , _entityUser(nullptr)
 {
     _id         = data.value("id").toInt();
     _createdAt  = Tasty::parseDate(data.value("created_at").toString());
@@ -174,6 +175,13 @@ Entry* Notification::entry()
     _entry = EntryPtr::create(nullptr);
     _entry->setId(id);
     return _entry.data();
+}
+
+
+
+Author* Notification::entityUser() const
+{
+    return _entityUser;
 }
 
 

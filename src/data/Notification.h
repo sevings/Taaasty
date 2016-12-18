@@ -50,7 +50,7 @@ class Notification: public TastyData
     Q_PROPERTY(QString      parentType MEMBER _parentType CONSTANT)
     
     Q_PROPERTY(Entry*       entry      READ   entry       CONSTANT)
-    Q_PROPERTY(Author*      entityUser MEMBER _entityUser CONSTANT)
+    Q_PROPERTY(Author*      entityUser READ   entityUser  CONSTANT)
 
 public:
     enum EntityType
@@ -75,6 +75,7 @@ public:
     int     parentId()   const;
 
     Entry*  entry();
+    Author* entityUser() const;
 
 public slots:
     void read();

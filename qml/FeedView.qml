@@ -145,179 +145,21 @@ Pane {
                     }
                 }
             }
-            SmallAvatar {
-                id: entryAvatar
+            TruncatedEntry {
+                id: truncEntry
                 anchors {
                     top: repostText.bottom
-                    margins: 1.5 * mm
+                    left: parent.left
+                    right: parent.right
                 }
-                user: entry.author
+                entry: model.entry
                 popBody: back
-                visible: entry.type !== 'anonymous'
-                acceptClick: back.x <= 0
-                onClicked: {
-                    if (entry.tlog.id === entry.author.id)
-                        window.pushProfile(entry.tlog);
-                    else
-                        window.pushProfileById(entry.author.id);
-                }
-            }
-            Image {
-                id: pin
-                anchors {
-                    top: parent.top
-                    right: parent.right
-                    margins: 1.5 * mm
-                }
-                visible: entry.isFixed && feedModel.showFixed
-                height: 20 * sp
-                fillMode: Image.PreserveAspectFit
-                source: (window.darkTheme ? '../icons/pin-white-'
-                                          : '../icons/pin-black-')
-                      + '128.png'
-            }
-            ThemedText {
-                id: nick
-                anchors {
-                    top: repostText.bottom
-                    left: entryAvatar.right
-                    right: pin.visible ? pin.left : parent.right
-                }
-                text: entry.author.name
-                font.pointSize: window.fontSmaller
-                elide: Text.ElideRight
-                wrapMode: Text.NoWrap
-                horizontalAlignment: Text.AlignLeft
-                visible: entry.type !== 'anonymous'
-            }
-            ThemedText {
-                id: date
-                anchors {
-                    top: nick.visible ? nick.bottom : repostText.bottom
-                    left: entryAvatar.visible ? entryAvatar.right : parent.left
-                    right: pin.visible ? pin.left : parent.right
-                }
-                text: entry.createdAt
-                color: window.secondaryTextColor
-                font.pointSize: window.fontSmallest
-                elide: Text.AlignRight
-                wrapMode: Text.NoWrap
-            }
-            Loader {
-                id: firstImage
-                anchors {
-                    top: entryAvatar.visible ? entryAvatar.bottom : date.bottom
-                    left: parent.left
-                    right: parent.right
-                    topMargin: 1.5 * mm
-                    bottomMargin: 1.5 * mm
-                }
-                property AttachedImage image: entry.attachedImagesModel.first()
-                active: image
-                height: active ? (image.height / image.width * width) : 0
-                onLoaded: item.image = image
-                sourceComponent: MyImage {
-                    property AttachedImage image
-                    url: image ? image.url : ''
-                    extension: image ? image.type : ''
-                    savable: true
-                    popBody: back
-                    acceptClick: false
-                    ThemedText {
-                        anchors {
-                            bottom: parent.bottom
-                            left: parent.left
-                            right: parent.right
-                            margins: 0.5 * mm
-                        }
-                        horizontalAlignment: Text.AlignHCenter
-                        font.pointSize: window.fontSmaller
-                        style: Text.Outline
-                        styleColor: window.backgroundColor
-                        property int total: entry.attachedImagesModel.rowCount()
-                        text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
-                        visible: total > 1
-                    }
-                }
-            }
-            Loader {
-                id: mediaLink
-                property Media media: entry.media
-                active: media
-                height: media ? media.thumbnail.height / media.thumbnail.width * width : -anchors.topMargin
-                anchors {
-                    top: firstImage.bottom
-                    left: parent.left
-                    right: parent.right
-                    bottomMargin: 1.5 * mm
-                }
-                onLoaded: item.media = media
-                sourceComponent: MediaLink {
-                    acceptClick: false
-                    popBody: back
-                }
-            }
-            ThemedText {
-                id: entryTitle
-                text: entry.truncatedTitle
-                anchors {
-                    top: mediaLink.bottom
-                    left: parent.left
-                    right: parent.right
-                }
-                font.pointSize: entry.truncatedText.length > 0 ? window.fontBigger
-                                                               : window.fontNormal
-                textFormat: Text.RichText
-                visible: entry.type !== 'quote'
-                height: visible && entry.truncatedTitle.length > 0
-                        ? contentHeight : entry.truncatedText.length > 0 ? -2 * mm : 0
-            }
-            ThemedText {
-                id: content
-                text: entry.truncatedText
-                anchors {
-                    top: entryTitle.bottom
-                    left: parent.left
-                    right: parent.right
-                    leftMargin: entry.type === 'quote' ? 5 * mm : 1.5 * mm
-                    rightMargin: anchors.leftMargin
-                }
-                textFormat: Text.RichText
-                height: entry.truncatedText.length > 0 ? contentHeight
-                                                       : entry.truncatedTitle.length > 0 ? -2 * mm : 0
-            }
-            ThemedText {
-                id: quoteSource
-                text: entry.source
-                anchors {
-                    top: content.bottom
-                    left: parent.left
-                    right: parent.right
-                }
-                font.pointSize: window.fontSmaller
-                font.italic: true
-                textFormat: Text.RichText
-                height: entry.source.length > 0 ? contentHeight : 0
-                horizontalAlignment: Text.AlignRight
-            }
-            Rectangle {
-                id: wc
-                anchors {
-                    top: quoteSource.bottom
-                    left: parent.left
-                    margins: 1.5 * mm
-                }
-                height: 0.5 * mm
-                radius: height / 2
-                readonly property int maxWidth: parent.width - 3 * mm
-                readonly property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
-                width: Math.min(length, maxWidth)
-                color: window.secondaryTextColor
+                pinVisible: entry.isFixed && feedModel.showFixed
             }
             IconButton {
                 id: commentsButton
                 anchors {
-                    top: wc.bottom
+                    top: truncEntry.bottom
                     left: parent.left
                 }
                 visible: text
@@ -335,7 +177,7 @@ Pane {
             IconButton {
                 id: entryVoteButton
                 anchors {
-                    top: wc.bottom
+                    top: truncEntry.bottom
                     right: parent.right
                 }
                 readonly property bool votable: entry.rating.isVotable && Tasty.isAuthorized
@@ -352,7 +194,7 @@ Pane {
             IconButton {
                 id: entryVoteAgainstButton
                 anchors {
-                    top: wc.bottom
+                    top: truncEntry.bottom
                     right: entryRating.left
                 }
                 icon: (entry.rating.isVotedAgainst ? '../icons/drop-solid-'
@@ -366,7 +208,7 @@ Pane {
             ThemedText {
                 id: entryRating
                 anchors {
-                    top: wc.bottom
+                    top: truncEntry.bottom
                     right: entryVoteButton.left
                 }
                 text: entry.isVotable ? '+ ' + entry.rating.votes : ''

@@ -36,7 +36,7 @@ ApplicationWindow {
     Material.primary: Material.BlueGrey
     readonly property bool darkTheme: Settings.darkTheme
     property color backgroundColor: Material.background
-    property color secondaryTextColor: darkTheme ? '#9E9E9E' : Qt.darker('#9E9E9E')
+    property color secondaryTextColor: darkTheme ? '#b2ffffff' : '#89000000'
     property color greenColor: '#4CAF50'
     property color redColor: '#F44336' // '#f3534b'
     property int fontBiggest: 30
@@ -48,7 +48,8 @@ ApplicationWindow {
     readonly property bool chatsShows: chatsView && chatsView.item && chatsView.item.showing
     readonly property int stackSize: stack ? stack.depth : 0
     readonly property int footerY: footer.y
-    readonly property bool canShowPageMenu: pageMenu && !pageMenu.autoclose
+    readonly property bool canShowPageMenu: !pageMenu.autoclose
+    property bool friendActivity: false
     property int showChatsOnPop: 0
     property int showNotifsOnPop: 0
     property CachedImage savingImage
@@ -537,7 +538,7 @@ ApplicationWindow {
     PageMenu {
         id: pageMenu
         page: stack.currentItem
-        openable: !menu.visible && !notifsShows
+        openable: !menu.visible
     }
     Footer {
         id: footer
