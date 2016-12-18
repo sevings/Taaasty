@@ -26,7 +26,6 @@
 #include "tastylistmodel.h"
 
 class User;
-class Bayes;
 
 
 
@@ -34,6 +33,7 @@ class UsersModel : public TastyListModel
 {
     Q_OBJECT
 
+    Q_PROPERTY(int tlog  READ tlog WRITE setTlog)
     Q_PROPERTY(Mode mode READ mode WRITE setMode)
 
 public:
@@ -49,15 +49,42 @@ public:
 
     UsersModel(QObject* parent = nullptr);
 
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    virtual bool canFetchMore(const QModelIndex& parent) const override;
+    virtual void fetchMore(const QModelIndex& parent) override;
+
     virtual bool hasMore() const override;
 
-    virtual void setMode(const Mode mode) { _mode = mode; }
+    virtual void setMode(const Mode mode);
     Mode mode() const {return _mode; }
+
+    void setTlog(const int tlog);
+    int tlog() const {return _tlog; }
+
+    void downloadAll();
+
+signals:
+    void downloadCompleted();
+
+private slots:
+    void _addItems(const QJsonObject& data);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
-    Mode _mode;
+private:
+    bool         _loadAll;
+
+    QList<User*> _users;
+
+    Mode         _mode;
+    QString      _url;
+    QString      _field;
+
+    int          _tlog;
+    int          _total;
+    int          _lastPosition;
 };
 
 #endif // USERSMODEL_H
