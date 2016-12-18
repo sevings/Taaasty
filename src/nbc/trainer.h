@@ -107,7 +107,7 @@ private:
         inline bool operator==(const BayesTlog& other);
         inline bool operator==(const int& userId);
         void loadInfo();
-        User* user;
+        User* user; //-V122
         int id;
         int latest;
     };
@@ -120,11 +120,11 @@ private:
 
     void _addEntriesToLoad();
 
-    Bayes* _bayes;
+    Bayes* _bayes; //-V122
 
     Mode                _curMode;
     int                 _iCurTlog;
-    CalendarModel*      _curTlog;
+    CalendarModel*      _curTlog; //-V122
     QList<BayesTlog>    _tlogs[2];
     
     QList<CalendarEntry*> _entries;

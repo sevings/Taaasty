@@ -115,11 +115,11 @@ private slots:
     void _saveOrReconnect(Qt::ApplicationState state);
 
 private:
-    QQmlApplicationEngine* _engine;
-    Settings*              _settings;
-    QNetworkAccessManager* _manager;
-    PusherClient*          _pusher;
-    TastyDataCache*        _dataCache;
+    QQmlApplicationEngine* _engine;     //-V122
+    Settings*              _settings;   //-V122
+    QNetworkAccessManager* _manager;    //-V122
+    PusherClient*          _pusher;     //-V122
+    TastyDataCache*        _dataCache;  //-V122
 
     int _entryImageWidth;
     int _commentImageWidth;
@@ -128,7 +128,7 @@ private:
     int _unreadNotifications;
     int _unreadFriendsEntries;
 
-    User* _me;
+    User* _me; //-V122
 
     bool _saveProfile;
 

@@ -91,9 +91,9 @@ private:
     QString _path() const;
     void    _saveFile(QByteArray* data) const;
 
-    CacheManager*        _man;
-    QNetworkReply*       _headReply;
-    QNetworkReply*       _reply;
+    CacheManager*        _man;       //-V122
+    QNetworkReply*       _headReply; //-V122
+    QNetworkReply*       _reply;     //-V122
     QFutureWatcher<void> _saveWatcher;
 
     ImageFormat _format;

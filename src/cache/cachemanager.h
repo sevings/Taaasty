@@ -61,7 +61,7 @@ private:
 
     QHash<QString, CachedImage*>    _images;
     
-    QNetworkAccessManager*          _web;
+    QNetworkAccessManager*          _web; //-V122
     QFutureWatcher<void>            _watcher;
     QString                         _path;
     

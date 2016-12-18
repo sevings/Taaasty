@@ -75,7 +75,7 @@ private:
 
     QSet<QString> _presenceMemberIds;
 
-    Pusher* _pusher;
+    Pusher* _pusher; //-V122
 };
 
 #endif // CHANNEL_H

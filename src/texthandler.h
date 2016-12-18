@@ -120,8 +120,8 @@ private:
     QTextCursor _textCursor() const;
     void        _mergeFormat(const QTextCharFormat& format);
 
-    QQuickItem*     _target;
-    QTextDocument*  _doc;
+    QQuickItem*     _target; //-V122
+    QTextDocument*  _doc; //-V122
 
     int             _cursorPosition;
     int             _selectionStart;

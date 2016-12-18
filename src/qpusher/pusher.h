@@ -70,14 +70,14 @@ private:
 
     QUrl        _url;
     QString     _socketId;
-    QWebSocket* _socket;
+    QWebSocket* _socket; //-V122
     bool        _imReconnect;
 
     QHash<QString, Channel*> _channels;
 
-    QTimer* _pingTimer;
-    QTimer* _pongTimer;
-    QTimer* _reconnectTimer;
+    QTimer* _pingTimer;      //-V122
+    QTimer* _pongTimer;      //-V122
+    QTimer* _reconnectTimer; //-V122
 };
 
 #endif // PUSHER_H

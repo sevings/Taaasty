@@ -173,14 +173,14 @@ private:
     QHash<int, User*>   _users;
     QHash<int, User*>   _deletedUsers;
     QHash<int, User*>   _leftUsers;
-    Author*             _recipient;
-    MessagesModel*      _messages;
+    Author*             _recipient; //-V122
+    MessagesModel*      _messages; //-V122
     QPointer<Message>   _lastMessage;
     QMap<int, QTimer*>  _typedUsers;
 
     EntryPtr _entry;
 
-    QTimer*              _typedTimer;
+    QTimer*              _typedTimer; //-V122
     bool                 _hadTyped;
     QPointer<ApiRequest> _typedRequest;
     

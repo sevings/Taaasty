@@ -71,5 +71,5 @@ private:
     bool    _isFlow;
 
     EntryPtr   _entry;
-    EntryBase* _base;
+    EntryBase* _base; //-V122
 };

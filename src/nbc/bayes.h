@@ -85,8 +85,8 @@ private:
 
     bool _loaded;
 
-    Trainer* _trainer;
-    StemmerV* _stemmer;
+    Trainer* _trainer; //-V122
+    StemmerV* _stemmer; //-V122
     QSqlDatabase _db;
     mutable QReadWriteLock _lock;
 };

@@ -70,10 +70,10 @@ private:
     int     _userId;
     int     _recipientId;
     int     _conversationId;
-    User*   _replyTo;
+    User*   _replyTo; //-V122
     int     _replyUserId;
 
-    Conversation* _chat;
+    Conversation* _chat; //-V122
     
-    AttachedImagesModel* _attachedImagesModel;
+    AttachedImagesModel* _attachedImagesModel; //-V122
 };

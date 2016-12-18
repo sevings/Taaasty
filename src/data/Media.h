@@ -46,7 +46,7 @@ private:
     QString _title;
     int     _duration;
 
-    AttachedImage* _thumbnail;
-    AttachedImage* _icon;
+    AttachedImage* _thumbnail; //-V122
+    AttachedImage* _icon;      //-V122
 
 };

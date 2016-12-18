@@ -72,11 +72,11 @@ private:
     void        _addPrivateChannels();
     ApiRequest* _getPusherAuth(const QString& channel);
 
-    Pusher* _pusher;
+    Pusher* _pusher; //-V122
     QString _messagingChannel;
     QString _friendsChannel;
 
-    Tasty* _tasty;
+    Tasty* _tasty; //-V122
 
     QTimer _readyTimer;
 };

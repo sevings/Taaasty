@@ -65,7 +65,7 @@ protected:
     QDateTime   _date;
     QString     _text;
     QString     _truncatedText;
-    User*       _user;
+    User*       _user; //-V122
     bool        _read;
     bool        _containsImage;
 };

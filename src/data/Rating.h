@@ -82,7 +82,7 @@ private:
     bool _isBayesVoted;
     bool _isVotedAgainst;
 
-    Entry* _parent;
+    Entry* _parent; //-V122
 
     QFutureWatcher<void> _watcher;
 };

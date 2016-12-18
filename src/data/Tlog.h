@@ -129,8 +129,8 @@ private:
     QString         _ignoredCount;
     Relationship    _myRelation;
     Relationship    _hisRelation;
-    Author*         _author;
-    Flow*           _flow;
+    Author*         _author; //-V122
+    Flow*           _flow;   //-V122
     ChatPtr         _chat;
 
     QPointer<ApiRequest> _relationRequest;

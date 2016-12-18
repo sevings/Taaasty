@@ -84,7 +84,7 @@ private:
     
     const QString   _url;
 
-    Entry*          _entry;
+    Entry*          _entry; //-V122
 };
 
 #endif // COMMENTSMODEL_H
