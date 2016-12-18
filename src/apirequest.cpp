@@ -25,6 +25,7 @@
 #include <QNetworkRequest>
 #include <QJsonParseError>
 #include <QDebug>
+#include <QTimer>
 
 #include "defines.h"
 
@@ -35,23 +36,27 @@ ApiRequest::ApiRequest(const QString& url,
                        const QNetworkAccessManager::Operation method,
                        const QString& data)
     : _readyData(data.toUtf8())
-    , _accessToken(Tasty::instance()->settings()->accessToken().toUtf8())
+    , _accessToken(pTasty->settings()->accessToken().toUtf8())
     , _fullUrl(QString("http://api.taaasty.com:80/%1").arg(url))
 {
     qDebug() << "ApiRequest to" << url;
 
     if ((options & AccessTokenRequired)
-            && (!Tasty::instance()->isAuthorized()))// || expiresAt <= QDateTime::currentDateTime()))
+            && (!pTasty->isAuthorized()))// || expiresAt <= QDateTime::currentDateTime()))
     {
         qDebug() << "authorization needed for" << url;
-        emit Tasty::instance()->authorizationNeeded();
+        emit pTasty->authorizationNeeded();
         deleteLater();
         return;
     }
+    
+    QTimer::singleShot(60000, this, &QObject::deleteLater);
+    
+    Q_TEST(connect(pTasty, &Tasty::networkNotAccessible, this, &QObject::deleteLater));
 
     if (options & ShowMessageOnError)
         Q_TEST(connect(this, SIGNAL(error(int,QString)),
-                       Tasty::instance(), SIGNAL(error(int,QString))));
+                       pTasty, SIGNAL(error(int,QString))));
 
     _start(method);
 }
@@ -82,7 +87,7 @@ void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 
 #ifdef QT_DEBUG
     if (reply)
-        qDebug() << code << reply->errorString(); //AuthenticationRequiredError 204, UnknownContentError 299
+        qDebug() << code << reply->errorString(); //AuthenticationRequiredError 204, UnknownContentError 299, Server Time-Out 499
     else
         qDebug() << code;
 #endif
@@ -147,7 +152,7 @@ void ApiRequest::_start(const QNetworkAccessManager::Operation method)
     request.setRawHeader(QByteArray("Connection"), QByteArray("close"));
 
     QNetworkReply* reply = nullptr;
-    auto manager = Tasty::instance()->manager();
+    auto manager = pTasty->manager();
     switch(method)
     {
     case QNetworkAccessManager::GetOperation:
