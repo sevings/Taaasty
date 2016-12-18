@@ -129,6 +129,9 @@ void Rating::setId(int entryId)
 
 void Rating::vote()
 {
+    if (isLoading())
+        return;
+    
     voteBayes();
 
     if (!_isVotable || !Tasty::instance()->isAuthorized())
@@ -137,10 +140,12 @@ void Rating::vote()
     auto url = QString("v1/entries/%1/votes.json").arg(_id);
     auto operation = (_isVoted ? QNetworkAccessManager::DeleteOperation
                                : QNetworkAccessManager::PostOperation);
-    auto request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError, operation);
+    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError, operation);
 
-    Q_TEST(connect(request, SIGNAL(success(const QJsonObject)),
+    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)),
                    this, SLOT(init(const QJsonObject))));
+                   
+    _initRequest();
 }
 
 
