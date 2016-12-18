@@ -45,7 +45,7 @@
 #include "models/calendarmodel.h"
 #include "models/commentsmodel.h"
 #include "models/attachedimagesmodel.h"
-#include "models/usersmodeltlog.h"
+#include "models/usersmodel.h"
 #include "models/notificationsmodel.h"
 #include "models/chatsmodel.h"
 #include "models/messagesmodel.h"
@@ -301,12 +301,10 @@ void Tasty::_init()
     qmlRegisterType<CalendarModel>      ("org.binque.taaasty", 1, 0, "CalendarModel");
     qmlRegisterType<CommentsModel>      ("org.binque.taaasty", 1, 0, "CommentsModel");
     qmlRegisterType<AttachedImagesModel>("org.binque.taaasty", 1, 0, "AttachedImagesModel");
-    qmlRegisterType<UsersModelTlog>     ("org.binque.taaasty", 1, 0, "UsersModelTlog");
+    qmlRegisterType<UsersModel>         ("org.binque.taaasty", 1, 0, "UsersModelTlog");
     qmlRegisterType<MessagesModel>      ("org.binque.taaasty", 1, 0, "MessagesModel");
     qmlRegisterType<FlowsModel>         ("org.binque.taaasty", 1, 0, "FlowsModel");
     qmlRegisterType<TagsModel>          ("org.binque.taaasty", 1, 0, "TagsModel");
-
-    qmlRegisterUncreatableType<UsersModel>("org.binque.taaasty", 1, 0, "UsersModel", "Use subclasses instead");
 
     qmlRegisterType<Entry>          ("org.binque.taaasty", 1, 0, "TlogEntry");
     qmlRegisterType<CalendarEntry>  ("org.binque.taaasty", 1, 0, "CalendarEntry");
@@ -334,6 +332,9 @@ void Tasty::_init()
 
     auto notifs = NotificationsModel::instance(this);
     root->setContextProperty("NotifsModel", notifs);
+
+    auto friendActivity = NotificationsModel::friendActivity(this);
+    root->setContextProperty("FriendActivityModel", friendActivity);
 
     auto chats = ChatsModel::instance(this);
     root->setContextProperty("ChatsModel", chats);

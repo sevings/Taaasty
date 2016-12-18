@@ -23,8 +23,8 @@
 #include "Notification.h"
 
 #include "User.h"
-
 #include "Entry.h"
+#include "Author.h"
 
 #include "../tasty.h"
 #include "../tastydatacache.h"
@@ -39,6 +39,7 @@ Notification::Notification(QObject* parent)
     , _entityId(0)
     , _entityType(UnknownType)
     , _parentId(0)
+    , _entityUser(nullptr)
 {
 
 }
@@ -59,9 +60,25 @@ Notification::Notification(const QJsonObject& data, QObject *parent)
 
     auto entityType = data.value("entity_type").toString();
     if (entityType == "Entry")
+    {
         _entityType = EntryType;
+        
+        if (data.contains("entity"))
+        {
+            _entry = EntryPtr::create();
+            _entry->init(data.value("entity").toObject());
+        }
+    }
     else if (entityType == "Relationship")
+    {
         _entityType = RelationshipType;
+        
+        if (data.contains("entity"))
+        {
+            auto userData = data.value("entity").toObject().value("user").toObject();
+            _entityUser = new Author(userData, this);
+        }
+    }
     else if (entityType == "Comment")
         _entityType = CommentType;
     else
@@ -131,7 +148,7 @@ int Notification::parentId() const
 
 Entry* Notification::entry()
 {
-    if (_entry )
+    if (_entry)
         return _entry.data();
 
     int id = 0;

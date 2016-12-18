@@ -27,6 +27,7 @@
 #include "TastyData.h"
 
 class User;
+class Author;
 
 
 
@@ -48,7 +49,8 @@ class Notification: public TastyData
     Q_PROPERTY(int          parentId   MEMBER _parentId   CONSTANT)
     Q_PROPERTY(QString      parentType MEMBER _parentType CONSTANT)
     
-    Q_PROPERTY(Entry*       entry      READ entry         CONSTANT)
+    Q_PROPERTY(Entry*       entry      READ   entry       CONSTANT)
+    Q_PROPERTY(Author*      entityUser MEMBER _entityUser CONSTANT)
 
 public:
     enum EntityType
@@ -65,19 +67,14 @@ public:
     Notification(const QJsonObject& data, QObject* parent = nullptr);
     ~Notification();
     
-    int entityId() const;
-
-    User* sender() const;
-
+    int     entityId()   const;
+    User*   sender()     const;
     QString actionText() const;
+    QString text()       const;
+    bool    isRead()     const;
+    int     parentId()   const;
 
-    QString text() const;
-
-    bool isRead() const;
-
-    int parentId() const;
-
-    Entry* entry();
+    Entry*  entry();
 
 public slots:
     void read();
@@ -90,7 +87,7 @@ private slots:
 
 private:
     QString     _createdAt;
-    User*       _sender;
+    User*       _sender; //-V122
     bool        _read;
     QString     _action;
     QString     _actionText;
@@ -102,4 +99,5 @@ private:
     //QString _image;
 
     EntryPtr    _entry;
+    Author*     _entityUser; //-V122
 };

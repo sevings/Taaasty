@@ -39,9 +39,8 @@
 #endif
 
 
-NotificationsModel::NotificationsModel(Tasty* tasty)
+NotificationsModel::NotificationsModel(NotificationType type, Tasty* tasty)
     : TastyListModel(tasty)
-    , _url("v2/messenger/notifications.json?limit=2")
     , _totalCount(1)
 #ifdef Q_OS_ANDROID
     , _androidNotifier(new AndroidNotifier(this))
@@ -49,10 +48,23 @@ NotificationsModel::NotificationsModel(Tasty* tasty)
 {
     qDebug() << "NotificationsModel";
 
-    Q_TEST(connect(tasty,           &Tasty::unreadNotificationsChanged, this, &NotificationsModel::unreadChanged));
-    Q_TEST(connect(tasty,           &Tasty::authorizedChanged,          this, &NotificationsModel::_reloadAll));
-    Q_TEST(connect(tasty->pusher(), &PusherClient::notification,        this, &NotificationsModel::_addPush));
-    Q_TEST(connect(tasty->pusher(), &PusherClient::unreadNotifications, this, &NotificationsModel::_check));
+    switch (type)
+    {
+    case ActivityType:
+        _url = "v2/messenger/notifications.json?limit=2";
+        
+        Q_TEST(connect(tasty,           &Tasty::unreadNotificationsChanged, this, &NotificationsModel::unreadChanged));
+        Q_TEST(connect(tasty->pusher(), &PusherClient::notification,        this, &NotificationsModel::_addPush));
+        Q_TEST(connect(tasty->pusher(), &PusherClient::unreadNotifications, this, &NotificationsModel::_check));
+        break;
+    case FriendActivityType:
+        _url = "v2/messenger/notifications.json?type=FriendActivityNotification&include_entity=true&limit=2";
+        break;
+    default:
+        qDebug() << "Unknown NotificationType: " << type;
+    }
+    
+    Q_TEST(connect(tasty, &Tasty::authorizedChanged, this, &NotificationsModel::_reloadAll));
 }
 
 
@@ -66,7 +78,15 @@ NotificationsModel::~NotificationsModel()
 
 NotificationsModel*NotificationsModel::instance(Tasty* tasty)
 {
-    static auto model = new NotificationsModel(tasty);
+    static auto model = new NotificationsModel(ActivityType, tasty);
+    return model;
+}
+
+
+
+NotificationsModel*NotificationsModel::friendActivity(Tasty* tasty)
+{
+    static auto model = new NotificationsModel(FriendActivityType, tasty);
     return model;
 }
 

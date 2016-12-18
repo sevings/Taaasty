@@ -41,10 +41,19 @@ class NotificationsModel : public TastyListModel
     Q_PROPERTY(bool unread  READ unread  NOTIFY unreadChanged)
 
 public:
-    NotificationsModel(Tasty* tasty = nullptr);
+    enum NotificationType
+    {
+        ActivityType        = 0,
+        FriendActivityType  = 1
+    };
+
+    Q_ENUMS(NotificationType)
+
+    NotificationsModel(NotificationType type = ActivityType, Tasty* tasty = nullptr);
     ~NotificationsModel();
 
     static NotificationsModel* instance(Tasty* tasty = nullptr);
+    static NotificationsModel* friendActivity(Tasty* tasty = nullptr);
 
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
