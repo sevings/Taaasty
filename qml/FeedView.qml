@@ -154,7 +154,7 @@ Pane {
                 }
                 entry: model.entry
                 popBody: back
-                pinVisible: entry.isFixed && feedModel.showFixed
+                pinVisible: model.entry.isFixed && feedModel.showFixed
             }
             IconButton {
                 id: commentsButton

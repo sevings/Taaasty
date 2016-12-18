@@ -305,28 +305,73 @@ bool FeedModel::showFixed() const
 {
     return (_mode == LiveMode || _mode == BestMode || _mode == ExcellentMode
             || _mode == GoodMode || _mode == WellMode || _mode == BetterThanMode
-            || _mode == FriendsMode);
+            || _mode == FriendsMode || _mode == AnonymousMode);
+}
+
+
+
+bool FeedModel::isRepostable(int entryId) const
+{
+    if (_ids.contains(entryId))
+        return false;
+
+    auto entry = pTasty->dataCache()->entry(entryId);
+    if (!entry)
+        return false;
+
+    if (entry->tlog()->id() == tlogId())
+        return false;
+
+    if (!pTasty->me())
+        return false;
+
+    if (_mode == MyTlogMode
+            && pTasty->me()->id() == entry->tlog()->id())
+        return false;
+
+    if (_mode != TlogMode)
+        return false;
+
+    if (!_tlog->flow() || !_tlog->flow()->isWritable())
+        return false;
+
+    if (pTasty->me()->id() == tlogId())
+        return false;
+
+    return true;
 }
 
 
 
 bool FeedModel::isUnrepostable(int entryId) const
 {
-    EntryPtr entry;
-    for (auto it = _entries.constBegin(); it != _entries.constEnd(); ++it)
-        if ((*it)->id() == entryId)
-        {
-            entry = *it;
-            break;
-        }
+    if (!_ids.contains(entryId))
+        return false;
 
+    auto entry = pTasty->dataCache()->entry(entryId);
     if (!entry)
         return false;
 
-    return entry && entry->tlog()->id() != tlogId()
-            && (_mode == MyTlogMode
-                || (_mode == TlogMode && ((_tlog->flow() && _tlog->flow()->isWritable())
-                    || (pTasty->me() && pTasty->me()->id() == tlogId()))));
+    if (entry->tlog()->id() == tlogId())
+        return false;
+    
+    if (!pTasty->me())
+        return false;
+    
+    if (_mode == MyTlogMode 
+            && pTasty->me()->id() == entry->tlog()->id())
+        return false;
+              
+    if (_mode != TlogMode)
+        return false;
+    
+    if (!_tlog->flow() || !_tlog->flow()->isWritable())
+        return false;
+    
+    if (pTasty->me()->id() == tlogId())
+        return false;
+        
+    return true;
 }
 
 
@@ -346,28 +391,33 @@ void FeedModel::setSinceDate(const QString& date)
 
 
 
-void FeedModel::unrepost(int entryId)
+void FeedModel::repost(int entryId)
 {
-    if (_unrepostRequest || !isUnrepostable(entryId))
-        return;
-
-    EntryPtr entry;
-    for (auto it = _entries.constBegin(); it != _entries.constEnd(); ++it)
-        if ((*it)->id() == entryId)
-        {
-            entry = *it;
-            break;
-        }
-
-    if (!entry)
+    if (_repostRequest)
         return;
 
     int tlog = _mode == MyTlogMode ? (pTasty->me() ? pTasty->me()->id() : 0) : tlogId();
-    auto url = QString("v1/reposts.json?tlog_id=%1&entry_id=%2").arg(tlog).arg(entry->id());
-    _unrepostRequest = new ApiRequest(url, ApiRequest::ShowMessageOnError | ApiRequest::AccessTokenRequired,
+    auto data = QString("tlog_id=%1&entry_id=%2").arg(tlog).arg(entryId);
+    auto url = QString("v1/reposts.json");
+    _repostRequest = new ApiRequest(url, ApiRequest::ShowMessageOnError | ApiRequest::AccessTokenRequired,
+                                      QNetworkAccessManager::PostOperation, data);
+
+    Q_TEST(connect(_repostRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addRepost(QJsonObject))));
+}
+
+
+
+void FeedModel::unrepost(int entryId)
+{
+    if (_repostRequest || !isUnrepostable(entryId))
+        return;
+
+    int tlog = _mode == MyTlogMode ? (pTasty->me() ? pTasty->me()->id() : 0) : tlogId();
+    auto url = QString("v1/reposts.json?tlog_id=%1&entry_id=%2").arg(tlog).arg(entryId);
+    _repostRequest = new ApiRequest(url, ApiRequest::ShowMessageOnError | ApiRequest::AccessTokenRequired,
                                       QNetworkAccessManager::DeleteOperation);
 
-    Q_TEST(connect(_unrepostRequest, SIGNAL(success(QJsonObject)), this, SLOT(_removeRepost(QJsonObject))));
+    Q_TEST(connect(_repostRequest, SIGNAL(success(QJsonObject)), this, SLOT(_removeRepost(QJsonObject))));
 }
 
 
@@ -575,6 +625,19 @@ void FeedModel::_setRatings(const QJsonArray& data)
 
 
 
+void FeedModel::_addRepost(const QJsonObject& data)
+{
+    if (data.value("status").toString() == "success")
+        emit pTasty->info("Репост добавлен"); //! \todo add entry to feed
+    else
+    {
+        emit pTasty->error(0, "При добавлении репоста произошла ошибка");
+        qDebug() << data;
+    }
+}
+
+
+
 void FeedModel::_removeRepost(const QJsonObject& data)
 {
     if (data.value("status").toString() == "success")
@@ -607,6 +670,8 @@ void FeedModel::_prependEntry(int id, int tlogId)
     if (!_allEntries.isEmpty())
         _allEntries.insert(_allFixedCount, entry);
 
+    _ids << id;
+
     endInsertRows();
 }
 
@@ -620,6 +685,7 @@ void FeedModel::_removeEntry(int id)
             beginRemoveRows(QModelIndex(), i, i);
             auto entry = _entries.takeAt(i);
             _allEntries.removeOne(entry);
+            _ids.remove(id);
             endRemoveRows();
 
             break;
@@ -636,7 +702,10 @@ void FeedModel::_addAll(QList<EntryPtr>& all, int& from)
     beginInsertRows(QModelIndex(), from, from + all.size() - 1);
 
     foreach (auto e, all)
+    {
         _entries.insert(from++, e);
+        _ids << e->id();
+    }
 
     endInsertRows();
 }
@@ -675,6 +744,7 @@ void FeedModel::_clear()
 {
     _entries.clear();
     _allEntries.clear();
+    _ids.clear();
 
     _fixedCount = 0;
     _allFixedCount = 0;

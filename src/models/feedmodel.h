@@ -106,6 +106,7 @@ public:
     bool showFixed() const;
     bool loading() const;
 
+    Q_INVOKABLE bool isRepostable(int entryId) const;
     Q_INVOKABLE bool isUnrepostable(int etryId) const;
 
     Q_INVOKABLE void setSinceEntryId(int id);
@@ -120,6 +121,7 @@ signals:
     void tagChanged();
 
 public slots:
+    void repost(int entryId);
     void unrepost(int entryId);
 
 protected:
@@ -131,6 +133,8 @@ private slots:
     void _resetOrReloadRatings();
     void _reloadRatings();
     void _setRatings(const QJsonArray& data);
+        
+    void _addRepost(const QJsonObject& data);
     void _removeRepost(const QJsonObject& data);
 
     void _prependEntry(int id, int tlogId);
@@ -145,11 +149,12 @@ private:
 
     QList<EntryPtr> _entries;
     QList<EntryPtr> _allEntries;
+    QSet<int>       _ids;
     int             _fixedCount;
     int             _allFixedCount;
 
     QString         _url;
-    Tlog*           _tlog;
+    Tlog*           _tlog; //-V122
     Mode            _mode;
     int             _lastEntry;
     int             _minRating;
@@ -158,7 +163,7 @@ private:
     int             _page;
     QString         _prevDate;
 
-    ApiRequestPtr   _unrepostRequest;
+    ApiRequestPtr   _repostRequest;
 };
 
 #endif // FEEDMODEL_H
