@@ -463,7 +463,12 @@ void Tasty::_incUnreadFriendsEntries()
 void Tasty::_saveOrReconnect(Qt::ApplicationState state)
 {
     if (state == Qt::ApplicationActive)
+    {
         _pusher->connect();
+
+        ChatsModel::instance()->loadUnread();
+        NotificationsModel::instance()->check();
+    }
     else
         Bayes::instance()->saveDb();
 }

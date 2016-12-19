@@ -178,7 +178,7 @@ void NotificationsModel::markAsRead()
 
 void NotificationsModel::check()
 {    
-    if (isChecking() || !pTasty->isAuthorized())
+    if (isChecking() || _notifs.isEmpty() || !pTasty->isAuthorized())
         return;
 
     qDebug() << "NotificationsModel::check";
@@ -294,10 +294,11 @@ void NotificationsModel::_addNewest(const QJsonObject& data)
     QList<Notification*> notifs;
     foreach(auto notif, list)
     {
-        auto id = data.value("id").toInt();
+        auto obj = notif.toObject();
+        auto id = obj.value("id").toInt();
         if (!_ids.contains(id))
         {
-            notifs << new Notification(notif.toObject(), this);
+            notifs << new Notification(obj, this);
             _ids << id;
         }
     }
@@ -309,7 +310,7 @@ void NotificationsModel::_addNewest(const QJsonObject& data)
         _notifs.prepend(notification);
 
 #ifdef Q_OS_ANDROID
-        if (!notification->isRead() && Tasty::instance()->settings()->systemNotifications())
+        if (!notification->isRead() && pTasty->settings()->systemNotifications())
         {
             auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
                     .arg(notification->actionText()).arg(notification->text());

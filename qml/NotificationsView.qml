@@ -26,14 +26,24 @@ import org.binque.taaasty 1.0
 PopupFill {
     id: back
     onStateChanged: {
-        if (state == "opened")
+        if (state == "opened") {
             Tasty.reconnectToPusher();
-        else if (!window.friendActivity && state == "closed")
+            if (window.friendActivity)
+                FriendActivityModel.check();
+        }
+        else if (!window.friendActivity)
             NotifsModel.markAsRead();
     }
     function hideNotifs() {
         back.hide();
         window.showNotifsOnPop = window.stackSize;
+    }
+    Connections {
+        target: window
+        onFriendActivityChanged: {
+            if (window.friendActivity)
+                FriendActivityModel.check();
+        }
     }
     Splash {
         model: notifsView.model
