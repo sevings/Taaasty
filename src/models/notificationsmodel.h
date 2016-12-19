@@ -69,6 +69,7 @@ signals:
 
 public slots:
     void markAsRead();
+    void check();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;

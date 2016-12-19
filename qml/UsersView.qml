@@ -35,9 +35,9 @@ Pane {
         body: back
     }
     Splash {
+        model: usres.model
         visible: !users.visible
-        running: users.model.loading
-        text: users.model.errorString || 'Список пуст'
+        emptyString: 'Список пуст'
     }
     MyListView {
         id: users

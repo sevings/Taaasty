@@ -28,7 +28,7 @@ PopupFill {
     onStateChanged: {
         if (state == "opened")
             Tasty.reconnectToPusher();
-        else if (!friendActivity && state == "closed")
+        else if (!window.friendActivity && state == "closed")
             NotifsModel.markAsRead();
     }
     function hideNotifs() {
@@ -36,9 +36,9 @@ PopupFill {
         window.showNotifsOnPop = window.stackSize;
     }
     Splash {
+        model: notifsView.model
         visible: !notifsView.visible
-        running: notifsView.model.loading
-        text: notifsView.model.errorString || 'Нет уведомлений'
+        emptyString: 'Нет уведомлений'
     }
     MyListView {
         id: notifsView
@@ -50,9 +50,9 @@ PopupFill {
         delegate: MouseArea {
             id: notif
             width: window.width
-            height: (window.friendActivity ? notifAvatar.height + 6 * mm
+            height: (window.friendActivity ? notifAvatar.height + 4.5 * mm
                                            : Math.max(notifAvatar.height, notifName.height + notifAction.height))
-                    + notifContent.height
+                    + notifContent.height + 1.5 * mm
             onClicked: {
                 var fullEntry = model.notification.entry;
                 if (fullEntry)

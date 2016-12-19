@@ -33,9 +33,9 @@ Pane {
     }
     Splash {
         id: splash
+        model: tagsModel
         visible: !listView.visible
-        running: tagsModel.loading
-        text: tagsModel.errorString || 'Нет тегов'
+        emptyString: 'Нет тегов'
     }
     TagsModel {
         id: tagsModel

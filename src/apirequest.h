@@ -37,7 +37,8 @@ public:
     {
         NoOptions           = 0x0,
         AccessTokenRequired = 0x1,
-        ShowMessageOnError  = 0x2
+        ShowMessageOnError  = 0x2,
+        AllOptions          = AccessTokenRequired | ShowMessageOnError
     };
 
     Q_DECLARE_FLAGS(Options, Option)
@@ -54,7 +55,7 @@ signals:
     void success(const QJsonObject& data);
     void success(const QJsonArray& data);
     void success(const QString& data);
-    void error(QNetworkReply::NetworkError code);
+    void networkError(QNetworkReply::NetworkError code);
     void error(const int code, const QString& text);
 
 private slots:

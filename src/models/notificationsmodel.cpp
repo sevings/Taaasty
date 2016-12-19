@@ -76,7 +76,7 @@ NotificationsModel::~NotificationsModel()
 
 
 
-NotificationsModel*NotificationsModel::instance(Tasty* tasty)
+NotificationsModel* NotificationsModel::instance(Tasty* tasty)
 {
     static auto model = new NotificationsModel(ActivityType, tasty);
     return model;
@@ -84,7 +84,7 @@ NotificationsModel*NotificationsModel::instance(Tasty* tasty)
 
 
 
-NotificationsModel*NotificationsModel::friendActivity(Tasty* tasty)
+NotificationsModel* NotificationsModel::friendActivity(Tasty* tasty)
 {
     static auto model = new NotificationsModel(FriendActivityType, tasty);
     return model;
@@ -172,6 +172,29 @@ void NotificationsModel::markAsRead()
     auto request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                   QNetworkAccessManager::PostOperation, data);
     Q_TEST(connect(request, SIGNAL(success(QJsonArray)),  this, SLOT(_readSuccess())));
+}
+
+
+
+void NotificationsModel::check()
+{    
+    if (isChecking() || !pTasty->isAuthorized())
+        return;
+
+    qDebug() << "NotificationsModel::check";
+
+    QString url = _url + "00"; // limit 200
+    if (!_notifs.isEmpty())
+    {
+        auto firstId = _notifs.first()->id();
+        url += QString("&from_notification_id=%1").arg(firstId);
+    }
+
+    _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
+
+    Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject))));
+
+    _initCheck();    
 }
 
 
@@ -321,9 +344,9 @@ void NotificationsModel::_reloadAll()
 
 
 
-void NotificationsModel::_check(int actual) //! \todo test me
+void NotificationsModel::_check(int actual)
 {
-    if (isChecking() || actual <= 0 || !Tasty::instance()->isAuthorized())
+    if (actual <= 0)
         return;
 
     int unread = 0;
@@ -335,21 +358,6 @@ void NotificationsModel::_check(int actual) //! \todo test me
             unread++;
     }
 
-    if (unread >= actual)
-        return;
-
-    qDebug() << "NotificationsModel::_check";
-
-    QString url = _url + "00"; // limit 200
-    if (!_notifs.isEmpty())
-    {
-        auto firstId = _notifs.first()->id();
-        url += QString("&from_notification_id=%1").arg(firstId);
-    }
-
-    _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
-
-    Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject))));
-
-    _initCheck();
+    if (unread < actual)
+        check();
 }

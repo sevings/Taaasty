@@ -22,10 +22,14 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 import QtQuick.Layouts 1.3
+import org.binque.taaasty 1.0
 
 Item {
-    property bool running: true
-    property string text: ''
+    id: splash
+    property QtObject model
+    property bool running: !model || model.loading
+    property string text: model ? model.errorString : ''
+    property string emptyString: ''
     anchors.centerIn: parent
     width: window.width - 3 * mm
     height: busy.height + loadingText.height + 1.5 * mm
@@ -35,7 +39,7 @@ Item {
             top: parent.top
             horizontalCenter: parent.horizontalCenter
         }
-        running: parent.visible && parent.running
+        running: splash.visible && splash.running
     }
     Q.Label {
         id: loadingText
@@ -48,7 +52,26 @@ Item {
         font.pointSize: window.fontBigger
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
-        text: parent.running ? 'Загрузка…' : parent.text
+        text: splash.running ? 'Загрузка…' : (splash.text || splash.emptyString)
     }
+    ThemedButton {
+        id: reloadButton
+        anchors {
+            top: loadingText.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
+        implicitWidth: 40 * mm
+        highlighted: true
+        text: 'Обновить'
+        visible: model && model.networkError
+        onClicked: {
+            if (!model)
+                return;
 
+            if (model.id)
+                model.reload();
+            else
+                model.loadMore();
+        }
+    }
 }

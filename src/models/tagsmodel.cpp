@@ -33,6 +33,7 @@
 
 TagsModel::TagsModel(QObject* parent)
     : TastyListModel(parent)
+    , _tlog(0)
 {
     qDebug() << "TagsModel";
 }
@@ -67,15 +68,34 @@ QVariant TagsModel::data(const QModelIndex &index, int role) const
 
 
 
-void TagsModel::setTlog(const int tlog)
+bool TagsModel::canFetchMore(const QModelIndex& parent) const
 {
-    if (tlog <= 0)
-        return;
+    Q_UNUSED(parent);
+    
+    return _tlog > 0 && _names.isEmpty() && !isLoading();
+}
 
-    _loadRequest = new ApiRequest(QString("v1/tlog/%1/tags.json").arg(tlog), ApiRequest::NoOptions);
+
+
+void TagsModel::fetchMore(const QModelIndex& parent) 
+{
+    if (isLoading() || !canFetchMore(parent))
+        return;
+    
+    _loadRequest = new ApiRequest(QString("v1/tlog/%1/tags.json").arg(_tlog), ApiRequest::NoOptions);
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonArray)), this, SLOT(_setData(QJsonArray))));
 
     _initLoad();
+}
+
+
+
+void TagsModel::setTlog(int tlog)
+{
+    if (tlog <= 0 || _tlog == tlog)
+        return;
+
+    _tlog = tlog;
 
     beginResetModel();
 
@@ -83,6 +103,8 @@ void TagsModel::setTlog(const int tlog)
     _counts.clear();
 
     endResetModel();
+    
+    fetchMore(QModelIndex());
 }
 
 

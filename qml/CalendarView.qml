@@ -33,9 +33,9 @@ Pane {
     }
     Splash {
         id: splash
+        model: calendarModel
         visible: !listView.visible
-        running: calendarModel.loading
-        text: calendarModel.errorString || 'Нет записей'
+        emptyString: 'Нет записей'
     }
     MyListView {
         id: listView

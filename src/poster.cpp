@@ -51,13 +51,6 @@ bool Poster::isLoading() const
 
 
 
-QString Poster::errorString() const
-{
-    return _errorString;
-}
-
-
-
 void Poster::postText(QString title, QString content, Poster::Privacy privacy, int tlogId)
 {
     if (tlogId < 0)
@@ -97,9 +90,8 @@ void Poster::postText(QString title, QString content, Poster::Privacy privacy, i
                               QNetworkAccessManager::PostOperation, data);
 
     Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_createPostedEntry(QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(error(int,QString)),         this, SLOT(_setErrorString(int,QString))));
     Q_TEST(connect(_request, &QObject::destroyed,                this, &Poster::loadingChanged, Qt::QueuedConnection));
-
+   
     emit loadingChanged();
 }
 
@@ -121,7 +113,6 @@ void Poster::postAnonymous(QString title, QString content)
                                   QNetworkAccessManager::PostOperation, data);
 
     Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_createPostedEntry(const QJsonObject))));
-    Q_TEST(connect(_request, SIGNAL(error(int,QString)),         this, SLOT(_setErrorString(int,QString))));
     Q_TEST(connect(_request, &QObject::destroyed,                this, &Poster::loadingChanged, Qt::QueuedConnection));
 
     emit loadingChanged();
@@ -137,16 +128,6 @@ void Poster::_createPostedEntry(const QJsonObject& data)
     emit posted(_entry);
 
     emit Tasty::instance()->entryCreated(_entry->id(), _tlogId);
-}
-
-
-
-void Poster::_setErrorString(int errorCode, QString str)
-{
-    qDebug() << "Poster error code" << errorCode;
-
-    _errorString = str;
-    emit errorStringChanged();
 }
 
 

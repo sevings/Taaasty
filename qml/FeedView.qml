@@ -67,9 +67,9 @@ Pane {
         body: back
     }
     Splash {
+        model: feedModel
         visible: !listView.visible
-        running: feedModel.loading
-        text: feedModel.errorString || 'Нет записей'
+        emptyString: 'Нет записей'
     }
     MyListView {
         id: listView

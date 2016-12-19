@@ -33,6 +33,7 @@ class TastyData: public QObject
 
     Q_PROPERTY(int  id              READ id             NOTIFY idChanged)
     Q_PROPERTY(bool loading         READ isLoading      NOTIFY loadingChanged)
+    Q_PROPERTY(bool networkError    READ networkError   NOTIFY networkErrorChanged)
     Q_PROPERTY(QString errorString  READ errorString    NOTIFY errorStringChanged)
 
 public:
@@ -40,12 +41,14 @@ public:
 
     int     id() const;
     bool    isLoading() const;
+    bool    networkError() const;
     QString errorString() const;
 
 signals:
     void idChanged();
     void loadingChanged();
     void errorStringChanged();
+    void networkErrorChanged();
 
 protected slots:
     void _setErrorString(int errorCode, QString str);
@@ -53,6 +56,7 @@ protected slots:
 protected:
     int _id;
     QPointer<ApiRequest> _request;
+    bool                 _networkError;
     QString              _errorString;
     
     void _initRequest();

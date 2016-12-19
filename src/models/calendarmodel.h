@@ -42,8 +42,10 @@ public:
 
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    virtual bool canFetchMore(const QModelIndex& parent) const override;
+    virtual void fetchMore(const QModelIndex& parent) override;
 
-    Q_INVOKABLE void setTlog(const int tlog);
+    Q_INVOKABLE void setTlog(int tlog);
 
     int lastEntryId() const;
 
@@ -63,6 +65,7 @@ private slots:
 private:
     QList<CalendarEntry*>           _calendar;
     QHash<QString, CalendarEntry*>  _firstMonthEntries;
+    int                             _tlog;
 };
 
 #endif // CALENDARMODEL_H

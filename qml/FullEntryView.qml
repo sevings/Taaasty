@@ -94,9 +94,8 @@ Pane {
         body: back
     }
     Splash {
+        model: back.entry
         visible: !fullEntry.visible
-        running: entry.loading
-        text: entry.errorString
     }
     MyListView {
         id: fullEntry

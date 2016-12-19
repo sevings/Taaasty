@@ -55,8 +55,15 @@ ApiRequest::ApiRequest(const QString& url,
     Q_TEST(connect(pTasty, &Tasty::networkNotAccessible, this, &QObject::deleteLater));
 
     if (options & ShowMessageOnError)
+    {
         Q_TEST(connect(this, SIGNAL(error(int,QString)),
                        pTasty, SIGNAL(error(int,QString))));
+                       
+        Q_TEST(connect(this, &ApiRequest::networkError, []()
+        {
+            emit pTasty->error(0, "Сетевая ошибка");
+        }));
+    }
 
     _start(method);
 }
@@ -83,19 +90,18 @@ ApiRequest::ApiRequest(const QString& url,
 
 void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 {
-    auto reply = qobject_cast<QNetworkReply*>(sender());
-
 #ifdef QT_DEBUG
+    auto reply = qobject_cast<QNetworkReply*>(sender());
     if (reply)
         qDebug() << code << reply->errorString(); //AuthenticationRequiredError 204, UnknownContentError 299, Server Time-Out 499
     else
         qDebug() << code;
 #endif
 
-    emit error(code);
+    emit networkError(code);
 
-    if (reply)
-        emit error(code, reply->errorString()); //-V2006
+    // if (reply)
+        // emit error(code, reply->errorString()); //-V2006
 
     deleteLater();
 }

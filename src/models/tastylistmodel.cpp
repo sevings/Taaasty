@@ -10,6 +10,7 @@
 TastyListModel::TastyListModel(QObject* parent)
     : QAbstractListModel(parent)
     , _hasMore(true)
+    , _networkError(false)
 {
 
 }
@@ -37,9 +38,23 @@ bool TastyListModel::hasMore() const
 
 
 
+bool TastyListModel::networkError() const
+{
+    return _networkError;
+}
+
+
+
 QString TastyListModel::errorString() const
 {
     return _errorString;
+}
+
+
+
+void TastyListModel::loadMore()
+{
+    fetchMore(QModelIndex());
 }
 
 
@@ -50,6 +65,12 @@ void TastyListModel::_setErrorString(int errorCode, QString str)
 
     _errorString = str;
     emit errorStringChanged();
+
+    if (_networkError)
+    {
+        _networkError = false;
+        emit networkErrorChanged();
+    }
 }
 
 
@@ -65,11 +86,23 @@ void TastyListModel::_initLoad(bool emitting)
     _errorString.clear();
     emit errorStringChanged();
 
+    _networkError = false;
+    emit networkErrorChanged();
+
     Q_TEST(connect(_loadRequest, &QObject::destroyed,
             this, &TastyListModel::loadingChanged, Qt::QueuedConnection));
 
     Q_TEST(connect(_loadRequest, SIGNAL(error(int,QString)),
                    this, SLOT(_setErrorString(int,QString))));
+
+    Q_TEST(connect(_loadRequest, &ApiRequest::networkError, [this]()
+    {
+        _errorString = "Сетевая ошибка";
+        emit errorStringChanged();
+        
+        _networkError = true;
+        emit networkErrorChanged();
+    }));
 }
 
 

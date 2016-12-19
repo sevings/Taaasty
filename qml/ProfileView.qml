@@ -33,10 +33,12 @@ Pane {
     }
     property Author author: tlog.author
     readonly property bool isProfileView: true
+    Poppable {
+        body: profileView
+    }
     Splash {
+        model: tlog
         visible: !column.visible
-        running: tlog.loading
-        text: tlog.errorString
     }
     Component.onCompleted: {
         if (!tlog.slug.length)
@@ -59,17 +61,13 @@ Pane {
         id: flickable
         anchors.fill: parent
         bottomMargin: 1.5 * mm
+        visible: !tlog.loading && !tlog.errorString
         contentWidth: parent.width
         contentHeight: column.height
-//        interactive: profileView.x == 0
-        Poppable {
-            body: profileView
-        }
         Column {
             id: column
             width: window.width
             spacing: 1.5 * mm
-            visible: !tlog.loading && !tlog.errorString
             MyImage {
                 id: bigAvatar
                 width: window.width

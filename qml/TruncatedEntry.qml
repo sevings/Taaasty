@@ -36,9 +36,9 @@ Item {
             top: parent.top
             margins: 1.5 * mm
         }
-        user: entry.author
+        user: entry ? entry.author : null
         popBody: truncEntry.popBody
-        visible: entry.type !== 'anonymous'
+        visible: entry && entry.type !== 'anonymous'
         acceptClick: !popBody || popBody.x <= 0
         onClicked: {
             avatarClicked();
@@ -69,12 +69,12 @@ Item {
             left: entryAvatar.right
             right: pinVisible ? pin.left : parent.right
         }
-        text: entry.author.name
+        text: entry ? entry.author.name : ''
         font.pointSize: window.fontSmaller
         elide: Text.ElideRight
         wrapMode: Text.NoWrap
         horizontalAlignment: Text.AlignLeft
-        visible: entry.type !== 'anonymous'
+        visible: entry && entry.type !== 'anonymous'
     }
     ThemedText {
         id: date
@@ -83,7 +83,7 @@ Item {
             left: entryAvatar.visible ? entryAvatar.right : parent.left
             right: pinVisible ? pin.left : parent.right
         }
-        text: entry.createdAt
+        text: entry ? entry.createdAt : ''
         color: window.secondaryTextColor
         font.pointSize: window.fontSmallest
         elide: Text.AlignRight
@@ -98,7 +98,7 @@ Item {
             topMargin: 1.5 * mm
             bottomMargin: 1.5 * mm
         }
-        property AttachedImage image: entry.attachedImagesModel.first()
+        property AttachedImage image: entry ? entry.attachedImagesModel.first() : null
         active: image
         height: active ? (image.height / image.width * width) : 0
         onLoaded: item.image = image
@@ -120,7 +120,7 @@ Item {
                 font.pointSize: window.fontSmaller
                 style: Text.Outline
                 styleColor: window.backgroundColor
-                property int total: entry.attachedImagesModel.rowCount()
+                property int total: entry ? entry.attachedImagesModel.rowCount() : 0
                 text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
                 visible: total > 1
             }
@@ -128,7 +128,7 @@ Item {
     }
     Loader {
         id: mediaLink
-        property Media media: entry.media
+        property Media media: entry ? entry.media : null
         active: media
         height: media ? media.thumbnail.height / media.thumbnail.width * width : -anchors.topMargin
         anchors {
@@ -145,36 +145,36 @@ Item {
     }
     ThemedText {
         id: entryTitle
-        text: entry.truncatedTitle
+        text: entry ? entry.truncatedTitle : ''
         anchors {
             top: mediaLink.bottom
             left: parent.left
             right: parent.right
         }
-        font.pointSize: entry.truncatedText.length > 0 ? window.fontBigger
-                                                       : window.fontNormal
+        font.pointSize: entry && entry.truncatedText.length > 0 ? window.fontBigger
+                                                                : window.fontNormal
         textFormat: Text.RichText
-        visible: entry.type !== 'quote'
-        height: visible && entry.truncatedTitle.length > 0
-                ? contentHeight : entry.truncatedText.length > 0 ? -2 * mm : 0
+        visible: entry && entry.type !== 'quote'
+        height: entry ? (visible && entry.truncatedTitle.length > 0
+                         ? contentHeight : entry.truncatedText.length > 0 ? -2 * mm : 0) : 0
     }
     ThemedText {
         id: content
-        text: entry.truncatedText
+        text: entry ? entry.truncatedText : ''
         anchors {
             top: entryTitle.bottom
             left: parent.left
             right: parent.right
-            leftMargin: entry.type === 'quote' ? 5 * mm : 1.5 * mm
+            leftMargin: entry && entry.type === 'quote' ? 5 * mm : 1.5 * mm
             rightMargin: anchors.leftMargin
         }
         textFormat: Text.RichText
-        height: entry.truncatedText.length > 0 ? contentHeight
-                                               : entry.truncatedTitle.length > 0 ? -2 * mm : 0
+        height: entry ? (entry.truncatedText.length > 0 ? contentHeight
+                                               : entry.truncatedTitle.length > 0 ? -2 * mm : 0) : 0
     }
     ThemedText {
         id: quoteSource
-        text: entry.source
+        text: entry ? entry.source : ''
         anchors {
             top: content.bottom
             left: parent.left
@@ -183,7 +183,7 @@ Item {
         font.pointSize: window.fontSmaller
         font.italic: true
         textFormat: Text.RichText
-        height: entry.source.length > 0 ? contentHeight : 0
+        height: entry && entry.source.length > 0 ? contentHeight : 0
         horizontalAlignment: Text.AlignRight
     }
     Rectangle {
@@ -196,7 +196,7 @@ Item {
         height: 0.5 * mm
         radius: height / 2
         readonly property int maxWidth: parent.width - 3 * mm
-        readonly property int length: Math.sqrt(entry.wordCount) / 32 * maxWidth
+        readonly property int length: entry ? Math.sqrt(entry.wordCount) / 32 * maxWidth : 0
         width: Math.min(length, maxWidth)
         color: window.secondaryTextColor
     }

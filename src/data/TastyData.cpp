@@ -32,6 +32,7 @@
 TastyData::TastyData(QObject* parent)
     : QObject(parent)
     , _id(0)
+    , _networkError(false)
 {
 
 }
@@ -52,6 +53,13 @@ bool TastyData::isLoading() const
 
 
 
+bool TastyData::networkError() const
+{
+    return _networkError;
+}
+
+
+
 QString TastyData::errorString() const
 {
     return _errorString;
@@ -65,6 +73,12 @@ void TastyData::_setErrorString(int errorCode, QString str)
 
     _errorString = str;
     emit errorStringChanged();
+
+    if (_networkError)
+    {
+        _networkError = false;
+        emit networkErrorChanged();
+    }
 }
 
 
@@ -77,10 +91,23 @@ void TastyData::_initRequest()
         return;
     
     _errorString.clear();
+    emit errorStringChanged();
+
+    _networkError = false;
+    emit networkErrorChanged();
 
     Q_TEST(connect(_request, &QObject::destroyed, 
             this, &TastyData::loadingChanged, Qt::QueuedConnection));
 
     Q_TEST(connect(_request, SIGNAL(error(int,QString)),
                    this, SLOT(_setErrorString(int,QString))));
+                   
+    Q_TEST(connect(_request, &ApiRequest::networkError, [this]()
+    {
+        _errorString = "Сетевая ошибка";
+        emit errorStringChanged();
+
+        _networkError = true;
+        emit networkErrorChanged();
+    }));
 }

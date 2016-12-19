@@ -36,8 +36,10 @@ public:
 
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    virtual bool canFetchMore(const QModelIndex& parent) const override;
+    virtual void fetchMore(const QModelIndex& parent) override;
 
-    Q_INVOKABLE void setTlog(const int tlog);
+    Q_INVOKABLE void setTlog(int tlog);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
@@ -48,6 +50,7 @@ private slots:
 private:
     QList<QString>  _names;
     QList<int>      _counts;
+    int             _tlog;
 };
 
 #endif // TAGSMODEL_H

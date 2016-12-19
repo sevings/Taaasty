@@ -69,7 +69,7 @@ signals:
 public slots:
     void reset();
     void check();
-    void loadMore();
+    virtual void loadMore() override;
 
 protected:
     QHash<int, QByteArray> roleNames() const override;

@@ -30,9 +30,9 @@ PopupFill {
             Tasty.reconnectToPusher();
     }
     Splash {
+        model: ChatsModel
         visible: !listView.visible
-        running: ChatsModel.loading
-        text: ChatsModel.errorString || 'Нет бесед'
+        emptyString: 'Нет бесед'
     }
     MyListView {
         id: listView

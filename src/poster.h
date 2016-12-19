@@ -34,7 +34,6 @@ class Poster : public QObject
     Q_OBJECT
 
     Q_PROPERTY(bool loading         READ isLoading      NOTIFY loadingChanged)
-    Q_PROPERTY(QString errorString  READ errorString    NOTIFY errorStringChanged)
 
 public:    
     enum Privacy
@@ -50,12 +49,10 @@ public:
 
     Entry*  entry() const;
     bool    isLoading() const;
-    QString errorString() const;
 
 signals:
     void posted(EntryPtr entry);
     void loadingChanged();
-    void errorStringChanged();
 
 public slots:    
     void postText(QString title, QString content, Privacy privacy, int tlogId = 0);
@@ -63,15 +60,13 @@ public slots:
 
 private slots:
     void _createPostedEntry(const QJsonObject& data);
-    void _setErrorString(int errorCode, QString str);
-
+    
 private:
     void _prepareText(QString& title, QString& content) const;
 
     int                  _tlogId;
     EntryPtr             _entry;
     QPointer<ApiRequest> _request;
-    QString              _errorString;
 };
 
 #endif // POSTER_H

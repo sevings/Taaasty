@@ -54,10 +54,11 @@ Pane {
     }
     Splash {
         id: splash
+        model: chat.messages
         visible: !listView.visible || !listView.count
         running: !listView.visible && (chat.loading || chat.messages.loading
                                        || (!listView.count && chat.messages.checking))
-        text: chat.messages.errorString || 'Нет сообщений'
+        emptyString: 'Нет сообщений'
     }
     MyListView {
         id: listView

@@ -16,6 +16,7 @@ class TastyListModel : public QAbstractListModel
     Q_PROPERTY(bool loading         READ isLoading      NOTIFY loadingChanged)
     Q_PROPERTY(bool checking        READ isChecking     NOTIFY checkingChanged)
     Q_PROPERTY(bool hasMore         READ hasMore        NOTIFY hasMoreChanged)
+    Q_PROPERTY(bool networkError    READ networkError   NOTIFY networkErrorChanged)
     Q_PROPERTY(QString errorString  READ errorString    NOTIFY errorStringChanged)
 
 public:
@@ -26,6 +27,7 @@ public:
 
     virtual bool hasMore() const;
 
+    bool networkError() const;
     QString errorString() const;
 
 signals:
@@ -33,7 +35,11 @@ signals:
     void checkingChanged();
     void hasMoreChanged();
     void errorStringChanged();
+    void networkErrorChanged();
 
+public slots:
+    virtual void loadMore();
+    
 protected slots:
     void _setErrorString(int errorCode, QString str);
 
@@ -46,9 +52,8 @@ protected:
     QPointer<ApiRequest> _loadRequest;
     QPointer<ApiRequest> _checkRequest;
     bool                 _hasMore;
+    bool                 _networkError;
     QString              _errorString;
-
-private:
 };
 
 #endif // TASTYLISTMODEL_H

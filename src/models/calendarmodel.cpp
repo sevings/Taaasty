@@ -34,6 +34,7 @@
 
 CalendarModel::CalendarModel(QObject* parent)
     : TastyListModel(parent)
+    , _tlog(0)
 {
     qDebug() << "CalendarModel";
 }
@@ -64,17 +65,36 @@ QVariant CalendarModel::data(const QModelIndex &index, int role) const
 
 
 
-void CalendarModel::setTlog(const int tlog)
+bool CalendarModel::canFetchMore(const QModelIndex& parent) const
 {
-    if (tlog <= 0 || isLoading())
-        return;
+    Q_UNUSED(parent);
+    
+    return _tlog > 0 && _calendar.isEmpty() && !isLoading();
+}
 
-    QString url = QString("v1/tlog/%1/calendar.json").arg(tlog);
+
+
+void CalendarModel::fetchMore(const QModelIndex& parent) 
+{
+    if (isLoading() || !canFetchMore(parent))
+        return;
+    
+    QString url = QString("v1/tlog/%1/calendar.json").arg(_tlog);
     _loadRequest = new ApiRequest(url);
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
 
     _initLoad();
+}
 
+
+
+void CalendarModel::setTlog(int tlog)
+{
+    if (tlog <= 0 || _tlog == tlog)
+        return;
+
+    _tlog = tlog;
+    
     beginResetModel();
 
     qDeleteAll(_calendar);
@@ -82,6 +102,8 @@ void CalendarModel::setTlog(const int tlog)
     _firstMonthEntries.clear();
 
     endResetModel();
+    
+    fetchMore(QModelIndex());
 }
 
 

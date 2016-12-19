@@ -320,11 +320,10 @@ void Entry::addComment(const QString& text)
     _entryRequest = new ApiRequest("v1/comments.json", ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
                                   QNetworkAccessManager::PostOperation, data);
 
-    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)),           this,   SIGNAL(commentAdded(const QJsonObject))));
-    Q_TEST(connect(_entryRequest, SIGNAL(error(QNetworkReply::NetworkError)),   this,   SIGNAL(addingCommentError())));
-    Q_TEST(connect(_entryRequest, SIGNAL(error(const int, const QString)),      this,   SIGNAL(addingCommentError())));
-    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)),           this,   SLOT(_setWatched())));
-    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)),           chat(), SLOT(readAll())));
+    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)),                this,   SIGNAL(commentAdded(const QJsonObject))));
+    Q_TEST(connect(_entryRequest, SIGNAL(networkError(QNetworkReply::NetworkError)), this,   SIGNAL(addingCommentError())));
+    Q_TEST(connect(_entryRequest, SIGNAL(error(const int, const QString)),           this,   SIGNAL(addingCommentError())));
+    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)),                this,   SLOT(_setWatched())));
 
     ChatsModel::instance()->addChat(sharedFromThis());
 }
