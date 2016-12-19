@@ -110,7 +110,7 @@ Pane {
                 id: imageSlider
                 width: parent.width - parent.padding * 2
                 snapMode: Q.Slider.SnapAlways
-                stepSize: 0.05
+                stepSize: 0.02
                 onValueChanged: { Settings.maxLoadImageSize = value < 1 ? size : -1; }
                 readonly property int size: Math.pow(position, 2) * 10000
                 function setSize(v) {
