@@ -25,6 +25,7 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     innerFlick: listView
+    hasMenu: true
     color: window.darkTheme ? window.backgroundColor : '#e6f1f2'
     property Chat chat: Chat { }
     property Tlog tlog: Tlog {

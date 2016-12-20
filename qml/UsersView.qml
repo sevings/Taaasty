@@ -35,7 +35,7 @@ Pane {
         body: back
     }
     Splash {
-        model: usres.model
+        model: users.model
         visible: !users.visible
         emptyString: 'Список пуст'
     }

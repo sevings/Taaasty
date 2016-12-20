@@ -25,6 +25,7 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     innerFlick: listView
+    hasMenu: true
     property int mode: Tasty.isAuthorized ? FeedModel.FriendsMode : FeedModel.LiveMode
     readonly property bool bestMode: back.mode === FeedModel.BestMode
                                      || back.mode === FeedModel.ExcellentMode

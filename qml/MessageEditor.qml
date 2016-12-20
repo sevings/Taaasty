@@ -48,6 +48,9 @@ FocusScope {
     function hideMenu() {
         editMenu.hideMenu();
     }
+    Poppable {
+        body: popBody
+    }
     Flickable {
         id: flickable
         anchors {

@@ -25,6 +25,7 @@ import org.binque.taaasty 1.0
 Pane {
     id: profileView
     innerFlick: flickable
+    hasMenu: true
     property int tlogId
     property string slug: ''
     property Tlog tlog: Tlog {
@@ -64,6 +65,9 @@ Pane {
         visible: !tlog.loading && !tlog.errorString
         contentWidth: parent.width
         contentHeight: column.height
+        Poppable {
+            body: profileView
+        }
         Column {
             id: column
             width: window.width

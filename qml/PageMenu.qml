@@ -30,7 +30,7 @@ Q.Drawer {
     width: 40 * mm
     property Item page: Item { }
     property bool openable: true
-    readonly property bool autoclose: !openable || column.height < 5 * mm
+    readonly property bool autoclose: !openable || !(page.hasMenu || window.chatsShows || window.notifsShows)
     onOpened: {
         if (autoclose)
             drawer.close();
@@ -41,7 +41,7 @@ Q.Drawer {
             left: parent.left
             right: parent.right
         }
-        height: contentHeight > parent.height ? parent.height : contentHeight
+        height: Math.min(parent.height, contentHeight)
         flickableDirection: Flickable.VerticalFlick
         topMargin: 1.5 * mm
         bottomMargin: 1.5 * mm

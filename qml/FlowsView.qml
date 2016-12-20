@@ -25,6 +25,7 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     innerFlick: listView
+    hasMenu: true
     property int mode: Tasty.isAuthorized ? FlowsModel.MyMode : FlowsModel.PopularMode
     readonly property bool isFlowsView: true
     Poppable {

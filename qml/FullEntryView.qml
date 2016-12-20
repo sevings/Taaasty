@@ -26,6 +26,7 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     innerFlick: fullEntry
+    hasMenu: true
     property int entryId
     property TlogEntry entry: TlogEntry {
         entryId: back.entryId

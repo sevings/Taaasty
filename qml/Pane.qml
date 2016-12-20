@@ -27,6 +27,7 @@ Rectangle {
     color: window.backgroundColor
     property Flickable innerFlick
     property bool poppable
+    property bool hasMenu: false
     signal popped
     onPopped: window.popFromStack()
     Rectangle {
