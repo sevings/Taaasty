@@ -98,7 +98,8 @@ Loader {
     }
     Poppable {
         id: pop
-        propagateComposedEvents: !acceptClick
+        focus: true
+        enabled: acceptClick
         onClicked: {
             mouse.accepted = acceptClick;
             if (acceptClick)
