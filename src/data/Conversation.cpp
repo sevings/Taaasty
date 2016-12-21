@@ -96,9 +96,10 @@ void Conversation::setRecipientId(int id)
 
     _recipientId = id;
 
-    _request = new ApiRequest(QString("v2/messenger/conversations/by_user_id/%1.json").arg(_recipientId),
-                              ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                              QNetworkAccessManager::PostOperation);
+    auto url = QString("v2/messenger/conversations/by_user_id/%1.json").arg(_recipientId);
+    _request = new ApiRequest(url, ApiRequest::AllOptions);
+    _request->post();
+    
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
     _initRequest();
@@ -111,9 +112,10 @@ void Conversation::setSlug(const QString& slug)
     if (isLoading() || slug.isEmpty())
         return;
 
-    _request = new ApiRequest(QString("v2/messenger/conversations/by_slug/%1.json").arg(slug),
-                              ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                              QNetworkAccessManager::PostOperation);
+    auto url = QString("v2/messenger/conversations/by_slug/%1.json").arg(slug);
+    _request = new ApiRequest(url, ApiRequest::AllOptions);
+    _request->post();
+    
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
     _initRequest();
@@ -131,10 +133,11 @@ void Conversation::setEntryId(int entryId)
 
     pTasty->dataCache()->addChat(sharedFromThis());
 
-    auto data = QString("id=%1").arg(entryId);
-    _request = new ApiRequest(QString("v2/messenger/conversations/by_entry_id.json"),
-                              ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                              QNetworkAccessManager::PostOperation, data);
+    auto url = QString("v2/messenger/conversations/by_entry_id.json");
+    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired);
+    _request->addFormData("id", entryId);
+    _request->post();
+
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
     _initRequest();
@@ -379,8 +382,10 @@ void Conversation::update()
     if (_id <= 0 || isLoading())
         return;
 
-    _request = new ApiRequest(QString("/v2/messenger/conversations/by_id/%1.json").arg(_id),
-                              ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
+    auto url = QString("v2/messenger/conversations/by_id/%1.json").arg(_id);
+    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired);
+    _request->get();
+    
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
     _initRequest();
@@ -397,12 +402,13 @@ void Conversation::sendMessage(const QString& text)
     if (_typedTimer)
         _typedTimer->stop();
 
-    auto content = QUrl::toPercentEncoding(text.trimmed());
     auto uuid    = QUuid::createUuid().toString().remove('{').remove('}');
-    auto data    = QString("uuid=%1&content=%2").arg(uuid).arg(QString::fromUtf8(content));
     auto url     = QString("v2/messenger/conversations/by_id/%1/messages.json").arg(_id);
-    _sendRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                                  QNetworkAccessManager::PostOperation, data);
+    
+    _sendRequest = new ApiRequest(url, ApiRequest::AllOptions);
+    _sendRequest->addFormData("uuid", uuid);
+    _sendRequest->addFormData("content", text.trimmed());
+    _sendRequest->post();
 
     Q_TEST(connect(_sendRequest, SIGNAL(success(const QJsonObject)),                this, SIGNAL(messageSent(const QJsonObject))));
     Q_TEST(connect(_sendRequest, SIGNAL(networkError(QNetworkReply::NetworkError)), this, SIGNAL(sendingMessageError())));
@@ -422,8 +428,8 @@ void Conversation::readAll()
         return;
 
     auto url = QString("v2/messenger/conversations/by_id/%1/messages/read_all.json").arg(_id);
-    _readRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                              QNetworkAccessManager::PutOperation);
+    _readRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
+    _readRequest->put();
 
     Q_TEST(connect(_readRequest, SIGNAL(success(const QJsonObject)), this, SIGNAL(allMessagesRead(const QJsonObject))));
     Q_TEST(connect(_readRequest, SIGNAL(success(QJsonObject)),       this, SLOT(_markRead(QJsonObject))));
@@ -437,8 +443,8 @@ void Conversation::leave()
         return;
     
     auto url = QString("v2/messenger/conversations/by_id/%1/leave.json").arg(_id);
-    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                              QNetworkAccessManager::PutOperation);
+    _request = new ApiRequest(url, ApiRequest::AllOptions);
+    _request->put();
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
     
@@ -453,9 +459,9 @@ void Conversation::remove()
         return;
 
     auto url = QString("v2/messenger/conversations/by_id/%1.json").arg(_id);
-    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                              QNetworkAccessManager::DeleteOperation);
-
+    _request = new ApiRequest(url, ApiRequest::AllOptions);
+    _request->deleteResource();
+    
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
     
     _initRequest();
@@ -548,8 +554,8 @@ void Conversation::_sendTyped()
     _hadTyped = false;
     
     auto url = QString("v2/messenger/conversations/by_id/%1/typed.json").arg(_id);
-    _typedRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                                   QNetworkAccessManager::PostOperation);
+    _typedRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
+    _typedRequest->post();
     
 #ifdef QT_DEBUG    
     Q_TEST(connect(_typedRequest, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
@@ -676,6 +682,7 @@ void Conversation::updateUsers()
 
     auto url = QString("v2/messenger/conversations/by_id/%1/users.json").arg(_id);
     _usersRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
+    _usersRequest->get();
 
     Q_TEST(connect(_usersRequest, SIGNAL(success(QJsonArray)), this, SLOT(_initUsers(QJsonArray))));
 }

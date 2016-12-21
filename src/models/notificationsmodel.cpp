@@ -139,7 +139,8 @@ void NotificationsModel::fetchMore(const QModelIndex& parent)
         url += QString("0&to_notification_id=%1").arg(lastId); // load ten times more
     }
     
-    _loadRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
+    _loadRequest = new ApiRequest(url, _optionsForFetchMore());
+    
     connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject)));
 
     _initLoad();
@@ -166,11 +167,11 @@ void NotificationsModel::markAsRead()
     if (_notifs.isEmpty() || !unread())
         return;
     
-    QString url = "v2/messenger/notifications/read.json";
-    QString data = QString("last_id=%1").arg(_notifs.first()->id());
+    QString url("v2/messenger/notifications/read.json");
+    auto request = new ApiRequest(url, ApiRequest::AccessTokenRequired);
+    request->addFormData("last_id", _notifs.first()->id());
+    request->post();
     
-    auto request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                                  QNetworkAccessManager::PostOperation, data);
     Q_TEST(connect(request, SIGNAL(success(QJsonArray)),  this, SLOT(_readSuccess())));
 }
 
@@ -190,7 +191,7 @@ void NotificationsModel::check()
         url += QString("&from_notification_id=%1").arg(firstId);
     }
 
-    _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
+    _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
 
     Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject))));
 

@@ -220,12 +220,12 @@ void FeedModel::setQuery(const QString& query)
 
 void FeedModel::setTag(const QString& tag)
 {
-    reset (InvalidMode, 0, QString(), QString(), tag);
+    reset(InvalidMode, 0, QString(), QString(), tag);
 }
 
 
 
-void FeedModel::reset(Mode mode, int tlog, QString slug, QString query, QString tag)
+void FeedModel::reset(Mode mode, int tlog, const QString& slug, const QString& query, const QString& tag)
 {
     beginResetModel();
 
@@ -397,10 +397,12 @@ void FeedModel::repost(int entryId)
         return;
 
     int tlog = _mode == MyTlogMode ? (pTasty->me() ? pTasty->me()->id() : 0) : tlogId();
-    auto data = QString("tlog_id=%1&entry_id=%2").arg(tlog).arg(entryId);
     auto url = QString("v1/reposts.json");
-    _repostRequest = new ApiRequest(url, ApiRequest::ShowMessageOnError | ApiRequest::AccessTokenRequired,
-                                      QNetworkAccessManager::PostOperation, data);
+    
+    _repostRequest = new ApiRequest(url, ApiRequest::AllOptions);
+    _repostRequest->addFormData("tlog_id", tlog);
+    _repostRequest->addFormData("entry_id", entryId);
+    _repostRequest->post();
 
     Q_TEST(connect(_repostRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addRepost(QJsonObject))));
 }
@@ -414,8 +416,8 @@ void FeedModel::unrepost(int entryId)
 
     int tlog = _mode == MyTlogMode ? (pTasty->me() ? pTasty->me()->id() : 0) : tlogId();
     auto url = QString("v1/reposts.json?tlog_id=%1&entry_id=%2").arg(tlog).arg(entryId);
-    _repostRequest = new ApiRequest(url, ApiRequest::ShowMessageOnError | ApiRequest::AccessTokenRequired,
-                                      QNetworkAccessManager::DeleteOperation);
+    _repostRequest = new ApiRequest(url, ApiRequest::AllOptions);
+    _repostRequest->deleteResource();
 
     Q_TEST(connect(_repostRequest, SIGNAL(success(QJsonObject)), this, SLOT(_removeRepost(QJsonObject))));
 }
@@ -600,6 +602,8 @@ void FeedModel::_reloadRatings()
     url += QString::number(entries.last()->entryId());
 
     auto request = new ApiRequest(url);
+    request->get();
+    
     Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
 }
 

@@ -104,7 +104,7 @@ void ChatsModel::fetchMore(const QModelIndex& parent)
     qDebug() << "ChatsModel::fetchMore";
 
     QString url = _url.arg(_page);
-    _loadRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
+    _loadRequest = new ApiRequest(url, _optionsForFetchMore());
 
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonArray)), this, SLOT(_addChats(QJsonArray))));
 

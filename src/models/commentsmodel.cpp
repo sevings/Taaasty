@@ -152,6 +152,7 @@ void CommentsModel::check()
         url += QString("&from_comment_id=%1").arg(_comments.last()->id());
 
     _checkRequest = new ApiRequest(url);
+
     Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)),  this, SLOT(_addLastComments(QJsonObject))));
 
     _initCheck();
@@ -168,7 +169,8 @@ void CommentsModel::loadMore()
     if (!_comments.isEmpty())
         url += QString("&to_comment_id=%1").arg(_comments.first()->id());
 
-    _loadRequest = new ApiRequest(url);
+    _loadRequest = new ApiRequest(url, ApiRequest::ShowMessageOnError);
+    
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)),  this, SLOT(_addComments(QJsonObject))));
 
     _initLoad();

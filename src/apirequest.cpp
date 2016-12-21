@@ -26,46 +26,21 @@
 #include <QJsonParseError>
 #include <QDebug>
 #include <QTimer>
+// #include <QImage>
+#include <QFileInfo>
+#include <QFile>
 
 #include "defines.h"
-
+#include "tasty.h"
 
 
 ApiRequest::ApiRequest(const QString& url,
-                       const ApiRequest::Options& options,
-                       const QNetworkAccessManager::Operation method,
-                       const QString& data)
-    : _readyData(data.toUtf8())
-    , _accessToken(pTasty->settings()->accessToken().toUtf8())
-    , _fullUrl(QString("http://api.taaasty.com:80/%1").arg(url))
+                       const ApiRequest::Options& options)
+    : _accessToken(pTasty->settings()->accessToken().toUtf8())
+    , _reply(nullptr)
+    , _data(nullptr)
 {
-    qDebug() << "ApiRequest to" << url;
-
-    if ((options & AccessTokenRequired)
-            && (!pTasty->isAuthorized()))// || expiresAt <= QDateTime::currentDateTime()))
-    {
-        qDebug() << "authorization needed for" << url;
-        emit pTasty->authorizationNeeded();
-        deleteLater();
-        return;
-    }
-    
-    QTimer::singleShot(60000, this, &QObject::deleteLater);
-    
-    Q_TEST(connect(pTasty, &Tasty::networkNotAccessible, this, &QObject::deleteLater));
-
-    if (options & ShowMessageOnError)
-    {
-        Q_TEST(connect(this, SIGNAL(error(int,QString)),
-                       pTasty, SIGNAL(error(int,QString))));
-                       
-        Q_TEST(connect(this, &ApiRequest::networkError, []()
-        {
-            emit pTasty->error(0, "Сетевая ошибка");
-        }));
-    }
-
-    _start(method);
+    _init(url, options);
 }
 
 
@@ -73,50 +48,192 @@ ApiRequest::ApiRequest(const QString& url,
 ApiRequest::ApiRequest(const QString& url,
                        const QString& accessToken)
     : _accessToken(accessToken.toUtf8())
-    , _fullUrl(QString("http://api.taaasty.com:80/%1").arg(url))
+    , _reply(nullptr)
+    , _data(nullptr)
 {
-    qDebug() << "ApiRequest to" << url;
-
-    if (accessToken.isEmpty())
-    {
-        deleteLater();
-        return;
-    }
-
-    _start(QNetworkAccessManager::GetOperation);
+    _init(url, AccessTokenRequired);
 }
 
+
+
+ApiRequest::~ApiRequest()
+{
+    Q_ASSERT(_reply);
+
+    delete _reply;
+}
+
+
+
+bool ApiRequest::isValid() const
+{
+    return !_request.url().isEmpty();
+}
+
+
+
+bool ApiRequest::get()
+{
+    Q_ASSERT(!_reply);
+    Q_ASSERT(!_data);
+    
+    if (_reply || !isValid())
+        return false;
+    
+    _reply = pTasty->manager()->get(_request);
+    
+    _initReply();     
+    
+    return true;
+}
+
+
+
+bool ApiRequest::post()
+{
+    Q_ASSERT(!_reply);
+    
+    if (_reply || !isValid())
+        return false;
+
+    if (_data)
+        _reply = pTasty->manager()->post(_request, _data);
+    else
+        _reply = pTasty->manager()->post(_request, QByteArray());
+    
+    _initReply();     
+    
+    return true;
+}
+
+
+
+bool ApiRequest::put()
+{
+    Q_ASSERT(!_reply);
+    
+    if (_reply || !isValid())
+        return false;
+
+    if (_data)
+        _reply = pTasty->manager()->put(_request, _data);
+    else
+        _reply = pTasty->manager()->put(_request, QByteArray());
+    
+    _initReply();     
+    
+    return true;
+}
+
+
+
+bool ApiRequest::deleteResource()
+{
+    Q_ASSERT(!_reply);
+    Q_ASSERT(!_data);
+    
+    if (_reply || !isValid())
+        return false;
+    
+    _reply = pTasty->manager()->deleteResource(_request);
+    
+    _initReply();    
+    
+    return true;
+}
+
+
+
+bool ApiRequest::addFormData(const QString& name, int value)
+{
+    return addFormData(name, QString::number(value));
+}
+
+
+
+bool ApiRequest::addFormData(const QString& name, const QString& content)
+{
+    QHttpPart part;
+    part.setHeader(QNetworkRequest::ContentDispositionHeader,
+        QString("form-data; name=\"%1\"").arg(name));
+    part.setBody(content.toUtf8());
+
+    if (!_data)
+        _data = new QHttpMultiPart(QHttpMultiPart::FormDataType, this);
+    
+    _data->append(part);
+    
+    return true;
+}
+    
+
+
+bool ApiRequest::addImage(const QString& fileName)
+{
+    QFileInfo info(fileName);
+    auto format = info.suffix();
+    if (format.isEmpty())
+        format = "jpg";
+    
+#if 0
+    QImage pic(fileName);
+    if (pic.isNull())
+        return false;
+    
+    if (pic.width() > _man->maxWidth())
+        pic = pic.scaledToWidth(_man->maxWidth(), Qt::SmoothTransformation);
+
+    QByteArray body;
+    QBuffer buffer(body);
+    buffer.open(QIODevice::WriteOnly);    
+    pic.save(&buffer, format.toUtf8().constData());
+#endif
+    
+    QFile* file = new QFile(fileName, this);
+    if(!file->open(QIODevice::ReadOnly))
+        return false;
+    
+    QHttpPart imagePart;
+    imagePart.setHeader(QNetworkRequest::ContentTypeHeader, QString("image/%1").arg(format));
+    imagePart.setHeader(QNetworkRequest::ContentDispositionHeader,
+        QVariant(QString("form-data; name=\"files[]\"; filename=\"%1\"").arg(info.fileName())));
+    // imagePart.setBody(body);
+    imagePart.setBodyDevice(file);
+
+    if (!_data)
+        _data = new QHttpMultiPart(QHttpMultiPart::FormDataType, this);
+    
+    _data->append(imagePart);
+    
+    return true;
+}
+   
 
 
 void ApiRequest::_printNetworkError(QNetworkReply::NetworkError code)
 {
 #ifdef QT_DEBUG
-    auto reply = qobject_cast<QNetworkReply*>(sender());
-    if (reply)
-        qDebug() << code << reply->errorString(); //AuthenticationRequiredError 204, UnknownContentError 299, Server Time-Out 499
+    if (_reply)
+        qDebug() << code << _reply->errorString(); //AuthenticationRequiredError 204, UnknownContentError 299, Server Time-Out 499
     else
         qDebug() << code;
 #endif
 
     emit networkError(code);
 
-    // if (reply)
-        // emit error(code, reply->errorString()); //-V2006
-
     deleteLater();
 }
 
 
 
-void ApiRequest::_finished()
+void ApiRequest::_handleResult()
 {
     deleteLater();
 
-    auto reply = qobject_cast<QNetworkReply*>(sender());
-    if (!reply)
+    if (!_reply)
         return;
 
-    auto data = reply->readAll();
+    auto data = _reply->readAll();
 
     QJsonParseError jpe;
     auto json = QJsonDocument::fromJson(data, &jpe);
@@ -126,7 +243,7 @@ void ApiRequest::_finished()
         return;
     }
 
-    if (reply->error() == QNetworkReply::NoError)
+    if (_reply->error() == QNetworkReply::NoError)
     {
         if (json.isObject())
             emit success(json.object());
@@ -148,38 +265,50 @@ void ApiRequest::_finished()
 
 
 
-void ApiRequest::_start(const QNetworkAccessManager::Operation method)
+bool ApiRequest::_init(const QString& url, const ApiRequest::Options& options)
 {
-    QNetworkRequest request;
-    request.setUrl(_fullUrl);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    request.setHeader(QNetworkRequest::ContentLengthHeader, _readyData.length());
-    request.setRawHeader(QByteArray("X-User-Token"), _accessToken);
-    request.setRawHeader(QByteArray("Connection"), QByteArray("close"));
+    qDebug() << "ApiRequest to" << url;
 
-    QNetworkReply* reply = nullptr;
-    auto manager = pTasty->manager();
-    switch(method)
+    if ((options & AccessTokenRequired)
+            && _accessToken.isEmpty())// || expiresAt <= QDateTime::currentDateTime()))
     {
-    case QNetworkAccessManager::GetOperation:
-        reply = manager->get(request);
-        break;
-    case QNetworkAccessManager::PutOperation:
-        reply = manager->put(request, _readyData);
-        break;
-    case QNetworkAccessManager::PostOperation:
-        reply = manager->post(request, _readyData);
-        break;
-    case QNetworkAccessManager::DeleteOperation:
-        reply = manager->deleteResource(request);
-        break;
-    default:
-        qDebug() << "Unsupported operation in ApiRequest";
+        qDebug() << "authorization needed for" << url;
+        emit pTasty->authorizationNeeded();
         deleteLater();
-        return;
+        return false;
     }
 
-    Q_TEST(connect(reply, SIGNAL(finished()), this, SLOT(_finished())));
-    Q_TEST(connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
-                   this, SLOT(_printNetworkError(QNetworkReply::NetworkError))));
+    if (options & ShowMessageOnError)
+    {
+        Q_TEST(connect(this, SIGNAL(error(int,QString)),
+                       pTasty, SIGNAL(error(int,QString))));
+                       
+        Q_TEST(connect(this, &ApiRequest::networkError, []()
+        {
+            emit pTasty->error(0, "Сетевая ошибка");
+        }));
+    }    
+    
+    _request.setUrl(QString("http://api.taaasty.com:80/").append(url));
+    _request.setRawHeader(QByteArray("X-User-Token"), _accessToken);
+
+    QTimer::singleShot(120000, this, &QObject::deleteLater);
+
+    return true;
+}
+
+
+
+void ApiRequest::_initReply()
+{
+    if (!_reply)
+        return;
+
+    Q_TEST(connect(_reply, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),
+                   this, &ApiRequest::_printNetworkError));
+    
+    Q_TEST(connect(_reply, &QNetworkReply::finished,         this, &ApiRequest::_handleResult));
+
+    Q_TEST(connect(_reply, &QNetworkReply::downloadProgress, this, &ApiRequest::progress));
+    Q_TEST(connect(_reply, &QNetworkReply::uploadProgress,   this, &ApiRequest::progress));
 }

@@ -89,9 +89,9 @@ void PusherClient::_sendReady()
 {
     if (_pusher->isConnected())
     {
-        auto data = QString("socket_id=%1").arg(_pusher->socketId());
-        new ApiRequest("v2/messenger/only_ready.json", ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                       QNetworkAccessManager::PostOperation, data);
+        auto request = new ApiRequest("v2/messenger/only_ready.json", ApiRequest::AccessTokenRequired);
+        request->addFormData("socket_id", _pusher->socketId());
+        request->post();
     }
     else
         _pusher->connect();
@@ -305,8 +305,9 @@ void PusherClient::_addPrivateChannels()
 
 ApiRequest* PusherClient::_getPusherAuth(const QString& channel)
 {
-    auto data = QString("socket_id=%1&channel_name=%2").arg(_pusher->socketId()).arg(channel);
-    return new ApiRequest("v2/messenger/auth.json",
-                          ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                          QNetworkAccessManager::PostOperation, data);
+    auto request = new ApiRequest("v2/messenger/auth.json", ApiRequest::AccessTokenRequired);
+    request->addFormData("socket_id", _pusher->socketId());
+    request->addFormData("channel_name", channel);
+    request->post();
+    return request;
 }

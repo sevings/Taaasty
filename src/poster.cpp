@@ -25,6 +25,8 @@
 #include <QUrl>
 
 #include "data/Entry.h"
+#include "tasty.h"
+#include "apirequest.h"
 
 
 
@@ -76,18 +78,13 @@ void Poster::postText(QString title, QString content, Poster::Privacy privacy, i
         break;
     }
 
-    QString data;
-    QTextStream(&data) << "title=" << title
-                       << "&text=" << content
-                       << "&privacy=" << privacyValue;
-
+    _request = new ApiRequest("v1/entries/text.json", ApiRequest::AllOptions);
+    _request->addFormData("title", title);
+    _request->addFormData("text", content);
+    _request->addFormData("privacy", privacyValue);
     if (tlogId > 0)
-        data += QString("&tlog_id=%1").arg(tlogId);
-
-    qDebug() << data;
-
-    _request = new ApiRequest("v1/entries/text.json", ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                              QNetworkAccessManager::PostOperation, data);
+        _request->addFormData("tlog_id", tlogId);
+    _request->post();
 
     Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_createPostedEntry(QJsonObject))));
     Q_TEST(connect(_request, &QObject::destroyed,                this, &Poster::loadingChanged, Qt::QueuedConnection));
@@ -103,14 +100,10 @@ void Poster::postAnonymous(QString title, QString content)
 
     _prepareText(title, content);
 
-    QString data;
-    QTextStream(&data) << "title=" << title
-                       << "&text=" << content;
-
-    qDebug() << data;
-
-    _request = new ApiRequest("v1/entries/anonymous.json", ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                                  QNetworkAccessManager::PostOperation, data);
+    _request = new ApiRequest("v1/entries/anonymous.json", ApiRequest::AllOptions);
+    _request->addFormData("title", title);
+    _request->addFormData("text", content);
+    _request->post();
 
     Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_createPostedEntry(const QJsonObject))));
     Q_TEST(connect(_request, &QObject::destroyed,                this, &Poster::loadingChanged, Qt::QueuedConnection));
@@ -127,7 +120,7 @@ void Poster::_createPostedEntry(const QJsonObject& data)
 
     emit posted(_entry);
 
-    emit Tasty::instance()->entryCreated(_entry->id(), _tlogId);
+    emit pTasty->entryCreated(_entry->id(), _tlogId);
 }
 
 
@@ -137,8 +130,6 @@ void Poster::_prepareText(QString& title, QString& content) const
     if (title.isEmpty())
         title = "&nbsp;";
 
-    title = QUrl::toPercentEncoding(title);
-
     auto ps = content.split('\n');
     for (auto it = ps.begin(); it != ps.end(); ++it)
         if (it->isEmpty())
@@ -147,5 +138,4 @@ void Poster::_prepareText(QString& title, QString& content) const
             it->prepend("<p>").append("</p>");
 
     content = ps.join(QString());
-    content = QUrl::toPercentEncoding(content);
 }

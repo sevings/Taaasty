@@ -25,7 +25,6 @@
 #include <QPointer>
 
 #include "defines.h"
-#include "apirequest.h"
 
 
 
@@ -64,9 +63,9 @@ private slots:
 private:
     void _prepareText(QString& title, QString& content) const;
 
-    int                  _tlogId;
-    EntryPtr             _entry;
-    QPointer<ApiRequest> _request;
+    int             _tlogId;
+    EntryPtr        _entry;
+    ApiRequestPtr   _request;
 };
 
 #endif // POSTER_H

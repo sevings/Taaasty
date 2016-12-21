@@ -103,6 +103,8 @@ void TastyListModel::_initLoad(bool emitting)
         _networkError = true;
         emit networkErrorChanged();
     }));
+    
+    _loadRequest->get();
 }
 
 
@@ -117,6 +119,8 @@ void TastyListModel::_initCheck(bool emitting)
 
     Q_TEST(connect(_checkRequest, &QObject::destroyed,
                    this, &TastyListModel::checkingChanged, Qt::QueuedConnection));
+                   
+    _checkRequest->get();
 }
 
 

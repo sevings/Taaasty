@@ -81,6 +81,7 @@ void CalendarModel::fetchMore(const QModelIndex& parent)
     
     QString url = QString("v1/tlog/%1/calendar.json").arg(_tlog);
     _loadRequest = new ApiRequest(url);
+    
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
 
     _initLoad();

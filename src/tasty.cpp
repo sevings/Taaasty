@@ -217,12 +217,10 @@ void Tasty::authorize(const QString& login, const QString& password, bool save)
 
     _saveProfile = save;
 
-    auto data = QString("email=%1&password=%2")
-            .arg(login)
-            .arg(password);
-
-    auto request = new ApiRequest("v1/sessions.json", ApiRequest::ShowMessageOnError,
-                                  QNetworkAccessManager::PostOperation, data);
+    auto request = new ApiRequest("v1/sessions.json", ApiRequest::ShowMessageOnError);
+    request->addFormData("email", login);
+    request->addFormData("password", password);
+    request->post();
 
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readAccessToken(const QJsonObject)));
 
@@ -251,6 +249,8 @@ void Tasty::swapProfiles()
 
     // avoid error 403 reasonable_security_violation (is that even legal?)
     auto request = new ApiRequest("v1/app/stats.json", token);
+    request->get();
+    
     Q_TEST(connect(request, SIGNAL(error(int,QString)),   this, SLOT(_swapProfiles())));
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_swapProfiles())));
 }
@@ -281,6 +281,13 @@ void Tasty::_init()
     _manager    = _engine->networkAccessManager();
     _pusher     = new PusherClient(this);
     _dataCache  = new TastyDataCache;
+
+    for (int i = 0; i < 3; i++)
+    {
+        _manager->connectToHost("http://api.taaasty.com");
+        _manager->connectToHost("http://thumbor4.tasty0.ru");
+        _manager->connectToHostEncrypted("https://tasty-prod.s3.amazonaws.com");
+    }
 
     _entryImageWidth   = _settings->maxImageWidth();
     _commentImageWidth = _entryImageWidth;

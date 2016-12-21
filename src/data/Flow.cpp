@@ -50,7 +50,9 @@ void Flow::setId(const int id)
     emit idChanged();
 
     _request = new ApiRequest(QString("v1/flows/%1.json").arg(_id));
-    connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_init(QJsonObject)));
+    _request->get();
+    
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
     _initRequest();
 }

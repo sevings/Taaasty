@@ -205,7 +205,9 @@ void Tlog::reload()
     else
         url = url.arg(_slug);
 
-    _request = new ApiRequest(url, ApiRequest::NoOptions);
+    _request = new ApiRequest(url);
+    _request->get();
+    
     connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject)));
 
     _initRequest();
@@ -267,8 +269,8 @@ void Tlog::unsubscribeHim()
         return;
 
     auto url = QString("v1/relationships/by/tlog/%1.json");
-    _relationRequest = new ApiRequest(url.arg(_id), ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                                      QNetworkAccessManager::DeleteOperation);
+    _relationRequest = new ApiRequest(url.arg(_id), ApiRequest::AllOptions);
+    _relationRequest->deleteResource();
 
     Q_TEST(connect(_relationRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_setHisRelation(QJsonObject))));
     Q_TEST(connect(_relationRequest, &QObject::destroyed,
@@ -314,8 +316,8 @@ void Tlog::_changeMyRelation(const QString& url)
     if (_relationRequest || !Tasty::instance()->isAuthorized())
         return;
 
-    _relationRequest = new ApiRequest(url.arg(_id), ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                                      QNetworkAccessManager::PostOperation);
+    _relationRequest = new ApiRequest(url.arg(_id), ApiRequest::AllOptions);
+    _relationRequest->post();
 
     Q_TEST(connect(_relationRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_setMyRelation(QJsonObject))));
     Q_TEST(connect(_relationRequest, &QObject::destroyed,
@@ -332,11 +334,11 @@ void Tlog::_handleFriendRequest(const QString& url)
     if (_hisRelation != Requested)
         return;
 
-    if (_relationRequest || !Tasty::instance()->isAuthorized())
+    if (_relationRequest || !pTasty->isAuthorized())
         return;
 
-    _relationRequest = new ApiRequest(url.arg(_id), ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                                      QNetworkAccessManager::PostOperation);
+    _relationRequest = new ApiRequest(url.arg(_id), ApiRequest::AllOptions);
+    _relationRequest->post();
 
     Q_TEST(connect(_relationRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_setHisRelation(QJsonObject))));
     Q_TEST(connect(_relationRequest, &QObject::destroyed,

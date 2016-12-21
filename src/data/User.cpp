@@ -76,6 +76,8 @@ void User::setId(int id)
     emit idChanged();
 
     _request = new ApiRequest(QString("v1/tlog/%1.json").arg(_id));
+    _request->get();
+    
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
     
     _initRequest();

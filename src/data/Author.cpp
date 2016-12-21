@@ -115,6 +115,7 @@ void Author::checkStatus()
 {
     auto url = QString("v1/online_statuses.json?user_ids=%1").arg(id());
     auto request = new ApiRequest(url);
+    request->get();
 
     Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_initStatus(QJsonArray))));
 }
@@ -127,6 +128,8 @@ void Author::reload()
         return;
 
     _request = new ApiRequest(QString("v1/tlog/%1.json").arg(id()));
+    _request->get();
+
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
 
     _initRequest();

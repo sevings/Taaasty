@@ -98,6 +98,7 @@ void UsersModel::fetchMore(const QModelIndex& parent)
     auto opt = _optionsForFetchMore(_mode == MyFollowersMode
                                     || _mode == MyFollowingsMode || _mode == MyIgnoredMode);
     _loadRequest = new ApiRequest(url, opt);
+
     connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject)));
 
     _initLoad();

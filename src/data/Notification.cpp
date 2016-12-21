@@ -192,8 +192,8 @@ void Notification::read()
         return;
 
     auto url = QString("v2/messenger/notifications/%1/read.json").arg(_id);
-    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                              QNetworkAccessManager::PutOperation);
+    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired);
+    _request->put();
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_updateRead(QJsonObject))));
     

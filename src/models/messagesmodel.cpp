@@ -148,7 +148,7 @@ void MessagesModel::check()
     if (!_messages.isEmpty())
         url += QString("&from_message_id=%1").arg(_messages.last()->id());
 
-    _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
+    _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addLastMessages(QJsonObject))));
 
     _initCheck();

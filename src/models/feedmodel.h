@@ -97,8 +97,9 @@ public:
     QString tag() const { return _tag; }
 
     Q_INVOKABLE void reset(Mode mode = InvalidMode, int tlogId = -1,
-                           QString slug = QString(), QString query = QString(),
-                           QString tag = QString());
+                           const QString& slug = QString(),
+                           const QString& query = QString(),
+                           const QString& tag = QString());
 
     bool hideMode() const;
     bool hideShort() const;

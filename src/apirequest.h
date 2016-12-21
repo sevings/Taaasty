@@ -21,11 +21,11 @@
 #ifndef APIREQUEST_H
 #define APIREQUEST_H
 
+#include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QJsonObject>
 #include <QJsonArray>
-
-#include "tasty.h"
+#include <QHttpMultiPart>
 
 
 
@@ -43,31 +43,43 @@ public:
 
     Q_DECLARE_FLAGS(Options, Option)
 
-    ApiRequest(const QString& url,
-               const ApiRequest::Options& options = ShowMessageOnError,
-               const QNetworkAccessManager::Operation method = QNetworkAccessManager::GetOperation,
-               const QString& data = QString());
-
-    // get resource with another token
+    ApiRequest(const QString& url, const ApiRequest::Options& options = NoOptions);               
     ApiRequest(const QString& url, const QString& accessToken);
+    ~ApiRequest();
 
+    bool isValid() const;
+    
+    bool get();
+    bool post();
+    bool put();
+    bool deleteResource();    
+    
+    bool addFormData(const QString& name, int value);
+    bool addFormData(const QString& name, const QString& content);
+    bool addImage(const QString& fileName);
+    
 signals:
+    void progress(qint64 bytes, qint64 bytesTotal);
+
     void success(const QJsonObject& data);
     void success(const QJsonArray& data);
     void success(const QString& data);
+
     void networkError(QNetworkReply::NetworkError code);
     void error(const int code, const QString& text);
 
 private slots:
     void _printNetworkError(QNetworkReply::NetworkError code);
-    void _finished();
+    void _handleResult();
 
 private:
-    QByteArray  _readyData;
-    QByteArray  _accessToken;
-    QUrl        _fullUrl;
-
-    void _start(const QNetworkAccessManager::Operation method);
+    bool _init(const QString& url, const ApiRequest::Options& options);
+    void _initReply();
+    
+    QByteArray      _accessToken;
+    QNetworkRequest _request;
+    QNetworkReply*  _reply; //-V122
+    QHttpMultiPart* _data; //-V122
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ApiRequest::Options) //-V813

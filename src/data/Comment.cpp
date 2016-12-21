@@ -69,9 +69,9 @@ void Comment::edit(const QString& text)
         return;
     
     auto url  = QString("v1/comments/%1.json").arg(_id);
-    auto data = QString("text=%1").arg(text);
-    _request  = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                               QNetworkAccessManager::PutOperation, data);
+    _request  = new ApiRequest(url, ApiRequest::AllOptions);
+    _request->addFormData("text", text);
+    _request->put();
 
     Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_init(const QJsonObject))));
     
@@ -86,8 +86,8 @@ void Comment::remove()
         return;
     
     auto url = QString("v1/comments/%1.json").arg(_id);
-    _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError,
-                              QNetworkAccessManager::DeleteOperation);
+    _request = new ApiRequest(url, ApiRequest::AllOptions);
+    _request->deleteResource();
 
     Q_TEST(connect(_request, SIGNAL(success(const QString)), this, SLOT(_remove(const QString))));
     
