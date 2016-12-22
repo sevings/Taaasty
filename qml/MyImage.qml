@@ -158,7 +158,7 @@ Loader {
                 }
                 Q.Label {
                     id: bytesText
-                    font.pointSize: window.fontSmallest
+                    font.pixelSize: window.fontSmallest
                     text: (cachedImage.isDownloading && cachedImage.kbytesTotal > 0
                            ? cachedImage.kbytesReceived + ' / ' : '')
                           + (cachedImage.kbytesTotal > 0

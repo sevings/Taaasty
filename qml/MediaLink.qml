@@ -39,7 +39,7 @@ MyImage {
             margins: 0.5 * mm
         }
         horizontalAlignment: Text.AlignHCenter
-        font.pointSize: window.fontSmaller
+        font.pixelSize: window.fontSmaller
         style: Text.Outline
         styleColor: window.backgroundColor
         text: media ? media.title : ''

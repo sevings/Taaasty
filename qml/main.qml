@@ -39,11 +39,11 @@ ApplicationWindow {
     property color secondaryTextColor: darkTheme ? '#b2ffffff' : '#89000000'
     property color greenColor: '#4CAF50'
     property color redColor: '#F44336' // '#f3534b'
-    property int fontBiggest: 30
-    property int fontBigger: 25
-    property int fontNormal: 20
-    property int fontSmaller: 17
-    property int fontSmallest: 14
+    property int fontBiggest:  34 * Settings.fontZoom / 100 //30
+    property int fontBigger:   20 * Settings.fontZoom / 100 //25
+    property int fontNormal:   16 * Settings.fontZoom / 100 //20
+    property int fontSmaller:  14 * Settings.fontZoom / 100 //17
+    property int fontSmallest: 12 * Settings.fontZoom / 100 //14
     readonly property bool notifsShows: notifsView && notifsView.item && notifsView.item.showing
     readonly property bool chatsShows: chatsView && chatsView.item && chatsView.item.showing
     readonly property int stackSize: stack ? stack.depth : 0

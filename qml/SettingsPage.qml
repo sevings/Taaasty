@@ -47,45 +47,57 @@ Pane {
             width: window.width
             spacing: 1.5 * mm
             padding: 1.5 * mm
-            Component.onCompleted: {
-                shortBox.checked      = Settings.hideShortPosts;
-                nbcBox.checked        = Settings.hideNegativeRated;
-                darkBox.checked       = Settings.darkTheme;
-                notiBox.checked       = Settings.systemNotifications;
-                textBox.checked       = Settings.predictiveText;
-                imageSlider.setSize(Settings.maxLoadImageSize);
-                imageWifiBox.checked  = Settings.loadImagesOverWifi;
-            }
             ThemedText {
                 text: 'Основные'
                 width: parent.width - parent.padding * 2
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
                 horizontalAlignment: Text.AlignHCenter
             }
             ThemedCheckBox {
                 id: shortBox
                 text: 'Скрывать короткие посты'
                 onCheckedChanged: { Settings.hideShortPosts = checked; }
+                checked: Settings.hideShortPosts
             }
             ThemedCheckBox {
                 id: nbcBox
                 text: 'Включить НБК'
                 onCheckedChanged: { Settings.hideNegativeRated = checked; }
+                checked: Settings.hideNegativeRated
             }
             ThemedCheckBox {
                 id: darkBox
                 text: 'Темная тема'
                 onCheckedChanged: { Settings.darkTheme = checked; }
+                checked: Settings.darkTheme
+            }
+            ThemedText {
+                id: fontText
+                width: parent.width - parent.padding * 2
+                text: 'Размер текста: ' + fontSlider.zoom + '%'
+            }
+            Q.Slider {
+                id: fontSlider
+                width: parent.width - parent.padding * 2
+                snapMode: Q.Slider.SnapAlways
+                stepSize: 1
+                from: 50
+                to: 200
+                value: Settings.fontZoom
+                onValueChanged: { Settings.fontZoom = value; }
+                readonly property int zoom: position * 150 + 50
             }
             ThemedCheckBox {
                 id: notiBox
                 text: 'Системные уведомления'
                 onCheckedChanged: { Settings.systemNotifications = checked; }
+                checked: Settings.systemNotifications
             }
             ThemedCheckBox {
                 id: textBox
                 text: 'Предиктивный ввод'
                 onCheckedChanged: { Settings.predictiveText = checked; }
+                checked: Settings.predictiveText
             }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2
@@ -94,7 +106,7 @@ Pane {
             ThemedText {
                 text: 'Изображения'
                 width: parent.width - parent.padding * 2
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
                 horizontalAlignment: Text.AlignHCenter
             }
             ThemedText {
@@ -110,7 +122,7 @@ Pane {
                 id: imageSlider
                 width: parent.width - parent.padding * 2
                 snapMode: Q.Slider.SnapAlways
-                stepSize: 0.02
+//                stepSize: 0.02
                 onValueChanged: { Settings.maxLoadImageSize = value < 1 ? size : -1; }
                 readonly property int size: Math.pow(position, 2) * 10000
                 function setSize(v) {
@@ -119,12 +131,14 @@ Pane {
                     else
                         value = Math.sqrt(v / 10000);
                 }
+                Component.onCompleted: setSize(Settings.maxLoadImageSize)
             }
             ThemedCheckBox {
                 id: imageWifiBox
                 text: 'Загружать все через Wi-Fi'
                 visible: imageSlider.value < 1
                 onCheckedChanged: { Settings.loadImagesOverWifi = checked; }
+                checked: Settings.loadImagesOverWifi
             }
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter

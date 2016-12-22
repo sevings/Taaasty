@@ -31,7 +31,7 @@ TextArea {
     property bool canCopyPaste: false
     readonly property bool richEditing: textFormat === TextEdit.RichText
     readonly property bool hasSelection: selectedText
-    font.pointSize: window.fontNormal
+    font.pixelSize: window.fontNormal
 //    text: handler.text
     textFormat:  TextEdit.PlainText
     wrapMode: TextEdit.Wrap

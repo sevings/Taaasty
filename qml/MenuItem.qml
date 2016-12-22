@@ -23,5 +23,5 @@ import QtQuick.Controls 2.0 as Q
 
 Q.MenuItem {
     implicitWidth: parent.width
-    font.pointSize: window.fontNormal
+    font.pixelSize: window.fontNormal
 }

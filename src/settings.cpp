@@ -422,6 +422,25 @@ void Settings::setDarkTheme(bool dark)
 
 
 
+quint8 Settings::fontZoom() const
+{
+    return _settings.value("font_zoom", 100).value<quint8>();
+}
+
+
+
+void Settings::setFontZoom(quint8 zoom)
+{
+    if (zoom == fontZoom())
+        return;
+
+    _settings.setValue("font_zoom", zoom);
+
+    emit fontZoomChanged();
+}
+
+
+
 bool Settings::systemNotifications() const
 {
     return _settings.value("system_notifications", true).toBool();

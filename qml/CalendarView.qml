@@ -81,7 +81,7 @@ Pane {
                 }
                 horizontalAlignment: Text.AlignHCenter
                 text: section
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
             }
         }
         delegate: Rectangle {
@@ -122,7 +122,7 @@ Pane {
                 }
                 text: entry.createdAt
                 color: window.secondaryTextColor
-                font.pointSize: window.fontSmallest
+                font.pixelSize: window.fontSmallest
                 elide: Text.AlignRight
                 wrapMode: Text.NoWrap
             }
@@ -133,7 +133,7 @@ Pane {
                     right: parent.right
                 }
                 text: entry.commentsCount + ' коммент.'
-                font.pointSize: window.fontSmallest
+                font.pixelSize: window.fontSmallest
                 color: window.secondaryTextColor
             }
         }

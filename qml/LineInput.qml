@@ -26,6 +26,6 @@ Q.TextField {
     id: back
     anchors.margins: 1.5 * mm
     padding: 1.5 * mm
-    font.pointSize: window.fontNormal
+    font.pixelSize: window.fontNormal
     implicitWidth: 30 * mm
 }

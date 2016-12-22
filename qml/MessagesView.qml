@@ -184,7 +184,7 @@ Pane {
                         left: parent.left
                     }
                     width: messageBack.maxWidth - 3 * mm
-                    font.pointSize: window.fontSmaller
+                    font.pixelSize: window.fontSmaller
                     text: (message.replyTo && message.replyTo.name.length > 0 ? '<b>' + message.replyTo.name + '</b>, ' : '') + message.text
                     textFormat: message.containsImage ? Text.RichText : Text.StyledText
                     onLinkActivated: window.openLink(link)
@@ -197,7 +197,7 @@ Pane {
                         left: parent.left
                     }
                     width: messageBack.maxWidth - 3 * mm - (unreadMessage.visible ? unreadMessage.width + 1.5 * mm : 0)
-                    font.pointSize: window.fontSmallest
+                    font.pixelSize: window.fontSmallest
                     text: (chat.type == Chat.PrivateConversation || !message.user.name.length
                            ? '' : message.user.name + ', ')
                           + message.createdAt
@@ -234,7 +234,7 @@ Pane {
                     top: parent.top
                 }
                 text: chat.typedUsers
-                font.pointSize: window.fontSmallest
+                font.pixelSize: window.fontSmallest
                 color: window.secondaryTextColor
             }
             Rectangle {

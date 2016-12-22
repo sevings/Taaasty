@@ -92,7 +92,7 @@ Pane {
             ThemedText {
                 id: flowTitle
                 text: flow.title
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
                 anchors {
                     top: flowName.bottom
                     left: parent.left
@@ -104,7 +104,7 @@ Pane {
                 id: flowFollowers
                 text: flow.followersCount
                 color: window.secondaryTextColor
-                font.pointSize: window.fontSmallest
+                font.pixelSize: window.fontSmallest
                 anchors {
                     top: flowTitle.bottom
                     right: parent.right
@@ -114,7 +114,7 @@ Pane {
                 id: flowPosts
                 text: flow.entriesCount
                 color: window.secondaryTextColor
-                font.pointSize: window.fontSmallest
+                font.pixelSize: window.fontSmallest
                 anchors {
                     top: flowTitle.bottom
                     left: parent.left

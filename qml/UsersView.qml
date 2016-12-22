@@ -90,7 +90,7 @@ Pane {
             }
             Q.Label {
                 id: usersName
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
                 text: user.name
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -107,7 +107,7 @@ Pane {
             height: usersTitle.paintedHeight + 3 * mm
             Q.Label {
                 id: usersTitle
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
                 text: {
                     if (back.mode === UsersModel.FollowersMode)
                         'Подписчики';

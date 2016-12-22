@@ -81,7 +81,7 @@ Pane {
                 text: '#' + model.tagName
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
                 font.italic: true
             }
             ThemedText {
@@ -93,7 +93,7 @@ Pane {
                 }
                 text: model.tagCount
                 color: window.secondaryTextColor
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
             }
         }
     }

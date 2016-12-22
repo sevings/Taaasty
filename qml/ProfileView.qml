@@ -86,7 +86,7 @@ Pane {
                     horizontalCenter: parent.horizontalCenter
                 }
                 width: parent.width - 3 * mm
-                font.pointSize: window.fontBiggest
+                font.pixelSize: window.fontBiggest
                 horizontalAlignment: Text.AlignHCenter
                 text: author.name
                 height: text.length > 0 ? paintedHeight : 0
@@ -236,7 +236,7 @@ Pane {
                     id: readButton
                     width: parent.cellWidth
                     height: parent.cellHeight
-                    font.pointSize: window.fontSmallest
+                    font.pixelSize: window.fontSmallest
                     text: tlog.publicEntriesCount
                     onClicked: window.pushTlog(author.id)
                     enabled: (!author.isPrivacy
@@ -247,7 +247,7 @@ Pane {
                 ThemedButton {
                     width: parent.cellWidth
                     height: parent.cellHeight
-                    font.pointSize: window.fontSmallest
+                    font.pixelSize: window.fontSmallest
                     text: tlog.tagsCount
                     onClicked: window.pushTags(tlog)
 //                    visible: !author.isFlow
@@ -257,7 +257,7 @@ Pane {
                     id: favButton
                     width: parent.cellWidth
                     height: parent.cellHeight
-                    font.pointSize: window.fontSmallest
+                    font.pixelSize: window.fontSmallest
                     text: tlog.favoritesCount
                     onClicked: window.pushTlog(author.id, 0, '', FeedModel.FavoritesMode)
                     visible: !author.isFlow
@@ -267,7 +267,7 @@ Pane {
                     id: followersButton
                     width: parent.cellWidth
                     height: parent.cellHeight
-                    font.pointSize: window.fontSmallest
+                    font.pixelSize: window.fontSmallest
                     text: tlog.followersCount
                     onClicked: window.pushUsers(UsersModel.FollowersMode, author.id, tlog)
                 }
@@ -275,7 +275,7 @@ Pane {
                     id: ignoredButton
                     width: parent.cellWidth
                     height: parent.cellHeight
-                    font.pointSize: window.fontSmallest
+                    font.pixelSize: window.fontSmallest
                     text: tlog.ignoredCount
                     visible: !author.isFlow
                     onClicked: window.pushUsers(UsersModel.MyIgnoredMode, author.id, tlog)
@@ -284,7 +284,7 @@ Pane {
                 ThemedButton {
                     width: parent.cellWidth
                     height: parent.cellHeight
-                    font.pointSize: window.fontSmallest
+                    font.pixelSize: window.fontSmallest
                     text: tlog.followingsCount
                     visible: !author.isFlow
                     onClicked: window.pushUsers(UsersModel.FollowingsMode, author.id, tlog)

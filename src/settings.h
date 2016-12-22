@@ -47,6 +47,7 @@ class Settings : public QObject
     Q_PROPERTY(bool     hideShortPosts      READ hideShortPosts         WRITE setHideShortPosts         NOTIFY hideShortPostsChanged)
     Q_PROPERTY(bool     hideNegativeRated   READ hideNegativeRated      WRITE setHideNegativeRated      NOTIFY hideNegativeRatedChanged)
     Q_PROPERTY(bool     darkTheme           READ darkTheme              WRITE setDarkTheme              NOTIFY darkThemeChanged)
+    Q_PROPERTY(quint8   fontZoom            READ fontZoom               WRITE setFontZoom               NOTIFY fontZoomChanged)
     Q_PROPERTY(bool     systemNotifications READ systemNotifications    WRITE setSystemNotifications    NOTIFY systemNotificationsChanged)
     Q_PROPERTY(bool     predictiveText      READ predictiveText         WRITE setPredictiveText         NOTIFY predictiveTextChanged)
 
@@ -115,6 +116,9 @@ public:
     bool darkTheme() const;
     void setDarkTheme(bool dark);
 
+    quint8 fontZoom() const;
+    void setFontZoom(quint8 zoom);
+
     bool systemNotifications() const;
     void setSystemNotifications(bool enable);
 
@@ -150,6 +154,7 @@ signals:
     void hideShortPostsChanged();
     void hideNegativeRatedChanged();
     void darkThemeChanged();
+    void fontZoomChanged();
     void systemNotificationsChanged();
     void predictiveTextChanged();
 

@@ -98,7 +98,7 @@ Rectangle {
         anchors.centerIn: parent
         width: window.width - 6 * mm
         text: "Hello World!"
-        font.pointSize: window.fontSmaller
+        font.pixelSize: window.fontSmaller
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
     }

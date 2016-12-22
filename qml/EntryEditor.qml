@@ -90,7 +90,7 @@ Pane {
             flickable: flick
             handler: titleHandler
             placeholderText: 'Заголовок'
-            font.pointSize: window.fontBigger
+            font.pixelSize: window.fontBigger
             popBody: back
             onActiveFocusChanged: {
                 if (!activeFocus)
@@ -144,11 +144,11 @@ Pane {
                 text: model[whereBox.textRole]
                 Material.foreground: whereBox.currentIndex === index ? whereBox.Material.accent : whereBox.Material.foreground
                 highlighted: whereBox.highlightedIndex === index
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
             }
             textRole: "text"
             readonly property int tlog: model.get(currentIndex).tlog
-            font.pointSize: window.fontSmaller
+            font.pixelSize: window.fontSmaller
         }
         IconButton {
             id: fireButton

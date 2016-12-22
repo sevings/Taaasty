@@ -32,6 +32,8 @@
 #include "../data/Notification.h"
 #include "../data/Conversation.h"
 #include "../apirequest.h"
+#include "../tasty.h"
+
 #include "notificationsmodel.h"
 
 #ifdef Q_OS_ANDROID
@@ -274,7 +276,7 @@ void MessagesModel::_addMessage(const QJsonObject& data)
     _chat->removeTyped(msg->userId());
 
 #ifdef Q_OS_ANDROID
-    if (!msg->isRead() && msg->userId() != _chat->userId() && Tasty::instance()->settings()->systemNotifications())
+    if (!msg->isRead() && msg->userId() != _chat->userId() && pTasty->settings()->systemNotifications())
     {
         auto text = QString("%1:\n%2").arg(msg->user()->name())
                 .arg(msg->text());

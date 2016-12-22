@@ -90,7 +90,7 @@ ListView {
         visible: y < window.height
         Text {
             anchors.centerIn: parent
-            font.pointSize: window.fontBiggest
+            font.pixelSize: window.fontBiggest
             text: '^'
             color: window.textColor
         }

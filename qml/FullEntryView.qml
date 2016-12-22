@@ -144,7 +144,7 @@ Pane {
                     topMargin: 2 * mm
                 }
                 wrapMode: Text.Wrap
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
                 font.bold: true
                 style: Text.Raised
                 styleColor: Material.accent
@@ -159,7 +159,7 @@ Pane {
                     leftMargin: 1.5 * mm
                     rightMargin: 1.5 * mm
                 }
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
             }
             Q.Label {
                 id: commentText
@@ -171,7 +171,7 @@ Pane {
                     right: parent.right
                 }
                 wrapMode: Text.Wrap
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
                 textFormat: Text.RichText
                 onLinkActivated: window.openLink(link)
             }
@@ -234,7 +234,7 @@ Pane {
                     left: parent.left
                     right: parent.right
                 }
-                font.pointSize: (entry.text.length > 0 ? window.fontBigger
+                font.pixelSize: (entry.text.length > 0 ? window.fontBigger
                                                       : window.fontNormal)
                 textFormat: Text.RichText
                 height: entry.title.length > 0 ? contentHeight : entry.text.length > 0 ? -1.5 * mm : 0
@@ -262,7 +262,7 @@ Pane {
                     left: parent.left
                     right: parent.right
                 }
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
                 font.italic: true
                 textFormat: Text.RichText
                 height: entry.source.length > 0 ? contentHeight : -1.5 * mm
@@ -277,7 +277,7 @@ Pane {
                 }
                 text: entry.createdAt
                 color: window.secondaryTextColor
-                font.pointSize: window.fontSmallest
+                font.pixelSize: window.fontSmallest
             }
             IconButton {
                 id: commentsButton

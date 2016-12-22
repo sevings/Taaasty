@@ -70,7 +70,7 @@ Item {
             right: pinVisible ? pin.left : parent.right
         }
         text: entry ? entry.author.name : ''
-        font.pointSize: window.fontSmaller
+        font.pixelSize: window.fontSmaller
         elide: Text.ElideRight
         wrapMode: Text.NoWrap
         horizontalAlignment: Text.AlignLeft
@@ -85,7 +85,7 @@ Item {
         }
         text: entry ? entry.createdAt : ''
         color: window.secondaryTextColor
-        font.pointSize: window.fontSmallest
+        font.pixelSize: window.fontSmallest
         elide: Text.AlignRight
         wrapMode: Text.NoWrap
     }
@@ -117,7 +117,7 @@ Item {
                     margins: 0.5 * mm
                 }
                 horizontalAlignment: Text.AlignHCenter
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
                 style: Text.Outline
                 styleColor: window.backgroundColor
                 property int total: entry ? entry.attachedImagesModel.rowCount() : 0
@@ -151,7 +151,7 @@ Item {
             left: parent.left
             right: parent.right
         }
-        font.pointSize: entry && entry.truncatedText.length > 0 ? window.fontBigger
+        font.pixelSize: entry && entry.truncatedText.length > 0 ? window.fontBigger
                                                                 : window.fontNormal
         textFormat: Text.RichText
         visible: entry && entry.type !== 'quote'
@@ -180,7 +180,7 @@ Item {
             left: parent.left
             right: parent.right
         }
-        font.pointSize: window.fontSmaller
+        font.pixelSize: window.fontSmaller
         font.italic: true
         textFormat: Text.RichText
         height: entry && entry.source.length > 0 ? contentHeight : 0

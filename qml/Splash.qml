@@ -49,7 +49,7 @@ Item {
             margins: 1.5 * mm
         }
         width: window.width - 3 * mm
-        font.pointSize: window.fontBigger
+        font.pixelSize: window.fontBigger
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
         text: splash.running ? 'Загрузка…' : (splash.text || splash.emptyString)

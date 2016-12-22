@@ -126,7 +126,7 @@ Pane {
                     rightMargin: anchors.leftMargin
                 }
                 color: window.secondaryTextColor
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
                 visible: entry.author.id !== entry.tlog.tlogId
                          && entry.tlog.tlogId !== tlog.tlogId
                 height: visible ? contentHeight : - 1.5 * mm

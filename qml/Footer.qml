@@ -84,7 +84,7 @@ Popup {
             style: Text.Outline
             color: 'white'
             styleColor: 'black'
-            font.pointSize: window.fontBigger
+            font.pixelSize: window.fontBigger
         }
         Rectangle {
             id: chatsNotice
@@ -125,7 +125,7 @@ Popup {
             style: Text.Outline
             color: 'white'
             styleColor: 'black'
-            font.pointSize: window.fontBigger
+            font.pixelSize: window.fontBigger
         }
         Rectangle {
             id: notifNotice

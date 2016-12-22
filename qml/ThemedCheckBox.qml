@@ -24,5 +24,5 @@ import QtQuick.Controls 2.0 as Q
 Q.CheckBox {
     id: box
     implicitWidth: parent.width - parent.padding * 2
-    font.pointSize: window.fontNormal
+    font.pixelSize: window.fontNormal
 }

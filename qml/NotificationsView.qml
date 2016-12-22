@@ -109,7 +109,7 @@ PopupFill {
                     right: notifDate.left
                     bottomMargin: 0
                 }
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
             }
@@ -121,7 +121,7 @@ PopupFill {
                 }
                 text: notification.createdAt
                 color: window.secondaryTextColor
-                font.pointSize: window.fontSmallest
+                font.pixelSize: window.fontSmallest
                 wrapMode: Text.NoWrap
             }
             ThemedText {
@@ -133,7 +133,7 @@ PopupFill {
                     right: unreadNotice.visible ? unreadNotice.left : parent.right
                     topMargin: 0
                 }
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
             }
             Rectangle {
                 id: unreadNotice
@@ -182,7 +182,7 @@ PopupFill {
         id: notifText
         ThemedText {
             text: textContent
-            font.pointSize: window.fontSmaller
+            font.pixelSize: window.fontSmaller
             font.italic: true
         }
     }
@@ -205,7 +205,7 @@ PopupFill {
             }
             Q.Label {
                 id: tlogName
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
                 text: notificationUser.name
                 anchors {
                     verticalCenter: parent.verticalCenter

@@ -45,7 +45,7 @@ T.ToolButton {
 //    implicitWidth: 10 * mm
     property url icon: ''
     property int iconHeight: 20 * sp
-    font.pointSize: window.fontNormal
+    font.pixelSize: window.fontNormal
     implicitWidth: Math.max(background ? background.implicitWidth : 0,
                             contentItem.implicitWidth + leftPadding + rightPadding)
     implicitHeight: Math.max(background ? background.implicitHeight : 0,

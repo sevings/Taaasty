@@ -80,7 +80,7 @@ PopupFill {
                     right: date.left
                 }
                 text: model.chat.topic
-                font.pointSize: window.fontSmaller
+                font.pixelSize: window.fontSmaller
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 horizontalAlignment: Text.AlignLeft
@@ -92,7 +92,7 @@ PopupFill {
                     baseline: chatNick.baseline
                 }
                 text: model.chat.lastMessage.createdAt
-                font.pointSize: window.fontSmallest
+                font.pixelSize: window.fontSmallest
                 color: window.secondaryTextColor
                 elide: Text.AlignRight
                 wrapMode: Text.NoWrap
@@ -118,7 +118,7 @@ PopupFill {
                     left: lastMessageAvatar.visible ? lastMessageAvatar.right : chatAvatar.right
                     right: unreadMessages.visible ? unreadMessages.left : parent.right
                 }
-                font.pointSize: window.fontSmallest
+                font.pixelSize: window.fontSmallest
                 color: window.secondaryTextColor
                 text: model.chat.lastMessage.truncatedText || (model.chat.lastMessage.containsImage ? '(изображение)' : '')
                 elide: Text.ElideRight
@@ -164,7 +164,7 @@ PopupFill {
                 visible: model.chat.unreadCount > 0
                 anchors.centerIn: unreadMessages
                 text: model.chat.unreadCount
-                font.pointSize: window.fontSmallest
+                font.pixelSize: window.fontSmallest
                 color: 'white'
             }
         }

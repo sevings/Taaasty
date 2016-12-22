@@ -47,7 +47,7 @@ Pane {
             ThemedText {
                 text: 'Помощь'
                 width: parent.width - parent.padding * 2
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
                 horizontalAlignment: Text.AlignHCenter
             }
             HelpPageItem {

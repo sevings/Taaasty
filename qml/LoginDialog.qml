@@ -62,7 +62,7 @@ Pane {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                 }
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
             }
             LineInput {
                 id: mail
@@ -83,7 +83,7 @@ Pane {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                 }
-                font.pointSize: window.fontBigger
+                font.pixelSize: window.fontBigger
             }
             LineInput {
                 id: password
