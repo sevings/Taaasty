@@ -26,6 +26,8 @@
 #include <QScreen>
 #include <QDebug>
 
+#include "data/Entry.h"
+
 
 
 Settings::Settings(QObject *parent)
@@ -517,6 +519,25 @@ void Settings::setLastText(const QString& text)
 
 
 
+QStringList Settings::lastImages() const
+{
+    return _settings.value("last_images").toStringList();
+}
+
+
+
+void Settings::setLastImages(const QStringList& images)
+{
+    if (images == lastImages())
+        return;
+
+    _settings.setValue("last_images", images);
+
+    emit lastImagesChanged();
+}
+
+
+
 int Settings::lastPrivacy() const
 {
     return _settings.value("last_privacy").toInt();
@@ -551,4 +572,23 @@ void Settings::setLastPostingTlog(int tlog)
     _settings.setValue("last_posting_tlog", tlog);
 
     emit lastPostingTlogChanged();
+}
+
+
+
+quint8 Settings::lastEntryType() const
+{
+    return _settings.value("last_entry_type", Entry::TextEntry).value<quint8>();
+}
+
+
+
+void Settings::setLastEntryType(quint8 type)
+{
+    if (type == lastEntryType())
+        return;
+
+    _settings.setValue("last_entry_type", type);
+
+    emit lastEntryTypeChanged();
 }

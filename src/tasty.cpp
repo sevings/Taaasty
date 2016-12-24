@@ -51,6 +51,8 @@
 #include "models/messagesmodel.h"
 #include "models/flowsmodel.h"
 #include "models/tagsmodel.h"
+#include "models/uploadmodel.h"
+
 #include "nbc/bayes.h"
 #include "nbc/trainer.h"
 
@@ -312,6 +314,7 @@ void Tasty::_init()
     qmlRegisterType<MessagesModel>      ("org.binque.taaasty", 1, 0, "MessagesModel");
     qmlRegisterType<FlowsModel>         ("org.binque.taaasty", 1, 0, "FlowsModel");
     qmlRegisterType<TagsModel>          ("org.binque.taaasty", 1, 0, "TagsModel");
+    qmlRegisterType<UploadModel>        ("org.binque.taaasty", 1, 0, "UploadModel");
 
     qmlRegisterType<Entry>          ("org.binque.taaasty", 1, 0, "TlogEntry");
     qmlRegisterType<CalendarEntry>  ("org.binque.taaasty", 1, 0, "CalendarEntry");

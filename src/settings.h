@@ -31,30 +31,32 @@ class Settings : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString  login               READ login                  WRITE setLogin                  NOTIFY loginChanged)
-    Q_PROPERTY(QString  accessToken         READ accessToken            WRITE setAccessToken            NOTIFY accessTokenChanged)
-    Q_PROPERTY(int      userId              READ userId                 WRITE setUserId                 NOTIFY userIdChanged)
+    Q_PROPERTY(QString      login               READ login                  WRITE setLogin                  NOTIFY loginChanged)
+    Q_PROPERTY(QString      accessToken         READ accessToken            WRITE setAccessToken            NOTIFY accessTokenChanged)
+    Q_PROPERTY(int          userId              READ userId                 WRITE setUserId                 NOTIFY userIdChanged)
 
-    Q_PROPERTY(QString  prevLogin           READ prevLogin              WRITE setPrevLogin              NOTIFY prevLoginChanged)
-    Q_PROPERTY(QString  prevAccessToken     READ prevAccessToken        WRITE setPrevAccessToken        NOTIFY prevAccessTokenChanged)
-    Q_PROPERTY(int      prevUserId          READ prevUserId             WRITE setPrevUserId             NOTIFY prevUserIdChanged)
+    Q_PROPERTY(QString      prevLogin           READ prevLogin              WRITE setPrevLogin              NOTIFY prevLoginChanged)
+    Q_PROPERTY(QString      prevAccessToken     READ prevAccessToken        WRITE setPrevAccessToken        NOTIFY prevAccessTokenChanged)
+    Q_PROPERTY(int          prevUserId          READ prevUserId             WRITE setPrevUserId             NOTIFY prevUserIdChanged)
 
-    Q_PROPERTY(int      maxImageWidth       READ maxImageWidth          WRITE setMaxImageWidth          NOTIFY maxImageWidthChanged)
-    Q_PROPERTY(bool     autoloadImages      READ autoloadImages         WRITE setAutoloadImages         NOTIFY autoloadImagesChanged)
-    Q_PROPERTY(bool     loadImagesOverWifi  READ loadImagesOverWifi     WRITE setLoadImagesOverWifi     NOTIFY loadImagesOverWifiChanged)
-    Q_PROPERTY(int      maxLoadImageSize    READ maxLoadImageSize       WRITE setMaxLoadImageSize       NOTIFY maxLoadImageSizeChanged)
-    
-    Q_PROPERTY(bool     hideShortPosts      READ hideShortPosts         WRITE setHideShortPosts         NOTIFY hideShortPostsChanged)
-    Q_PROPERTY(bool     hideNegativeRated   READ hideNegativeRated      WRITE setHideNegativeRated      NOTIFY hideNegativeRatedChanged)
-    Q_PROPERTY(bool     darkTheme           READ darkTheme              WRITE setDarkTheme              NOTIFY darkThemeChanged)
-    Q_PROPERTY(quint8   fontZoom            READ fontZoom               WRITE setFontZoom               NOTIFY fontZoomChanged)
-    Q_PROPERTY(bool     systemNotifications READ systemNotifications    WRITE setSystemNotifications    NOTIFY systemNotificationsChanged)
-    Q_PROPERTY(bool     predictiveText      READ predictiveText         WRITE setPredictiveText         NOTIFY predictiveTextChanged)
+    Q_PROPERTY(int          maxImageWidth       READ maxImageWidth          WRITE setMaxImageWidth          NOTIFY maxImageWidthChanged)
+    Q_PROPERTY(bool         autoloadImages      READ autoloadImages         WRITE setAutoloadImages         NOTIFY autoloadImagesChanged)
+    Q_PROPERTY(bool         loadImagesOverWifi  READ loadImagesOverWifi     WRITE setLoadImagesOverWifi     NOTIFY loadImagesOverWifiChanged)
+    Q_PROPERTY(int          maxLoadImageSize    READ maxLoadImageSize       WRITE setMaxLoadImageSize       NOTIFY maxLoadImageSizeChanged)
 
-    Q_PROPERTY(QString  lastTitle           READ lastTitle              WRITE setLastTitle              NOTIFY lastTitleChanged)
-    Q_PROPERTY(QString  lastText            READ lastText               WRITE setLastText               NOTIFY lastTextChanged)
-    Q_PROPERTY(int      lastPrivacy         READ lastPrivacy            WRITE setLastPrivacy            NOTIFY lastPrivacyChanged)
-    Q_PROPERTY(int      lastPostingTlog     READ lastPostingTlog        WRITE setLastPostingTlog        NOTIFY lastPostingTlogChanged)
+    Q_PROPERTY(bool         hideShortPosts      READ hideShortPosts         WRITE setHideShortPosts         NOTIFY hideShortPostsChanged)
+    Q_PROPERTY(bool         hideNegativeRated   READ hideNegativeRated      WRITE setHideNegativeRated      NOTIFY hideNegativeRatedChanged)
+    Q_PROPERTY(bool         darkTheme           READ darkTheme              WRITE setDarkTheme              NOTIFY darkThemeChanged)
+    Q_PROPERTY(quint8       fontZoom            READ fontZoom               WRITE setFontZoom               NOTIFY fontZoomChanged)
+    Q_PROPERTY(bool         systemNotifications READ systemNotifications    WRITE setSystemNotifications    NOTIFY systemNotificationsChanged)
+    Q_PROPERTY(bool         predictiveText      READ predictiveText         WRITE setPredictiveText         NOTIFY predictiveTextChanged)
+
+    Q_PROPERTY(QString      lastTitle           READ lastTitle              WRITE setLastTitle              NOTIFY lastTitleChanged)
+    Q_PROPERTY(QString      lastText            READ lastText               WRITE setLastText               NOTIFY lastTextChanged)
+    Q_PROPERTY(QStringList  lastImages          READ lastImages             WRITE setLastImages             NOTIFY lastImagesChanged)
+    Q_PROPERTY(int          lastPrivacy         READ lastPrivacy            WRITE setLastPrivacy            NOTIFY lastPrivacyChanged)
+    Q_PROPERTY(int          lastPostingTlog     READ lastPostingTlog        WRITE setLastPostingTlog        NOTIFY lastPostingTlogChanged)
+    Q_PROPERTY(quint8       lastEntryType       READ lastEntryType          WRITE setLastEntryType          NOTIFY lastEntryTypeChanged)
 
 public:
     explicit Settings(QObject *parent = 0);
@@ -131,11 +133,17 @@ public:
     QString lastText() const;
     void setLastText(const QString& text);
 
+    QStringList lastImages() const;
+    void setLastImages(const QStringList& images);
+
     int lastPrivacy() const;
     void setLastPrivacy(int privacy);
 
     int lastPostingTlog() const;
     void setLastPostingTlog(int tlog);
+
+    quint8 lastEntryType() const;
+    void setLastEntryType(quint8 type);
 
 signals:
     void loginChanged();
@@ -160,8 +168,10 @@ signals:
 
     void lastTitleChanged();
     void lastTextChanged();
+    void lastImagesChanged();
     void lastPrivacyChanged();
     void lastPostingTlogChanged();
+    void lastEntryTypeChanged();
 
 public slots:
 

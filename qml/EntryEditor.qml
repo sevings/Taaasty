@@ -25,20 +25,26 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    hasMenu: true
+    readonly property bool isEntryEditor: true
+    property int entryType: Settings.lastEntryType
     readonly property int privacy: lockButton.locked
                                    ? Poster.Private : fireButton.voting
                                      ? Poster.Voting : Poster.Public;
+    onEntryTypeChanged: {
+        editMenu.hideMenu();
+    }
     Component.onCompleted: {
         titleInput.text   = Settings.lastTitle;
         textInput.text    = Settings.lastText;
         fireButton.voting = Settings.lastPrivacy == Poster.Voting;
         lockButton.locked = Settings.lastPrivacy == Poster.Private;
 
-        var last = Settings.lastPostingTlog;
-        while (whereBox.tlog !== last && whereBox.currentIndex < whereBox.count)
-            whereBox.incrementCurrentIndex();
-        if (whereBox.currentIndex == whereBox.count)
-            whereBox.currentIndex = 0;
+//        var last = Settings.lastPostingTlog;
+//        while (whereBox.tlog !== last && whereBox.currentIndex < whereBox.count)
+//            whereBox.incrementCurrentIndex();
+//        if (whereBox.currentIndex == whereBox.count)
+//            whereBox.currentIndex = 0;
 
         titleInput.forceActiveFocus();
     }
@@ -55,7 +61,10 @@ Pane {
         Settings.lastTitle       = titleInput.text;
         Settings.lastText        = textInput.text;
         Settings.lastPrivacy     = back.privacy;
-        Settings.lastPostingTlog = whereBox.tlog;
+//        Settings.lastPostingTlog = whereBox.tlog;
+        Settings.lastEntryType   = back.entryType;
+
+        poster.images.save();
     }
     Timer {
         running: back.visible
@@ -70,133 +79,193 @@ Pane {
     }
     MyFlickable {
         id: flick
-        anchors.fill: parent
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
+        height: Math.min(back.height - 1.5 * mm, contentHeight)
         visible: !poster.loading
-        contentWidth: Math.max(Math.max(titleInput.contentWidth, textInput.contentWidth), window.width)
-        contentHeight: Math.max(parent.height, titleInput.implicitHeight + textInput.implicitHeight + postButton.height + 6 * mm)
         onVerticalVelocityChanged: editMenu.hideMenu()
+        bottomMargin: 1.5 * mm
+        contentWidth: parent.width
+        contentHeight: column.height
         Poppable {
             body: back
         }
-        TextEditor {
-            id: titleInput
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-                margins: 1.5 * mm
+        Column {
+            id: column
+            width: window.width
+            spacing: 1.5 * mm
+            ListView {
+                id: images
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
+                visible: entryType === TlogEntry.ImageEntry
+                interactive: false
+                spacing: 1.5 * mm
+                height: visible ? contentHeight : 0
+                model: poster.images
+                add: Transition {
+                    NumberAnimation { property: "opacity"; from: 0;   to: 1.0; duration: 300 }
+                    NumberAnimation { property: "scale";   from: 0.8; to: 1.0; duration: 300 }
+                }
+                remove: Transition {
+                    NumberAnimation { property: "opacity"; from: 1.0; to: 0;   duration: 300 }
+                    NumberAnimation { property: "scale";   from: 1.0; to: 0.8; duration: 300 }
+                }
+                displaced: Transition {
+                    NumberAnimation { property: "y"; duration: 300 }
+                }
+                delegate: AnimatedImage {
+                    id: picture
+                    width: images.width
+                    cache: true
+                    smooth: true
+                    asynchronous: true
+                    fillMode: Image.PreserveAspectFit
+                    source: model.display
+                    Rectangle {
+                        anchors.fill: removeImageButton
+                        color: window.backgroundColor
+                        opacity: 0.3
+                    }
+                    IconButton {
+                        id: removeImageButton
+                        anchors {
+                            top: parent.top
+                            right: parent.right
+                        }
+                        icon: (window.darkTheme ? '../icons/cross-white'
+                                                : '../icons/cross-black')
+                              + '-128.png'
+                        onClicked: poster.images.remove(model.index)
+                    }
+                }
+                footer: Item {
+                    width: images.width
+                    height: addImageButton.height + 3 * mm
+                    ThemedButton {
+                        id: addImageButton
+                        anchors.centerIn: parent
+                        implicitWidth: 40 * mm
+                        highlighted: true
+                        text: 'Добавить'
+                        onClicked: poster.images.append('/home/binque/Изображения/IMG_20160511_233057.jpg')
+                    }
+                }
             }
-            z: 6
-            flickable: flick
-            handler: titleHandler
-            placeholderText: 'Заголовок'
-            font.pixelSize: window.fontBigger
-            popBody: back
-            onActiveFocusChanged: {
-                if (!activeFocus)
-                    return;
+            TextEditor {
+                id: titleInput
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
+                z: 6
+                flickable: flick
+                handler: titleHandler
+                placeholderText: entryType === TlogEntry.ImageEntry ? 'Подпись' : 'Заголовок'
+                font.pixelSize: window.fontBigger
+                popBody: back
+                onActiveFocusChanged: {
+                    if (!activeFocus)
+                        return;
 
-                editMenu.textEdit = titleInput;
-                editMenu.handler  = titleHandler;
+                    editMenu.textEdit = titleInput;
+                    editMenu.handler  = titleHandler;
 
-                window.hideFooter();
+                    window.hideFooter();
+                }
             }
-        }
-        TextEditor {
-            id: textInput
-            z: 5
-            anchors {
-                top: titleInput.bottom
-                bottom: postButton.top
-                left: parent.left
-                right: parent.right
-                margins: 1.5 * mm
-            }
-            flickable: flick
-            handler: textHandler
-//            textFormat: TextEdit.RichText
-            placeholderText: 'Текст поста'
-            popBody: back
-            onActiveFocusChanged: {
-                if (!activeFocus)
-                    return;
+            TextEditor {
+                id: textInput
+                z: 5
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: parent.width - 3 * mm
+                height: Math.max(implicitHeight, back.height - titleInput.height - buttonsRow.height - 6 * mm)
+                visible: entryType == TlogEntry.TextEntry || entryType == TlogEntry.AnonymousEntry
+                flickable: flick
+                handler: textHandler
+//                textFormat: TextEdit.RichText
+                placeholderText: 'Текст поста'
+                popBody: back
+                onActiveFocusChanged: {
+                    if (!activeFocus)
+                        return;
 
-                editMenu.textEdit = textInput;
-                editMenu.handler  = textHandler;
+                    editMenu.textEdit = textInput;
+                    editMenu.handler  = textHandler;
 
-                window.hideFooter();
+                    window.hideFooter();
+                }
             }
-        }
-        Q.ComboBox {
-            id: whereBox
-            anchors {
-                verticalCenter: postButton.verticalCenter
-                left: parent.left
-                right: fireButton.left
-                margins: 1.5 * mm
-            }
-            model: ListModel {
-                ListElement { tlog: 0;  text: "В мой тлог" }
-                ListElement { tlog: -1; text: "В анонимки" }
-            }
-            delegate: Q.MenuItem {
-                width: whereBox.width
-                text: model[whereBox.textRole]
-                Material.foreground: whereBox.currentIndex === index ? whereBox.Material.accent : whereBox.Material.foreground
-                highlighted: whereBox.highlightedIndex === index
-                font.pixelSize: window.fontSmaller
-            }
-            textRole: "text"
-            readonly property int tlog: model.get(currentIndex).tlog
-            font.pixelSize: window.fontSmaller
-        }
-        IconButton {
-            id: fireButton
-            property bool voting
-            anchors {
-                bottom: parent.bottom
-                right: lockButton.left
-            }
-            visible: whereBox.tlog >= 0 && !lockButton.locked
-            icon: (voting ? '../icons/flame-solid-'
-                          : '../icons/flame-outline-')
-                  + '72.png'
-            onClicked: {
-                editMenu.hideMenu();
-                voting = !voting;
-            }
-        }
-        IconButton {
-            id: lockButton
-            property bool locked
-            anchors {
-                bottom: parent.bottom
-                right: postButton.left
-            }
-            visible: whereBox.tlog == 0
-            icon: (locked ? (window.darkTheme ? '../icons/lock-white-'
-                                              : '../icons/lock-black-')
-                          : (window.darkTheme ? '../icons/unlock-white-'
-                                              : '../icons/unlock-black-'))
-                  + '128.png'
-            onClicked: {
-                editMenu.hideMenu();
-                locked = !locked;
-            }
-        }
-        IconButton {
-            id: postButton
-            anchors {
-                bottom: parent.bottom
-                right: parent.right
-            }
-            enabled: titleInput.length || textInput.length
-            icon: (window.darkTheme ? '../icons/send-light-'
-                                    : '../icons/send-dark-')
-                  + '128.png'
-            onClicked: {
-                editMenu.hideMenu();
-                poster.postText(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
+            Row {
+                id: buttonsRow
+                spacing: 1.5 * mm
+                anchors {
+                    right: parent.right
+                }
+                IconButton {
+                    id: fireButton
+                    property bool voting
+                    visible: entryType != TlogEntry.AnonymousEntry && !lockButton.locked
+                    icon: (voting ? '../icons/flame-solid-'
+                                  : '../icons/flame-outline-')
+                          + '72.png'
+                    onClicked: {
+                        editMenu.hideMenu();
+                        voting = !voting;
+                    }
+                }
+                IconButton {
+                    id: lockButton
+                    property bool locked
+                    visible: entryType != TlogEntry.AnonymousEntry // && to my tlog?
+                    icon: (locked ? (window.darkTheme ? '../icons/lock-white-'
+                                                      : '../icons/lock-black-')
+                                  : (window.darkTheme ? '../icons/unlock-white-'
+                                                      : '../icons/unlock-black-'))
+                          + '128.png'
+                    onClicked: {
+                        editMenu.hideMenu();
+                        locked = !locked;
+                    }
+                }
+                IconButton {
+                    id: postButton
+                    enabled: titleInput.length || textInput.length
+                    icon: (window.darkTheme ? '../icons/send-light-'
+                                            : '../icons/send-dark-')
+                          + '128.png'
+                    onClicked: {
+                        editMenu.hideMenu();
+
+                        switch (entryType)
+                        {
+                        case TlogEntry.ImageEntry:
+                            poster.postImage(titleInput.text, back.privacy);//, whereBox.tlog);
+                            break;
+                        case TlogEntry.QuoteEntry:
+                            poster.postQuote(titleInput.text, textInput.text, back.privacy);//, whereBox.tlog);
+                            break;
+                        case TlogEntry.VideoEntry:
+                            poster.postVideo(titleInput.text, textInput.text, back.privacy);//, whereBox.tlog);
+                            break;
+                        case TlogEntry.TextEntry:
+                            poster.postText(titleInput.text, textInput.text, back.privacy);//, whereBox.tlog);
+                            break;
+                        case TlogEntry.AnonymousEntry:
+                            poster.postAnonymous(titleInput.text, textInput.text);
+                            break;
+                        default:
+                            console.log('entry type', entryType);
+                        }
+                    }
+                }
             }
         }
     }

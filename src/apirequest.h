@@ -27,6 +27,8 @@
 #include <QJsonArray>
 #include <QHttpMultiPart>
 
+class UploadModel;
+
 
 
 class ApiRequest : public QObject
@@ -37,27 +39,35 @@ public:
     {
         NoOptions           = 0x0,
         AccessTokenRequired = 0x1,
-        ShowMessageOnError  = 0x2,
+        ShowTastyError      = 0x2,
+        ShowNetworkError    = 0x4,
+        ShowMessageOnError  = ShowTastyError | ShowNetworkError,
         AllOptions          = AccessTokenRequired | ShowMessageOnError
     };
 
     Q_DECLARE_FLAGS(Options, Option)
 
+    ApiRequest(const ApiRequest::Options& options = NoOptions);
     ApiRequest(const QString& url, const ApiRequest::Options& options = NoOptions);               
-    ApiRequest(const QString& url, const QString& accessToken);
+    ApiRequest(const QString& url, const QString& accessToken, 
+               const ApiRequest::Options& options = AccessTokenRequired);
     ~ApiRequest();
 
     bool isValid() const;
-    
-    bool get();
-    bool post();
-    bool put();
-    bool deleteResource();    
+    bool isRunning() const;
+
+    bool setUrl(const QString& url);
     
     bool addFormData(const QString& name, int value);
     bool addFormData(const QString& name, const QString& content);
-    bool addImage(const QString& fileName);
+    bool addImages(UploadModel* model);
     
+public slots:
+    bool get();
+    bool post();
+    bool put();
+    bool deleteResource();
+
 signals:
     void progress(qint64 bytes, qint64 bytesTotal);
 
@@ -72,14 +82,16 @@ private slots:
     void _printNetworkError(QNetworkReply::NetworkError code);
     void _handleResult();
 
+    void _addImages();
+
 private:
-    bool _init(const QString& url, const ApiRequest::Options& options);
+    bool _setOptions(const QString& accessToken, const ApiRequest::Options& options);
     void _initReply();
-    
-    QByteArray      _accessToken;
+
     QNetworkRequest _request;
     QNetworkReply*  _reply; //-V122
     QHttpMultiPart* _data; //-V122
+    UploadModel*    _model; //-V122
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ApiRequest::Options) //-V813

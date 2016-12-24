@@ -589,6 +589,41 @@ Q.Drawer {
                              || page.tlog.myRelationship === Tlog.Me)
                          && page.tlog.hisRelationship !== Tlog.Ignored
             }
+
+            // ENTRY EDITOR SECTION
+            MenuItem {
+                text: 'Текст'
+                onTriggered: {
+                    page.entryType = TlogEntry.TextEntry;
+                    drawer.close();
+                }
+                highlighted: page.entryType === TlogEntry.TextEntry
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isEntryEditor === true
+            }
+            MenuItem {
+                text: 'Изображение'
+                onTriggered: {
+                    page.entryType = TlogEntry.ImageEntry;
+                    drawer.close();
+                }
+                highlighted: page.entryType === TlogEntry.ImageEntry
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isEntryEditor === true
+            }
+            MenuItem {
+                text: 'Анонимка'
+                onTriggered: {
+                    page.entryType = TlogEntry.AnonymousEntry;
+                    drawer.close();
+                }
+                highlighted: page.entryType === TlogEntry.AnonymousEntry
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isEntryEditor === true
+            }
         }
     }
 }

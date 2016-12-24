@@ -107,6 +107,17 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel READ attachedImagesModel NOTIFY updated)
 
 public:
+    enum EntryType
+    {
+        ImageEntry,
+        QuoteEntry,
+        VideoEntry,
+        TextEntry,
+        AnonymousEntry
+    };
+
+    Q_ENUM(EntryType)
+
     Entry();
     Entry(Conversation* chat);
     ~Entry();

@@ -26,13 +26,16 @@
 
 #include "defines.h"
 
+class UploadModel;
+
 
 
 class Poster : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool loading         READ isLoading      NOTIFY loadingChanged)
+    Q_PROPERTY(bool         loading    READ isLoading  NOTIFY loadingChanged)
+    Q_PROPERTY(UploadModel* images     READ images     CONSTANT)
 
 public:    
     enum Privacy
@@ -46,26 +49,36 @@ public:
 
     explicit Poster(QObject* parent = 0);
 
-    Entry*  entry() const;
-    bool    isLoading() const;
-
+    Entry*          entry() const;
+    bool            isLoading() const;
+    UploadModel*    images();
+    
 signals:
     void posted(EntryPtr entry);
     void loadingChanged();
 
-public slots:    
-    void postText(QString title, QString content, Privacy privacy, int tlogId = 0);
+public slots:
+    void postImage(QString title,                  Privacy privacy, int tlogId = 0);
+    void postQuote(QString text,  QString source,  Privacy privacy, int tlogId = 0);
+    void postVideo(QString title, QString url,     Privacy privacy, int tlogId = 0);
+    void postText( QString title, QString content, Privacy privacy, int tlogId = 0);
     void postAnonymous(QString title, QString content);
 
 private slots:
     void _createPostedEntry(const QJsonObject& data);
     
 private:
-    void _prepareText(QString& title, QString& content) const;
+    QString _privacyValue(const Privacy& privacy) const;
+    
+    void    _prepare(int tlogId);
+    void    _prepare(QString& title, int tlogId);
+    void    _prepare(QString& title, QString& content, int tlogId);
+    void    _postPrepared();
 
     int             _tlogId;
     EntryPtr        _entry;
     ApiRequestPtr   _request;
+    UploadModel*    _images; //-V122
 };
 
 #endif // POSTER_H
