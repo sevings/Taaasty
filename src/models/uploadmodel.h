@@ -60,7 +60,7 @@ private slots:
     void _append(const QString& fileName);
 
 private:
-    void _loadFiles();
+    void _loadFiles(bool optimize);
 
     QList<QHttpPart>             _parts;
     QMap<QString, QImageReader*> _readers;

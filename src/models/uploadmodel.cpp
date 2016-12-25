@@ -83,7 +83,8 @@ void UploadModel::loadFiles()
         return;
     }
 
-    auto future = QtConcurrent::run(this, &UploadModel::_loadFiles);
+    auto opt = pTasty->settings()->lastOptimizeImages();
+    auto future = QtConcurrent::run(this, &UploadModel::_loadFiles, opt);
     _watcher.setFuture(future);
 }
 
@@ -177,14 +178,13 @@ void UploadModel::_append(const QString& fileName)
 
 
 
-void UploadModel::_loadFiles()
+void UploadModel::_loadFiles(bool optimize)
 {
     for (auto it = _readers.cbegin(); it != _readers.cend(); ++it)
     {
         auto fileName = QFileInfo(it.key()).fileName();
         auto reader = it.value();
         auto format = reader->format();
-        auto quality = reader->quality();
 
         QHttpPart imagePart;
         imagePart.setHeader(QNetworkRequest::ContentTypeHeader,
@@ -192,12 +192,13 @@ void UploadModel::_loadFiles()
         imagePart.setHeader(QNetworkRequest::ContentDispositionHeader,
                             QVariant(QString("form-data; name=\"files[]\"; filename=\"%1\"").arg(fileName)));
 
-        if (format == "gif" || reader->size().width() <= TASTY_IMAGE_WIDTH)
+        if (!optimize || format == "gif" || reader->size().width() <= TASTY_IMAGE_WIDTH)
             imagePart.setBodyDevice(reader->device());
         else
         {
+            auto quality = reader->quality();
             auto image = reader->read();
-//            image = image.scaledToWidth(TASTY_IMAGE_WIDTH, Qt::SmoothTransformation);
+            image = image.scaledToWidth(TASTY_IMAGE_WIDTH, Qt::SmoothTransformation);
 
             QByteArray body;
             QBuffer buffer(&body);

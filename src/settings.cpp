@@ -538,6 +538,25 @@ void Settings::setLastImages(const QStringList& images)
 
 
 
+bool Settings::lastOptimizeImages() const
+{
+    return _settings.value("last_optimize_image", true).toBool();
+}
+
+
+
+void Settings::setLastOptimizeImages(bool opt)
+{
+    if (opt == lastOptimizeImages())
+        return;
+
+    _settings.setValue("last_optimize_image", opt);
+
+    emit lastOptimizeImagesChanged();
+}
+
+
+
 int Settings::lastPrivacy() const
 {
     return _settings.value("last_privacy").toInt();

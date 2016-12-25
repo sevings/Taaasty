@@ -147,14 +147,29 @@ Pane {
                 }
                 footer: Item {
                     width: images.width
-                    height: addImageButton.height + 3 * mm
+                    height: addImageButton.height + optimizeBox.height + 4.5 * mm
                     ThemedButton {
                         id: addImageButton
                         enabled: !poster.loading
-                        anchors.centerIn: parent
+                        anchors {
+                            top: parent.top
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        width: implicitWidth + 5 * mm
                         highlighted: true
                         text: 'Добавить из галереи'
                         onClicked: poster.images.append()
+                    }
+                    ThemedCheckBox {
+                        id: optimizeBox
+                        anchors {
+                            top: addImageButton.bottom
+                            left: parent.left
+                            margins: 1.5 * mm
+                        }
+                        text: 'Оптимизировать размер'
+                        onCheckedChanged: { Settings.lastOptimizeImages = checked; }
+                        checked: Settings.lastOptimizeImages
                     }
                 }
             }
