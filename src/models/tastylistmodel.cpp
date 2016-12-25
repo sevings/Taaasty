@@ -95,13 +95,17 @@ void TastyListModel::_initLoad(bool emitting)
     Q_TEST(connect(_loadRequest, SIGNAL(error(int,QString)),
                    this, SLOT(_setErrorString(int,QString))));
 
-    Q_TEST(connect(_loadRequest, &ApiRequest::networkError, [this]()
+    QPointer<TastyListModel> that(this);
+    Q_TEST(connect(_loadRequest, &ApiRequest::networkError, [that]()
     {
-        _errorString = "Сетевая ошибка";
-        emit errorStringChanged();
+        if (!that)
+            return;
+
+        that->_errorString = "Сетевая ошибка";
+        emit that->errorStringChanged();
         
-        _networkError = true;
-        emit networkErrorChanged();
+        that->_networkError = true;
+        emit that->networkErrorChanged();
     }));
     
     _loadRequest->get();

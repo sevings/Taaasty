@@ -54,10 +54,15 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
     Q_ASSERT(_man);
 
     Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, &CachedImage::downloadingChanged, Qt::QueuedConnection));
-    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, [&]()
+
+    QPointer<CachedImage> that(this);
+    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, [that]()
     {
-        _available = true;
-        emit available();
+        if (!that)
+            return;
+
+        that->_available = true;
+        emit that->available();
     }, Qt::QueuedConnection));
     
     if (!_man || _url.isEmpty())
