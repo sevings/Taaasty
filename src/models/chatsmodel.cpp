@@ -236,7 +236,7 @@ void ChatsModel::loadUnread()
     qDebug() << "ChatsModel::loadUnread";
 
     QString url("v2/messenger/conversations.json?unread=true");
-    _checkRequest = new ApiRequest(url, _optionsForFetchMore());
+    _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
 
     Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonArray)), this, SLOT(_addUnread(QJsonArray))));
 

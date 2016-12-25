@@ -197,8 +197,9 @@ Pane {
                 interactive: false
                 spacing: 1.5 * mm
                 property AttachedImagesModel imagesModel: entry.attachedImagesModel
-                height: imagesModel ? (imagesModel.listRatio() * window.width
-                        + (imagesModel.rowCount() - 1) * mm) : 0
+//                height: imagesModel ? (imagesModel.listRatio() * window.width
+//                        + (imagesModel.rowCount() - 1) * mm) : 0
+                height: contentHeight
                 model: imagesModel
                 delegate: MyImage {
                     id: picture
@@ -217,7 +218,7 @@ Pane {
                     top: fullEntryImages.bottom
                     left: parent.left
                     right: parent.right
-                    topMargin: 1.5 * mm
+//                    topMargin: 1.5 * mm
                     bottomMargin: 1.5 * mm
                 }
                 media: entry.media
