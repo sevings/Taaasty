@@ -27,16 +27,18 @@ ColumnLayout {
     id: control
     spacing: 1.5 * mm
     property string text: ''
+    property string units: ''
     property bool percents: false
     property alias to: bar.to
     property int value: 0
     property int showValue: value
+    property int preferredWidth: window.width
     Behavior on showValue {
         NumberAnimation { duration: 200 }
     }
     Q.ProgressBar {
         id: bar
-        Layout.preferredWidth: window.width
+        Layout.preferredWidth: control.preferredWidth
         padding: 1.5 * mm
         value: control.showValue
         indeterminate: !control.to
@@ -45,9 +47,9 @@ ColumnLayout {
         id: label
         leftPadding: 5 * mm
         rightPadding: leftPadding
-        Layout.preferredWidth: window.width
+        Layout.preferredWidth: control.preferredWidth
         text: control.text + (control.showValue <= control.to && control.to > 0
                               ? ' — ' + (control.percents ? Math.round(control.showValue / control.to * 100) + '%'
-                                                          : control.showValue + '/' + control.to) : '')
+                                                          : control.showValue + '/' + control.to + ' ' + control.units) : '')
     }
 }

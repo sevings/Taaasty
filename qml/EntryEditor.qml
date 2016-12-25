@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.0
+import QtQuick 2.7
 import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
@@ -45,8 +45,6 @@ Pane {
 //            whereBox.incrementCurrentIndex();
 //        if (whereBox.currentIndex == whereBox.count)
 //            whereBox.currentIndex = 0;
-
-        titleInput.forceActiveFocus();
     }
     Component.onDestruction: {
         save();
@@ -220,22 +218,11 @@ Pane {
             Row {
                 id: buttonsRow
                 spacing: 1.5 * mm
-                anchors {
-                    right: parent.right
-                    margins: 1.5 * mm
-                }
-                ThemedProgressBar {
-                    id: uploadBar
-                    visible: poster.loading
-                    width: column.width
-                    text: 'Отправка'
-                    value: poster.kBytesSent
-                    to: poster.kBytesTotal
-                }
+                anchors.right: parent.right
                 IconButton {
                     id: fireButton
                     property bool voting
-                    visible: entryType != TlogEntry.AnonymousEntry && !lockButton.locked && !poster.loading
+                    visible: entryType !== TlogEntry.AnonymousEntry && !lockButton.locked && !poster.loading
                     icon: (voting ? '../icons/flame-solid-'
                                   : '../icons/flame-outline-')
                           + '72.png'
@@ -247,7 +234,7 @@ Pane {
                 IconButton {
                     id: lockButton
                     property bool locked
-                    visible: entryType != TlogEntry.AnonymousEntry && !poster.loading// && to my tlog?
+                    visible: entryType !== TlogEntry.AnonymousEntry && !poster.loading// && to my tlog?
                     icon: (locked ? (window.darkTheme ? '../icons/lock-white-'
                                                       : '../icons/lock-black-')
                                   : (window.darkTheme ? '../icons/unlock-white-'
@@ -304,6 +291,14 @@ Pane {
                             console.log('entry type', entryType);
                         }
                     }
+                }
+                ThemedProgressBar {
+                    id: uploadBar
+                    visible: poster.loading
+                    text: 'Отправка'
+                    units: 'КБ'
+                    value: poster.kBytesSent
+                    to: poster.kBytesTotal
                 }
             }
         }

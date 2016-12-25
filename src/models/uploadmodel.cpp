@@ -22,6 +22,7 @@
 
 #include "uploadmodel.h"
 
+#include <QFile>
 #include <QFileInfo>
 #include <QtConcurrent>
 #include <QUrl>
@@ -199,19 +200,33 @@ void UploadModel::_loadFiles(bool optimize)
         imagePart.setHeader(QNetworkRequest::ContentDispositionHeader,
                             QVariant(QString("form-data; name=\"files[]\"; filename=\"%1\"").arg(fileName)));
 
+        QByteArray body;
+
         if (!optimize || format == "gif" || reader->size().width() <= TASTY_IMAGE_WIDTH)
-            imagePart.setBodyDevice(reader->device());
+        {
+            QFile file(it.key());
+            if (!file.open(QIODevice::ReadOnly))
+                continue;
+
+            body = file.readAll();
+            if (body.isEmpty())
+                continue;
+        }
         else
         {
             auto image = reader->read();
+            Q_ASSERT(!image.isNull());
+            if (image.isNull())
+                continue;
+
             image = image.scaledToWidth(TASTY_IMAGE_WIDTH, Qt::SmoothTransformation);
 
-            QByteArray body;
             QBuffer buffer(&body);
             buffer.open(QIODevice::WriteOnly);
             image.save(&buffer, format.constData(), reader->quality());
-            imagePart.setBody(body);
         }
+
+        imagePart.setBody(body);
 
         _parts << imagePart;
     }

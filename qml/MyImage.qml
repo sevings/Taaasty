@@ -162,7 +162,7 @@ Loader {
                     text: (cachedImage.isDownloading && cachedImage.kbytesTotal > 0
                            ? cachedImage.kbytesReceived + ' / ' : '')
                           + (cachedImage.kbytesTotal > 0
-                             ? cachedImage.kbytesTotal + ' KB ' : '')
+                             ? cachedImage.kbytesTotal + ' КБ ' : '')
                           + (cachedImage.extension ? '\n' + cachedImage.extension : '')
                     anchors {
                         verticalCenter: parent.verticalCenter
