@@ -27,7 +27,7 @@
 #include <QUrl>
 
 #ifdef Q_OS_ANDROID
-
+#   include "../androidimagepicker.h"
 #else
 #   include <QFileDialog>
 #   include <QStandardPaths>
@@ -43,6 +43,9 @@
 UploadModel::UploadModel(QObject* parent)
     : QStringListModel(parent)
     , _savable(false)
+#ifdef Q_OS_ANDROID
+    , _picker(new AndroidImagePicker(this))
+#endif
 {
     Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished, this, &UploadModel::loaded));
 }
@@ -55,6 +58,10 @@ UploadModel::~UploadModel()
         save();
 
     qDeleteAll(_readers);
+
+#ifdef Q_OS_ANDROID
+    delete _picker;
+#endif
 }
 
 
@@ -93,7 +100,7 @@ void UploadModel::loadFiles()
 void UploadModel::append()
 {
 #ifdef Q_OS_ANDROID
-
+    _picker->select();
 #else
     auto path = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
     auto fileName = QFileDialog::getOpenFileName(nullptr, tr("Open Image"), path, tr("Image Files (*.png *.jpg *.bmp *.gif)"));
@@ -196,14 +203,13 @@ void UploadModel::_loadFiles(bool optimize)
             imagePart.setBodyDevice(reader->device());
         else
         {
-            auto quality = reader->quality();
             auto image = reader->read();
             image = image.scaledToWidth(TASTY_IMAGE_WIDTH, Qt::SmoothTransformation);
 
             QByteArray body;
             QBuffer buffer(&body);
             buffer.open(QIODevice::WriteOnly);
-            image.save(&buffer, format.constData(), quality);
+            image.save(&buffer, format.constData(), reader->quality());
             imagePart.setBody(body);
         }
 

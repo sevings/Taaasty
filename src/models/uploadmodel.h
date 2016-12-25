@@ -30,11 +30,20 @@
 
 #include "../defines.h"
 
+#ifdef Q_OS_ANDROID
+class AndroidImagePicker;
+#endif
+
 
 
 class UploadModel : public QStringListModel
 {
     Q_OBJECT
+
+#ifdef Q_OS_ANDROID
+    friend class AndroidImagePicker;
+#endif
+
 public:
     UploadModel(QObject* parent = nullptr);
     ~UploadModel();
@@ -66,6 +75,10 @@ private:
     QMap<QString, QImageReader*> _readers;
     QFutureWatcher<void>         _watcher;
     bool                         _savable;
+
+#ifdef Q_OS_ANDROID
+    AndroidImagePicker*          _picker;
+#endif
 };
 
 #endif // UPLOADMODEL_H

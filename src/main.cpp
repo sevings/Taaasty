@@ -20,6 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QObject> // defines Q_OS_*
+
 #ifdef Q_OS_ANDROID
 #   include <QGuiApplication>
 #else

@@ -23,7 +23,6 @@ SOURCES += src/main.cpp \
     src/cache/cachemanager.cpp \
     src/cache/cachedimage.cpp \
     src/nbc/stemmerv.cpp \
-    src/androidnotifier.cpp \
     src/data/AttachedImage.cpp \
     src/data/Author.cpp \
     src/data/CalendarEntry.cpp \
@@ -52,6 +51,9 @@ SOURCES += src/main.cpp \
     src/tastydatacache.cpp \
     src/models/uploadmodel.cpp
 
+android: SOURCES += src/androidimagepicker.cpp \
+    src/androidnotifier.cpp
+
 RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
@@ -76,7 +78,6 @@ HEADERS += \
     src/cache/cachedimage.h \
     src/defines.h \
     src/nbc/stemmerv.h \
-    src/androidnotifier.h \
     src/data/AttachedImage.h \
     src/data/Author.h \
     src/data/CalendarEntry.h \
@@ -104,6 +105,9 @@ HEADERS += \
     src/poster.h \
     src/tastydatacache.h \
     src/models/uploadmodel.h
+
+android: HEADERS += src/androidimagepicker.h \
+    src/androidnotifier.h
 
 DISTFILES += \
     android/AndroidManifest.xml \
