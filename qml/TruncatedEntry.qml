@@ -123,6 +123,7 @@ Item {
                 property int total: entry ? entry.attachedImagesModel.rowCount() : 0
                 text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
                 visible: total > 1
+                z: firstImage.z + 1
             }
         }
     }

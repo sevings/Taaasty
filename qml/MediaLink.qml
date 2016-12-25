@@ -25,7 +25,7 @@ MyImage {
     id: link
     property Media media
     width: window.width
-    height: media ? media.thumbnail.height / media.thumbnail.width * width : -anchors.topMargin
+    height: media ? media.thumbnail.height / media.thumbnail.width * width : 0
     url: media ? media.thumbnail.url : ''
     extension: media ? media.thumbnail.type : ''
     function play() {

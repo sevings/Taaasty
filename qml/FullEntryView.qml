@@ -217,6 +217,7 @@ Pane {
                     top: fullEntryImages.bottom
                     left: parent.left
                     right: parent.right
+                    topMargin: 1.5 * mm
                     bottomMargin: 1.5 * mm
                 }
                 media: entry.media
