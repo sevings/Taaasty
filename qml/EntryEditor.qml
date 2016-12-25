@@ -63,19 +63,18 @@ Pane {
         Settings.lastPrivacy     = back.privacy;
 //        Settings.lastPostingTlog = whereBox.tlog;
         Settings.lastEntryType   = back.entryType;
-
-        poster.images.save();
     }
     Timer {
-        running: back.visible
+        running: !poster.loading
         interval: 30000
         repeat: true
         onTriggered: {
             save();
         }
     }
-    Splash {
-        visible: poster.loading
+    Poppable {
+        body: back
+        enabled: !poster.loading
     }
     MyFlickable {
         id: flick
@@ -84,14 +83,15 @@ Pane {
             left: parent.left
             right: parent.right
         }
-        height: Math.min(back.height - 1.5 * mm, contentHeight)
-        visible: !poster.loading
+        height: Math.min(back.height, contentHeight + 1.5 * mm)
         onVerticalVelocityChanged: editMenu.hideMenu()
         bottomMargin: 1.5 * mm
         contentWidth: parent.width
         contentHeight: column.height
+        onContentHeightChanged: returnToBounds()
         Poppable {
             body: back
+            enabled: !poster.loading
         }
         Column {
             id: column
@@ -99,10 +99,7 @@ Pane {
             spacing: 1.5 * mm
             ListView {
                 id: images
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-                width: parent.width - 3 * mm
+                width: parent.width
                 visible: entryType === TlogEntry.ImageEntry
                 interactive: false
                 spacing: 1.5 * mm
@@ -111,10 +108,6 @@ Pane {
                 add: Transition {
                     NumberAnimation { property: "opacity"; from: 0;   to: 1.0; duration: 300 }
                     NumberAnimation { property: "scale";   from: 0.8; to: 1.0; duration: 300 }
-                }
-                remove: Transition {
-                    NumberAnimation { property: "opacity"; from: 1.0; to: 0;   duration: 300 }
-                    NumberAnimation { property: "scale";   from: 1.0; to: 0.8; duration: 300 }
                 }
                 displaced: Transition {
                     NumberAnimation { property: "y"; duration: 300 }
@@ -131,9 +124,11 @@ Pane {
                         anchors.fill: removeImageButton
                         color: window.backgroundColor
                         opacity: 0.3
+                        radius: width / 2
                     }
                     IconButton {
                         id: removeImageButton
+                        enabled: !poster.loading
                         anchors {
                             top: parent.top
                             right: parent.right
@@ -141,7 +136,13 @@ Pane {
                         icon: (window.darkTheme ? '../icons/cross-white'
                                                 : '../icons/cross-black')
                               + '-128.png'
-                        onClicked: poster.images.remove(model.index)
+                        onClicked: removeAnimation.start()
+                    }
+                    ParallelAnimation {
+                        id: removeAnimation
+                        onStopped: poster.images.remove(model.index)
+                        NumberAnimation { target: picture; property: "opacity"; from: 1.0; to: 0;   duration: 300 }
+                        NumberAnimation { target: picture; property: "scale";   from: 1.0; to: 0.8; duration: 300 }
                     }
                 }
                 footer: Item {
@@ -149,21 +150,20 @@ Pane {
                     height: addImageButton.height + 3 * mm
                     ThemedButton {
                         id: addImageButton
+                        enabled: !poster.loading
                         anchors.centerIn: parent
-                        implicitWidth: 40 * mm
                         highlighted: true
-                        text: 'Добавить'
-                        onClicked: poster.images.append('/home/binque/Изображения/IMG_20160511_233057.jpg')
+                        text: 'Добавить из галереи'
+                        onClicked: poster.images.append()
                     }
                 }
             }
             TextEditor {
                 id: titleInput
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
+                anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width - 3 * mm
                 z: 6
+                readOnly: poster.loading
                 flickable: flick
                 handler: titleHandler
                 placeholderText: entryType === TlogEntry.ImageEntry ? 'Подпись' : 'Заголовок'
@@ -182,12 +182,11 @@ Pane {
             TextEditor {
                 id: textInput
                 z: 5
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
+                anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width - 3 * mm
                 height: Math.max(implicitHeight, back.height - titleInput.height - buttonsRow.height - 6 * mm)
                 visible: entryType == TlogEntry.TextEntry || entryType == TlogEntry.AnonymousEntry
+                readOnly: poster.loading
                 flickable: flick
                 handler: textHandler
 //                textFormat: TextEdit.RichText
@@ -208,11 +207,20 @@ Pane {
                 spacing: 1.5 * mm
                 anchors {
                     right: parent.right
+                    margins: 1.5 * mm
+                }
+                ThemedProgressBar {
+                    id: uploadBar
+                    visible: poster.loading
+                    width: column.width
+                    text: 'Отправка'
+                    value: poster.kBytesSent
+                    to: poster.kBytesTotal
                 }
                 IconButton {
                     id: fireButton
                     property bool voting
-                    visible: entryType != TlogEntry.AnonymousEntry && !lockButton.locked
+                    visible: entryType != TlogEntry.AnonymousEntry && !lockButton.locked && !poster.loading
                     icon: (voting ? '../icons/flame-solid-'
                                   : '../icons/flame-outline-')
                           + '72.png'
@@ -224,7 +232,7 @@ Pane {
                 IconButton {
                     id: lockButton
                     property bool locked
-                    visible: entryType != TlogEntry.AnonymousEntry // && to my tlog?
+                    visible: entryType != TlogEntry.AnonymousEntry && !poster.loading// && to my tlog?
                     icon: (locked ? (window.darkTheme ? '../icons/lock-white-'
                                                       : '../icons/lock-black-')
                                   : (window.darkTheme ? '../icons/unlock-white-'
@@ -237,7 +245,23 @@ Pane {
                 }
                 IconButton {
                     id: postButton
-                    enabled: titleInput.length || textInput.length
+                    visible: !poster.loading
+                    enabled: {
+                        switch (entryType)
+                        {
+                        case TlogEntry.ImageEntry:
+                            images.count;
+                            break;
+                        case TlogEntry.QuoteEntry:
+                        case TlogEntry.VideoEntry:
+                        case TlogEntry.TextEntry:
+                        case TlogEntry.AnonymousEntry:
+                            titleInput.length || textInput.length
+                            break;
+                        default:
+                            console.log('entry type', entryType);
+                        }
+                    }
                     icon: (window.darkTheme ? '../icons/send-light-'
                                             : '../icons/send-dark-')
                           + '128.png'

@@ -26,8 +26,6 @@
 
 #include "defines.h"
 
-class UploadModel;
-
 
 
 class Poster : public QObject
@@ -36,6 +34,9 @@ class Poster : public QObject
 
     Q_PROPERTY(bool         loading    READ isLoading  NOTIFY loadingChanged)
     Q_PROPERTY(UploadModel* images     READ images     CONSTANT)
+
+    Q_PROPERTY(qint64 kBytesSent  READ kBytesSent  NOTIFY kBytesSentChanged)
+    Q_PROPERTY(qint64 kBytesTotal READ kBytesTotal NOTIFY kBytesTotalChanged)
 
 public:    
     enum Privacy
@@ -53,9 +54,15 @@ public:
     bool            isLoading() const;
     UploadModel*    images();
     
+    qint64 kBytesSent()  const { return _kBytesSent; }
+    qint64 kBytesTotal() const { return _kBytesTotal; }
+
 signals:
     void posted(EntryPtr entry);
     void loadingChanged();
+
+    void kBytesSentChanged();
+    void kBytesTotalChanged();
 
 public slots:
     void postImage(QString title,                  Privacy privacy, int tlogId = 0);
@@ -63,6 +70,8 @@ public slots:
     void postVideo(QString title, QString url,     Privacy privacy, int tlogId = 0);
     void postText( QString title, QString content, Privacy privacy, int tlogId = 0);
     void postAnonymous(QString title, QString content);
+
+    void _setProgress(qint64 bytes, qint64 bytesTotal);
 
 private slots:
     void _createPostedEntry(const QJsonObject& data);
@@ -78,7 +87,10 @@ private:
     int             _tlogId;
     EntryPtr        _entry;
     ApiRequestPtr   _request;
-    UploadModel*    _images; //-V122
+    UploadModelPtr  _images;
+
+    qint64 _kBytesSent;
+    qint64 _kBytesTotal;
 };
 
 #endif // POSTER_H

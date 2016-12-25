@@ -39,6 +39,7 @@ ColumnLayout {
         Layout.preferredWidth: window.width
         padding: 1.5 * mm
         value: control.showValue
+        indeterminate: !control.to
     }
     ThemedText {
         id: label

@@ -36,6 +36,8 @@ Poster::Poster(QObject* parent)
     : QObject(parent)
     , _tlogId(0)
     , _images(nullptr)
+    , _kBytesSent(0)
+    , _kBytesTotal(0)
 {
 
 }
@@ -59,7 +61,10 @@ bool Poster::isLoading() const
 UploadModel* Poster::images()
 {
     if (!_images)
+    {
         _images = new UploadModel(this);
+        _images->load();
+    }
     
     return _images;
 }
@@ -153,13 +158,29 @@ void Poster::postAnonymous(QString title, QString content)
 
 
 
+void Poster::_setProgress(qint64 bytes, qint64 bytesTotal)
+{
+    auto sent = bytes / 1024;
+    if (sent != _kBytesSent)
+    {
+        _kBytesSent = sent;
+        emit kBytesSentChanged();
+    }
+
+    auto total = bytesTotal / 1024;
+    if (total != _kBytesTotal)
+    {
+        _kBytesTotal = total;
+        emit kBytesTotalChanged();
+    }
+}
+
+
+
 void Poster::_createPostedEntry(const QJsonObject& data)
 {
     _entry = EntryPtr::create(nullptr);
     _entry->init(data);
-
-    if (_images)
-        _images->clear();
 
     emit posted(_entry);
 
@@ -228,6 +249,7 @@ void Poster::_postPrepared()
 {
     _request->post();
 
+    Q_TEST(connect(_request, &ApiRequest::progress,              this, &Poster::_setProgress));
     Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_createPostedEntry(const QJsonObject))));
     Q_TEST(connect(_request, &QObject::destroyed,                this, &Poster::loadingChanged, Qt::QueuedConnection));
 

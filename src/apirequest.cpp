@@ -296,6 +296,8 @@ void ApiRequest::_addImages()
 
     foreach (auto part, parts)
         _data->append(part);
+
+    _model->clear();
 }
 
 

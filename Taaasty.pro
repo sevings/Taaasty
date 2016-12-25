@@ -4,6 +4,8 @@ QT += qml quick quickcontrols2 sql concurrent network websockets
 
 android: QT += androidextras
 
+!android: QT += widgets
+
 CONFIG += c++11 qtquickcompiler
 
 SOURCES += src/main.cpp \
@@ -136,6 +138,7 @@ unix:{
     INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtQuickControls2/
     INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtSql/
     INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtWebSockets/
+    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtWidgets/
 
     pvs_studio.target = Taaasty
     pvs_studio.output = true

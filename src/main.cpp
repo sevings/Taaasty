@@ -20,7 +20,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QGuiApplication>
+#ifdef Q_OS_ANDROID
+#   include <QGuiApplication>
+#else
+#   include <QApplication>
+#endif
 
 #include "tasty.h"
 #include "tastydatacache.h"
@@ -30,7 +34,13 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+#ifdef Q_OS_ANDROID
     QGuiApplication app(argc, argv);
+#else
+    QApplication app(argc, argv);
+#endif
+
     app.setApplicationName("Taaasty");
     app.setApplicationVersion("1.0");
     app.setOrganizationName("binque");
