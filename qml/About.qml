@@ -30,8 +30,7 @@ Pane {
         Item {
             id: item
             width: window.width
-            height: aboutText.contentHeight > window.height
-                    ? aboutText.contentHeight : window.height
+            height: Math.max(aboutText.contentHeight, window.height)
             Poppable {
                 body: back
             }

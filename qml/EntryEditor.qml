@@ -116,6 +116,7 @@ Pane {
                     cache: true
                     smooth: true
                     asynchronous: true
+                    autoTransform: true
                     fillMode: Image.PreserveAspectFit
                     source: model.display
                     Rectangle {
@@ -155,11 +156,12 @@ Pane {
                         }
                         width: implicitWidth + 5 * mm
                         highlighted: true
-                        text: 'Добавить из галереи'
+                        text: 'Добавить'
                         onClicked: poster.images.append()
                     }
                     ThemedCheckBox {
                         id: optimizeBox
+                        enabled: !poster.loading
                         anchors {
                             top: addImageButton.bottom
                             left: parent.left
@@ -175,11 +177,12 @@ Pane {
                 id: titleInput
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width - 3 * mm
+                visible: entryType == TlogEntry.TextEntry || entryType == TlogEntry.AnonymousEntry
                 z: 6
                 readOnly: poster.loading
                 flickable: flick
                 handler: titleHandler
-                placeholderText: entryType === TlogEntry.ImageEntry ? 'Подпись' : 'Заголовок'
+                placeholderText: 'Заголовок'
                 font.pixelSize: window.fontBigger
                 popBody: back
                 onActiveFocusChanged: {
@@ -197,13 +200,28 @@ Pane {
                 z: 5
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width - 3 * mm
-                height: Math.max(implicitHeight, back.height - titleInput.height - buttonsRow.height - 6 * mm)
-                visible: entryType == TlogEntry.TextEntry || entryType == TlogEntry.AnonymousEntry
+                height: {
+                    switch (entryType)
+                    {
+                    case TlogEntry.ImageEntry:
+                    case TlogEntry.QuoteEntry:
+                    case TlogEntry.VideoEntry:
+                        implicitHeight;
+                        break;
+                    case TlogEntry.TextEntry:
+                    case TlogEntry.AnonymousEntry:
+                        Math.max(implicitHeight, back.height - titleInput.height - buttonsRow.height - 6 * mm)
+                        break;
+                    default:
+                        console.log('entry type', entryType);
+                    }
+                }
                 readOnly: poster.loading
                 flickable: flick
                 handler: textHandler
 //                textFormat: TextEdit.RichText
-                placeholderText: 'Текст поста'
+                placeholderText: entryType === TlogEntry.TextEntry || entryType === TlogEntry.AnonymousEntry 
+                                    ? 'Текст поста' : 'Подпись'
                 popBody: back
                 onActiveFocusChanged: {
                     if (!activeFocus)
@@ -217,12 +235,16 @@ Pane {
             }
             Row {
                 id: buttonsRow
+                visible: !poster.loading
                 spacing: 1.5 * mm
-                anchors.right: parent.right
+                anchors {
+                    right: parent.right
+                    rightMargin: 1.5 * mm
+                }
                 IconButton {
                     id: fireButton
                     property bool voting
-                    visible: entryType !== TlogEntry.AnonymousEntry && !lockButton.locked && !poster.loading
+                    visible: entryType !== TlogEntry.AnonymousEntry && !lockButton.locked
                     icon: (voting ? '../icons/flame-solid-'
                                   : '../icons/flame-outline-')
                           + '72.png'
@@ -234,7 +256,7 @@ Pane {
                 IconButton {
                     id: lockButton
                     property bool locked
-                    visible: entryType !== TlogEntry.AnonymousEntry && !poster.loading// && to my tlog?
+                    visible: entryType !== TlogEntry.AnonymousEntry // && to my tlog?
                     icon: (locked ? (window.darkTheme ? '../icons/lock-white-'
                                                       : '../icons/lock-black-')
                                   : (window.darkTheme ? '../icons/unlock-white-'
@@ -247,7 +269,6 @@ Pane {
                 }
                 IconButton {
                     id: postButton
-                    visible: !poster.loading
                     enabled: {
                         switch (entryType)
                         {
@@ -292,14 +313,14 @@ Pane {
                         }
                     }
                 }
-                ThemedProgressBar {
-                    id: uploadBar
-                    visible: poster.loading
-                    text: 'Отправка'
-                    units: 'КБ'
-                    value: poster.kBytesSent
-                    to: poster.kBytesTotal
-                }
+            }
+            ThemedProgressBar {
+                id: uploadBar
+                visible: poster.loading
+                text: 'Отправка'
+                units: 'КБ'
+                value: poster.kBytesSent
+                to: poster.kBytesTotal
             }
         }
     }

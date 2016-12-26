@@ -282,49 +282,41 @@ ApplicationWindow {
                    }
                    )
     }
-    function pushLoginDialog() {
-        stack.push(stack.loginDialog,
+    function simplePush(comp, pop) {
+        stack.push(comp,
                    {
-                       poppable: true
-                   }
-                   )
+                       poppable: pop !== false
+                   })
+    }
+    function simpleReplace(comp, pop) {
+        stack.replace(comp,
+                   {
+                       poppable: pop !== false
+                   })
+    }
+    function pushLoginDialog() {
+        simplePush(stack.loginDialog);
+    }
+    function pushHello() {
+        simplePush(stack.hello);
     }
     function pushTrainingProgress() {
-        stack.push(stack.trainingProgress,
-                   {
-                       poppable: false
-                   }
-                   )
+        simplePush(stack.trainingProgress, false);
     }
     function pushHelp() {
-        stack.push(stack.help,
-                   {
-                       poppable: true
-                   })
+        simplePush(stack.help);
     }
     function pushAbout() {
-        stack.push(stack.about,
-                   {
-                       poppable: true
-                   })
+        simplePush(stack.about);
     }
     function pushSettings() {
-        stack.push(stack.settings,
-                   {
-                       poppable: true
-                   })
+        simplePush(stack.settings);
     }
     function pushFlows() {
-        stack.push(stack.flows,
-                   {
-                       poppable: true
-                   })
+        simplePush(stack.flows);
     }
     function pushEntryEditor() {
-        stack.push(stack.entryEditor,
-                   {
-                       poppable: true
-                   })
+        simplePush(stack.entryEditor);
     }
     function popFromStack() {
         stack.pop();
@@ -482,6 +474,7 @@ ApplicationWindow {
             property Component calendar:            Qt.createComponent("CalendarView.qml",      Component.Asynchronous, stack)
             property Component users:               Qt.createComponent("UsersView.qml",         Component.Asynchronous, stack)
             property Component loginDialog:         Qt.createComponent("LoginDialog.qml",       Component.Asynchronous, stack)
+            property Component hello:               Qt.createComponent("Hello.qml",             Component.Asynchronous, stack)
             property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack)
             property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack)
             property Component help:                Qt.createComponent("HelpPage.qml",          Component.Asynchronous, stack)
@@ -499,7 +492,7 @@ ApplicationWindow {
                 }
                 onAuthorizedChanged: {
                     if (stack.currentItem.isLoginDialog)
-                        window.popFromStack();
+                        window.popFromStack();//window.simpleReplace(stack.hello);
                 }
             }
             Connections {

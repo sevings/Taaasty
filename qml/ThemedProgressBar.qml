@@ -47,6 +47,7 @@ ColumnLayout {
         id: label
         leftPadding: 5 * mm
         rightPadding: leftPadding
+        bottomPadding: 1.5 * mm
         Layout.preferredWidth: control.preferredWidth
         text: control.text + (control.showValue <= control.to && control.to > 0
                               ? ' — ' + (control.percents ? Math.round(control.showValue / control.to * 100) + '%'

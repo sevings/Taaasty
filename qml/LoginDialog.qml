@@ -30,9 +30,6 @@ Pane {
         mail.line = '';
         password.line = '';
     }
-    Component.onCompleted: {
-        mail.forceActiveFocus();
-    }
     Poppable {
         body: dialog
     }
