@@ -190,19 +190,13 @@ void UploadModel::_loadFiles(bool optimize)
 {
     for (auto it = _readers.cbegin(); it != _readers.cend(); ++it)
     {
-        auto fileName = QFileInfo(it.key()).fileName();
         auto reader = it.value();
         auto format = reader->format();
 
-        QHttpPart imagePart;
-        imagePart.setHeader(QNetworkRequest::ContentTypeHeader,
-                            QString("image/").append(QString::fromLatin1(format)));
-        imagePart.setHeader(QNetworkRequest::ContentDispositionHeader,
-                            QVariant(QString("form-data; name=\"files[]\"; filename=\"%1\"").arg(fileName)));
-
         QByteArray body;
-
-        if (!optimize || format == "gif" || reader->size().width() <= TASTY_IMAGE_WIDTH)
+        auto transform = reader->transformation() != QImageIOHandler::TransformationNone;
+        auto scale = optimize && format != "gif" && reader->size().width() > TASTY_IMAGE_WIDTH;
+        if (!transform && !scale)
         {
             QFile file(it.key());
             if (!file.open(QIODevice::ReadOnly))
@@ -214,18 +208,26 @@ void UploadModel::_loadFiles(bool optimize)
         }
         else
         {
+            reader->setAutoTransform(true);
             auto image = reader->read();
             Q_ASSERT(!image.isNull());
             if (image.isNull())
                 continue;
 
-            image = image.scaledToWidth(TASTY_IMAGE_WIDTH, Qt::SmoothTransformation);
+            if (scale)
+                image = image.scaledToWidth(TASTY_IMAGE_WIDTH, Qt::SmoothTransformation);
 
             QBuffer buffer(&body);
             buffer.open(QIODevice::WriteOnly);
             image.save(&buffer, format.constData(), reader->quality());
         }
 
+        QHttpPart imagePart;
+        imagePart.setHeader(QNetworkRequest::ContentTypeHeader,
+                            QString("image/").append(QString::fromLatin1(format)));
+        auto fileName = QFileInfo(it.key()).fileName();
+        imagePart.setHeader(QNetworkRequest::ContentDispositionHeader,
+                            QVariant(QString("form-data; name=\"files[]\"; filename=\"%1\"").arg(fileName)));
         imagePart.setBody(body);
 
         _parts << imagePart;
