@@ -33,7 +33,7 @@
 #include "../pusherclient.h"
 
 #ifdef Q_OS_ANDROID
-#   include "../androidnotifier.h"
+#   include "../android/androidnotifier.h"
 #   include "../data/User.h"
 #   include "../settings.h"
 #endif
@@ -52,7 +52,7 @@ NotificationsModel::NotificationsModel(NotificationType type, Tasty* tasty)
     {
     case ActivityType:
         _url = "v2/messenger/notifications.json?limit=2";
-        
+
         Q_TEST(connect(tasty,           &Tasty::unreadNotificationsChanged, this, &NotificationsModel::unreadChanged));
         Q_TEST(connect(tasty->pusher(), &PusherClient::notification,        this, &NotificationsModel::_addPush));
         Q_TEST(connect(tasty->pusher(), &PusherClient::unreadNotifications, this, &NotificationsModel::_check));
@@ -63,7 +63,7 @@ NotificationsModel::NotificationsModel(NotificationType type, Tasty* tasty)
     default:
         qDebug() << "Unknown NotificationType: " << type;
     }
-    
+
     Q_TEST(connect(tasty, &Tasty::authorizedChanged, this, &NotificationsModel::_reloadAll));
 }
 
@@ -138,9 +138,9 @@ void NotificationsModel::fetchMore(const QModelIndex& parent)
         auto lastId = _notifs.last()->id();
         url += QString("0&to_notification_id=%1").arg(lastId); // load ten times more
     }
-    
+
     _loadRequest = new ApiRequest(url, _optionsForFetchMore());
-    
+
     connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject)));
 
     _initLoad();
@@ -166,19 +166,19 @@ void NotificationsModel::markAsRead()
 {
     if (_notifs.isEmpty() || !unread())
         return;
-    
+
     QString url("v2/messenger/notifications/read.json");
     auto request = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     request->addFormData("last_id", _notifs.first()->id());
     request->post();
-    
+
     Q_TEST(connect(request, SIGNAL(success(QJsonArray)),  this, SLOT(_readSuccess())));
 }
 
 
 
 void NotificationsModel::check()
-{    
+{
     if (isChecking() || _notifs.isEmpty() || !pTasty->isAuthorized())
         return;
 
@@ -195,7 +195,7 @@ void NotificationsModel::check()
 
     Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addNewest(QJsonObject))));
 
-    _initCheck();    
+    _initCheck();
 }
 
 
@@ -237,7 +237,7 @@ void NotificationsModel::_addItems(const QJsonObject& data)
     }
 
     _totalCount = data.value("total_count").toInt();
-    
+
     beginInsertRows(QModelIndex(), size, size + list.size() - 1);
 
     _notifs.reserve(size + list.size());

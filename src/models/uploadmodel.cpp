@@ -28,7 +28,7 @@
 #include <QUrl>
 
 #ifdef Q_OS_ANDROID
-#   include "../androidimagepicker.h"
+#   include "../android/androidimagepicker.h"
 #else
 #   include <QFileDialog>
 #   include <QStandardPaths>

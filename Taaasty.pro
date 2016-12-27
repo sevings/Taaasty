@@ -51,8 +51,8 @@ SOURCES += src/main.cpp \
     src/tastydatacache.cpp \
     src/models/uploadmodel.cpp
 
-android: SOURCES += src/androidimagepicker.cpp \
-    src/androidnotifier.cpp
+android: SOURCES += src/android/androidimagepicker.cpp \
+    src/android/androidnotifier.cpp
 
 RESOURCES += qml.qrc
 
@@ -106,8 +106,8 @@ HEADERS += \
     src/tastydatacache.h \
     src/models/uploadmodel.h
 
-android: HEADERS += src/androidimagepicker.h \
-    src/androidnotifier.h
+android: HEADERS += src/android/androidimagepicker.h \
+    src/android/androidnotifier.h
 
 DISTFILES += \
     android/AndroidManifest.xml \
