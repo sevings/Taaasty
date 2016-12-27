@@ -492,7 +492,7 @@ ApplicationWindow {
                 }
                 onAuthorizedChanged: {
                     if (stack.currentItem.isLoginDialog)
-                        window.popFromStack();//window.simpleReplace(stack.hello);
+                        window.simpleReplace(stack.hello);
                 }
             }
             Connections {
