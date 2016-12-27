@@ -50,6 +50,7 @@
 #include "models/chatsmodel.h"
 #include "models/messagesmodel.h"
 #include "models/flowsmodel.h"
+#include "models/availabletlogsmodel.h"
 #include "models/tagsmodel.h"
 #include "models/uploadmodel.h"
 
@@ -166,7 +167,7 @@ void Tasty::correctHtml(QString& html, bool isEntry)
 
     QRegularExpression imageLinkRe("<a[^>]*>(<img[^>]*>)</a>");
     html.replace(imageLinkRe, "\\1");
-    
+
     auto width = isEntry ? Tasty::instance()->_entryImageWidth
                          : Tasty::instance()->_commentImageWidth;
     QRegularExpression imgRe("<img (?:width=\\d+ )?");
@@ -252,7 +253,7 @@ void Tasty::swapProfiles()
     // avoid error 403 reasonable_security_violation (is that even legal?)
     auto request = new ApiRequest("v1/app/stats.json", token);
     request->get();
-    
+
     Q_TEST(connect(request, SIGNAL(error(int,QString)),   this, SLOT(_swapProfiles())));
     Q_TEST(connect(request, SIGNAL(success(QJsonObject)), this, SLOT(_swapProfiles())));
 }
@@ -313,6 +314,7 @@ void Tasty::_init()
     qmlRegisterType<UsersModel>         ("org.binque.taaasty", 1, 0, "UsersModel");
     qmlRegisterType<MessagesModel>      ("org.binque.taaasty", 1, 0, "MessagesModel");
     qmlRegisterType<FlowsModel>         ("org.binque.taaasty", 1, 0, "FlowsModel");
+    qmlRegisterType<AvailableTlogsModel>("org.binque.taaasty", 1, 0, "AvailableTlogsModel");
     qmlRegisterType<TagsModel>          ("org.binque.taaasty", 1, 0, "TagsModel");
     qmlRegisterType<UploadModel>        ("org.binque.taaasty", 1, 0, "UploadModel");
 
@@ -495,7 +497,7 @@ void Tasty::_finishLogin()
 
     _unreadFriendsEntries = 0;
     emit unreadFriendsEntriesChanged();
-    
+
     if (_me)
         _me->setId(_settings->userId());
 

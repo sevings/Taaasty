@@ -27,40 +27,36 @@ Pane {
     id: back
     hasMenu: true
     readonly property bool isEntryEditor: true
-    property int entryType: Settings.lastEntryType
+    property int entryType
     readonly property int privacy: lockButton.locked
                                    ? Poster.Private : fireButton.voting
                                      ? Poster.Voting : Poster.Public;
     onEntryTypeChanged: {
         editMenu.hideMenu();
     }
-    Component.onCompleted: {
-        titleInput.text   = Settings.lastTitle;
-        textInput.text    = Settings.lastText;
-        fireButton.voting = Settings.lastPrivacy == Poster.Voting;
-        lockButton.locked = Settings.lastPrivacy == Poster.Private;
-
-//        var last = Settings.lastPostingTlog;
-//        while (whereBox.tlog !== last && whereBox.currentIndex < whereBox.count)
-//            whereBox.incrementCurrentIndex();
-//        if (whereBox.currentIndex == whereBox.count)
-//            whereBox.currentIndex = 0;
-    }
-    Component.onDestruction: {
-        save();
-    }
+    Component.onCompleted: load()
+    Component.onDestruction: save()
     onHeightChanged: {
         if (titleInput.activeFocus)
             titleInput.ensureVisible(titleInput.cursorRectangle);
         else if (textInput.activeFocus)
             textInput.ensureVisible(textInput.cursorRectangle);
     }
+    function load() {
+        titleInput.text   = Settings.lastTitle;
+        textInput.text    = Settings.lastText;
+        fireButton.voting = Settings.lastPrivacy == Poster.Voting;
+        lockButton.locked = Settings.lastPrivacy == Poster.Private;
+        back.entryType    = Settings.lastEntryType;
+
+        whereBox.setLastTlog();
+    }
     function save() {
         Settings.lastTitle       = titleInput.text;
         Settings.lastText        = textInput.text;
         Settings.lastPrivacy     = back.privacy;
-//        Settings.lastPostingTlog = whereBox.tlog;
         Settings.lastEntryType   = back.entryType;
+        Settings.lastPostingTlog = whereBox.tlog;
     }
     Timer {
         running: !poster.loading
@@ -72,7 +68,6 @@ Pane {
     }
     Poppable {
         body: back
-        enabled: !poster.loading
     }
     MyFlickable {
         id: flick
@@ -89,7 +84,6 @@ Pane {
         onContentHeightChanged: returnToBounds()
         Poppable {
             body: back
-            enabled: !poster.loading
         }
         Column {
             id: column
@@ -220,7 +214,7 @@ Pane {
                 flickable: flick
                 handler: textHandler
 //                textFormat: TextEdit.RichText
-                placeholderText: entryType === TlogEntry.TextEntry || entryType === TlogEntry.AnonymousEntry 
+                placeholderText: entryType === TlogEntry.TextEntry || entryType === TlogEntry.AnonymousEntry
                                     ? 'Текст поста' : 'Подпись'
                 popBody: back
                 onActiveFocusChanged: {
@@ -233,84 +227,122 @@ Pane {
                     window.hideFooter();
                 }
             }
-            Row {
-                id: buttonsRow
+            Item {
+                id: footerItem
                 visible: !poster.loading
-                spacing: 1.5 * mm
-                anchors {
-                    right: parent.right
-                    rightMargin: 1.5 * mm
-                }
-                IconButton {
-                    id: fireButton
-                    property bool voting
-                    visible: entryType !== TlogEntry.AnonymousEntry && !lockButton.locked
-                    icon: (voting ? '../icons/flame-solid-'
-                                  : '../icons/flame-outline-')
-                          + '72.png'
-                    onClicked: {
-                        editMenu.hideMenu();
-                        voting = !voting;
+                width: column.width
+                height: Math.max(whereBox.height, buttonsRow.height)
+                Row {
+                    id: buttonsRow
+                    spacing: 1.5 * mm
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        right: parent.right
+                        leftMargin: 1.5 * mm
+                        rightMargin: 1.5 * mm
                     }
-                }
-                IconButton {
-                    id: lockButton
-                    property bool locked
-                    visible: entryType !== TlogEntry.AnonymousEntry // && to my tlog?
-                    icon: (locked ? (window.darkTheme ? '../icons/lock-white-'
-                                                      : '../icons/lock-black-')
-                                  : (window.darkTheme ? '../icons/unlock-white-'
-                                                      : '../icons/unlock-black-'))
-                          + '128.png'
-                    onClicked: {
-                        editMenu.hideMenu();
-                        locked = !locked;
-                    }
-                }
-                IconButton {
-                    id: postButton
-                    enabled: {
-                        switch (entryType)
-                        {
-                        case TlogEntry.ImageEntry:
-                            images.count;
-                            break;
-                        case TlogEntry.QuoteEntry:
-                        case TlogEntry.VideoEntry:
-                        case TlogEntry.TextEntry:
-                        case TlogEntry.AnonymousEntry:
-                            titleInput.length || textInput.length
-                            break;
-                        default:
-                            console.log('entry type', entryType);
+                    IconButton {
+                        id: fireButton
+                        property bool voting
+                        visible: entryType !== TlogEntry.AnonymousEntry && !lockButton.locked
+                        icon: (voting ? '../icons/flame-solid-'
+                                      : '../icons/flame-outline-')
+                              + '72.png'
+                        onClicked: {
+                            editMenu.hideMenu();
+                            voting = !voting;
                         }
                     }
-                    icon: (window.darkTheme ? '../icons/send-light-'
-                                            : '../icons/send-dark-')
-                          + '128.png'
-                    onClicked: {
-                        editMenu.hideMenu();
+                    IconButton {
+                        id: lockButton
+                        property bool locked
+                        visible: entryType !== TlogEntry.AnonymousEntry // && to my tlog?
+                        icon: (locked ? (window.darkTheme ? '../icons/lock-white-'
+                                                          : '../icons/lock-black-')
+                                      : (window.darkTheme ? '../icons/unlock-white-'
+                                                          : '../icons/unlock-black-'))
+                              + '128.png'
+                        onClicked: {
+                            editMenu.hideMenu();
+                            locked = !locked;
+                        }
+                    }
+                    IconButton {
+                        id: postButton
+                        enabled: {
+                            switch (entryType)
+                            {
+                            case TlogEntry.ImageEntry:
+                                images.count;
+                                break;
+                            case TlogEntry.QuoteEntry:
+                            case TlogEntry.VideoEntry:
+                            case TlogEntry.TextEntry:
+                            case TlogEntry.AnonymousEntry:
+                                titleInput.length || textInput.length
+                                break;
+                            default:
+                                console.log('entry type', entryType);
+                            }
+                        }
+                        icon: (window.darkTheme ? '../icons/send-light-'
+                                                : '../icons/send-dark-')
+                              + '128.png'
+                        onClicked: {
+                            editMenu.hideMenu();
 
-                        switch (entryType)
-                        {
-                        case TlogEntry.ImageEntry:
-                            poster.postImage(titleInput.text, back.privacy);//, whereBox.tlog);
-                            break;
-                        case TlogEntry.QuoteEntry:
-                            poster.postQuote(titleInput.text, textInput.text, back.privacy);//, whereBox.tlog);
-                            break;
-                        case TlogEntry.VideoEntry:
-                            poster.postVideo(titleInput.text, textInput.text, back.privacy);//, whereBox.tlog);
-                            break;
-                        case TlogEntry.TextEntry:
-                            poster.postText(titleInput.text, textInput.text, back.privacy);//, whereBox.tlog);
-                            break;
-                        case TlogEntry.AnonymousEntry:
-                            poster.postAnonymous(titleInput.text, textInput.text);
-                            break;
-                        default:
-                            console.log('entry type', entryType);
+                            switch (entryType)
+                            {
+                            case TlogEntry.ImageEntry:
+                                poster.postImage(titleInput.text, back.privacy, whereBox.tlog);
+                                break;
+                            case TlogEntry.QuoteEntry:
+                                poster.postQuote(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
+                                break;
+                            case TlogEntry.VideoEntry:
+                                poster.postVideo(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
+                                break;
+                            case TlogEntry.TextEntry:
+                                poster.postText(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
+                                break;
+                            case TlogEntry.AnonymousEntry:
+                                poster.postAnonymous(titleInput.text, textInput.text);
+                                break;
+                            default:
+                                console.log('entry type', entryType);
+                            }
                         }
+                    }
+                }
+                Q.ComboBox {
+                    id: whereBox
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        left: parent.left
+                        right: buttonsRow.left
+                        leftMargin: 1.5 * mm
+                        rightMargin: 1.5 * mm
+                    }
+                    visible: back.entryType !== TlogEntry.AnonymousEntry
+                    model: AvailableTlogsModel {
+                        onFlowsLoaded: {
+                            if (whereBox.currentIndex < 0)
+                                whereBox.setLastTlog();
+                        }
+                    }
+                    delegate: Q.MenuItem {
+                        width: whereBox.width
+                        text: model[whereBox.textRole]
+                        Material.foreground: whereBox.currentIndex === index ? whereBox.Material.accent : whereBox.Material.foreground
+                        highlighted: whereBox.highlightedIndex === index
+                        font.pixelSize: window.fontSmaller
+                    }
+                    textRole: "name"
+                    readonly property int tlog: model.get(currentIndex).tlog
+                    font.pixelSize: window.fontSmaller
+                    function setLastTlog() {
+                        var last = Settings.lastPostingTlog;
+                        whereBox.currentIndex = whereBox.model.tlogIndex(last);
                     }
                 }
             }

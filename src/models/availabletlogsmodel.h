@@ -18,62 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FLOWSMODEL_H
-#define FLOWSMODEL_H
+#ifndef AVAILABLETLOGSMODEL_H
+#define AVAILABLETLOGSMODEL_H
 
-#include <QJsonObject>
-
-#include "tastylistmodel.h"
-
-class Flow;
-class ApiRequest;
+#include <QAbstractProxyModel>
 
 
 
-class FlowsModel : public TastyListModel
+class AvailableTlogsModel: public QAbstractProxyModel
 {
     Q_OBJECT
-
-    Q_PROPERTY(Mode mode READ mode WRITE setMode)
-
 public:
-    enum Mode
-    {
-        PopularMode,
-        NewestMode,
-        MyMode,
-        AvailableMode
-    };
-
-    Q_ENUMS(Mode)
-
-    FlowsModel(QObject* parent = nullptr);
+    AvailableTlogsModel(QObject* parent = nullptr);
 
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    virtual bool canFetchMore(const QModelIndex& parent) const override;
-    virtual void fetchMore(const QModelIndex& parent) override;
 
-    void setMode(const Mode mode);
-    Mode mode() const {return _mode; }
+    virtual QModelIndex mapFromSource(const QModelIndex& sourceIndex) const override;
+    virtual QModelIndex mapToSource(const QModelIndex& proxyIndex) const override;
 
-    int flowIndex(int id) const;
+    virtual QHash<int, QByteArray> roleNames() const override;
 
-public slots:
-    void reset();
+    int tlogIndex(int id) const;
 
-protected:
-    QHash<int, QByteArray> roleNames() const override;
+signals:
+    void flowsLoaded();
+}
 
-private slots:
-    void _addItems(const QJsonObject& data);
-    void _resetIfMy();
-
-private:
-    QList<Flow*> _flows;
-    QString      _url;
-    Mode         _mode;
-    int          _page;
-};
-
-#endif // FLOWSMODEL_H
+#endif AVAILABLETLOGSMODEL_H

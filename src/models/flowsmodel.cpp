@@ -40,7 +40,7 @@ FlowsModel::FlowsModel(QObject* parent)
     qDebug() << "FlowsModel";
 
     setMode(Tasty::instance()->isAuthorized() ? MyMode : PopularMode);
-    
+
     Q_TEST(connect(Tasty::instance(), &Tasty::authorizedChanged, this, &FlowsModel::_resetIfMy));
 }
 
@@ -133,6 +133,17 @@ void FlowsModel::setMode(const FlowsModel::Mode mode)
     delete _loadRequest;
 
     endResetModel();
+}
+
+
+
+int FlowsModel::flowIndex(int id) const
+{
+    for (int i = 0; i < _flows.size(); i++)
+        if (_flows.at(i)->id() == id)
+            return i;
+
+    return -1;
 }
 
 
