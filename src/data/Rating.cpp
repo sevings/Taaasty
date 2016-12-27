@@ -45,7 +45,7 @@ Rating::Rating(QObject* parent)
     , _isBayesVoted(false)
     , _isVotedAgainst(false)
     , _parent(qobject_cast<Entry*>(parent))
-{    
+{
     Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished, this, &Rating::bayesChanged, Qt::QueuedConnection));
 }
 
@@ -97,6 +97,8 @@ void Rating::reCalcBayes()
         }
     }
 
+    emit bayesVoteChanged();
+
     _bayesRating = Bayes::instance()->classify(_parent);
     emit bayesChanged();
 }
@@ -114,15 +116,15 @@ void Rating::setId(int entryId)
 {
     if (_id == entryId || isLoading())
         return;
-    
+
     _id = entryId;
-    
+
     auto url = QString("v1/ratings.json?ids=%1").arg(_id);
     _request = new ApiRequest(url);
     _request->get();
-    
+
     Q_TEST(connect(_request, SIGNAL(success(QJsonArray)), this, SLOT(_reinit(QJsonArray))));
-    
+
     _initRequest();
 }
 
@@ -132,10 +134,10 @@ void Rating::vote()
 {
     if (isLoading())
         return;
-    
+
     voteBayes();
 
-    if (!_isVotable || !Tasty::instance()->isAuthorized())
+    if (!_isVotable || !pTasty->isAuthorized())
         return;
 
     auto url = QString("v1/entries/%1/votes.json").arg(_id);
@@ -147,34 +149,44 @@ void Rating::vote()
 
     Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)),
                    this, SLOT(init(const QJsonObject))));
+
+    Q_TEST(connect(_request, SIGNAL(error(int, QString)),
+                    this, SLOT(_returnVotedState())));
+    Q_TEST(connect(_request, SIGNAL(networkError(QNetworkReply::NetworkError)),
+                    this, SLOT(_returnVotedState())));
                    
     _initRequest();
+
+    _isVoted = _isVoted;
+    emit voteChanged();
 }
 
 
 
 void Rating::voteBayes()
 {
-    if (_isBayesVoted || _isVotedAgainst)
+    if (_isBayesVoted || _isVotedAgainst || _watcher.isRunning())
         return;
 
     auto future = QtConcurrent::run(this, &Rating::_changeBayesRating, Bayes::Fire);
     _watcher.setFuture(future);
 
     _isBayesVoted = true;
+    emit bayesVoteChanged();
 }
 
 
 
 void Rating::voteAgainst()
 {
-    if (_isBayesVoted || _isVotedAgainst)
+    if (_isBayesVoted || _isVotedAgainst || _watcher.isRunning())
         return;
 
     auto future = QtConcurrent::run(this, &Rating::_changeBayesRating, Bayes::Water);
     _watcher.setFuture(future);
 
     _isVotedAgainst = true;
+    emit bayesVoteChanged();
 }
 
 
@@ -188,11 +200,12 @@ void Rating::init(const QJsonObject& data)
     _votes      = data.value("votes").toInt();
     _rating     = data.value("rating").toInt();
     _isVoted    = data.value("is_voted").toBool();
-    _isVotable  = data.value("is_voteable").toBool() && (!_parent || (_parent->isVotable() 
+    _isVotable  = data.value("is_voteable").toBool() && (!_parent || (_parent->isVotable()
             && _parent->type() != "anonymous"
             && _parent->author()->id() != Tasty::instance()->settings()->userId()));
 
     emit dataChanged();
+    emit voteChanged();
 }
 
 
@@ -208,8 +221,16 @@ void Rating::_reinit(const QJsonArray& data)
 {
     if (data.isEmpty())
         return;
-    
+
     init(data.first().toObject());
 
     reCalcBayes();
+}
+
+
+
+void Rating::_returnVotedState()
+{
+    _isVoted = !_isVoted;
+    emit voteChanged();
 }

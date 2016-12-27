@@ -39,12 +39,12 @@ class Rating: public TastyData
     Q_PROPERTY (int  entryId    MEMBER _id          NOTIFY dataChanged)
     Q_PROPERTY (int  votes      MEMBER _votes       NOTIFY dataChanged)
     Q_PROPERTY (int  rating     MEMBER _rating      NOTIFY dataChanged)
-    Q_PROPERTY (bool isVoted    MEMBER _isVoted     NOTIFY dataChanged)
+    Q_PROPERTY (bool isVoted    MEMBER _isVoted     NOTIFY voteChanged)
     Q_PROPERTY (bool isVotable  MEMBER _isVotable   NOTIFY dataChanged)
 
     Q_PROPERTY (int  bayesRating    MEMBER _bayesRating     NOTIFY bayesChanged)
-    Q_PROPERTY (bool isBayesVoted   MEMBER _isBayesVoted    NOTIFY bayesChanged)
-    Q_PROPERTY (bool isVotedAgainst MEMBER _isVotedAgainst  NOTIFY bayesChanged)
+    Q_PROPERTY (bool isBayesVoted   MEMBER _isBayesVoted    NOTIFY bayesVoteChanged)
+    Q_PROPERTY (bool isVotedAgainst MEMBER _isVotedAgainst  NOTIFY bayesVoteChanged)
 
 public:
     Rating(QObject* parent = nullptr);
@@ -56,7 +56,7 @@ public:
     int bayesRating() const;
 
     void setId(int entryId);
-    
+
 public slots:
     void vote();
     void voteBayes();
@@ -68,9 +68,13 @@ signals:
     void dataChanged();
     void bayesChanged();
 
+    void voteChanged();
+    void bayesVoteChanged();
+
 private slots:
     void _changeBayesRating(Bayes::Type type);
     void _reinit(const QJsonArray& data);
+    void _returnVotedState();
 
 private:
     int  _votes;
