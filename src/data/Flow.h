@@ -52,6 +52,8 @@ public:
     bool isEditable() const;
     bool isWritable() const;
 
+    QString name() const;
+
 signals:
     void updated();
 

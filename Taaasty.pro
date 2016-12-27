@@ -49,7 +49,8 @@ SOURCES += src/main.cpp \
     src/texthandler.cpp \
     src/poster.cpp \
     src/tastydatacache.cpp \
-    src/models/uploadmodel.cpp
+    src/models/uploadmodel.cpp \
+    src/models/availabletlogsmodel.cpp
 
 android: SOURCES += src/android/androidimagepicker.cpp \
     src/android/androidnotifier.cpp
@@ -104,7 +105,8 @@ HEADERS += \
     src/texthandler.h \
     src/poster.h \
     src/tastydatacache.h \
-    src/models/uploadmodel.h
+    src/models/uploadmodel.h \
+    src/models/availabletlogsmodel.h
 
 android: HEADERS += src/android/androidimagepicker.h \
     src/android/androidnotifier.h
@@ -131,23 +133,23 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
 
 DEFINES += BUILDDATE=\\\"$$system("date +%d.%m.%Y")\\\"
 
-unix:{
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtConcurrent/
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtCore/
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtGui/
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtNetwork/
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtQml/
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtQuick/
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtQuickControls2/
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtSql/
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtWebSockets/
-    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtWidgets/
+#unix:{
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtConcurrent/
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtCore/
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtGui/
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtNetwork/
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtQml/
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtQuick/
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtQuickControls2/
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtSql/
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtWebSockets/
+#    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtWidgets/
 
-    pvs_studio.target = Taaasty
-    pvs_studio.output = true
-    pvs_studio.sources = $${SOURCES}
-    pvs_studio.cxxflags = -fPIC
-    pvs_studio.cfg = "$$PWD/PVS-Studio.cfg"
-    include(PVS-Studio.pri)
-}
+#    pvs_studio.target = Taaasty
+#    pvs_studio.output = true
+#    pvs_studio.sources = $${SOURCES}
+#    pvs_studio.cxxflags = -fPIC
+#    pvs_studio.cfg = "$$PWD/PVS-Studio.cfg"
+#    include(PVS-Studio.pri)
+#}

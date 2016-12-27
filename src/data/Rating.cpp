@@ -157,7 +157,7 @@ void Rating::vote()
                    
     _initRequest();
 
-    _isVoted = _isVoted;
+    _isVoted = !_isVoted;
     emit voteChanged();
 }
 

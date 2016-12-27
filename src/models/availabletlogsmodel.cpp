@@ -42,8 +42,34 @@ AvailableTlogsModel::AvailableTlogsModel(QObject* parent)
     source->setMode(FlowsModel::AvailableMode);
     setSourceModel(source);
 
-    Q_TEST(connect(source, &QAbstractItemModel::endInsertRows,
+    Q_TEST(connect(source, &QAbstractItemModel::rowsAboutToBeInserted,
+        this, &QAbstractItemModel::rowsAboutToBeInserted));
+    Q_TEST(connect(source, &QAbstractItemModel::rowsInserted,
+        this, &QAbstractItemModel::rowsInserted));
+
+    Q_TEST(connect(source, &QAbstractItemModel::rowsInserted,
         this, &AvailableTlogsModel::flowsLoaded));
+
+
+}
+
+
+
+QModelIndex AvailableTlogsModel::index(int row, int column, const QModelIndex& parent) const
+{
+    if (!parent.isValid() && row >= 0 && row < rowCount() && !column)
+        return createIndex(row, column);
+
+    return QModelIndex();
+}
+
+
+
+QModelIndex AvailableTlogsModel::parent(const QModelIndex& child) const
+{
+    Q_UNUSED(child);
+
+    return QModelIndex();
 }
 
 
@@ -54,6 +80,15 @@ int AvailableTlogsModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     return sourceModel()->rowCount(parent) + 1;
+}
+
+
+
+int AvailableTlogsModel::columnCount(const QModelIndex& parent) const
+{
+    if (parent.isValid())
+        return 0;
+    return 1;
 }
 
 
@@ -69,7 +104,8 @@ QVariant AvailableTlogsModel::data(const QModelIndex& index, int role) const
         return QVariant();
     }
 
-    auto flow = sourceModel()->data(index, Qt::UserRole).value<Flow*>();
+    auto flowIndex = createIndex(index.row() - 1, 0);
+    auto flow = sourceModel()->data(flowIndex, Qt::UserRole).value<Flow*>();
     if (!flow)
         return QVariant();
 
@@ -91,12 +127,12 @@ QModelIndex AvailableTlogsModel::mapFromSource(const QModelIndex& sourceIndex) c
 
 QModelIndex AvailableTlogsModel::mapToSource(const QModelIndex& proxyIndex) const
 {
-    return sourceModel()->createIndex(proxyIndex.row() - 1, 0);
+    return createIndex(proxyIndex.row() - 1, 0);
 }
 
 
 
-virtual QHash<int, QByteArray> AvailableTlogsModel::roleNames() const override
+QHash<int, QByteArray> AvailableTlogsModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[Qt::UserRole]     = "tlog";
@@ -114,5 +150,12 @@ int AvailableTlogsModel::tlogIndex(int id) const
         return 0;
 
     auto source = static_cast<FlowsModel*>(sourceModel());
-    return source->tlogIndex(id);
+    return source->flowIndex(id) + 1;
+}
+
+
+
+int AvailableTlogsModel::indexTlog(int row) const
+{
+    return data(createIndex(row, 0), Qt::UserRole).toInt();
 }

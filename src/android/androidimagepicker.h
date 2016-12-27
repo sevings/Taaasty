@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QAndroidActivityResultReceiver>
 
-#include "defines.h"
+#include "../defines.h"
 
 
 

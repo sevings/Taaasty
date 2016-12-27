@@ -323,7 +323,7 @@ Pane {
                         leftMargin: 1.5 * mm
                         rightMargin: 1.5 * mm
                     }
-                    visible: back.entryType !== TlogEntry.AnonymousEntry
+                    visible: back.entryType != TlogEntry.AnonymousEntry && count > 1
                     model: AvailableTlogsModel {
                         onFlowsLoaded: {
                             if (whereBox.currentIndex < 0)
@@ -338,7 +338,7 @@ Pane {
                         font.pixelSize: window.fontSmaller
                     }
                     textRole: "name"
-                    readonly property int tlog: model.get(currentIndex).tlog
+                    readonly property int tlog: model.indexTlog(currentIndex)
                     font.pixelSize: window.fontSmaller
                     function setLastTlog() {
                         var last = Settings.lastPostingTlog;

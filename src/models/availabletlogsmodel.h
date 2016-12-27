@@ -31,7 +31,12 @@ class AvailableTlogsModel: public QAbstractProxyModel
 public:
     AvailableTlogsModel(QObject* parent = nullptr);
 
+    virtual QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
+    virtual QModelIndex parent(const QModelIndex& child) const override;
+
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
     virtual QModelIndex mapFromSource(const QModelIndex& sourceIndex) const override;
@@ -39,10 +44,11 @@ public:
 
     virtual QHash<int, QByteArray> roleNames() const override;
 
-    int tlogIndex(int id) const;
+    Q_INVOKABLE int tlogIndex(int id) const;
+    Q_INVOKABLE int indexTlog(int row) const;
 
 signals:
     void flowsLoaded();
-}
+};
 
-#endif AVAILABLETLOGSMODEL_H
+#endif //AVAILABLETLOGSMODEL_H
