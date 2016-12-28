@@ -229,6 +229,26 @@ void ChatsModel::bubbleChat(int id)
 
 
 
+void ChatsModel::loadLast()
+{
+    if (isChecking())
+        return;
+
+    qDebug() << "ChatsModel::loadLast";
+
+    _checkRequest = new ApiRequest(_url.arg(1), ApiRequest::AccessTokenRequired);
+
+    Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonArray)), this, SLOT(_addLast(QJsonArray))));
+    Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonArray)), [this]()
+    {
+        _checkUnread(pTasty->unreadChats());
+    }, Qt::QueuedConnection));
+
+    _initCheck();
+}
+
+
+
 void ChatsModel::loadUnread()
 {
     if (isChecking())
@@ -272,6 +292,49 @@ QHash<int, QByteArray> ChatsModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles[Qt::UserRole] = "chat";
     return roles;
+}
+
+
+
+void ChatsModel::_addLast(const QJsonArray& data)
+{
+    qDebug() << "ChatsModel::_addLast";
+
+    QList<ChatPtr> chats;
+    foreach(auto item, data)
+    {
+        auto id = item.toObject().value("id").toInt();
+        auto chat = pTasty->dataCache()->chat(id);
+        if (!chat)
+            chat = ChatPtr::create(nullptr);
+
+        chat->init(item.toObject());
+
+        if (_ids.contains(id))
+            continue;
+
+        _allChats << chat;
+        _ids << chat->id();
+
+        _insertEntryChat(chat);
+
+        Q_TEST(connect(chat.data(), SIGNAL(left(int)), this, SLOT(_removeChat(int))));
+
+        if (_mode == AllChatsMode
+                || (_mode == PrivateChatsMode && chat->type() != Conversation::PublicConversation)
+                || (_mode == EntryChatsMode && chat->type() == Conversation::PublicConversation))
+            chats << chat;
+    }
+
+    if (chats.isEmpty())
+        return;
+
+    beginInsertRows(QModelIndex(), 0, chats.size() - 1);
+
+    for (int i = 0; i < chats.size(); i++)
+        _chats.insert(i, chats.at(i));
+
+    endInsertRows();
 }
 
 

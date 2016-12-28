@@ -66,6 +66,7 @@ public:
     void bubbleChat(int id);
 
 public slots:
+    void loadLast();
     void loadUnread();
     void reset();
 
@@ -76,6 +77,7 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private slots:
+    void _addLast(const QJsonArray& data);
     void _addUnread(const QJsonArray& data);
     void _addChats(const QJsonArray& data);
     void _removeChat(int id);

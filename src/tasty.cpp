@@ -478,7 +478,7 @@ void Tasty::_saveOrReconnect(Qt::ApplicationState state)
     {
         _pusher->connect();
 
-        ChatsModel::instance()->loadUnread();
+        ChatsModel::instance()->loadLast();
         NotificationsModel::instance()->check();
     }
     else
