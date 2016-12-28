@@ -37,7 +37,7 @@
 #include "notificationsmodel.h"
 
 #ifdef Q_OS_ANDROID
-#   include "../androidnotifier.h"
+#   include "../android/androidnotifier.h"
 #   include "../data/User.h"
 #endif
 
@@ -169,7 +169,7 @@ void MessagesModel::loadMore()
     if (isLoading() || !_chatId)
         return;
 
-    int limit = qBound(20, chat->unreadCount() - _messages.size(), 200);
+    int limit = qBound(20, _chat->unreadCount() - _messages.size(), 200);
     QString url = _url.arg(_chatId).arg(limit);
     if (!_messages.isEmpty())
         url += QString("&to_message_id=%1").arg(_messages.first()->id());

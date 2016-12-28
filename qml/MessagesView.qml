@@ -49,9 +49,6 @@ Pane {
         onMessageSent: {
             listView.positionViewAtEnd();
         }
-        onDestroyed: {
-            window.popFromStack();
-        }
         onLeft: {
             window.popFromStack();
         }

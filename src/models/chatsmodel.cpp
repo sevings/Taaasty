@@ -239,7 +239,8 @@ void ChatsModel::loadLast()
     _checkRequest = new ApiRequest(_url.arg(1), ApiRequest::AccessTokenRequired);
 
     Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonArray)), this, SLOT(_addLast(QJsonArray))));
-    Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonArray)), [this]()
+    Q_TEST(connect(_checkRequest, static_cast<void(ApiRequest::*)(const QJsonArray&)>(&ApiRequest::success),
+                   this, [this]()
     {
         _checkUnread(pTasty->unreadChats());
     }, Qt::QueuedConnection));

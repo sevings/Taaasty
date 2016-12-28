@@ -44,23 +44,23 @@ AvailableTlogsModel::AvailableTlogsModel(QObject* parent)
 
     QPointer<AvailableTlogsModel> that(this);
     Q_TEST(connect(source, &QAbstractItemModel::rowsAboutToBeInserted,
-        [that](const QModelIndex& parent, int start, int end)
-        {
-            if (that)
-                that->beginInsertRows(parent, start+1, end+1);
-        });
+                   [that](const QModelIndex& parent, int start, int end)
+    {
+        if (that)
+            that->beginInsertRows(parent, start+1, end+1);
+    }));
 
     Q_TEST(connect(source, &QAbstractItemModel::rowsInserted,
-        [that](const QModelIndex& parent, int start, int end)
-        {
-            if (that)
-                that->endInsertRows();
-        });
+                   [that](const QModelIndex& parent, int start, int end)
+    {
+        Q_UNUSED(parent); Q_UNUSED(start); Q_UNUSED(end);
+
+        if (that)
+            that->endInsertRows();
+    }));
 
     Q_TEST(connect(source, &QAbstractItemModel::rowsInserted,
-        this, &AvailableTlogsModel::flowsLoaded));
-
-
+                   this, &AvailableTlogsModel::flowsLoaded));
 }
 
 

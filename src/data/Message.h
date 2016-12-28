@@ -49,7 +49,7 @@ public:
         UnknownMessageType,
         NormalMessage,
         SystemMessage
-    }
+    };
 
     Q_ENUMS(MessageType)
 
