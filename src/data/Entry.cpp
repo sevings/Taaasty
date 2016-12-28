@@ -61,10 +61,10 @@ void EntryBase::load(int id)
 
     _request = new ApiRequest(QString("v1/entries/%1.json").arg(_id));
     _request->get();
-    
+
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initBase(QJsonObject))));
     Q_TEST(connect(_request, SIGNAL(destroyed(QObject*)),  this, SLOT(_maybeError())));
-    
+
     _initRequest();
 }
 
@@ -293,7 +293,7 @@ void Entry::setId(const int id)
     _chat.clear();
 
     reload();
-    
+
     Q_TEST(connect(_request, SIGNAL(destroyed()), this, SLOT(_maybeError())));
 }
 
@@ -307,7 +307,7 @@ void Entry::reload()
     auto url = QString("v1/entries/%1.json?include_comments=true").arg(_id);
     _request = new ApiRequest(url);
     _request->get();
-    
+
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
     _initRequest();
@@ -522,12 +522,19 @@ int Entry::commentsCount() const
 
 
 
+void Entry::resetChat()
+{
+    _chat.clear();
+}
+
+
+
 Conversation* Entry::chat()
 {
     if (_chat)
         return _chat.data();
 
-    if (_id <= 0 || !Tasty::instance()->isAuthorized())
+    if (_id <= 0 || !pTasty->isAuthorized())
         return nullptr;
 
     _chat = pTasty->dataCache()->chatByEntry(_id);

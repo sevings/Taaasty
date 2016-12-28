@@ -27,14 +27,13 @@
 #include <QDebug>
 #include <QQmlEngine>
 
-#include "../defines.h"
-
 #include "../tasty.h"
 #include "../apirequest.h"
 #include "../pusherclient.h"
 #include "../tastydatacache.h"
 #include "../data/Author.h"
 #include "../data/Entry.h"
+#include "../data/Conversation.h"
 
 
 
@@ -61,7 +60,7 @@ ChatsModel::ChatsModel(Tasty* tasty)
 
 
 
-int ChatsModel::rowCount(const QModelIndex &parent) const
+int ChatsModel::rowCount(const QModelIndex& parent) const
 {
     if (parent.isValid())
         return 0;
@@ -71,7 +70,7 @@ int ChatsModel::rowCount(const QModelIndex &parent) const
 
 
 
-QVariant ChatsModel::data(const QModelIndex &index, int role) const
+QVariant ChatsModel::data(const QModelIndex& index, int role) const
 {
     if (index.row() < 0 || index.row() >= _chats.size())
         return QVariant();
@@ -117,12 +116,12 @@ void ChatsModel::setMode(ChatsModel::Mode mode)
 {
     if (mode == _mode)
         return;
-    
+
     beginResetModel();
 
     _mode = mode;
     emit modeChanged();
-    
+
     if (_allChats.isEmpty())
         _allChats = _chats;
 
@@ -147,7 +146,7 @@ void ChatsModel::setMode(ChatsModel::Mode mode)
     default:
         qDebug() << "Error ChatsModel::Mode" << mode;
     }
-    
+
     endResetModel();
 }
 
@@ -182,6 +181,8 @@ void ChatsModel::addChat(const ChatPtr& chat)
         bubbleChat(chat->id());
         return;
     }
+
+    _insertEntryChat(chat);
 
     beginInsertRows(QModelIndex(), 0, 0);
 
@@ -250,8 +251,9 @@ void ChatsModel::reset()
     beginResetModel();
 
     _allChats.clear();
-    _chats.clear();        
+    _chats.clear();
     _ids.clear();
+    _entryChats.clear();
 
     _hasMore = true;
     delete _checkRequest;
@@ -278,8 +280,8 @@ void ChatsModel::_addUnread(const QJsonArray& data)
 {
     qDebug() << "ChatsModel::_addUnread";
 
-    emit Tasty::instance()->pusher()->unreadChats(data.size());
-    
+    emit pTasty->pusher()->unreadChats(data.size());
+
     if (data.isEmpty())
         return;
 
@@ -291,7 +293,7 @@ void ChatsModel::_addUnread(const QJsonArray& data)
         auto chat = pTasty->dataCache()->chat(id);
         if (!chat)
             chat = ChatPtr::create(nullptr);
-        
+
         chat->init(item.toObject());
 
         if (_ids.contains(id))
@@ -306,6 +308,8 @@ void ChatsModel::_addUnread(const QJsonArray& data)
 
         _allChats << chat;
         _ids << chat->id();
+
+        _insertEntryChat(chat);
 
         Q_TEST(connect(chat.data(), SIGNAL(left(int)), this, SLOT(_removeChat(int))));
 
@@ -361,6 +365,8 @@ void ChatsModel::_addChats(const QJsonArray& data)
         _ids << chat->id();
         _allChats << chat;
 
+        _insertEntryChat(chat);
+
         Q_TEST(connect(chat.data(), SIGNAL(left(int)), this, SLOT(_removeChat(int))));
 
         if (_mode == AllChatsMode
@@ -379,8 +385,9 @@ void ChatsModel::_addChats(const QJsonArray& data)
     beginInsertRows(QModelIndex(), _chats.size(), _chats.size() + chats.size() - 1);
     _chats << chats;
     endInsertRows();
-    
-    if (_chats.size() < 10) //! \todo what is this?
+
+    // requested 10 chats, but loaded less
+    if (_chats.size() < 10) //! \todo set _hasMore to false?
         emit hasMoreChanged();
 }
 
@@ -404,14 +411,15 @@ void ChatsModel::_removeChat(int id)
     for (i = 0; i < _chats.size(); i++)
         if (_chats.at(i)->id() == id)
             break;
-        
+
     if (i >= _chats.size())
         return;
-    
+
     beginRemoveRows(QModelIndex(), i, i);
-    
-    _chats.removeAt(i);
-    
+
+    auto chat = _chats.takeAt(i);
+    _entryChats.remove(chat->entryId());
+
     endRemoveRows();
 }
 
@@ -452,4 +460,21 @@ void ChatsModel::_addChat()
     disconnect(chat, &Conversation::updated, this, &ChatsModel::_addChat);
 
     addChat(chat->sharedFromThis());
+}
+
+
+
+// if entry chat id has changed, remove old chat and insert new one
+void ChatsModel::_insertEntryChat(const ChatPtr& chat)
+{
+    if (chat->type() != Conversation::PublicConversation)
+        return;
+
+    if (_entryChats.contains(chat->entryId()))
+        _removeChat(_entryChats.value(chat->entryId()));
+
+    if (chat->entry())
+        chat->entry()->resetChat();
+
+    _entryChats.insert(chat->entryId(), chat->id());
 }

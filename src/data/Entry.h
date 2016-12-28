@@ -76,7 +76,7 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
 {
     Q_OBJECT
 
-    Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated) //! \todo remove 
+    Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated) //! \todo remove
     Q_PROPERTY(QString     createdAt      MEMBER _createdAt         NOTIFY updated)
     Q_PROPERTY(QString     url            MEMBER _url               NOTIFY updated)
     Q_PROPERTY(QString     type           MEMBER _type              NOTIFY updated) //! \todo enum
@@ -133,6 +133,7 @@ public:
 
     int commentsCount() const;
 
+    void resetChat();
     Conversation* chat();
 
     bool      isVotable() const;

@@ -27,9 +27,8 @@
 #include <QSet>
 #include <QHash>
 
+#include "../defines.h"
 #include "tastylistmodel.h"
-
-#include "../data/Conversation.h"
 
 class Tasty;
 
@@ -49,7 +48,7 @@ public:
     };
 
     Q_ENUMS(Mode)
-    
+
     static ChatsModel* instance(Tasty* tasty = nullptr);
 
     ChatsModel(Tasty* tasty = nullptr);
@@ -84,9 +83,12 @@ private slots:
     void _addChat();
 
 private:
+    void _insertEntryChat(const ChatPtr& chat);
+
     QList<ChatPtr>  _allChats;
     QList<ChatPtr>  _chats;
     QSet<int>       _ids;
+    QHash<int, int> _entryChats;
     Mode            _mode;
 
     QString         _url;

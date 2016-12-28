@@ -49,6 +49,12 @@ Pane {
         onMessageSent: {
             listView.positionViewAtEnd();
         }
+        onDestroyed: {
+            window.popFromStack();
+        }
+        onLeft: {
+            window.popFromStack();
+        }
     }
     Poppable {
         body: back
@@ -105,7 +111,7 @@ Pane {
             width: window.width
             height: (messageAvatar.height > messageBack.height
                      ? messageAvatar.height : messageBack.height) + 2 * mm
-            readonly property bool isMyMessage: chat.userId === message.userId 
+            readonly property bool isMyMessage: chat.userId === message.userId
             Poppable {
                 body: back
                 onClicked: {
@@ -144,7 +150,7 @@ Pane {
                     margins: 1.5 * mm
                     leftMargin: isMyMessage ? 1.5 * mm : 0
                     rightMargin: isMyMessage ? 0 : 1.5 * mm
-                }                
+                }
                 readonly property int maxWidth: window.width - messageAvatar.width - 3 * mm
                 readonly property int dateWidth: messageDate.contentWidth
                                                  + (unreadMessage.visible ? unreadMessage.width + 1.5 * mm : 0)
@@ -223,7 +229,7 @@ Pane {
             width: window.width
             z: listView.count + 10
             onHeightChanged: {
-                if (messageEditor.focus)
+                if (messageEditor.activeFocus)
                     listView.positionViewAtEnd();
             }
             ThemedText {
