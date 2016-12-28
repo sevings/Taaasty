@@ -62,7 +62,8 @@ Conversation::Conversation(QObject* parent)
     , _typedTimer(nullptr)
     , _hadTyped(false)
 {
-    
+    Q_TEST(connect(this, &Conversation::lastMessageChanged,
+        this, &Conversation::isMyLastMessageUnreadChanged));
 }
 
 
@@ -99,7 +100,7 @@ void Conversation::setRecipientId(int id)
     auto url = QString("v2/messenger/conversations/by_user_id/%1.json").arg(_recipientId);
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->post();
-    
+
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
     _initRequest();
@@ -115,7 +116,7 @@ void Conversation::setSlug(const QString& slug)
     auto url = QString("v2/messenger/conversations/by_slug/%1.json").arg(slug);
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->post();
-    
+
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
     _initRequest();
@@ -366,7 +367,11 @@ void Conversation::init(const QJsonObject& data)
      auto lastId = last.value("id").toInt();
      _lastMessage = dataCache->message(lastId);
      if (!_lastMessage)
+     {
          _lastMessage   = new Message(last, this, this);
+
+         Q_TEST(connect(_lastMessage, &MessageBase::readChanged, this, &Conversation::isMyLastMessageUnreadChanged));
+     }
 
      emit idChanged();
      emit isInvolvedChanged();
@@ -385,7 +390,7 @@ void Conversation::update()
     auto url = QString("v2/messenger/conversations/by_id/%1.json").arg(_id);
     _request = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     _request->get();
-    
+
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
 
     _initRequest();
@@ -404,7 +409,7 @@ void Conversation::sendMessage(const QString& text)
 
     auto uuid    = QUuid::createUuid().toString().remove('{').remove('}');
     auto url     = QString("v2/messenger/conversations/by_id/%1/messages.json").arg(_id);
-    
+
     _sendRequest = new ApiRequest(url, ApiRequest::AllOptions);
     _sendRequest->addFormData("uuid", uuid);
     _sendRequest->addFormData("content", text.trimmed());
@@ -441,13 +446,13 @@ void Conversation::leave()
 {
     if (isLoading() || !isInvolved())
         return;
-    
+
     auto url = QString("v2/messenger/conversations/by_id/%1/leave.json").arg(_id);
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->put();
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
-    
+
     _initRequest();
 }
 
@@ -461,9 +466,9 @@ void Conversation::remove()
     auto url = QString("v2/messenger/conversations/by_id/%1.json").arg(_id);
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->deleteResource();
-    
+
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_emitLeft(QJsonObject))));
-    
+
     _initRequest();
 }
 
@@ -478,7 +483,7 @@ void Conversation::sendTyped()
         _typedTimer->setSingleShot(true);
         Q_TEST(connect(_typedTimer, &QTimer::timeout, this, &Conversation::_sendTyped));
     }
-    
+
     if (_typedTimer->isActive())
     {
         qDebug() << _typedTimer->remainingTime();
@@ -490,7 +495,7 @@ void Conversation::sendTyped()
         _typedTimer->start();
         _hadTyped = true;
         _sendTyped();
-    }    
+    }
 }
 
 
@@ -539,7 +544,7 @@ void Conversation::_removeTypedUser()
     auto timer = qobject_cast<QTimer*>(sender());
     if (!timer)
         return;
-    
+
     auto userId = _typedUsers.key(timer);
     removeTyped(userId);
 }
@@ -550,14 +555,14 @@ void Conversation::_sendTyped()
 {
     if (!_hadTyped || _typedRequest)
         return;
-    
+
     _hadTyped = false;
-    
+
     auto url = QString("v2/messenger/conversations/by_id/%1/typed.json").arg(_id);
     _typedRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     _typedRequest->post();
-    
-#ifdef QT_DEBUG    
+
+#ifdef QT_DEBUG
     Q_TEST(connect(_typedRequest, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
                    [](const QJsonObject& data)
     {
@@ -605,13 +610,13 @@ int Conversation::recipientId() const
 QString Conversation::typedUsers()
 {
     QString typed;
-    
+
     if (_typedUsers.isEmpty())
         return typed;
-    
+
     if (_type == PrivateConversation)
-        return "Печатает...";        
-    
+        return "Печатает...";
+
     QStringList userNames;
     foreach (auto userId, _typedUsers.keys())
     {
@@ -619,25 +624,25 @@ QString Conversation::typedUsers()
         if (!user->name().isEmpty())
             userNames << user->name();
     }
-    
+
     if (userNames.isEmpty())
         return "Печатает...";
-    
+
     typed += userNames.first();
-    
+
     if (userNames.size() == 1)
         return typed + " печатает...";
-    
+
     for (int i = 1; i < userNames.size() - 1; i++)
         typed += ", " + userNames.at(i);
-    
-    typed += " и " + userNames.last() + " печатают...";    
+
+    typed += " и " + userNames.last() + " печатают...";
     return typed;
 }
 
 
 
-bool Conversation::isTyped() const 
+bool Conversation::isTyped() const
 {
     return !_typedUsers.isEmpty();
 }
@@ -652,15 +657,15 @@ void Conversation::addTyped(int userId)
         timer->start();
         return;
     }
-    
+
     timer = new QTimer(this);
     timer->setInterval(7000); //! \note pusher event is every 5 sec
     timer->start();
-    
+
     Q_TEST(connect(timer, &QTimer::timeout, this, &Conversation::_removeTypedUser));
-    
+
     _typedUsers.insert(userId, timer);
-    
+
     emit typedUsersChanged();
 }
 

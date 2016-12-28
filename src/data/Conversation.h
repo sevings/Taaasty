@@ -63,12 +63,12 @@ class Conversation: public TastyData, public QEnableSharedFromThis<Conversation>
 //    Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
     Q_PROPERTY(Author*          recipient       MEMBER _recipient       NOTIFY updated)
     Q_PROPERTY(MessagesModel*   messages        READ messages           CONSTANT)
-    Q_PROPERTY(bool  isMyLastMessageUnread   READ isMyLastMessageUnread NOTIFY updated)
+    Q_PROPERTY(bool  isMyLastMessageUnread   READ isMyLastMessageUnread NOTIFY isMyLastMessageUnreadChanged)
     Q_PROPERTY(MessageBase*     lastMessage     READ lastMessage        NOTIFY lastMessageChanged)
     Q_PROPERTY(bool             isInvolved      READ isInvolved         NOTIFY isInvolvedChanged)
     Q_PROPERTY(QString          typedUsers      READ typedUsers         NOTIFY typedUsersChanged)
     Q_PROPERTY(bool             isTyped         READ isTyped            NOTIFY typedUsersChanged)
-    
+
 public:
     enum ConversationType {
         UninitializedConversation,
@@ -76,7 +76,7 @@ public:
         GroupConversation,
         PrivateConversation
     };
-    
+
     Q_ENUMS(ConversationType)
 
     Conversation(QObject* parent = nullptr);
@@ -127,7 +127,7 @@ public slots:
     void readAll();
     void leave();
     void remove();
-    
+
     void sendTyped();
 
 signals:
@@ -141,6 +141,7 @@ signals:
     void sendingMessageError();
 
     void allMessagesRead(const QJsonObject& data);
+    void isMyLastMessageUnreadChanged();
     void lastMessageChanged();
 
     void left(int id);
@@ -183,7 +184,7 @@ private:
     QTimer*              _typedTimer; //-V122
     bool                 _hadTyped;
     QPointer<ApiRequest> _typedRequest;
-    
+
     QPointer<ApiRequest> _sendRequest;
     QPointer<ApiRequest> _readRequest;
     QPointer<ApiRequest> _usersRequest;
