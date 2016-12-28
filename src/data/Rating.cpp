@@ -114,10 +114,20 @@ int Rating::bayesRating() const
 
 void Rating::setId(int entryId)
 {
-    if (_id == entryId || isLoading())
+    if (_id == entryId)
         return;
 
     _id = entryId;
+
+    update();
+}
+
+
+
+void Rating::update()
+{
+    if (isLoading())
+        return;
 
     auto url = QString("v1/ratings.json?ids=%1").arg(_id);
     _request = new ApiRequest(url);
@@ -154,7 +164,7 @@ void Rating::vote()
                     this, SLOT(_returnVotedState())));
     Q_TEST(connect(_request, SIGNAL(networkError(QNetworkReply::NetworkError)),
                     this, SLOT(_returnVotedState())));
-                   
+
     _initRequest();
 
     _isVoted = !_isVoted;

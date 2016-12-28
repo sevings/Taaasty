@@ -56,6 +56,7 @@ public:
     int bayesRating() const;
 
     void setId(int entryId);
+    void update();
 
 public slots:
     void vote();
