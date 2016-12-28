@@ -47,7 +47,7 @@ MessagesModel::MessagesModel(Conversation* chat)
     : TastyListModel(chat)
     , _chat(chat)
     , _chatId(0)
-    , _url("v2/messenger/conversations/by_id/%1/messages.json?limit=20&order=desc")
+    , _url("v2/messenger/conversations/by_id/%1/messages.json?limit=%2&order=desc")
 #ifdef Q_OS_ANDROID
     , _androidNotifier(new AndroidNotifier(this))
 #endif
@@ -146,7 +146,7 @@ void MessagesModel::check()
     if (isChecking() || !_chatId)
         return;
 
-    QString url = _url.arg(_chatId);
+    QString url = _url.arg(_chatId).arg(20);
     if (!_messages.isEmpty())
         url += QString("&from_message_id=%1").arg(_messages.last()->id());
 
@@ -169,7 +169,8 @@ void MessagesModel::loadMore()
     if (isLoading() || !_chatId)
         return;
 
-    QString url = _url.arg(_chatId);
+    int limit = qBound(20, chat->unreadCount() - _messages.size(), 200);
+    QString url = _url.arg(_chatId).arg(limit);
     if (!_messages.isEmpty())
         url += QString("&to_message_id=%1").arg(_messages.first()->id());
 
@@ -203,7 +204,7 @@ void MessagesModel::_addMessages(const QJsonObject& data)
     auto msgs = _messagesList(feed);
     if (msgs.isEmpty())
         return;
-    
+
     emit itemsAboutToBePrepended();
 
     beginInsertRows(QModelIndex(), 0, msgs.size() - 1);
@@ -211,7 +212,7 @@ void MessagesModel::_addMessages(const QJsonObject& data)
     _setTotalCount(data.value("total_count").toInt());
 
     _messages = msgs + _messages;
-    
+
     endInsertRows();
 
     if (_messages.size() <= msgs.size())
@@ -234,13 +235,13 @@ void MessagesModel::_addLastMessages(const QJsonObject& data)
     auto msgs = _messagesList(feed);
     if (msgs.isEmpty())
         return;
-    
+
     beginInsertRows(QModelIndex(), _messages.size(), _messages.size() + msgs.size() - 1);
 
     _setTotalCount(data.value("total_count").toInt());
 
     _messages << msgs;
-    
+
     endInsertRows();
 
     emit lastMessageChanged();
@@ -338,14 +339,13 @@ QList<Message*> MessagesModel::_messagesList(const QJsonArray& feed)
         auto msg = new Message(feed.at(i).toObject(), _chat, this);
         if (_ids.contains(msg->id()))
             continue;
-        
+
         _ids << msg->id();
         msgs.insert(i, msg);
 
         Q_TEST(connect(msg, &QObject::destroyed, this, &MessagesModel::_removeMessage));
         Q_TEST(connect(msg, &MessageBase::readChanged, _chat, &Conversation::_decUnread));
     }
-    
+
     return msgs;
 }
-    
