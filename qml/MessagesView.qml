@@ -169,8 +169,7 @@ Pane {
                     interactive: false
                     spacing: 1.5 * mm
                     property AttachedImagesModel imagesModel: message.attachedImagesModel
-                    height: visible ? (imagesModel.listRatio() * width
-                            + (count - 1) * mm) : -1.5 * mm
+                    height: visible ? contentHeight : -1.5 * mm
                     model: imagesModel
                     visible: imagesModel && count > 0
                     delegate: MyImage {

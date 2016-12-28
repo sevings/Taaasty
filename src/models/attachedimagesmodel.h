@@ -32,15 +32,16 @@ class AttachedImagesModel : public QAbstractListModel
 {
     Q_OBJECT
 
+    Q_PROPERTY(AttachedImage* first READ first CONSTANT)
+
 public:
     AttachedImagesModel(QObject* parent = nullptr);
-    AttachedImagesModel(const QJsonArray* data, QObject* parent = nullptr);
+    AttachedImagesModel(const QJsonArray& data, QObject* parent = nullptr);
 
     Q_INVOKABLE int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
-    Q_INVOKABLE AttachedImage* first() const;
-    Q_INVOKABLE double listRatio() const;
+    AttachedImage* first() const;
 
 protected:
     QHash<int, QByteArray> roleNames() const override;

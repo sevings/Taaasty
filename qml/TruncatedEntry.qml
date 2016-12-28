@@ -98,7 +98,7 @@ Item {
             topMargin: 1.5 * mm
             bottomMargin: 1.5 * mm
         }
-        property AttachedImage image: entry ? entry.attachedImagesModel.first() : null
+        property AttachedImage image: entry ? entry.attachedImagesModel.first : null
         active: image
         height: active ? (image.height / image.width * width) : 0
         onLoaded: item.image = image

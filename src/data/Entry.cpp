@@ -266,7 +266,7 @@ void Entry::init(const QJsonObject& data)
 
     auto imageAttach = data.value("image_attachments").toArray();
     delete _attachedImagesModel;
-    _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
+    _attachedImagesModel = new AttachedImagesModel(imageAttach, this);
 
     _rating->reCalcBayes();
 

@@ -38,21 +38,16 @@ AttachedImagesModel::AttachedImagesModel(QObject* parent)
 
 
 
-AttachedImagesModel::AttachedImagesModel(const QJsonArray* data, QObject* parent)
+AttachedImagesModel::AttachedImagesModel(const QJsonArray& data, QObject* parent)
     : QAbstractListModel(parent)
 {
-//    qDebug() << "AttachedImagesModel";
-
-    if (!data)
-        return;
-
-    for (int i = 0; i < data->size(); i++)
-        _images << new AttachedImage(data->at(i).toObject(), this);
+    foreach (auto obj, data)
+        _images << new AttachedImage(obj.toObject(), this);
 }
 
 
 
-int AttachedImagesModel::rowCount(const QModelIndex &parent) const
+int AttachedImagesModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
 
@@ -61,7 +56,7 @@ int AttachedImagesModel::rowCount(const QModelIndex &parent) const
 
 
 
-QVariant AttachedImagesModel::data(const QModelIndex &index, int role) const
+QVariant AttachedImagesModel::data(const QModelIndex& index, int role) const
 {
     if (index.row() < 0 || index.row() >= _images.size())
         return QVariant();
@@ -76,20 +71,9 @@ QVariant AttachedImagesModel::data(const QModelIndex &index, int role) const
 
 
 
-AttachedImage *AttachedImagesModel::first() const
+AttachedImage* AttachedImagesModel::first() const
 {
     return _images.isEmpty() ? nullptr : _images.first();
-}
-
-
-
-double AttachedImagesModel::listRatio() const
-{
-    double h = 0;
-    foreach (auto img, _images)
-        h += img->_height / (double)img->_width; //-V2005
-
-    return h;
 }
 
 

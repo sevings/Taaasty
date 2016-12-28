@@ -63,7 +63,7 @@ Message::Message(const QJsonObject& data, Conversation* chat, QObject *parent)
 
     if (_userId != Tasty::instance()->settings()->userId())
         Q_TEST(connect(chat, SIGNAL(allMessagesRead(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
-    
+
     if (_user->slug().isEmpty())
         Q_TEST(connect(chat, &Conversation::usersUpdated, this, &Message::_updateUser));
 }
@@ -108,7 +108,7 @@ void Message::read()
     _request->put();
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_markRead(QJsonObject))));
-    
+
     _initRequest();
 }
 
@@ -128,14 +128,22 @@ void Message::_init(const QJsonObject& data)
 
     _user = _chat->user(_userId);
     Q_ASSERT(_user);
-    
+
+    auto type = data.value("type").toString();
+    if (type == "Message")
+        _type = NormalMessage;
+    else if (type == "SystemMessage")
+        _type = SystemMessage;
+    else
+        _type = UnknownMessageType;
+
     auto imageAttach = data.value("attachments").toArray();
     delete _attachedImagesModel;
-    if (imageAttach.isEmpty())
+    if (_type == SystemMessage || imageAttach.isEmpty())
         _attachedImagesModel = nullptr;
     else
-        _attachedImagesModel = new AttachedImagesModel(&imageAttach, this);
-        
+        _attachedImagesModel = new AttachedImagesModel(imageAttach, this);
+
     _correctHtml();
     _setTruncatedText();
 
@@ -189,10 +197,10 @@ void Message::_updateUser()
         disconnect(_chat, &Conversation::usersUpdated, this, &Message::_updateUser);
         return;
     }
-    
+
     _user = _chat->user(_userId);
     emit userUpdated();
-    
+
     Q_ASSERT(_user);
 
     if (!_user->slug().isEmpty())

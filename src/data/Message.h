@@ -40,10 +40,19 @@ class Message: public MessageBase
     Q_PROPERTY(int      recipientId     MEMBER _recipientId    NOTIFY updated)
     Q_PROPERTY(int      conversationId  MEMBER _conversationId NOTIFY updated)
     Q_PROPERTY(User*    replyTo         READ replyTo           NOTIFY updated)
-    
+
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel MEMBER _attachedImagesModel NOTIFY updated)
-    
+
 public:
+    enum MessageType
+    {
+        UnknownMessageType,
+        NormalMessage,
+        SystemMessage
+    }
+
+    Q_ENUMS(MessageType)
+
     Message(QObject* parent = nullptr);
     Message(const QJsonObject& data, Conversation* chat, QObject* parent = nullptr);
     ~Message();
@@ -67,13 +76,14 @@ private:
     void _updateRead(const QJsonObject& data);
     void _markRemoved(const QJsonObject& data);
 
-    int     _userId;
-    int     _recipientId;
-    int     _conversationId;
-    User*   _replyTo; //-V122
-    int     _replyUserId;
+    int         _userId;
+    int         _recipientId;
+    int         _conversationId;
+    User*       _replyTo; //-V122
+    int         _replyUserId;
+    MessageType _type;
 
     Conversation* _chat; //-V122
-    
+
     AttachedImagesModel* _attachedImagesModel; //-V122
 };
