@@ -41,10 +41,11 @@ class Tasty : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool isAuthorized         READ isAuthorized         NOTIFY authorizedChanged)
-    Q_PROPERTY(int  unreadChats          READ unreadChats          NOTIFY unreadChatsChanged)
-    Q_PROPERTY(int  unreadNotifications  READ unreadNotifications  NOTIFY unreadNotificationsChanged)
-    Q_PROPERTY(int  unreadFriendsEntries READ unreadFriendsEntries NOTIFY unreadFriendsEntriesChanged)
+    Q_PROPERTY(bool  isAuthorized         READ isAuthorized         NOTIFY authorizedChanged)
+    Q_PROPERTY(int   unreadChats          READ unreadChats          NOTIFY unreadChatsChanged)
+    Q_PROPERTY(int   unreadNotifications  READ unreadNotifications  NOTIFY unreadNotificationsChanged)
+    Q_PROPERTY(int   unreadFriendsEntries READ unreadFriendsEntries NOTIFY unreadFriendsEntriesChanged)
+    Q_PROPERTY(User* me                   READ me                   NOTIFY authorizedChanged)
 
 public:
     explicit Tasty();

@@ -131,8 +131,6 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
         $$PWD/../../android/libssl.so
 }
 
-DEFINES += BUILDDATE=\\\"$$system("date +%d.%m.%Y")\\\"
-
 #unix:{
 #    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/
 #    INCLUDEPATH += /home/binque/.Qt5/5.7/gcc_64/include/QtConcurrent/

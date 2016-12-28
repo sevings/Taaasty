@@ -42,10 +42,20 @@ AvailableTlogsModel::AvailableTlogsModel(QObject* parent)
     source->setMode(FlowsModel::AvailableMode);
     setSourceModel(source);
 
+    QPointer<AvailableTlogsModel> that(this);
     Q_TEST(connect(source, &QAbstractItemModel::rowsAboutToBeInserted,
-        this, &QAbstractItemModel::rowsAboutToBeInserted));
+        [that](const QModelIndex& parent, int start, int end)
+        {
+            if (that)
+                that->beginInsertRows(parent, start+1, end+1);
+        });
+
     Q_TEST(connect(source, &QAbstractItemModel::rowsInserted,
-        this, &QAbstractItemModel::rowsInserted));
+        [that](const QModelIndex& parent, int start, int end)
+        {
+            if (that)
+                that->endInsertRows();
+        });
 
     Q_TEST(connect(source, &QAbstractItemModel::rowsInserted,
         this, &AvailableTlogsModel::flowsLoaded));
@@ -100,7 +110,10 @@ QVariant AvailableTlogsModel::data(const QModelIndex& index, int role) const
         if (role == Qt::UserRole)
             return 0;
         if (role == Qt::UserRole + 1)
-            return pTasty->me()->name();
+        {
+            auto me = pTasty->me();
+            return me && !me->name().isEmpty() ? me->name() : "В мой тлог";
+        }
         return QVariant();
     }
 

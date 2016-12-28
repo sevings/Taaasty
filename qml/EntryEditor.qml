@@ -324,6 +324,8 @@ Pane {
                         rightMargin: 1.5 * mm
                     }
                     visible: back.entryType != TlogEntry.AnonymousEntry && count > 1
+                    textRole: "name"
+                    font.pixelSize: window.fontSmaller
                     model: AvailableTlogsModel {
                         onFlowsLoaded: {
                             if (whereBox.currentIndex < 0)
@@ -337,12 +339,25 @@ Pane {
                         highlighted: whereBox.highlightedIndex === index
                         font.pixelSize: window.fontSmaller
                     }
-                    textRole: "name"
                     readonly property int tlog: model.indexTlog(currentIndex)
-                    font.pixelSize: window.fontSmaller
+                    property bool tlogSet: false
                     function setLastTlog() {
+                        if (tlogSet)
+                            return;
+
                         var last = Settings.lastPostingTlog;
-                        whereBox.currentIndex = whereBox.model.tlogIndex(last);
+                        var i = whereBox.model.tlogIndex(last);
+                        if (i < 0)
+                            return;
+
+                        whereBox.currentIndex = i;
+                        tlogSet = true;
+                    }
+                    onPressedChanged: {
+                        editMenu.hideMenu();
+                    }
+                    onActivated: {
+                        tlogSet = true;
                     }
                 }
             }

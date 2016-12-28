@@ -19,6 +19,7 @@
  */
 
 import QtQuick 2.7
+import org.binque.taaasty 1.0
 
 Pane {
     id: back
@@ -55,12 +56,13 @@ Pane {
                 right: parent.right
             }
             onLinkActivated: back.openLink(link)
-            text: '<h3>Привет, <a href="http://taaasty.com/~' + Settings.iserId + '">' + Settings.login + '</a>!</h3>'
+            text: '<style type="text/css"> h1, p { margin-top: 5; margin-bottom: 5 } </style>'
+                + '<h1>Привет, <a href="http://taaasty.com/~' + Settings.iserId + '">' + (Tasty.me ? Tasty.me.name : Settings.login) + '</a>!</h1>'
                 + '<p>Здорово, что ты пользуешься альтернативным клиентом Тейсти.</p>'
                 + '<p>Если у тебя есть вопросы или пожелания по работе приложения, <a href="help">можешь посмотреть здесь</a>.</p>'
                 + '<p>Чтобы быть в курсе последних изменений, <a href="http://taaasty.com/~1431729">подписывайся на поток</a>.</p>'
                 + '<p>И если тебе нравится приложение, <a href="https://play.google.com/store/apps/details?id=org.binque.taaasty">не забудь оставить отзыв</a>.</p>'
-                + '<p>Приятного использования!</p>'
+                + '<p>Приятно провести время!</p>'
         }
     }
 }
