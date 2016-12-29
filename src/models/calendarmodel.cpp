@@ -35,6 +35,8 @@
 CalendarModel::CalendarModel(QObject* parent)
     : TastyListModel(parent)
     , _tlog(0)
+    , _order(NewestFirst)
+    , _ratingsLoaded(false)
 {
     qDebug() << "CalendarModel";
 }
@@ -68,23 +70,32 @@ QVariant CalendarModel::data(const QModelIndex &index, int role) const
 bool CalendarModel::canFetchMore(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
-    
+
     return _tlog > 0 && _calendar.isEmpty() && !isLoading();
 }
 
 
 
-void CalendarModel::fetchMore(const QModelIndex& parent) 
+void CalendarModel::fetchMore(const QModelIndex& parent)
 {
     if (isLoading() || !canFetchMore(parent))
         return;
-    
+
     QString url = QString("v1/tlog/%1/calendar.json").arg(_tlog);
     _loadRequest = new ApiRequest(url);
-    
+
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
 
     _initLoad();
+}
+
+
+
+QHash<int, QByteArray> CalendarModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[Qt::UserRole] = "entry";
+    return roles;
 }
 
 
@@ -95,7 +106,7 @@ void CalendarModel::setTlog(int tlog)
         return;
 
     _tlog = tlog;
-    
+
     beginResetModel();
 
     qDeleteAll(_calendar);
@@ -103,7 +114,7 @@ void CalendarModel::setTlog(int tlog)
     _firstMonthEntries.clear();
 
     endResetModel();
-    
+
     fetchMore(QModelIndex());
 }
 
@@ -122,7 +133,7 @@ int CalendarModel::lastEntryId() const
 CalendarEntry* CalendarModel::at(int row) const
 {
     Q_ASSERT(row >= 0 && row < _calendar.size());
-    
+
     return _calendar.at(row);
 }
 
@@ -136,11 +147,32 @@ CalendarEntry* CalendarModel::firstMonthEntry(QString month) const
 
 
 
-QHash<int, QByteArray> CalendarModel::roleNames() const
+CalendarModel::SortOrder CalendarModel::sortOrder() const
 {
-    QHash<int, QByteArray> roles;
-    roles[Qt::UserRole] = "entry";
-    return roles;
+    return _sorting;
+}
+
+
+
+void CalendarModel::sort(CalendarModel::SortOrder order)
+{
+    if (order == _order)
+        return;
+
+    _order = order;
+    emit sortOrderChanged();
+
+    _sort();
+}
+
+
+
+void CalendarModel::loadMore()
+{
+    if (_calendar.isEmpty())
+        fetchMore(QModelIndex());
+    else if (_order == BestFirst && !_ratingsLoaded)
+        _loadRatings();
 }
 
 
@@ -163,6 +195,7 @@ void CalendarModel::_setCalendar(const QJsonObject& data)
             }
 
             _calendar << entry;
+            _idEntries.insert(entry->id(), entry);
 
             if (!_firstMonthEntries.contains(entry->month()))
                 _firstMonthEntries.insert(entry->month(), entry);
@@ -171,5 +204,93 @@ void CalendarModel::_setCalendar(const QJsonObject& data)
 
     endResetModel();
 
+    if (_order != NewestFirst)
+        _sort();
+
     emit loaded();
+}
+
+
+
+void CalendarModel::_setRatings(const QJsonArray& data)
+{
+    foreach (auto rating, data)
+    {
+        auto id = rating.toObject().value("entry_id").toInt();
+        auto entry = _idEntries.value(id);
+        Q_ASSERT(entry);
+        if (!entry)
+            continue;
+
+        entry->rating()->init(rating.toObject());
+    }
+
+    _ratingsLoaded = true;
+    _sort();
+}
+
+
+
+void CalendarModel::_loadRatings()
+{
+    QString url("v1/ratings.json?ids=");
+    url.reserve(_calendar.size() * 9 + 20);
+    for (auto entry: _calendar)
+        url += QString("%1,").arg(entry->id());
+    url.remove(url.size() - 1, 1);
+
+    _loadRequest = new ApiRequest(url);
+    _loadRequest->get();
+
+    Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
+
+    _initLoad();
+}
+
+
+
+void CalendarModel::_sort()
+{
+    if (_order == BestFirst && !_ratingsLoaded)
+    {
+        _loadRatings();
+        return;
+    }
+
+    beginResetModel();
+
+#define SORT_CALENDAR \
+    std::sort(_calendar.begin(), _calendar.end(), \
+              [](const CalendarEntry* left, const CalendarEntry* right)
+
+    switch (_order)
+    {
+        case NewestFirst:
+            SORT_CALENDAR
+            {
+                return left->date() > right->date();
+            });
+            break;
+        case OldestFirst:
+            SORT_CALENDAR
+            {
+                return left->date() < right->date();
+            });
+            break;
+        case BestFirst:
+            SORT_CALENDAR
+            {
+                return left->rating()->votes() > right->rating()->votes();
+            });
+            break;
+        default:
+            qDebug() << "Unknown calendar sorting order:" << _order;
+    }
+
+    _firstMonthEntries.clear();
+    for (auto entry: _calendar)
+        if (!_firstMonthEntries.contains(entry->month()))
+            _firstMonthEntries.insert(entry->month(), entry);
+
+    endResetModel();
 }

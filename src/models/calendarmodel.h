@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QHash>
 
 #include "tastylistmodel.h"
@@ -37,13 +38,25 @@ class CalendarModel : public TastyListModel
 {
     Q_OBJECT
 
+    Q_PROPERTY(SortOrder sortOrder READ sortOrder WRITE sort NOTIFY sortOrderChanged)
+
 public:
+    enum SortOrder
+    {
+        NewestFirst,
+        OldestFirst,
+        BestFirst
+    };
+
+    Q_ENUMS(SortOrder)
+
     CalendarModel(QObject* parent = nullptr);
 
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     virtual bool canFetchMore(const QModelIndex& parent) const override;
     virtual void fetchMore(const QModelIndex& parent) override;
+    virtual QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE void setTlog(int tlog);
 
@@ -53,19 +66,30 @@ public:
 
     Q_INVOKABLE CalendarEntry* firstMonthEntry(QString month) const;
 
+    SortOrder sortOrder() const;
+    void sort(SortOrder order);
+
 signals:
     void loaded();
+    void sortOrderChanged();
 
-protected:
-    QHash<int, QByteArray> roleNames() const override;
+public slots:
+    virtual void loadMore() override();
 
 private slots:
     void _setCalendar(const QJsonObject& data);
+    void _setRatings(const QJsonArray& data);
 
 private:
+    void _loadRatings();
+    void _sort();
+
     QList<CalendarEntry*>           _calendar;
+    QHash<int, CalendarEntry*>      _idEntries;
     QHash<QString, CalendarEntry*>  _firstMonthEntries;
     int                             _tlog;
+    SortOrder                       _order;
+    bool                            _ratingsLoaded;
 };
 
 #endif // CALENDARMODEL_H

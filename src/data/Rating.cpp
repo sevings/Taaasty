@@ -112,6 +112,13 @@ int Rating::bayesRating() const
 
 
 
+int Rating::votes() const
+{
+    return _votes;
+}
+
+
+
 void Rating::setId(int entryId)
 {
     if (_id == entryId)
@@ -212,7 +219,7 @@ void Rating::init(const QJsonObject& data)
     _isVoted    = data.value("is_voted").toBool();
     _isVotable  = data.value("is_voteable").toBool() && (!_parent || (_parent->isVotable()
             && _parent->type() != EntryBase::AnonymousEntry
-            && _parent->author()->id() != Tasty::instance()->settings()->userId()));
+            && _parent->author()->id() != pTasty->settings()->userId()));
 
     emit dataChanged();
     emit voteChanged();

@@ -54,6 +54,7 @@ public:
     void reCalcBayes();
 
     int bayesRating() const;
+    int votes() const;
 
     void setId(int entryId);
     void update();

@@ -590,6 +590,30 @@ Q.Drawer {
                          && page.tlog.hisRelationship !== Tlog.Ignored
             }
 
+            // CALENDAR SECTION
+            MenuItem {
+                text: 'Сначала новые'
+                onTriggered: {
+                    page.sortOrder = CalendarModel.NewestFirst
+                    drawer.close();
+                }
+                highlighted: page.sortOrder == CalendarModel.NewestFirst
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isCalendarView === true
+            }
+            MenuItem {
+                text: 'Сначала лучшие'
+                onTriggered: {
+                    page.sortOrder = CalendarModel.BestFirst
+                    drawer.close();
+                }
+                highlighted: page.sortOrder == CalendarModel.BestFirst
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isCalendarView === true
+            }
+
             // ENTRY EDITOR SECTION
             MenuItem {
                 text: 'Текст'

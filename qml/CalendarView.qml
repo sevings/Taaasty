@@ -24,7 +24,10 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
+    hasMenu: true
     readonly property int tlogId: tlog.tlogId
+    property int sortOrder: CalendarModel.NewestFirst
+    readonly property bool isCalendarView: true
     property Tlog tlog: Tlog {
 
     }
@@ -46,14 +49,14 @@ Pane {
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
         visible: count > 0
-//        interactive: back.x == 0
         model: CalendarModel {
             id: calendarModel
+            sortOrder: back.sortOrder
             Component.onCompleted: {
                 setTlog(back.tlogId);
             }
         }
-        section.property: 'entry.month'
+        section.property: back.sortOrder == CalendarModel.NewestFirst ? 'entry.month' : ''
         section.criteria: ViewSection.FullString
         section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
         section.delegate: Rectangle {
@@ -118,7 +121,7 @@ Pane {
                 anchors {
                     top: entryTitle.bottom
                     left: parent.left
-                    right: comments.left
+                    right: rating.visible ? rating.left : comments.left
                 }
                 text: entry.createdAt
                 color: window.secondaryTextColor
@@ -127,9 +130,20 @@ Pane {
                 wrapMode: Text.NoWrap
             }
             ThemedText {
+                id: rating
+                anchors {
+                    top: entryTitle.bottom
+                    horizontalCenter: parent.horizontalCenter
+                }
+                text: '+ ' + entry.rating.votes
+                font.pixelSize: window.fontSmallest
+                visible: back.sortOrder == CalendarModel.BestFirst && entry.rating.votes
+            }
+            ThemedText {
                 id: comments
                 anchors {
                     top: entryTitle.bottom
+                    left: rating.visible ? rating.right : undefined
                     right: parent.right
                 }
                 text: entry.commentsCount + ' коммент.'

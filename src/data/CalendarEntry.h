@@ -26,6 +26,7 @@
 #include "../defines.h"
 
 class EntryBase;
+class Rating;
 
 
 
@@ -54,9 +55,11 @@ public:
 
     EntryPtr full();
     EntryBase* base();
+    Rating* rating(); // rating should be inited manually
 
     int     id() const;
-    QString month() const;
+    QString month() const; // year, standalone month
+    QString date() const; // yyyy-MM-dd
 
 private:
     int     _id;
@@ -72,4 +75,5 @@ private:
 
     EntryPtr   _entry;
     EntryBase* _base; //-V122
+    Rating*    _rating; //-V122
 };

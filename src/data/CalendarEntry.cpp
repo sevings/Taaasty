@@ -25,6 +25,7 @@
 #include <QDate>
 
 #include "Entry.h"
+#include "Rating.h"
 
 #include "../tasty.h"
 #include "../tastydatacache.h"
@@ -38,6 +39,7 @@ CalendarEntry::CalendarEntry(QObject* parent)
     , _commentsCount(0)
     , _isFlow(false)
     , _base(nullptr)
+    , _rating(nullptr)
 {
 
 }
@@ -46,8 +48,8 @@ CalendarEntry::CalendarEntry(QObject* parent)
 
 CalendarEntry::CalendarEntry(const QJsonObject& data, QObject *parent)
     : QObject(parent)
-    , _entry(nullptr)
     , _base(nullptr)
+    , _rating(nullptr)
 {
     _id              = data.value("entry_id").toInt();
     auto d = data.value("created_at").toString();
@@ -103,6 +105,19 @@ EntryBase* CalendarEntry::base()
 
 
 
+Rating* CalendarEntry::rating()
+{
+    if (_entry)
+        return _entry->rating();
+
+    if (!_rating)
+        _rating = new Rating(this);
+
+    return _rating;
+}
+
+
+
 int CalendarEntry::id() const
 {
     return _id;
@@ -115,3 +130,9 @@ QString CalendarEntry::month() const
     return _month;
 }
 
+
+
+QString CalendarEntry::date() const
+{
+    return _date;
+}
