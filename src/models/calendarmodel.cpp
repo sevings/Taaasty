@@ -27,6 +27,7 @@
 
 #include "../defines.h"
 
+#include "../data/Rating.h"
 #include "../data/CalendarEntry.h"
 #include "../apirequest.h"
 
@@ -149,7 +150,7 @@ CalendarEntry* CalendarModel::firstMonthEntry(QString month) const
 
 CalendarModel::SortOrder CalendarModel::sortOrder() const
 {
-    return _sorting;
+    return _order;
 }
 
 
@@ -240,7 +241,6 @@ void CalendarModel::_loadRatings()
     url.remove(url.size() - 1, 1);
 
     _loadRequest = new ApiRequest(url);
-    _loadRequest->get();
 
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
 

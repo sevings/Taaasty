@@ -33,9 +33,7 @@
 #include "../reposter.h"
 
 #include "../data/Rating.h"
-#include "../data/User.h"
 #include "../data/Tlog.h"
-#include "../data/Flow.h"
 
 
 
@@ -585,7 +583,7 @@ void FeedModel::_prepend(const EntryPtr& entry)
     if (!_allEntries.isEmpty())
         _allEntries.insert(_allFixedCount, entry);
 
-    _idEntries.insert(id, entry);
+    _idEntries.insert(entry->id(), entry);
 
     endInsertRows();
 }

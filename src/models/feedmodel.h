@@ -161,7 +161,7 @@ private:
     int                  _page;
     QString              _prevDate;
 
-    Reposter*            _reposter;
+    Reposter*            _reposter; //-V122
 };
 
 #endif // FEEDMODEL_H

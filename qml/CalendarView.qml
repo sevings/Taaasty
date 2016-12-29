@@ -56,9 +56,12 @@ Pane {
                 setTlog(back.tlogId);
             }
         }
-        section.property: back.sortOrder == CalendarModel.NewestFirst ? 'entry.month' : ''
+        readonly property bool showSection: back.sortOrder == CalendarModel.NewestFirst
+        section.property: showSection ? 'entry.month' : ''
         section.criteria: ViewSection.FullString
-        section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
+        section.labelPositioning: showSection ?  ViewSection.InlineLabels
+                                                | ViewSection.CurrentLabelAtStart
+                                              : ViewSection.InlineLabels
         section.delegate: Rectangle {
             color: sectionMouse.pressed ? Material.accent : Material.primary
             width: window.width
@@ -132,11 +135,11 @@ Pane {
             ThemedText {
                 id: rating
                 anchors {
-                    top: entryTitle.bottom
+                    verticalCenter: date.verticalCenter
                     horizontalCenter: parent.horizontalCenter
                 }
                 text: '+ ' + entry.rating.votes
-                font.pixelSize: window.fontSmallest
+                font.pixelSize: window.fontSmaller
                 visible: back.sortOrder == CalendarModel.BestFirst && entry.rating.votes
             }
             ThemedText {
@@ -149,6 +152,7 @@ Pane {
                 text: entry.commentsCount + ' коммент.'
                 font.pixelSize: window.fontSmallest
                 color: window.secondaryTextColor
+                horizontalAlignment: Text.AlignRight
             }
         }
     }

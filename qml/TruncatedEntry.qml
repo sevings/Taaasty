@@ -38,7 +38,7 @@ Item {
         }
         user: entry ? entry.author : null
         popBody: truncEntry.popBody
-        visible: entry && entry.type !== 'anonymous'
+        visible: entry && entry.type != TlogEntry.AnonymousEntry
         acceptClick: !popBody || popBody.x <= 0
         onClicked: {
             avatarClicked();
@@ -74,7 +74,7 @@ Item {
         elide: Text.ElideRight
         wrapMode: Text.NoWrap
         horizontalAlignment: Text.AlignLeft
-        visible: entry && entry.type !== 'anonymous'
+        visible: entry && entry.type != TlogEntry.AnonymousEntry
     }
     ThemedText {
         id: date
@@ -155,7 +155,7 @@ Item {
         font.pixelSize: entry && entry.truncatedText.length > 0 ? window.fontBigger
                                                                 : window.fontNormal
         textFormat: Text.RichText
-        visible: entry && entry.type !== 'quote'
+        visible: entry && entry.type != TlogEntry.QuoteEntry
         height: entry ? (visible && entry.truncatedTitle.length > 0
                          ? contentHeight : entry.truncatedText.length > 0 ? -2 * mm : 0) : 0
     }
@@ -166,7 +166,7 @@ Item {
             top: entryTitle.bottom
             left: parent.left
             right: parent.right
-            leftMargin: entry && entry.type === 'quote' ? 5 * mm : 1.5 * mm
+            leftMargin: entry && entry.type == TlogEntry.QuoteEntry ? 5 * mm : 1.5 * mm
             rightMargin: anchors.leftMargin
         }
         textFormat: Text.RichText

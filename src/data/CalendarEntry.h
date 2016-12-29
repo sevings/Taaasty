@@ -46,6 +46,7 @@ class CalendarEntry: public QObject
     Q_PROPERTY(bool    isFlow         MEMBER _isFlow         CONSTANT)
 
     Q_PROPERTY(Entry*  fullEntry      READ fullEntry         CONSTANT)
+    Q_PROPERTY(Rating* rating         READ rating            CONSTANT)
 
 public:
     CalendarEntry(QObject* parent = nullptr);
@@ -55,7 +56,7 @@ public:
 
     EntryPtr full();
     EntryBase* base();
-    Rating* rating(); // rating should be inited manually
+    Rating* rating() const; // rating should be inited manually
 
     int     id() const;
     QString month() const; // year, standalone month

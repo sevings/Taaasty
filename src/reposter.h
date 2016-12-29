@@ -44,10 +44,14 @@ public slots:
     void repost(int entryId);
     void unrepost(int entryId);
 
+private slots:
+    void _addRepost(const QJsonObject& data);
+    void _removeRepost(const QJsonObject& data);
+
 private:
     int _tlogId() const;
 
-    FeedModel*    _model;
+    FeedModel*    _model; //-V122
     ApiRequestPtr _request;
     int           _entryId;
 };

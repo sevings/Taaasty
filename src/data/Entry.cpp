@@ -45,6 +45,7 @@
 EntryBase::EntryBase(QObject* parent)
     : TastyData(parent)
     , _author(nullptr)
+    , _type(UnknownEntryType)
 {
 
 }
@@ -83,15 +84,15 @@ void EntryBase::_initBase(const QJsonObject& data)
         _author = new Author(this);
 
     auto type = data.value("type").toString();
-    if (type == "image")
+    if (     type == "image"     || type == "ImageEntry")
         _type = ImageEntry;
-    else if (type == "quote")
+    else if (type == "quote"     || type == "QuoteEntry")
         _type = QuoteEntry;
-    else if (type == "video")
+    else if (type == "video"     || type == "VideoEntry")
         _type = VideoEntry;
-    else if (type == "text")
+    else if (type == "text"      || type == "TextEntry")
         _type = TextEntry;
-    else if (type == "anonymous")
+    else if (type == "anonymous" || type == "AnonymousEntry")
         _type = AnonymousEntry;
     else
         _type = UnknownEntryType;
@@ -288,8 +289,11 @@ void Entry::init(const QJsonObject& data)
     _source          = data.value("source").toString(); // quote author
 
     delete _media;
-    _media           =  _type == "video" ? new Media(data.value("iframely").toObject(), this)
-                                         : nullptr; // music?
+    if (_type == VideoEntry)
+        _media = new Media(data.value("iframely").toObject(), this);
+    else
+        _media = nullptr;
+
 //    _imagePreview    = data.value("preview_image").toObject();
 
     QRegularExpression wordRe("\\s[^\\s]+\\s");

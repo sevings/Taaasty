@@ -22,6 +22,8 @@
 #define DEFINES_H
 
 #include <QDebug>
+#include <QObject>
+#include <QPointer>
 #include <QSharedPointer>
 
 #ifdef QT_DEBUG

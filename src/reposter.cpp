@@ -25,6 +25,8 @@
 #include "models/feedmodel.h"
 
 #include "data/Entry.h"
+#include "data/Tlog.h"
+#include "data/Flow.h"
 
 #include "tasty.h"
 #include "tastydatacache.h"
@@ -96,11 +98,11 @@ bool Reposter::isUnrepostable(int entryId) const
 
     int myId = pTasty->settings()->userId();
 
-    if (_model->mode() == MyTlogMode
+    if (_model->mode() == FeedModel::MyTlogMode
             && entry->tlog()->id() == myId)
         return false;
 
-    if (_model->mode() != TlogMode)
+    if (_model->mode() != FeedModel::TlogMode)
         return false;
 
     if (!_model->tlog() || !_model->tlog()->flow()
@@ -148,7 +150,7 @@ void Reposter::unrepost(int entryId)
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->deleteResource();
 
-    Q_TEST(connect(_repostRequest, SIGNAL(success(QJsonObject)), this, SLOT(_removeRepost(QJsonObject))));
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_removeRepost(QJsonObject))));
 }
 
 
@@ -161,7 +163,7 @@ int Reposter::_tlogId() const
 
 
 
-void FeedModel::_addRepost(const QJsonObject& data)
+void Reposter::_addRepost(const QJsonObject& data)
 {
     emit pTasty->info("Репост добавлен");
 
@@ -177,7 +179,7 @@ void FeedModel::_addRepost(const QJsonObject& data)
 
 
 
-void FeedModel::_removeRepost(const QJsonObject& data)
+void Reposter::_removeRepost(const QJsonObject& data)
 {
     if (data.value("status").toString() == "success")
     {

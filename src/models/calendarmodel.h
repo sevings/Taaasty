@@ -74,7 +74,7 @@ signals:
     void sortOrderChanged();
 
 public slots:
-    virtual void loadMore() override();
+    virtual void loadMore() override;
 
 private slots:
     void _setCalendar(const QJsonObject& data);

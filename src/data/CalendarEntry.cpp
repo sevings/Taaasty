@@ -49,7 +49,7 @@ CalendarEntry::CalendarEntry(QObject* parent)
 CalendarEntry::CalendarEntry(const QJsonObject& data, QObject *parent)
     : QObject(parent)
     , _base(nullptr)
-    , _rating(nullptr)
+    , _rating(new Rating(this))
 {
     _id              = data.value("entry_id").toInt();
     auto d = data.value("created_at").toString();
@@ -105,13 +105,10 @@ EntryBase* CalendarEntry::base()
 
 
 
-Rating* CalendarEntry::rating()
+Rating* CalendarEntry::rating() const
 {
     if (_entry)
         return _entry->rating();
-
-    if (!_rating)
-        _rating = new Rating(this);
 
     return _rating;
 }
