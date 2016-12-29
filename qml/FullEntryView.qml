@@ -33,7 +33,7 @@ Pane {
     }
     readonly property Tlog tlog: entry.tlog
     property CommentsModel commentsModel: entry.comments
-    property bool showProfiles: entry.type !== 'anonymous'
+    property bool showProfiles: entry.type != TlogEntry.AnonymousEntry
     property bool scrollToBottom: false
     property bool scrollToFirst: false
     readonly property bool isFullEntryView: true
@@ -247,7 +247,7 @@ Pane {
                     top: fullTitle.bottom
                     left: parent.left
                     right: parent.right
-                    leftMargin: entry.type === 'quote' ? 5 * mm : 1.5 * mm
+                    leftMargin: entry.type == TlogEntry.QuoteEntry ? 5 * mm : 1.5 * mm
                     rightMargin: anchors.leftMargin
                 }
                 textFormat: Text.RichText

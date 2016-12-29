@@ -155,7 +155,7 @@ void Bayes::saveDb()
                 query.addBindValue(word);
                 query.addBindValue(_wordCounts[type][word].count);
                 Q_TEST(query.exec());
-                
+
                 _wordCounts[type][word].changed = false;
             }
 
@@ -308,7 +308,7 @@ int Bayes::_calcEntry(const EntryBase* entry, QHash<QString, FeatureCount>& word
 
     const auto author = entry->author();
 
-    ++wordCounts[QString(".type_%1").arg(entry->type())];
+    ++wordCounts[QString(".type_%1").arg(entry->strType())];
     ++wordCounts[QString(".author_%1").arg(author->slug())];
 
     if (author->isFemale())

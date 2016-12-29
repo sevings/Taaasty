@@ -211,7 +211,7 @@ void Rating::init(const QJsonObject& data)
     _rating     = data.value("rating").toInt();
     _isVoted    = data.value("is_voted").toBool();
     _isVotable  = data.value("is_voteable").toBool() && (!_parent || (_parent->isVotable()
-            && _parent->type() != "anonymous"
+            && _parent->type() != EntryBase::AnonymousEntry
             && _parent->author()->id() != Tasty::instance()->settings()->userId()));
 
     emit dataChanged();

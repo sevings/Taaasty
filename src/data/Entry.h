@@ -44,14 +44,27 @@ class EntryBase: public TastyData
     Q_OBJECT
 
 public:
+    enum EntryType
+    {
+        UnknownEntryType,
+        ImageEntry,
+        QuoteEntry,
+        VideoEntry,
+        TextEntry,
+        AnonymousEntry
+    };
+
+    Q_ENUM(EntryType)
+
     EntryBase(QObject* parent = nullptr);
 
     void load(int id);
 
-    Author* author() const;
-    QString text() const;
-    QString title() const;
-    QString type() const;
+    Author*     author() const;
+    QString     text() const;
+    QString     title() const;
+    EntryType   type() const;
+    QString     strType() const;
 
     int entryId() const { return _id; }
 
@@ -67,7 +80,7 @@ protected:
     Author*     _author; //-V122
     QString     _text;
     QString     _title;
-    QString     _type;
+    EntryType   _type;
 };
 
 
@@ -79,7 +92,7 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated) //! \todo remove
     Q_PROPERTY(QString     createdAt      MEMBER _createdAt         NOTIFY updated)
     Q_PROPERTY(QString     url            MEMBER _url               NOTIFY updated)
-    Q_PROPERTY(QString     type           MEMBER _type              NOTIFY updated) //! \todo enum
+    Q_PROPERTY(EntryType   type           MEMBER _type              NOTIFY updated)
     Q_PROPERTY(bool        isVotable      READ   isVotable          NOTIFY updated)
     Q_PROPERTY(bool        isWatchable    MEMBER _isWatchable       NOTIFY updated)
     Q_PROPERTY(bool        isWatched      MEMBER _isWatched         NOTIFY watchedChanged)
@@ -107,17 +120,6 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(AttachedImagesModel* attachedImagesModel READ attachedImagesModel NOTIFY updated)
 
 public:
-    enum EntryType
-    {
-        ImageEntry,
-        QuoteEntry,
-        VideoEntry,
-        TextEntry,
-        AnonymousEntry
-    };
-
-    Q_ENUM(EntryType)
-
     Entry();
     Entry(Conversation* chat);
     ~Entry();

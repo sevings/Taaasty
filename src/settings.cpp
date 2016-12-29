@@ -349,7 +349,7 @@ void Settings::setLoadImagesOverWifi(bool load)
 int Settings::maxLoadImageSize() const
 {
     int def = autoloadImages() ? -1 : 0;
-    
+
     return _settings.value("autoload_images_max_size", def).toInt();
 }
 
@@ -359,7 +359,7 @@ void Settings::setMaxLoadImageSize(int size)
 {
     if (size == maxLoadImageSize())
         return;
-        
+
     _settings.setValue("autoload_images_max_size", size);
 
     emit maxLoadImageSizeChanged(size);
@@ -597,7 +597,7 @@ void Settings::setLastPostingTlog(int tlog)
 
 quint8 Settings::lastEntryType() const
 {
-    return _settings.value("last_entry_type", Entry::TextEntry).value<quint8>();
+    return _settings.value("last_entry_type", EntryBase::TextEntry).value<quint8>();
 }
 
 

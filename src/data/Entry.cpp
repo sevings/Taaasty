@@ -82,7 +82,22 @@ void EntryBase::_initBase(const QJsonObject& data)
     else
         _author = new Author(this);
 
-    _type   = data.value("type").toString();
+    auto type = data.value("type").toString();
+    if (type == "image")
+        _type = ImageEntry;
+    else if (type == "quote")
+        _type = QuoteEntry;
+    else if (type == "video")
+        _type = VideoEntry;
+    else if (type == "text")
+        _type = TextEntry;
+    else if (type == "anonymous")
+        _type = AnonymousEntry;
+    else
+        _type = UnknownEntryType;
+
+    Q_ASSERT(_type != UnknownEntryType);
+
     _text   = data.value("text").toString().trimmed();
     _title  = data.value("title").toString().trimmed();
 
@@ -100,9 +115,30 @@ void EntryBase::_maybeError()
 
 
 
-QString EntryBase::type() const
+EntryBase::EntryType EntryBase::type() const
 {
     return _type;
+}
+
+
+
+QString EntryBase::strType() const
+{
+    switch (_type)
+    {
+    case ImageEntry:
+        return "image";
+    case QuoteEntry:
+        return "quote";
+    case VideoEntry:
+        return "video";
+    case TextEntry:
+        return "text";
+    case AnonymousEntry:
+        return "anonymous";
+    default:
+        return QString();
+    }
 }
 
 

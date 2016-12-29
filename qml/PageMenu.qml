@@ -61,7 +61,7 @@ Q.Drawer {
                          && page.entry.author
                          && page.entry.author.id > 0
                          && page.tlog.tlogId !== page.entry.author.id
-                         && page.entry.type !== 'anonymous'
+                         && page.entry.type != TlogEntry.AnonymousEntry
                 height: 6 * mm
                 width: parent.width
                 SmallAvatar {
@@ -87,7 +87,7 @@ Q.Drawer {
                          && !window.notifsShows
                          && tlog && tlog.tlogId > 0
                          && (!page.isFullEntryView
-                             || page.entry.type !== 'anonymous')
+                             || page.entry.type != TlogEntry.AnonymousEntry)
                 height: 6 * mm
                 width: parent.width
                 property Tlog tlog: page.isFullEntryView
@@ -306,7 +306,7 @@ Q.Drawer {
                 highlighted: window.friendActivity
                 visible: window.notifsShows
             }
-                        
+
             // MESSAGES SECTION
             MenuItem {
                 id: chatTopic
