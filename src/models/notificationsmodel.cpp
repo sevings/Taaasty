@@ -227,9 +227,22 @@ QHash<int, QByteArray> NotificationsModel::roleNames() const
 
 void NotificationsModel::_addItems(const QJsonObject& data)
 {
+    auto array = data.value("notifications").toArray();
+    QList<Notification*> notifs;
+    for (auto notifData: array)
+    {
+        auto notifObj = notifData.toObject();
+        auto id = notifObj.value("id").toInt();
+        if (_ids.contains(id))
+            continue;
+
+        auto notification = new Notification(notifObj, this);
+        notifs << notification;
+        _ids << id;
+    }
+
     int size = _notifs.size();
-    auto list = data.value("notifications").toArray();
-    if (list.isEmpty())
+    if (notifs.isEmpty())
     {
         _totalCount = size;
         emit hasMoreChanged();
@@ -238,15 +251,11 @@ void NotificationsModel::_addItems(const QJsonObject& data)
 
     _totalCount = data.value("total_count").toInt();
 
-    beginInsertRows(QModelIndex(), size, size + list.size() - 1);
+    beginInsertRows(QModelIndex(), size, size + notifs.size() - 1);
 
-    _notifs.reserve(size + list.size());
-    foreach(auto notif, list)
-    {
-        auto notification = new Notification(notif.toObject(), this);
-        _notifs.insert(size, notification);
-        _ids << notification->id(); //! \todo check existing ids
-    }
+    _notifs.reserve(size + notifs.size());
+    for (auto notif: notifs)
+        _notifs.insert(size, notif);
 
     endInsertRows();
 
