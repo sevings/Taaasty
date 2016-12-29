@@ -144,6 +144,7 @@ private slots:
 private:
     void _addAll(QList<EntryPtr>& all, int& from);
     bool _addSome(QList<EntryPtr>& all, int& from, int& allFrom);
+    void _prepend(const EntryPtr& entry);
     void _clear();
 
     void _setUrl(Mode mode);

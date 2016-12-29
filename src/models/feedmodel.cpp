@@ -631,7 +631,18 @@ void FeedModel::_setRatings(const QJsonArray& data)
 void FeedModel::_addRepost(const QJsonObject& data)
 {
     if (data.value("status").toString() == "success")
-        emit pTasty->info("Репост добавлен"); //! \todo add entry to feed
+    {
+        emit pTasty->info("Репост добавлен");
+
+        int id = data.value("id").toInt();
+        auto entry = pTasty->dataCache()->entry(id);
+        if (!entry)
+            entry = EntryPtr::create(nullptr);
+
+        entry->init(data);
+
+        _prepend(entry);
+    }
     else
     {
         emit pTasty->error(0, "При добавлении репоста произошла ошибка");
@@ -667,16 +678,7 @@ void FeedModel::_prependEntry(int id, int tlogId)
         && !(_mode == TlogMode && _tlog->id() == tlogId))
         return;
 
-    beginInsertRows(QModelIndex(), _fixedCount, _fixedCount);
-
-    _entries.insert(_fixedCount, entry);
-
-    if (!_allEntries.isEmpty())
-        _allEntries.insert(_allFixedCount, entry);
-
-    _idEntries.insert(id, entry);
-
-    endInsertRows();
+    _prepend(entry);
 }
 
 
@@ -740,6 +742,22 @@ bool FeedModel::_addSome(QList<EntryPtr>& all, int& from, int& allFrom)
     _addAll(some, from);
 
     return false;
+}
+
+
+
+void FeedModel::_prepend(const EntryPtr& entry)
+{
+    beginInsertRows(QModelIndex(), _fixedCount, _fixedCount);
+
+    _entries.insert(_fixedCount, entry);
+
+    if (!_allEntries.isEmpty())
+        _allEntries.insert(_allFixedCount, entry);
+
+    _idEntries.insert(id, entry);
+
+    endInsertRows();
 }
 
 
