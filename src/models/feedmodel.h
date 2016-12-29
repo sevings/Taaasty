@@ -134,13 +134,13 @@ private slots:
     void _resetOrReloadRatings();
     void _reloadRatings();
     void _setRatings(const QJsonArray& data);
-        
+
     void _addRepost(const QJsonObject& data);
     void _removeRepost(const QJsonObject& data);
 
     void _prependEntry(int id, int tlogId);
     void _removeEntry(int id);
-    
+
 private:
     void _addAll(QList<EntryPtr>& all, int& from);
     bool _addSome(QList<EntryPtr>& all, int& from, int& allFrom);
@@ -148,21 +148,21 @@ private:
 
     void _setUrl(Mode mode);
 
-    QList<EntryPtr> _entries;
-    QList<EntryPtr> _allEntries;
-    QSet<int>       _ids;
-    int             _fixedCount;
-    int             _allFixedCount;
+    QList<EntryPtr>      _entries;
+    QList<EntryPtr>      _allEntries;
+    QHash<int, EntryPtr> _idEntries;
+    int                  _fixedCount;
+    int                  _allFixedCount;
 
-    QString         _url;
-    Tlog*           _tlog; //-V122
-    Mode            _mode;
-    int             _lastEntry;
-    int             _minRating;
-    QString         _query;
-    QString         _tag;
-    int             _page;
-    QString         _prevDate;
+    QString              _url;
+    Tlog*                _tlog; //-V122
+    Mode                 _mode;
+    int                  _lastEntry;
+    int                  _minRating;
+    QString              _query;
+    QString              _tag;
+    int                  _page;
+    QString              _prevDate;
 
     ApiRequestPtr   _repostRequest;
 };

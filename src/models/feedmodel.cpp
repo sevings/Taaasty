@@ -312,7 +312,7 @@ bool FeedModel::showFixed() const
 
 bool FeedModel::isRepostable(int entryId) const
 {
-    if (_ids.contains(entryId))
+    if (_idEntries.contains(entryId))
         return false;
 
     auto entry = pTasty->dataCache()->entry(entryId);
@@ -345,7 +345,7 @@ bool FeedModel::isRepostable(int entryId) const
 
 bool FeedModel::isUnrepostable(int entryId) const
 {
-    if (!_ids.contains(entryId))
+    if (!_idEntries.contains(entryId))
         return false;
 
     auto entry = pTasty->dataCache()->entry(entryId);
@@ -354,23 +354,23 @@ bool FeedModel::isUnrepostable(int entryId) const
 
     if (entry->tlog()->id() == tlogId())
         return false;
-    
+
     if (!pTasty->me())
         return false;
-    
-    if (_mode == MyTlogMode 
+
+    if (_mode == MyTlogMode
             && pTasty->me()->id() == entry->tlog()->id())
         return false;
-              
+
     if (_mode != TlogMode)
         return false;
-    
+
     if (!_tlog->flow() || !_tlog->flow()->isWritable())
         return false;
-    
+
     if (pTasty->me()->id() == tlogId())
         return false;
-        
+
     return true;
 }
 
@@ -398,7 +398,7 @@ void FeedModel::repost(int entryId)
 
     int tlog = _mode == MyTlogMode ? (pTasty->me() ? pTasty->me()->id() : 0) : tlogId();
     auto url = QString("v1/reposts.json");
-    
+
     _repostRequest = new ApiRequest(url, ApiRequest::AllOptions);
     _repostRequest->addFormData("tlog_id", tlog);
     _repostRequest->addFormData("entry_id", entryId);
@@ -597,13 +597,13 @@ void FeedModel::_reloadRatings()
 
     QString url("v1/ratings.json?ids=");
     url.reserve(entries.size() * 9 + 20);
-    for (int i = 0; i < entries.size() - 1; i++)
-        url += QString("%1,").arg(entries.at(i)->entryId());
-    url += QString::number(entries.last()->entryId());
+    for (auto entry: entries)
+        url += QString("%1,").arg(entry->id());
+    url.remove(url.size() - 1, 1);
 
     auto request = new ApiRequest(url);
     request->get();
-    
+
     Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
 }
 
@@ -611,19 +611,18 @@ void FeedModel::_reloadRatings()
 
 void FeedModel::_setRatings(const QJsonArray& data)
 {
-    auto entries = _allEntries.isEmpty() ? _entries : _allEntries;
-    if (entries.isEmpty())
+    if (_idEntries.isEmpty())
         return;
 
     foreach (auto rating, data)
     {
         auto id = rating.toObject().value("entry_id").toInt();
-        foreach (auto entry, entries) //! \todo optimize
-            if (entry->entryId() == id)
-            {
-                entry->rating()->init(rating.toObject());
-                break;
-            }
+        auto entry = _idEntries.value(id);
+        Q_ASSERT(entry);
+        if (!entry)
+            continue;
+
+        entry->rating()->init(rating.toObject());
     }
 }
 
@@ -674,7 +673,7 @@ void FeedModel::_prependEntry(int id, int tlogId)
     if (!_allEntries.isEmpty())
         _allEntries.insert(_allFixedCount, entry);
 
-    _ids << id;
+    _idEntries.insert(id, entry);
 
     endInsertRows();
 }
@@ -689,7 +688,7 @@ void FeedModel::_removeEntry(int id)
             beginRemoveRows(QModelIndex(), i, i);
             auto entry = _entries.takeAt(i);
             _allEntries.removeOne(entry);
-            _ids.remove(id);
+            _idEntries.remove(id);
             endRemoveRows();
 
             break;
@@ -708,7 +707,7 @@ void FeedModel::_addAll(QList<EntryPtr>& all, int& from)
     foreach (auto e, all)
     {
         _entries.insert(from++, e);
-        _ids << e->id();
+        _idEntries.insert(e->id(), e);
     }
 
     endInsertRows();
@@ -748,7 +747,7 @@ void FeedModel::_clear()
 {
     _entries.clear();
     _allEntries.clear();
-    _ids.clear();
+    _idEntries.clear();
 
     _fixedCount = 0;
     _allFixedCount = 0;
