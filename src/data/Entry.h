@@ -139,6 +139,7 @@ public:
     Conversation* chat();
 
     bool      isVotable() const;
+    bool      isPrivate() const;
     bool      isFixed() const;
     QDateTime fixedAt() const;
     int       chatId() const;

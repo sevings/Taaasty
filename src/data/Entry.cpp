@@ -524,6 +524,13 @@ bool Entry::isVotable() const
 
 
 
+bool Entry::isPrivate() const
+{
+    return _isPrivate;
+}
+
+
+
 bool Entry::isFixed() const
 {
     return _isFixed;

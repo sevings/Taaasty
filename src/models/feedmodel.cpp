@@ -656,17 +656,18 @@ void FeedModel::_removeRepost(const QJsonObject& data)
 
 void FeedModel::_prependEntry(int id, int tlogId)
 {
-    if (!(tlogId == 0 && (_mode == MyTlogMode //! \todo || _mode == FriendsMode && not is private
-                          || (_mode == TlogMode && pTasty->me()
-                              && _tlog->id() == pTasty->me()->id())))
-            && !(tlogId == -1 && _mode == AnonymousMode))
-        return;
-
     auto entry = pTasty->dataCache()->entry(id);
+    Q_ASSERT(entry);
     if (!entry)
         return;
 
-    beginInsertRows(QModelIndex(), 0, 0);
+    if (!(tlogId == 0 && (_mode == MyTlogMode
+                          || (_mode == FriendsMode && !entry->isPrivate())))
+        && !(tlogId == -1 && _mode == AnonymousMode)
+        && !(_mode == TlogMode && _tlog->id() == tlogId))
+        return;
+
+    beginInsertRows(QModelIndex(), _fixedCount, _fixedCount);
 
     _entries.insert(_fixedCount, entry);
 
