@@ -48,6 +48,7 @@ SOURCES += src/main.cpp \
     src/models/tastylistmodel.cpp \
     src/texthandler.cpp \
     src/poster.cpp \
+    src/reposter.cpp \
     src/tastydatacache.cpp \
     src/models/uploadmodel.cpp \
     src/models/availabletlogsmodel.cpp
@@ -104,6 +105,7 @@ HEADERS += \
     src/models/tastylistmodel.h \
     src/texthandler.h \
     src/poster.h \
+    src/reposter.h \
     src/tastydatacache.h \
     src/models/uploadmodel.h \
     src/models/availabletlogsmodel.h

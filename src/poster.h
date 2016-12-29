@@ -22,7 +22,6 @@
 #define POSTER_H
 
 #include <QObject>
-#include <QPointer>
 
 #include "defines.h"
 
@@ -38,7 +37,7 @@ class Poster : public QObject
     Q_PROPERTY(qint64 kBytesSent  READ kBytesSent  NOTIFY kBytesSentChanged)
     Q_PROPERTY(qint64 kBytesTotal READ kBytesTotal NOTIFY kBytesTotalChanged)
 
-public:    
+public:
     enum Privacy
     {
         Voting,
@@ -53,7 +52,7 @@ public:
     Entry*          entry() const;
     bool            isLoading() const;
     UploadModel*    images();
-    
+
     qint64 kBytesSent()  const { return _kBytesSent; }
     qint64 kBytesTotal() const { return _kBytesTotal; }
 
@@ -75,10 +74,10 @@ public slots:
 
 private slots:
     void _createPostedEntry(const QJsonObject& data);
-    
+
 private:
     QString _privacyValue(const Privacy& privacy) const;
-    
+
     void    _prepare(int tlogId);
     void    _prepare(QString& title, int tlogId);
     void    _prepare(QString& title, QString& content, int tlogId);

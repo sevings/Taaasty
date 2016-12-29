@@ -31,6 +31,7 @@
 
 class ApiRequest;
 class Tlog;
+class Reposter;
 
 
 
@@ -46,6 +47,8 @@ class FeedModel : public TastyListModel
     Q_PROPERTY(QString  query       READ query      WRITE setQuery      NOTIFY queryChanged)
     Q_PROPERTY(QString  tag         READ tag        WRITE setTag        NOTIFY tagChanged)
     Q_PROPERTY(bool     showFixed   READ showFixed                      NOTIFY modeChanged)
+
+    Q_PROPERTY(Reposter* reposter MEMBER _reposter CONSTANT)
 
 public:
     enum Mode {
@@ -75,6 +78,8 @@ public:
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     virtual bool canFetchMore(const QModelIndex& parent) const override;
     virtual void fetchMore(const QModelIndex& parent) override;
+
+    bool contains(int entryId) const;
 
     void setMode(const Mode mode);
     Mode mode() const {return _mode; }
@@ -107,9 +112,6 @@ public:
     bool showFixed() const;
     bool loading() const;
 
-    Q_INVOKABLE bool isRepostable(int entryId) const;
-    Q_INVOKABLE bool isUnrepostable(int etryId) const;
-
     Q_INVOKABLE void setSinceEntryId(int id);
     Q_INVOKABLE void setSinceDate(const QString& date);
 
@@ -121,10 +123,6 @@ signals:
     void queryChanged();
     void tagChanged();
 
-public slots:
-    void repost(int entryId);
-    void unrepost(int entryId);
-
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
@@ -135,16 +133,14 @@ private slots:
     void _reloadRatings();
     void _setRatings(const QJsonArray& data);
 
-    void _addRepost(const QJsonObject& data);
-    void _removeRepost(const QJsonObject& data);
-
     void _prependEntry(int id, int tlogId);
     void _removeEntry(int id);
+
+    void _prepend(const EntryPtr& entry);
 
 private:
     void _addAll(QList<EntryPtr>& all, int& from);
     bool _addSome(QList<EntryPtr>& all, int& from, int& allFrom);
-    void _prepend(const EntryPtr& entry);
     void _clear();
 
     void _setUrl(Mode mode);
@@ -165,7 +161,7 @@ private:
     int                  _page;
     QString              _prevDate;
 
-    ApiRequestPtr   _repostRequest;
+    Reposter*            _reposter;
 };
 
 #endif // FEEDMODEL_H

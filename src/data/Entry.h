@@ -209,5 +209,4 @@ private:
     ChatPtr              _chat;
 
     QPointer<ApiRequest> _entryRequest;
-    QPointer<ApiRequest> _repostRequest;
 };

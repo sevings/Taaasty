@@ -30,6 +30,7 @@
 #include "../tastydatacache.h"
 #include "../settings.h"
 #include "../apirequest.h"
+#include "../reposter.h"
 
 #include "../data/Rating.h"
 #include "../data/User.h"
@@ -47,6 +48,7 @@ FeedModel::FeedModel(QObject* parent)
     , _lastEntry(0)
     , _minRating(0)
     , _page(1)
+    , _reposter(new Reposter(this))
 {
     qDebug() << "FeedModel";
 
@@ -56,6 +58,9 @@ FeedModel::FeedModel(QObject* parent)
     Q_TEST(connect(Tasty::instance(), &Tasty::authorizedChanged, this, &FeedModel::_resetOrReloadRatings));
     Q_TEST(connect(Tasty::instance(), &Tasty::entryCreated,      this, &FeedModel::_prependEntry));
     Q_TEST(connect(Tasty::instance(), &Tasty::entryDeleted,      this, &FeedModel::_removeEntry));
+
+    Q_TEST(connect(_reposter, &Reposter::reposted,   this, &FeedModel::_prepend));
+    Q_TEST(connect(_reposter, &Reposter::unreposted, this, &FeedModel::_removeEntry));
 }
 
 
@@ -86,7 +91,7 @@ QVariant FeedModel::data(const QModelIndex& index, int role) const
     if (role == Qt::UserRole)
         return QVariant::fromValue<Entry*>(entry.data());
     else if (role == Qt::UserRole + 1)
-        return isUnrepostable(entry->id());
+        return _reposter->isUnrepostable(entry->id());
 
     qDebug() << "role" << role;
 
@@ -155,6 +160,13 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addItems(QJsonObject))));
 
     _initLoad();
+}
+
+
+
+bool FeedModel::contains(int entryId) const
+{
+    return _idEntries.contains(entryId);
 }
 
 
@@ -310,72 +322,6 @@ bool FeedModel::showFixed() const
 
 
 
-bool FeedModel::isRepostable(int entryId) const
-{
-    if (_idEntries.contains(entryId))
-        return false;
-
-    auto entry = pTasty->dataCache()->entry(entryId);
-    if (!entry)
-        return false;
-
-    if (entry->tlog()->id() == tlogId())
-        return false;
-
-    if (!pTasty->me())
-        return false;
-
-    if (_mode == MyTlogMode
-            && pTasty->me()->id() == entry->tlog()->id())
-        return false;
-
-    if (_mode != TlogMode)
-        return false;
-
-    if (!_tlog->flow() || !_tlog->flow()->isWritable())
-        return false;
-
-    if (pTasty->me()->id() == tlogId())
-        return false;
-
-    return true;
-}
-
-
-
-bool FeedModel::isUnrepostable(int entryId) const
-{
-    if (!_idEntries.contains(entryId))
-        return false;
-
-    auto entry = pTasty->dataCache()->entry(entryId);
-    if (!entry)
-        return false;
-
-    if (entry->tlog()->id() == tlogId())
-        return false;
-
-    if (!pTasty->me())
-        return false;
-
-    if (_mode == MyTlogMode
-            && pTasty->me()->id() == entry->tlog()->id())
-        return false;
-
-    if (_mode != TlogMode)
-        return false;
-
-    if (!_tlog->flow() || !_tlog->flow()->isWritable())
-        return false;
-
-    if (pTasty->me()->id() == tlogId())
-        return false;
-
-    return true;
-}
-
-
-
 void FeedModel::setSinceEntryId(int id)
 {
     if (id > 0)
@@ -387,39 +333,6 @@ void FeedModel::setSinceEntryId(int id)
 void FeedModel::setSinceDate(const QString& date)
 {
     _prevDate = date;
-}
-
-
-
-void FeedModel::repost(int entryId)
-{
-    if (_repostRequest)
-        return;
-
-    int tlog = _mode == MyTlogMode ? (pTasty->me() ? pTasty->me()->id() : 0) : tlogId();
-    auto url = QString("v1/reposts.json");
-
-    _repostRequest = new ApiRequest(url, ApiRequest::AllOptions);
-    _repostRequest->addFormData("tlog_id", tlog);
-    _repostRequest->addFormData("entry_id", entryId);
-    _repostRequest->post();
-
-    Q_TEST(connect(_repostRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addRepost(QJsonObject))));
-}
-
-
-
-void FeedModel::unrepost(int entryId)
-{
-    if (_repostRequest || !isUnrepostable(entryId))
-        return;
-
-    int tlog = _mode == MyTlogMode ? (pTasty->me() ? pTasty->me()->id() : 0) : tlogId();
-    auto url = QString("v1/reposts.json?tlog_id=%1&entry_id=%2").arg(tlog).arg(entryId);
-    _repostRequest = new ApiRequest(url, ApiRequest::AllOptions);
-    _repostRequest->deleteResource();
-
-    Q_TEST(connect(_repostRequest, SIGNAL(success(QJsonObject)), this, SLOT(_removeRepost(QJsonObject))));
 }
 
 
@@ -628,43 +541,6 @@ void FeedModel::_setRatings(const QJsonArray& data)
 
 
 
-void FeedModel::_addRepost(const QJsonObject& data)
-{
-    if (data.value("status").toString() == "success")
-    {
-        emit pTasty->info("Репост добавлен");
-
-        int id = data.value("id").toInt();
-        auto entry = pTasty->dataCache()->entry(id);
-        if (!entry)
-            entry = EntryPtr::create(nullptr);
-
-        entry->init(data);
-
-        _prepend(entry);
-    }
-    else
-    {
-        emit pTasty->error(0, "При добавлении репоста произошла ошибка");
-        qDebug() << data;
-    }
-}
-
-
-
-void FeedModel::_removeRepost(const QJsonObject& data)
-{
-    if (data.value("status").toString() == "success")
-        emit pTasty->info("Репост удален"); //! \todo remove entry from feed
-    else
-    {
-        emit pTasty->error(0, "При удалении репоста произошла ошибка");
-        qDebug() << data;
-    }
-}
-
-
-
 void FeedModel::_prependEntry(int id, int tlogId)
 {
     auto entry = pTasty->dataCache()->entry(id);
@@ -696,6 +572,22 @@ void FeedModel::_removeEntry(int id)
 
             break;
         }
+}
+
+
+
+void FeedModel::_prepend(const EntryPtr& entry)
+{
+    beginInsertRows(QModelIndex(), _fixedCount, _fixedCount);
+
+    _entries.insert(_fixedCount, entry);
+
+    if (!_allEntries.isEmpty())
+        _allEntries.insert(_allFixedCount, entry);
+
+    _idEntries.insert(id, entry);
+
+    endInsertRows();
 }
 
 
@@ -742,22 +634,6 @@ bool FeedModel::_addSome(QList<EntryPtr>& all, int& from, int& allFrom)
     _addAll(some, from);
 
     return false;
-}
-
-
-
-void FeedModel::_prepend(const EntryPtr& entry)
-{
-    beginInsertRows(QModelIndex(), _fixedCount, _fixedCount);
-
-    _entries.insert(_fixedCount, entry);
-
-    if (!_allEntries.isEmpty())
-        _allEntries.insert(_allFixedCount, entry);
-
-    _idEntries.insert(id, entry);
-
-    endInsertRows();
 }
 
 

@@ -427,7 +427,7 @@ Q.Drawer {
                 text: 'Удалить репост'
                 onTriggered: {
                     if (page.feedModel)
-                        page.feedModel.unrepost(page.entry.entryId);
+                        page.feedModel.reposter.unrepost(page.entry.entryId);
                     drawer.close();
                 }
                 visible: !window.chatsShows
