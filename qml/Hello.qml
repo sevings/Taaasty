@@ -55,9 +55,9 @@ Pane {
                 left: parent.left
                 right: parent.right
             }
+            textFormat: Text.RichText
             onLinkActivated: back.openLink(link)
-            text: '<style type="text/css"> h1, p { margin-top: 5; margin-bottom: 5 } </style>'
-                + '<h1>Привет, <a href="http://taaasty.com/~' + Settings.iserId + '">' + (Tasty.me ? Tasty.me.name : Settings.login) + '</a>!</h1>'
+            text: '<h1 align="center">Привет, ' + (Tasty.me ? Tasty.me.name : Settings.login) + '!</h1>'
                 + '<p>Здорово, что ты пользуешься альтернативным клиентом Тейсти.</p>'
                 + '<p>Если у тебя есть вопросы или пожелания по работе приложения, <a href="help">можешь посмотреть здесь</a>.</p>'
                 + '<p>Чтобы быть в курсе последних изменений, <a href="http://taaasty.com/~1431729">подписывайся на поток</a>.</p>'
