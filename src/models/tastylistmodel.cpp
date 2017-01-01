@@ -2,9 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "tastylistmodel.h"
 
-#include "../defines.h"
-#include "../apirequest.h"
-
 
 
 TastyListModel::TastyListModel(QObject* parent)

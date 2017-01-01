@@ -39,6 +39,7 @@ class CalendarModel : public TastyListModel
     Q_OBJECT
 
     Q_PROPERTY(SortOrder sortOrder READ sortOrder WRITE sort NOTIFY sortOrderChanged)
+    Q_PROPERTY(bool loadingRatings READ loadingRatings       NOTIFY loadingRatingsChanged)
 
 public:
     enum SortOrder
@@ -69,9 +70,12 @@ public:
     SortOrder sortOrder() const;
     void sort(SortOrder order);
 
+    bool loadingRatings() const;
+
 signals:
     void loaded();
     void sortOrderChanged();
+    void loadingRatingsChanged();
 
 public slots:
     virtual void loadMore() override;
@@ -89,7 +93,8 @@ private:
     QHash<QString, CalendarEntry*>  _firstMonthEntries;
     int                             _tlog;
     SortOrder                       _order;
-    bool                            _ratingsLoaded;
+    int                             _ratingsLoaded;
+    QList<ApiRequestPtr>            _ratingRequests;
 };
 
 #endif // CALENDARMODEL_H

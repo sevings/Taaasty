@@ -38,6 +38,7 @@ Pane {
         id: splash
         model: calendarModel
         visible: !listView.visible
+        running: calendarModel.loading || calendarModel.loadingRatings
         emptyString: 'Нет записей'
     }
     MyListView {
@@ -48,7 +49,7 @@ Pane {
             right: parent.right
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
-        visible: count > 0
+        visible: count > 0 && !calendarModel.loadingRatings
         model: CalendarModel {
             id: calendarModel
             sortOrder: back.sortOrder

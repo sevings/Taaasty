@@ -25,8 +25,6 @@
 #include <QJsonArray>
 #include <QDebug>
 
-#include "../defines.h"
-
 #include "../data/Rating.h"
 #include "../data/CalendarEntry.h"
 #include "../apirequest.h"
@@ -37,7 +35,7 @@ CalendarModel::CalendarModel(QObject* parent)
     : TastyListModel(parent)
     , _tlog(0)
     , _order(NewestFirst)
-    , _ratingsLoaded(false)
+    , _ratingsLoaded(0)
 {
     qDebug() << "CalendarModel";
 }
@@ -168,6 +166,17 @@ void CalendarModel::sort(CalendarModel::SortOrder order)
 
 
 
+bool CalendarModel::loadingRatings() const
+{
+    for (auto request: _ratingRequests)
+        if (request && request->isRunning())
+            return true;
+
+    return false;
+}
+
+
+
 void CalendarModel::loadMore()
 {
     if (_calendar.isEmpty())
@@ -215,7 +224,7 @@ void CalendarModel::_setCalendar(const QJsonObject& data)
 
 void CalendarModel::_setRatings(const QJsonArray& data)
 {
-    foreach (auto rating, data)
+    for (auto rating: data)
     {
         auto id = rating.toObject().value("entry_id").toInt();
         auto entry = _idEntries.value(id);
@@ -226,8 +235,13 @@ void CalendarModel::_setRatings(const QJsonArray& data)
         entry->rating()->init(rating.toObject());
     }
 
-    _ratingsLoaded = true;
+    _ratingsLoaded += data.size();
+    if (_ratingsLoaded < _calendar.size())
+        return;
+
     _sort();
+
+    emit loadingRatingsChanged();
 }
 
 
@@ -235,23 +249,42 @@ void CalendarModel::_setRatings(const QJsonArray& data)
 void CalendarModel::_loadRatings()
 {
     QString url("v1/ratings.json?ids=");
-    url.reserve(_calendar.size() * 9 + 20);
+    url.reserve(200 * 9 + 20);
+
+    auto addRequest = [&]()
+    {
+        url.remove(url.size() - 1, 1);
+
+        auto request = new ApiRequest(url, ApiRequest::ShowMessageOnError);
+        request->get();
+
+        Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
+
+        _ratingRequests << request;
+
+        url = "v1/ratings.json?ids=";
+    };
+
+    int i = 0;
     for (auto entry: _calendar)
+    {
         url += QString("%1,").arg(entry->id());
-    url.remove(url.size() - 1, 1);
 
-    _loadRequest = new ApiRequest(url);
+        if (++i % 200 == 0)
+            addRequest();
+    }
 
-    Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
+    if (i % 200 > 0)
+        addRequest();
 
-    _initLoad();
+    emit loadingRatingsChanged();
 }
 
 
 
 void CalendarModel::_sort()
 {
-    if (_order == BestFirst && !_ratingsLoaded)
+    if (_order == BestFirst && _ratingsLoaded < _calendar.size())
     {
         _loadRatings();
         return;

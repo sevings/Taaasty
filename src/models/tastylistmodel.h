@@ -5,6 +5,7 @@
 #include <QAbstractListModel>
 #include <QPointer>
 
+#include "../defines.h"
 #include "../apirequest.h"
 
 
