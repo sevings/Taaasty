@@ -211,8 +211,11 @@ void Rating::voteAgainst()
 void Rating::init(const QJsonObject& data)
 {
     int id = data.value("entry_id").toInt();
-    if (id)
+    if (id && id != _id)
+    {
         _id = id;
+        emit idChanged();
+    }
 
     _votes      = data.value("votes").toInt();
     _rating     = data.value("rating").toInt();

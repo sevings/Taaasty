@@ -110,7 +110,7 @@ public:
     bool hideShort() const;
     bool hideNegative() const;
     bool showFixed() const;
-    bool loading() const;
+    bool reloadRatingsMode() const;
 
     Q_INVOKABLE void setSinceEntryId(int id);
     Q_INVOKABLE void setSinceDate(const QString& date);
@@ -130,6 +130,7 @@ private slots:
     void _addItems(const QJsonObject& data);
     void _changeHideSome();
     void _resetOrReloadRatings();
+
     void _reloadRatings();
     void _setRatings(const QJsonArray& data);
 
@@ -143,6 +144,7 @@ private:
     bool _addSome(QList<EntryPtr>& all, int& from, int& allFrom);
     void _clear();
 
+    void _loadRatings(const QList<EntryPtr>& entries);
     void _setUrl(Mode mode);
 
     QList<EntryPtr>      _entries;

@@ -320,6 +320,16 @@ bool FeedModel::showFixed() const
 
 
 
+bool FeedModel::reloadRatingsMode() const
+{
+    return (   _mode == LiveMode || _mode == FlowsMode
+            || _mode == BestMode || _mode == ExcellentMode
+            || _mode == GoodMode || _mode == WellMode
+            || _mode == BetterThanMode);
+}
+
+
+
 void FeedModel::setSinceEntryId(int id)
 {
     if (id > 0)
@@ -408,7 +418,7 @@ void FeedModel::_addItems(const QJsonObject& data)
             _prevDate = prev.toString();
     }
 
-    if (all.isEmpty())
+    if (all.isEmpty() && fixed.isEmpty())
     {
         _loadRequest = nullptr;
 
@@ -419,6 +429,10 @@ void FeedModel::_addItems(const QJsonObject& data)
 
         return;
     }
+
+    // uncomment if use api v2
+//    if (reloadRatingsMode())
+//        _loadRatings(QList<EntryPtr>() << fixed << all);
 
     bool loadMore = false;
     if (hideShort() || hideNegative())
@@ -506,16 +520,8 @@ void FeedModel::_reloadRatings()
     if (entries.isEmpty())
         return;
 
-    QString url("v1/ratings.json?ids=");
-    url.reserve(entries.size() * 9 + 20);
-    for (auto entry: entries)
-        url += QString("%1,").arg(entry->id());
-    url.remove(url.size() - 1, 1);
-
-    auto request = new ApiRequest(url);
-    request->get();
-
-    Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
+    for (int i = 0; i < entries.size(); i += 200)
+        _loadRatings(entries.mid(i, 200));
 }
 
 
@@ -525,7 +531,7 @@ void FeedModel::_setRatings(const QJsonArray& data)
     if (_idEntries.isEmpty())
         return;
 
-    foreach (auto rating, data)
+    for (auto rating: data)
     {
         auto id = rating.toObject().value("entry_id").toInt();
         auto entry = _idEntries.value(id);
@@ -644,6 +650,22 @@ void FeedModel::_clear()
 
     _fixedCount = 0;
     _allFixedCount = 0;
+}
+
+
+
+void FeedModel::_loadRatings(const QList<EntryPtr>& entries)
+{
+    QString url("v1/ratings.json?ids=");
+    url.reserve(entries.size() * 9 + 20);
+    for (auto entry: entries)
+        url += QString("%1,").arg(entry->id());
+    url.remove(url.size() - 1, 1);
+
+    auto request = new ApiRequest(url);
+    request->get();
+
+    Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
 }
 
 
