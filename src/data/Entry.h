@@ -102,6 +102,7 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(bool        isFixed        READ   isFixed            NOTIFY updated)
     Q_PROPERTY(bool        isDeletable    MEMBER _isDeletable       NOTIFY updated)
     Q_PROPERTY(bool        isEditable     MEMBER _isEditable        NOTIFY updated)
+    Q_PROPERTY(bool        isReportable   MEMBER _isReportable      NOTIFY isReportableChanged)
     Q_PROPERTY(Tlog*       tlog           READ   tlog               NOTIFY updated)
     Q_PROPERTY(Author*     author         MEMBER _author            NOTIFY updated)
     Q_PROPERTY(Rating*     rating         READ    rating            NOTIFY updated)
@@ -153,6 +154,7 @@ public slots:
     void addComment(const QString& text);
     void watch();
     void favorite();
+    void report();
 
     void deleteEntry();
 
@@ -164,6 +166,7 @@ signals:
     void commentsCountChanged();
     void watchedChanged();
     void favoritedChanged();
+    void isReportableChanged();
     void commentAdded(const QJsonObject& data);
     void addingCommentError();
 
@@ -172,6 +175,7 @@ signals:
 private slots:
     void _changeWatched(const QJsonObject& data);
     void _changeFavorited(const QJsonObject& data);
+    void _changeIsReportable(const QJsonObject& data);
     void _setCommentsCount(int tc);
     void _setWatched();
     void _correctHtml();
@@ -188,6 +192,7 @@ private:
     bool        _isFavorited;
     bool        _isPrivate;
     bool        _isFixed;
+    bool        _isReportable;
     QDateTime   _fixedAt;
     bool        _isDeletable;
     bool        _isEditable;

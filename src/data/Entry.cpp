@@ -174,6 +174,7 @@ Entry::Entry()
     , _isFavorited(false)
     , _isPrivate(false)
     , _isFixed(false)
+    , _isReportable(false)
     , _tlog(new Tlog(this))
     , _rating(new Rating(this))
     , _commentsCount(0)
@@ -196,6 +197,7 @@ Entry::Entry(Conversation* chat)
     , _isFavorited(false)
     , _isPrivate(false)
     , _isFixed(false)
+    , _isReportable(false)
     , _tlog(nullptr)
     , _rating(new Rating(this))
     , _commentsCount(0)
@@ -243,12 +245,13 @@ void Entry::init(const QJsonObject& data)
     _createdAt       = Tasty::parseDate(data.value("created_at").toString());
     _url             = data.value("entry_url").toString();
     _isVotable       = data.value("is_voteable").toBool();
-    _isFavoritable   = data.value("can_favorite").toBool(Tasty::instance()->isAuthorized());
+    _isFavoritable   = data.value("can_favorite").toBool(pTasty->isAuthorized());
     _isFavorited     = data.value("is_favorited").toBool();
     _isWatchable     = data.value("can_watch").toBool();
     _isWatched       = data.value("is_watching").toBool();
     _isPrivate       = data.value("is_private").toBool();
     _isFixed         = data.value("fixed_state").toString() == "fixed";
+    _isReportable    = data.value("can_report").toBool(pTasty->isAuthorized());
 
     auto fixDate = data.value("fixed_up_at").toString();
     _fixedAt         = QDateTime::fromString(fixDate.left(19), "yyyy-MM-ddTHH:mm:ss");
@@ -421,6 +424,20 @@ void Entry::favorite()
 
 
 
+void Entry::report()
+{
+    if (_entryRequest || _id <= 0)
+        return;
+
+    auto url      = QString("v1/entries/%1/report.json").arg(_id);
+    _entryRequest = new ApiRequest(url, ApiRequest::AllOptions);
+    _entryRequest->post();
+
+    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_changeIsReportable(QJsonObject))));
+}
+
+
+
 void Entry::deleteEntry()
 {
     if (isLoading() || _id <= 0 || !_isDeletable)
@@ -466,6 +483,15 @@ void Entry::_changeFavorited(const QJsonObject& data)
         emit Tasty::instance()->info("Запись добавлена в избранное");
     else
         emit Tasty::instance()->info("Запись удалена из избранного");
+}
+
+
+
+void Entry::_changeIsReportable(const QJsonObject& data)
+{
+    _isReportable = data.value("can_report").toBool();
+
+    emit isReportableChanged();
 }
 
 

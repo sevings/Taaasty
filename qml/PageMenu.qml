@@ -338,6 +338,17 @@ Q.Drawer {
                          && page.entry.isFavoritable
             }
             MenuItem {
+                text: 'Пожаловаться'
+                onTriggered: {
+                    page.entry.report();
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isFullEntryView === true
+                         && page.entry.isReportable
+            }
+            MenuItem {
                 text: 'Перезагрузить'
                 onTriggered: {
                     page.entry.reload();
