@@ -197,7 +197,7 @@ Entry::Entry(Conversation* chat)
     , _isPrivate(false)
     , _isFixed(false)
     , _tlog(nullptr)
-    , _rating(nullptr)
+    , _rating(new Rating(this))
     , _commentsCount(0)
     , _media(nullptr)
     , _wordCount(0)
@@ -263,9 +263,6 @@ void Entry::init(const QJsonObject& data)
         _tlog->init(tlogData);
     else
         _tlog        = new Tlog(tlogData, this);
-
-    if (!_rating)
-        _rating = new Rating(this);
 
     if (isLoading())
         _rating->init(data.value("rating").toObject());
