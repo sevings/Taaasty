@@ -70,9 +70,8 @@ public slots:
     void postText( QString title, QString content, Privacy privacy, int tlogId = 0);
     void postAnonymous(QString title, QString content);
 
-    void _setProgress(qint64 bytes, qint64 bytesTotal);
-
 private slots:
+    void _setProgress(qint64 bytes, qint64 bytesTotal);
     void _createPostedEntry(const QJsonObject& data);
 
 private:

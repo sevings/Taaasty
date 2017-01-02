@@ -41,10 +41,13 @@ Pane {
             titleInput.ensureVisible(titleInput.cursorRectangle);
         else if (textInput.activeFocus)
             textInput.ensureVisible(textInput.cursorRectangle);
+        else if (sourceInput.activeFocus)
+            sourceInput.ensureVisible(sourceInput.cursorRectangle)
     }
     function load() {
         titleInput.text   = Settings.lastTitle;
         textInput.text    = Settings.lastText;
+        sourceInput.text  = Settings.lastSource;
         fireButton.voting = Settings.lastPrivacy == Poster.Voting;
         lockButton.locked = Settings.lastPrivacy == Poster.Private;
         back.entryType    = Settings.lastEntryType;
@@ -54,6 +57,7 @@ Pane {
     function save() {
         Settings.lastTitle       = titleInput.text;
         Settings.lastText        = textInput.text;
+        Settings.lastSource      = sourceInput.text;
         Settings.lastPrivacy     = back.privacy;
         Settings.lastEntryType   = back.entryType;
         Settings.lastPostingTlog = whereBox.tlog;
@@ -92,7 +96,7 @@ Pane {
             ListView {
                 id: images
                 width: parent.width
-                visible: entryType === TlogEntry.ImageEntry
+                visible: entryType == TlogEntry.ImageEntry
                 interactive: false
                 spacing: 1.5 * mm
                 height: visible ? contentHeight : 0
@@ -198,9 +202,11 @@ Pane {
                     switch (entryType)
                     {
                     case TlogEntry.ImageEntry:
-                    case TlogEntry.QuoteEntry:
                     case TlogEntry.VideoEntry:
                         implicitHeight;
+                        break;
+                    case TlogEntry.QuoteEntry:
+                        Math.max(implicitHeight, back.height - sourceInput.height - buttonsRow.height - 6 * mm)
                         break;
                     case TlogEntry.TextEntry:
                     case TlogEntry.AnonymousEntry:
@@ -214,8 +220,23 @@ Pane {
                 flickable: flick
                 handler: textHandler
 //                textFormat: TextEdit.RichText
-                placeholderText: entryType === TlogEntry.TextEntry || entryType === TlogEntry.AnonymousEntry
-                                    ? 'Текст поста' : 'Подпись'
+                placeholderText: {
+                    switch (entryType)
+                    {
+                    case TlogEntry.ImageEntry:
+                        'Подпись'; break;
+                    case TlogEntry.QuoteEntry:
+                        'Цитата'; break;
+                    case TlogEntry.VideoEntry:
+                        ''; break;
+                    case TlogEntry.TextEntry:
+                        'Текст поста'; break;
+                    case TlogEntry.AnonymousEntry:
+                        'Текст анонимки'; break;
+                    default:
+                        console.log('entry type', entryType);
+                    }
+                }
                 popBody: back
                 onActiveFocusChanged: {
                     if (!activeFocus)
@@ -223,6 +244,28 @@ Pane {
 
                     editMenu.textEdit = textInput;
                     editMenu.handler  = textHandler;
+
+                    window.hideFooter();
+                }
+            }
+            TextEditor {
+                id: sourceInput
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width - 3 * mm
+                visible: entryType == TlogEntry.QuoteEntry
+                z: 4
+                readOnly: poster.loading
+                flickable: flick
+                handler: titleHandler
+                placeholderText: 'Источник'
+                horizontalAlignment: Text.AlignRight
+                popBody: back
+                onActiveFocusChanged: {
+                    if (!activeFocus)
+                        return;
+
+                    editMenu.textEdit = sourceInput;
+                    editMenu.handler  = sourceHandler;
 
                     window.hideFooter();
                 }
@@ -276,6 +319,8 @@ Pane {
                                 images.count;
                                 break;
                             case TlogEntry.QuoteEntry:
+                                textInput.length;
+                                break;
                             case TlogEntry.VideoEntry:
                             case TlogEntry.TextEntry:
                             case TlogEntry.AnonymousEntry:
@@ -297,7 +342,7 @@ Pane {
                                 poster.postImage(titleInput.text, back.privacy, whereBox.tlog);
                                 break;
                             case TlogEntry.QuoteEntry:
-                                poster.postQuote(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
+                                poster.postQuote(textInput.text, sourceInput.text, back.privacy, whereBox.tlog);
                                 break;
                             case TlogEntry.VideoEntry:
                                 poster.postVideo(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
@@ -391,6 +436,16 @@ Pane {
             console.error(message);
         }
     }
+    TextHandler {
+        id: sourceHandler
+        target: sourceInput
+        cursorPosition: sourceInput.cursorPosition
+        selectionStart: sourceInput.selectionStart
+        selectionEnd: sourceInput.selectionEnd
+        onError: {
+            console.error(message);
+        }
+    }
     TextEditorMenu {
         id: editMenu
         z: 7
@@ -410,6 +465,7 @@ Pane {
         onPosted: {
             titleInput.clear();
             textInput.clear();
+            sourceInput.clear();
             window.popFromStack();
             window.showMessage('Запись опубликована', true);
         }

@@ -53,6 +53,7 @@ class Settings : public QObject
 
     Q_PROPERTY(QString      lastTitle           READ lastTitle              WRITE setLastTitle              NOTIFY lastTitleChanged)
     Q_PROPERTY(QString      lastText            READ lastText               WRITE setLastText               NOTIFY lastTextChanged)
+    Q_PROPERTY(QString      lastSource          READ lastSource             WRITE setLastSource             NOTIFY lastSourceChanged)
     Q_PROPERTY(QStringList  lastImages          READ lastImages             WRITE setLastImages             NOTIFY lastImagesChanged)
     Q_PROPERTY(bool         lastOptimizeImages  READ lastOptimizeImages     WRITE setLastOptimizeImages     NOTIFY lastOptimizeImagesChanged)
     Q_PROPERTY(int          lastPrivacy         READ lastPrivacy            WRITE setLastPrivacy            NOTIFY lastPrivacyChanged)
@@ -134,6 +135,9 @@ public:
     QString lastText() const;
     void setLastText(const QString& text);
 
+    QString lastSource() const;
+    void setLastSource(const QString& source);
+
     QStringList lastImages() const;
     void setLastImages(const QStringList& images);
 
@@ -172,6 +176,7 @@ signals:
 
     void lastTitleChanged();
     void lastTextChanged();
+    void lastSourceChanged();
     void lastImagesChanged();
     void lastOptimizeImagesChanged();
     void lastPrivacyChanged();

@@ -519,6 +519,25 @@ void Settings::setLastText(const QString& text)
 
 
 
+QString Settings::lastSource() const
+{
+    return _settings.value("last_source").toString();
+}
+
+
+
+void Settings::setLastSource(const QString& source)
+{
+    if (source == lastSource())
+        return;
+
+    _settings.setValue("last_source", source);
+
+    emit lastSourceChanged();
+}
+
+
+
 QStringList Settings::lastImages() const
 {
     return _settings.value("last_images").toStringList();

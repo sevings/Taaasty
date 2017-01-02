@@ -409,11 +409,11 @@ Q.Drawer {
                 }
                 visible: !window.chatsShows
                          && !window.notifsShows
-                         && (page.isFullEntryView === true
+                         && ((page.isFullEntryView === true
                              && page.entry.chat
                              && page.entry.chat.isInvolved)
                          || (page.isMessagesView === true
-                             && page.chat.isInvolved)
+                             && page.chat.isInvolved))
                          && Tasty.isAuthorized
             }
             MenuSeparator {
@@ -633,6 +633,17 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.entryType === TlogEntry.TextEntry
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isEntryEditor === true
+            }
+            MenuItem {
+                text: 'Цитата'
+                onTriggered: {
+                    page.entryType = TlogEntry.QuoteEntry;
+                    drawer.close();
+                }
+                highlighted: page.entryType === TlogEntry.QuoteEntry
                 visible: !window.chatsShows
                          && !window.notifsShows
                          && page.isEntryEditor === true
