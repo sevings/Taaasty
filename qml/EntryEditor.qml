@@ -171,6 +171,35 @@ Pane {
                     }
                 }
             }
+            Item {
+                id: urlItem
+                visible: entryType == TlogEntry.VideoEntry
+                width: column.width
+                height: Math.max(urlText.height, pasteUrlButton.height)
+                ThemedText {
+                    id: urlText
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        right: pasteUrlButton.left
+                        topMargin: 0
+                    }
+                }
+                IconButton {
+                    id: pasteUrlButton
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        right: parent.right
+                    }
+                    icon: (Settings.darkTheme ? '../icons/paste-white'
+                                              : '../icons/paste-black')
+                          + '-128.png'
+                    onClicked: {
+                        editMenu.hideMenu();
+
+                    }
+                }
+            }
             TextEditor {
                 id: titleInput
                 anchors.horizontalCenter: parent.horizontalCenter
