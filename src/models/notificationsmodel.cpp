@@ -278,7 +278,7 @@ void NotificationsModel::_addPush(QJsonObject data)
     _ids << notification->id();
 
 #ifdef Q_OS_ANDROID
-    if (!notification->isRead() && Tasty::instance()->settings()->systemNotifications())
+    if (!notification->isRead() && pTasty->settings()->systemNotifications())
     {
         auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
                 .arg(notification->actionText()).arg(notification->text());

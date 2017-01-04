@@ -129,13 +129,7 @@ void Message::_init(const QJsonObject& data)
     _user = _chat->user(_userId);
     Q_ASSERT(_user);
 
-    auto type = data.value("type").toString();
-    if (type == "Message")
-        _type = NormalMessage;
-    else if (type == "SystemMessage")
-        _type = SystemMessage;
-    else
-        _type = UnknownMessageType;
+    _setType(data);
 
     auto imageAttach = data.value("attachments").toArray();
     delete _attachedImagesModel;
@@ -226,8 +220,23 @@ void Message::_markRemoved(const QJsonObject& data)
         return;
 
     _text = data.value("content").toString();
-//    _type = data.value("type").toString();
+    _setType(data);
     _setTruncatedText();
 
     emit textUpdated();
+}
+
+
+
+void Message::_setType(const QJsonObject& data)
+{
+    auto type = data.value("type").toString();
+    if (type == "Message")
+        _type = NormalMessage;
+    else if (type == "SystemMessage")
+        _type = SystemMessage;
+    else
+        _type = UnknownMessageType;
+
+    Q_ASSERT(type.isEmpty() || _type != UnknownMessageType);
 }

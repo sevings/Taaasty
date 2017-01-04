@@ -75,6 +75,7 @@ private slots:
 private:
     void _updateRead(const QJsonObject& data);
     void _markRemoved(const QJsonObject& data);
+    void _setType(const QJsonObject& data);
 
     int         _userId;
     int         _recipientId;
