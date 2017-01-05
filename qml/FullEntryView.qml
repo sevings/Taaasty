@@ -146,8 +146,6 @@ Pane {
                 wrapMode: Text.Wrap
                 font.pixelSize: window.fontSmaller
                 font.bold: true
-                style: Text.Raised
-                styleColor: Material.accent
             }
             Q.Label {
                 id: commentDate
