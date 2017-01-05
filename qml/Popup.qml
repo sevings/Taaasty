@@ -113,8 +113,14 @@ Rectangle {
         onClicked: closing()
     }
     MouseArea {
-        anchors.fill: parent
         visible: closable
+        anchors.fill: parent
         anchors.margins: -2 * mm
+        onClicked: {
+            mouse.accepted = true;
+        }
+        onDoubleClicked: {
+            mouse.accepted = true;
+        }
     }
 }

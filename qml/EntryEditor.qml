@@ -445,6 +445,7 @@ Pane {
             }
         }
     }
+    MyScrollIndicator { flick: flick }
     TextHandler {
         id: titleHandler
         target: titleInput

@@ -55,27 +55,7 @@ ListView {
     displaced: Transition {
         NumberAnimation { property: "y"; duration: 300 }
     }
-    Rectangle {
-        id: scrollbar
-        anchors {
-            right: parent.right
-            margins: 0.5 * mm
-        }
-        y: parent.visibleArea.yPosition * (parent.height - height + h)
-        width: 0.5 * mm
-        property int h: parent.visibleArea.heightRatio * parent.height
-        height: Math.max(5 * mm, h)
-        color: Material.foreground
-        opacity: parent.movingVertically ? 0.7 : 0
-        visible: opacity > 0 && height < parent.height * 0.9
-        Behavior on opacity {
-            NumberAnimation { duration: 500 }
-        }
-        Behavior on height {
-            NumberAnimation { duration: 500 }
-        }
-        radius: width / 2
-    }
+    MyScrollIndicator { flick: list }
 /*    Rectangle {
         id: upButton
         anchors {

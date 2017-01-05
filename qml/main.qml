@@ -21,7 +21,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Material 2.0
-//import QtGraphicalEffects 1.0
 
 import org.binque.taaasty 1.0
 import ImageCache 2.0
@@ -367,7 +366,7 @@ ApplicationWindow {
     MainMenu {
         id: menu
         visible: stackLoader.opacity == 1
-                 && stack.depth === 1 && stack.currentItem && stack.currentItem.x > 0
+                 && stack.depth === 1 && stack.get(0).x > 0
     }
     PropertyAnimation {
         id: backAnimation

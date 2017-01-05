@@ -84,5 +84,6 @@
         <file>icons/cross-white-128.png</file>
         <file>icons/cross-black-128.png</file>
         <file>qml/Hello.qml</file>
+        <file>qml/MyScrollIndicator.qml</file>
     </qresource>
 </RCC>

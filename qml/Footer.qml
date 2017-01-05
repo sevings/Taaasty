@@ -27,15 +27,6 @@ Popup {
     height: 48 * sp
     closable: false
     state: "opened"
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            mouse.accepted = true;
-        }
-        onDoubleClicked: {
-            mouse.accepted = true;
-        }
-    }
     IconButton {
         id: left
         anchors {

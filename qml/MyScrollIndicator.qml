@@ -20,23 +20,26 @@
 
 import QtQuick 2.7
 import QtQuick.Controls.Material 2.0
-import org.binque.taaasty 1.0
 
-Flickable {
-    id: flickable
-    flickableDirection: Flickable.VerticalFlick
-    maximumFlickVelocity: 1000 * mm
-    interactive: parent.x <= 0
-    boundsBehavior: Flickable.DragOverBounds
-    onVerticalVelocityChanged: {
-        if (!dragging)
-            return;
-
-        if (verticalVelocity > 0) {
-            window.hideFooter();
-        }
-        else if (verticalVelocity < 0) {
-            window.showFooter();
-        }
+Rectangle {
+    id: scrollbar
+    anchors {
+        right: parent.right
+        margins: 0.5 * mm
     }
+    property Flickable flick
+    y: flick.visibleArea.yPosition * (flick.height - height + h)
+    width: 0.5 * mm
+    readonly property int h: flick.visibleArea.heightRatio * flick.height
+    height: Math.max(5 * mm, h)
+    color: Material.foreground
+    opacity: flick.movingVertically ? 0.7 : 0
+    visible: opacity > 0 && height < flick.height * 0.9
+    Behavior on opacity {
+        NumberAnimation { duration: 500 }
+    }
+    Behavior on height {
+        NumberAnimation { duration: 500 }
+    }
+    radius: width / 2
 }
