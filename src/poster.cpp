@@ -236,7 +236,7 @@ void Poster::_prepare(QString& title, QString& content, int tlogId)
     auto ps = content.split('\n');
     for (auto it = ps.begin(); it != ps.end(); ++it)
         if (it->isEmpty())
-            *it = QString("</br>");
+            *it = QString("<br>");
         else
             it->prepend("<p>").append("</p>");
 

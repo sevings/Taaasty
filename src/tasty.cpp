@@ -169,10 +169,12 @@ void Tasty::correctHtml(QString& html, bool isEntry)
     QRegularExpression imageLinkRe("<a[^>]*>(<img[^>]*>)</a>");
     html.replace(imageLinkRe, "\\1");
 
-    auto width = isEntry ? Tasty::instance()->_entryImageWidth
-                         : Tasty::instance()->_commentImageWidth;
-    QRegularExpression imgRe("<img (?:width=\\d+ )?");
-    html.replace(imgRe, QString("<img width=%1 ").arg(width));
+    html.replace("class=\"embeded__image\"", QString());
+
+    auto width = isEntry ? pTasty->_entryImageWidth
+                         : pTasty->_commentImageWidth;
+    QRegularExpression imgRe("<img (?:width=\"\\d+\" )?");
+    html.replace(imgRe, QString("<img width=\"%1\" ").arg(width));
 }
 
 
@@ -296,8 +298,23 @@ void Tasty::_init()
     _entryImageWidth   = _settings->maxImageWidth();
     _commentImageWidth = _entryImageWidth;
 
-    Q_TEST(connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)),
-                   this, SLOT(_saveOrReconnect(Qt::ApplicationState))));
+    QPointer<Tasty> that(this);
+    Q_TEST(connect(qApp, &QGuiApplication::applicationStateChanged,
+                   [that](Qt::ApplicationState state)
+    {
+        if (!that)
+            return;
+
+        if (state == Qt::ApplicationActive)
+        {
+            Q_TEST(QMetaObject::invokeMethod(that->_pusher, "connect", Qt::QueuedConnection));
+
+            Q_TEST(QMetaObject::invokeMethod(ChatsModel::instance(), "loadLast", Qt::QueuedConnection));
+            Q_TEST(QMetaObject::invokeMethod(NotificationsModel::instance(), "check", Qt::QueuedConnection));
+        }
+        else
+            Q_TEST(QMetaObject::invokeMethod(Bayes::instance(), "saveDb", Qt::QueuedConnection));
+    }));
 
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));

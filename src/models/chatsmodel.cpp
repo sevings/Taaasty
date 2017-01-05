@@ -87,7 +87,7 @@ QVariant ChatsModel::data(const QModelIndex& index, int role) const
 
 bool ChatsModel::canFetchMore(const QModelIndex& parent) const
 {
-    if (parent.isValid() || !Tasty::instance()->isAuthorized())
+    if (parent.isValid() || !pTasty->isAuthorized())
         return false;
 
     return _hasMore;
@@ -97,7 +97,7 @@ bool ChatsModel::canFetchMore(const QModelIndex& parent) const
 
 void ChatsModel::fetchMore(const QModelIndex& parent)
 {
-    if (isLoading() || parent.isValid() || !Tasty::instance()->isAuthorized())
+    if (isLoading() || parent.isValid() || !pTasty->isAuthorized())
         return;
 
     qDebug() << "ChatsModel::fetchMore";
@@ -231,7 +231,7 @@ void ChatsModel::bubbleChat(int id)
 
 void ChatsModel::loadLast()
 {
-    if (isChecking())
+    if (isChecking() || !pTasty->isAuthorized())
         return;
 
     qDebug() << "ChatsModel::loadLast";

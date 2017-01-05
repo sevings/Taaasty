@@ -28,7 +28,7 @@ Pane {
     hasMenu: true
     readonly property bool isEntryEditor: true
     property int entryType
-    readonly property int privacy: lockButton.locked
+    readonly property int privacy: lockButton.locked && lockButton.visible
                                    ? Poster.Private : fireButton.voting
                                      ? Poster.Voting : Poster.Public;
     onEntryTypeChanged: {
@@ -328,7 +328,7 @@ Pane {
                     IconButton {
                         id: lockButton
                         property bool locked
-                        visible: entryType !== TlogEntry.AnonymousEntry // && to my tlog?
+                        visible: entryType !== TlogEntry.AnonymousEntry && whereBox.currentIndex == 0
                         icon: (locked ? (window.darkTheme ? '../icons/lock-white-'
                                                           : '../icons/lock-black-')
                                       : (window.darkTheme ? '../icons/unlock-white-'
