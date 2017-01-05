@@ -31,6 +31,7 @@
 #include "Author.h"
 #include "Media.h"
 #include "Conversation.h"
+#include "Flow.h"
 
 #include "../tasty.h"
 #include "../apirequest.h"
@@ -256,16 +257,19 @@ void Entry::init(const QJsonObject& data)
     auto fixDate = data.value("fixed_up_at").toString();
     _fixedAt         = QDateTime::fromString(fixDate.left(19), "yyyy-MM-ddTHH:mm:ss");
 
-    auto me = Tasty::instance()->me();
-    auto isMy = me && _author->id() == me->id();
-    _isDeletable     = data.value("can_delete").toBool(isMy);
-    _isEditable      = data.value("can_edit").toBool(isMy);
-
     auto tlogData = data.value("tlog").toObject();
     if (_tlog && tlogData.contains("slug"))
         _tlog->init(tlogData);
-    else
+    else //! \todo where is difference?
+    {
+        delete _tlog;
         _tlog        = new Tlog(tlogData, this);
+    }
+
+    auto isMy = _author->id() == pTasty->settings()->userId();
+    auto isModer = _tlog->flow() && _tlog->flow()->isEditable();
+    _isDeletable     = data.value("can_delete").toBool(isMy || isModer);
+    _isEditable      = data.value("can_edit").toBool(isMy);
 
     if (!_rating->id())
         _rating->init(data.value("rating").toObject());

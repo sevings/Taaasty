@@ -98,9 +98,10 @@ bool Reposter::isUnrepostable(int entryId) const
 
     int myId = pTasty->settings()->userId();
 
-    if (_model->mode() == FeedModel::MyTlogMode
-            && entry->tlog()->id() == myId)
-        return false;
+    if ((_model->mode() == FeedModel::MyTlogMode
+         || _model->tlogId() == myId)
+            && entry->tlog()->id() != myId)
+        return true;
 
     if (_model->mode() != FeedModel::TlogMode)
         return false;
