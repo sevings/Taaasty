@@ -289,8 +289,10 @@ void FeedModel::reset(Mode mode, int tlog, const QString& slug, const QString& q
 
 bool FeedModel::hideMode() const
 {
-    return (_mode == LiveMode || _mode == BestMode || _mode == ExcellentMode
-            || _mode == GoodMode || _mode == WellMode || _mode == BetterThanMode);
+    return (   _mode == LiveMode
+            || _mode == BestMode || _mode == ExcellentMode
+            || _mode == GoodMode || _mode == WellMode
+            || _mode == BetterThanMode);
 }
 
 
@@ -313,9 +315,11 @@ bool FeedModel::hideNegative() const
 
 bool FeedModel::showFixed() const
 {
-    return (_mode == LiveMode || _mode == BestMode || _mode == ExcellentMode
-            || _mode == GoodMode || _mode == WellMode || _mode == BetterThanMode
-            || _mode == FriendsMode || _mode == AnonymousMode);
+    return (   _mode == LiveMode    || _mode == FriendsMode
+            || _mode == AnonymousMode
+            || _mode == BestMode    || _mode == ExcellentMode
+            || _mode == GoodMode    || _mode == WellMode
+            || _mode == BetterThanMode);
 }
 
 
@@ -325,7 +329,8 @@ bool FeedModel::reloadRatingsMode() const
     return (   _mode == LiveMode || _mode == FlowsMode
             || _mode == BestMode || _mode == ExcellentMode
             || _mode == GoodMode || _mode == WellMode
-            || _mode == BetterThanMode);
+            || _mode == BetterThanMode
+            || _mode == TlogMode);
 }
 
 
@@ -430,9 +435,8 @@ void FeedModel::_addItems(const QJsonObject& data)
         return;
     }
 
-    // uncomment if use api v2
-//    if (reloadRatingsMode())
-//        _loadRatings(QList<EntryPtr>() << fixed << all);
+    if (reloadRatingsMode())
+        _loadRatings(QList<EntryPtr>() << fixed << all);
 
     bool loadMore = false;
     if (hideShort() || hideNegative())

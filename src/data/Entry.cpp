@@ -267,8 +267,7 @@ void Entry::init(const QJsonObject& data)
     else
         _tlog        = new Tlog(tlogData, this);
 
-    // uncomment if use api v2
-//    if (!_rating->id())
+    if (!_rating->id())
         _rating->init(data.value("rating").toObject());
 
     _commentsCount   = data.value("comments_count").toInt();
