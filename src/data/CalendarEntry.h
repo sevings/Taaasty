@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QDateTime>
 
 #include "../defines.h"
 
@@ -62,6 +63,8 @@ public:
     QString month() const; // year, standalone month
     QString date() const; // yyyy-MM-dd
 
+    QDateTime dateTime() const { return _dateTime; }
+
 private:
     int     _id;
     QString _createdAt;
@@ -73,6 +76,8 @@ private:
     int     _commentsCount;
     QString _truncatedTitle;
     bool    _isFlow;
+
+    QDateTime  _dateTime;
 
     EntryPtr   _entry;
     EntryBase* _base; //-V122

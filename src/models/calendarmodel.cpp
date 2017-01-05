@@ -301,19 +301,22 @@ void CalendarModel::_sort()
         case NewestFirst:
             SORT_CALENDAR
             {
-                return left->date() > right->date();
+                return left->dateTime() > right->dateTime();
             });
             break;
         case OldestFirst:
             SORT_CALENDAR
             {
-                return left->date() < right->date();
+                return left->dateTime() < right->dateTime();
             });
             break;
         case BestFirst:
             SORT_CALENDAR
             {
-                return left->rating()->votes() > right->rating()->votes();
+                auto diff = left->rating()->votes() - right->rating()->votes();
+                if (diff)
+                    return diff > 0;
+                return left->dateTime() > right->dateTime();
             });
             break;
         default:

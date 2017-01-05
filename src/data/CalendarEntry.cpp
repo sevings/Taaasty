@@ -22,8 +22,6 @@
 
 #include "CalendarEntry.h"
 
-#include <QDate>
-
 #include "Entry.h"
 #include "Rating.h"
 
@@ -55,7 +53,8 @@ CalendarEntry::CalendarEntry(const QJsonObject& data, QObject *parent)
     auto d = data.value("created_at").toString();
     _createdAt       = Tasty::parseDate(d);
 
-    auto date = QDate::fromString(d.left(7), "yyyy-MM");
+    _dateTime = QDateTime::fromString(d.left(19), "yyyy-MM-ddTHH:mm:ss");
+    auto date = _dateTime.date();
     auto month = QDate::longMonthName(date.month(), QDate::StandaloneFormat);
     _month           = QString("%1, %2").arg(date.year()).arg(month);
 
