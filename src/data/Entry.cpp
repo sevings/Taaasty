@@ -91,7 +91,7 @@ void EntryBase::_initBase(const QJsonObject& data)
         _type = QuoteEntry;
     else if (type == "video"     || type == "VideoEntry")
         _type = VideoEntry;
-    else if (type == "text"      || type == "TextEntry")
+    else if (type == "text"      || type == "TextEntry" || type == "convo") //! \todo enum for convo?
         _type = TextEntry;
     else if (type == "anonymous" || type == "AnonymousEntry")
         _type = AnonymousEntry;
