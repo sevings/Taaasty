@@ -249,9 +249,9 @@ MessageBase* Conversation::lastMessage()
 {
     MessageBase* last = _lastMessage;
 
-    if (_entryId)
+    if (_entry)
     {
-        auto lst = entry()->commentsModel()->lastComment();
+        auto lst = _entry->commentsModel()->lastComment();
         if (!last || (lst && lst->createdDate() > last->createdDate()))
             last = lst;
     }

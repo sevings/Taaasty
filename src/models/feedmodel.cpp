@@ -326,11 +326,8 @@ bool FeedModel::showFixed() const
 
 bool FeedModel::reloadRatingsMode() const
 {
-    return (   _mode == LiveMode || _mode == FlowsMode
-            || _mode == BestMode || _mode == ExcellentMode
-            || _mode == GoodMode || _mode == WellMode
-            || _mode == BetterThanMode
-            || _mode == TlogMode);
+    return (   _mode != InvalidMode
+            && _mode != AnonymousMode);
 }
 
 
