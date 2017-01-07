@@ -175,7 +175,6 @@ signals:
 private slots:
     void _changeWatched(const QJsonObject& data);
     void _changeFavorited(const QJsonObject& data);
-    void _changeIsReportable(const QJsonObject& data);
     void _setCommentsCount(int tc);
     void _setWatched();
     void _correctHtml();

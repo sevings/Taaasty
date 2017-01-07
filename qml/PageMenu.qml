@@ -377,8 +377,10 @@ Q.Drawer {
                          && page.isFullEntryView === true
                          && !page.entry.loading
                          && Tasty.isAuthorized
+                         && (goChat.visible || leftChat.visible)
             }
             MenuItem {
+                id: goChat
                 text: 'Перейти к беседе'
                 onTriggered: {
                     window.pushMessages(page.entry.chat);

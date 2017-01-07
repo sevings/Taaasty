@@ -51,8 +51,9 @@ Media::Media(const QJsonObject& data, QObject* parent)
     auto links = data.value("links").toObject();
     _url = links.value("player").toArray().first().toObject().value("href").toString();
 
-    //! \todo entry iframely links may have no thumbnail
-    auto thumb = links.value("thumbnail").toArray().first().toObject();
+    auto imageData = links.contains("thumbnail")
+            ? links.value("thumbnail") : links.value("image");
+    auto thumb = imageData.toArray().first().toObject();
     _thumbnail = new AttachedImage(thumb, this);
 
     auto icon = links.value("icon").toArray().first().toObject();

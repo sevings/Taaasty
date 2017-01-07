@@ -39,12 +39,9 @@ Settings::Settings(QObject *parent)
     if (!_settings.contains("max_image_width"))
     {
         auto screen = qApp->primaryScreen();
-        auto width = screen->size().width();
+        auto width = screen->size().width() * screen->devicePixelRatio();
         setMaxImageWidth(width);
     }
-
-    if (!_settings.contains("autoload_images"))
-        setAutoloadImages(true);
 }
 
 

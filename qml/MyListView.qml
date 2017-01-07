@@ -45,15 +45,15 @@ ListView {
         }
     }
     add: Transition {
-        NumberAnimation { property: "opacity"; from: 0;   to: 1.0; duration: 300 }
-        NumberAnimation { property: "scale";   from: 0.8; to: 1.0; duration: 300 }
+        NumberAnimation { property: "opacity"; from: 0;   to: 1.0; duration: 300; alwaysRunToEnd: true }
+        NumberAnimation { property: "scale";   from: 0.8; to: 1.0; duration: 300; alwaysRunToEnd: true }
     }
     remove: Transition {
-        NumberAnimation { property: "opacity"; from: 1.0; to: 0; duration: 300 }
-        NumberAnimation { property: "scale";   from: 1.0; to: 0.8; duration: 300 }
+        NumberAnimation { property: "opacity"; from: 1.0; to: 0;   duration: 300; alwaysRunToEnd: true }
+        NumberAnimation { property: "scale";   from: 1.0; to: 0.8; duration: 300; alwaysRunToEnd: true }
     }
     displaced: Transition {
-        NumberAnimation { property: "y"; duration: 300 }
+        NumberAnimation { property: "y"; duration: 300; alwaysRunToEnd: true }
     }
     MyScrollIndicator { flick: list }
 /*    Rectangle {

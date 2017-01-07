@@ -436,7 +436,18 @@ void Entry::report()
     _entryRequest = new ApiRequest(url, ApiRequest::AllOptions);
     _entryRequest->post();
 
-    Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_changeIsReportable(QJsonObject))));
+    auto ptr = sharedFromThis();
+    Q_TEST(connect(_entryRequest, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
+                   [ptr](const QJsonObject& data)
+    {
+        if (!ptr)
+            return;
+
+        ptr->_isReportable = data.value("can_report").toBool();
+        emit ptr->isReportableChanged();
+
+        emit pTasty->info("Жалоба на пост отправлена");
+    }));
 }
 
 
@@ -486,15 +497,6 @@ void Entry::_changeFavorited(const QJsonObject& data)
         emit Tasty::instance()->info("Запись добавлена в избранное");
     else
         emit Tasty::instance()->info("Запись удалена из избранного");
-}
-
-
-
-void Entry::_changeIsReportable(const QJsonObject& data)
-{
-    _isReportable = data.value("can_report").toBool();
-
-    emit isReportableChanged();
 }
 
 

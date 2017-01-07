@@ -21,6 +21,7 @@
 import QtQuick 2.7
 import QtQuick.Controls.Material 2.0
 import org.binque.taaasty 1.0
+import QtQuick.Window 2.2
 
 MyImage {
     id: avatar
@@ -33,7 +34,7 @@ MyImage {
     property User user
     property string symbol: user && user.name ? user.name[0].toUpperCase() : '?'
     property string defaultSource: ''
-    url: user && (dp < 2 ? user.thumb64 : user.thumb128) || defaultSource
+    url: user && (Screen.pixelDensity <= 8 ? user.thumb64 : user.thumb128) || defaultSource
     backgroundColor: user && user.backgroundColor || '#373737'
     onAvailable: {
         letter.visible = false;
