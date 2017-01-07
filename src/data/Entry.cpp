@@ -258,13 +258,10 @@ void Entry::init(const QJsonObject& data)
     _fixedAt         = QDateTime::fromString(fixDate.left(19), "yyyy-MM-ddTHH:mm:ss");
 
     auto tlogData = data.value("tlog").toObject();
-    if (_tlog && tlogData.contains("slug"))
-        _tlog->init(tlogData);
-    else //! \todo where is difference?
-    {
-        delete _tlog;
+    if (!_tlog)
         _tlog        = new Tlog(tlogData, this);
-    }
+    else if (_tlog->slug().isEmpty() || tlogData.contains("slug"))
+        _tlog->init(tlogData);
 
     auto isMy = _author->id() == pTasty->settings()->userId();
     auto isModer = _tlog->flow() && _tlog->flow()->isEditable();

@@ -78,13 +78,13 @@ public:
 
     bool changingRelation() const;
 
-public slots:
     int  tlogId() const                 { return _id; }
     void setId(const int id);
 
     QString slug() const                { return _slug; }
     void    setSlug(const QString& slug);
 
+public slots:
     void init(const QJsonObject& data);
     void reload();
 
