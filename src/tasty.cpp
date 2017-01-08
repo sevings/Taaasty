@@ -288,7 +288,7 @@ void Tasty::_init()
     _pusher     = new PusherClient(this);
     _dataCache  = new TastyDataCache;
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 6; i++)
     {
         _manager->connectToHost("http://api.taaasty.com");
         _manager->connectToHost("http://thumbor4.tasty0.ru");
@@ -298,23 +298,7 @@ void Tasty::_init()
     _entryImageWidth   = _settings->maxImageWidth();
     _commentImageWidth = _entryImageWidth;
 
-    QPointer<Tasty> that(this);
-    Q_TEST(connect(qApp, &QGuiApplication::applicationStateChanged,
-                   [that](Qt::ApplicationState state)
-    {
-        if (!that)
-            return;
-
-        if (state == Qt::ApplicationActive)
-        {
-            Q_TEST(QMetaObject::invokeMethod(that->_pusher, "connect", Qt::QueuedConnection));
-
-            Q_TEST(QMetaObject::invokeMethod(ChatsModel::instance(), "loadLast", Qt::QueuedConnection));
-            Q_TEST(QMetaObject::invokeMethod(NotificationsModel::instance(), "check", Qt::QueuedConnection));
-        }
-        else
-            Q_TEST(QMetaObject::invokeMethod(Bayes::instance(), "saveDb", Qt::QueuedConnection));
-    }));
+    Q_TEST(connect(qApp, &QGuiApplication::applicationStateChanged, this, &Tasty::_saveOrReconnect));
 
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));

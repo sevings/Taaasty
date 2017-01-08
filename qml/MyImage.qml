@@ -32,10 +32,13 @@ Loader {
     property bool savable: false
     property bool acceptClick: true
     property alias popBody: pop.body
-    property CachedImage cachedImage: Cache.image()
+    property CachedImage cachedImage
     signal available
     signal clicked
     Component.onCompleted: {
+        if (!cachedImage)
+            return;
+
         if (cachedImage.available)
             showImage();
         else if ((width > 0 && width < 12 * mm)
@@ -58,9 +61,13 @@ Loader {
             hideImage();
     }
     onLoaded: {
-        item.source = cachedImage.source
+        if (cachedImage)
+            item.source = cachedImage.source
     }
     function showImage() {
+        if (!cachedImage)
+            return;
+
         back.visible = false;
         image.sourceComponent = cachedImage.format == CachedImage.GifFormat
                 ? animatedImage : staticImage
@@ -106,7 +113,7 @@ Loader {
                 image.clicked();
         }
         onPressAndHold: {
-            if (image.savable && cachedImage.available)
+            if (image.savable && cachedImage && cachedImage.available)
                 window.saveImage(cachedImage);
         }
     }
@@ -115,7 +122,7 @@ Loader {
         anchors.fill: parent
         color: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
         Loader {
-            active: image.url && !cachedImage.available && back.width > 12 * mm && back.height > 12 * mm
+            active: image.url && cachedImage && !cachedImage.available && back.width > 12 * mm && back.height > 12 * mm
             anchors {
                 verticalCenter: parent.verticalCenter
                 horizontalCenter: parent.horizontalCenter
@@ -124,9 +131,9 @@ Loader {
             }
             sourceComponent: Rectangle {
                 id: downloadButton
-                width: cachedImage.kbytesTotal > 0 ? cachedImage.kbytesReceived * (back.width - 12 * mm)
-                                                     / cachedImage.kbytesTotal + 12 * mm
-                                                   : 12 * mm
+                width: cachedImage && cachedImage.kbytesTotal > 0 ? cachedImage.kbytesReceived * (back.width - 12 * mm)
+                                                                    / cachedImage.kbytesTotal + 12 * mm
+                                                                  : 12 * mm
                 height: 12 * mm
                 radius: height / 2
                 color: Material.primary
@@ -140,6 +147,9 @@ Loader {
                     anchors.fill: parent
                     onClicked: {
                         mouse.accepted = true;
+
+                        if (!cachedImage)
+                            return;
 
                         if (cachedImage.isDownloading)
                             cachedImage.abortDownload();
@@ -159,11 +169,11 @@ Loader {
                 Q.Label {
                     id: bytesText
                     font.pixelSize: window.fontSmallest
-                    text: (cachedImage.isDownloading && cachedImage.kbytesTotal > 0
-                           ? cachedImage.kbytesReceived + ' / ' : '')
-                          + (cachedImage.kbytesTotal > 0
-                             ? cachedImage.kbytesTotal + ' КБ ' : '')
-                          + (cachedImage.extension ? '\n' + cachedImage.extension : '')
+                    text: cachedImage ? ((cachedImage.isDownloading && cachedImage.kbytesTotal > 0
+                                          ? cachedImage.kbytesReceived + ' / ' : '')
+                                         + (cachedImage.kbytesTotal > 0
+                                            ? cachedImage.kbytesTotal + ' КБ ' : '')
+                                         + (cachedImage.extension ? '\n' + cachedImage.extension : '')) : ''
                     anchors {
                         verticalCenter: parent.verticalCenter
                         left: parent.left

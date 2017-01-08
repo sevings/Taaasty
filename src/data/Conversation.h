@@ -91,11 +91,11 @@ public:
 
     bool isAnonymous() const;
 
-    MessagesModel* messages();
+    MessagesModel* messages() const;
 
     User* user(int id, bool reloadUsers = true);
 
-    MessageBase* lastMessage();
+    MessageBase* lastMessage() const;
 
     ConversationType type() const;
 

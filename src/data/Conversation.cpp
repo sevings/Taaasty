@@ -184,21 +184,16 @@ bool Conversation::isInvolved() const
 
 bool Conversation::isMyLastMessageUnread() const
 {
-    return  _lastMessage && _lastMessage->userId() == _userId
-            && !_lastMessage->isRead();
+    const auto msg = lastMessage();
+    return  msg && msg->user()
+            && msg->user()->id() == _userId
+            && !msg->isRead();
 }
 
 
 
-MessagesModel* Conversation::messages()
+MessagesModel* Conversation::messages() const
 {
-    if (!_messages)
-    {
-        _messages = new MessagesModel(this);
-
-        Q_TEST(connect(_messages, SIGNAL(lastMessageChanged()), this, SIGNAL(lastMessageChanged())));
-    }
-
     return _messages;
 }
 
@@ -245,7 +240,7 @@ User* Conversation::user(int id, bool reloadUsers)
 
 
 
-MessageBase* Conversation::lastMessage()
+MessageBase* Conversation::lastMessage() const
 {
     MessageBase* last = _lastMessage;
 
@@ -256,7 +251,7 @@ MessageBase* Conversation::lastMessage()
             last = lst;
     }
 
-    auto lst = messages()->lastMessage();
+    auto lst = _messages ? _messages->lastMessage() : nullptr;
     if (!last || (lst && lst->createdDate() > last->createdDate()))
         last = lst;
 
@@ -310,7 +305,14 @@ void Conversation::init(const QJsonObject& data)
      auto dataCache = pTasty->dataCache();
      dataCache->addChat(sharedFromThis());
 
-     messages()->init(this);
+     if (_messages)
+         _messages->init(this);
+     else
+     {
+         _messages = new MessagesModel(this);
+
+         Q_TEST(connect(_messages, SIGNAL(lastMessageChanged()), this, SIGNAL(lastMessageChanged())));
+     }
 
      if (!_entry && data.contains("entry"))
      {

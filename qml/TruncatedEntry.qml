@@ -89,7 +89,7 @@ Item {
         elide: Text.AlignRight
         wrapMode: Text.NoWrap
     }
-    Loader {
+    MyImage {
         id: firstImage
         anchors {
             top: entryAvatar.visible ? entryAvatar.bottom : date.bottom
@@ -99,32 +99,28 @@ Item {
             bottomMargin: 1.5 * mm
         }
         property AttachedImage image: entry ? entry.attachedImagesModel.first : null
-        active: image
-        height: active ? (image.height / image.width * width) : 0
-        onLoaded: item.image = image
-        sourceComponent: MyImage {
-            property AttachedImage image
-            url: image ? image.url : ''
-            extension: image ? image.type : ''
-            savable: true
-            popBody: truncEntry.popBody
-            acceptClick: false
-            ThemedText {
-                anchors {
-                    bottom: parent.bottom
-                    left: parent.left
-                    right: parent.right
-                    margins: 0.5 * mm
-                }
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: window.fontSmaller
-                style: Text.Outline
-                styleColor: window.backgroundColor
-                property int total: entry ? entry.attachedImagesModel.rowCount() : 0
-                text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
-                visible: total > 1
-                z: firstImage.z + 1
+        visible: image
+        height: visible ? (image.height / image.width * width) : 0
+        url: image ? image.url : ''
+        extension: image ? image.type : ''
+        savable: true
+        popBody: truncEntry.popBody
+        acceptClick: false
+        ThemedText {
+            anchors {
+                bottom: parent.bottom
+                left: parent.left
+                right: parent.right
+                margins: 0.5 * mm
             }
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: window.fontSmaller
+            style: Text.Outline
+            styleColor: window.backgroundColor
+            property int total: entry ? entry.attachedImagesModel.rowCount() : 0
+            text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
+            visible: total > 1
+            z: firstImage.z + 1
         }
     }
     Loader {
