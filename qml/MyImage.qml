@@ -25,7 +25,7 @@ import ImageCache 2.0
 
 Loader {
     id: image
-    asynchronous: true
+    asynchronous: false
     property string url: ''
     property string extension: ''
     property alias backgroundColor: back.color
@@ -121,68 +121,65 @@ Loader {
         id: back
         anchors.fill: parent
         color: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
-        Loader {
-            active: image.url && cachedImage && !cachedImage.available && back.width > 12 * mm && back.height > 12 * mm
+        Rectangle {
+            id: downloadButton
             anchors {
-                verticalCenter: parent.verticalCenter
-                horizontalCenter: parent.horizontalCenter
+                centerIn: parent
                 bottomMargin: 1.5 * mm
                 alignWhenCentered: false
             }
-            sourceComponent: Rectangle {
-                id: downloadButton
-                width: cachedImage && cachedImage.kbytesTotal > 0 ? cachedImage.kbytesReceived * (back.width - 12 * mm)
-                                                                    / cachedImage.kbytesTotal + 12 * mm
-                                                                  : 12 * mm
-                height: 12 * mm
-                radius: height / 2
-                color: Material.primary
-                Behavior on width {
-                    NumberAnimation { duration: 100 }
-                }
-                Behavior on scale {
-                    NumberAnimation { easing.overshoot: 5; easing.type: Easing.OutBack; duration: 400; }
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        mouse.accepted = true;
+            visible: image.url && cachedImage && !cachedImage.available && back.width > height && back.height > height
+            width: cachedImage && cachedImage.kbytesTotal > 0 ? cachedImage.kbytesReceived * (back.width - height)
+                                                                / cachedImage.kbytesTotal + height
+                                                              : height
+            height: 12 * mm
+            radius: height / 2
+            color: Material.primary
+            Behavior on width {
+                NumberAnimation { duration: 100 }
+            }
+            Behavior on scale {
+                NumberAnimation { easing.overshoot: 5; easing.type: Easing.OutBack; duration: 400; }
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    mouse.accepted = true;
 
-                        if (!cachedImage)
-                            return;
+                    if (!cachedImage)
+                        return;
 
-                        if (cachedImage.isDownloading)
-                            cachedImage.abortDownload();
-                        else
-                            cachedImage.download();
-                    }
-                    onDoubleClicked: {
-                        // supress second click
-                    }
-                    onPressedChanged: {
-                        if (pressed)
-                            parent.scale = 0.8;
-                        else
-                            parent.scale = 1;
-                    }
+                    if (cachedImage.isDownloading)
+                        cachedImage.abortDownload();
+                    else
+                        cachedImage.download();
                 }
-                Q.Label {
-                    id: bytesText
-                    font.pixelSize: window.fontSmallest
-                    text: cachedImage ? ((cachedImage.isDownloading && cachedImage.kbytesTotal > 0
-                                          ? cachedImage.kbytesReceived + ' / ' : '')
-                                         + (cachedImage.kbytesTotal > 0
-                                            ? cachedImage.kbytesTotal + ' КБ ' : '')
-                                         + (cachedImage.extension ? '\n' + cachedImage.extension : '')) : ''
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                        left: parent.left
-                        right: parent.right
-                        margins: 1.5 * mm
-                    }
-                    horizontalAlignment: Text.AlignHCenter
-                    wrapMode: Text.WordWrap
+                onDoubleClicked: {
+                    // supress second click
                 }
+                onPressedChanged: {
+                    if (pressed)
+                        parent.scale = 0.8;
+                    else
+                        parent.scale = 1;
+                }
+            }
+            Q.Label {
+                id: bytesText
+                font.pixelSize: window.fontSmallest
+                text: cachedImage ? ((cachedImage.isDownloading && cachedImage.kbytesTotal > 0
+                                      ? cachedImage.kbytesReceived + ' / ' : '')
+                                     + (cachedImage.kbytesTotal > 0
+                                        ? cachedImage.kbytesTotal + ' КБ ' : '')
+                                     + (cachedImage.extension ? '\n' + cachedImage.extension : '')) : ''
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    left: parent.left
+                    right: parent.right
+                    margins: 1.5 * mm
+                }
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
             }
         }
     }

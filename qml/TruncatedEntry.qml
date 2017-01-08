@@ -123,22 +123,18 @@ Item {
             z: firstImage.z + 1
         }
     }
-    Loader {
+    MediaLink {
         id: mediaLink
-        property Media media: entry ? entry.media : null
-        active: media
-        height: media ? media.thumbnail.height / media.thumbnail.width * width : -anchors.topMargin
         anchors {
             top: firstImage.bottom
             left: parent.left
             right: parent.right
             bottomMargin: 1.5 * mm
         }
-        onLoaded: item.media = media
-        sourceComponent: MediaLink {
-            acceptClick: false
-            popBody: truncEntry.popBody
-        }
+        visible: media
+        media: entry ? entry.media : null
+        acceptClick: false
+        popBody: truncEntry.popBody
     }
     ThemedText {
         id: entryTitle
