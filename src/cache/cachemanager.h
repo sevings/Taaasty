@@ -37,7 +37,7 @@ class CacheManager : public QObject
 public:
     static CacheManager* instance(QNetworkAccessManager* web = nullptr);
 
-    Q_INVOKABLE CachedImage* image(QString url = QString());
+    Q_INVOKABLE CachedImage* image(const QString& url = QString());
 
     QNetworkAccessManager* web() const;
     QString path() const;
@@ -47,29 +47,29 @@ public:
 
     bool autoloadOverWifi() const;
     int  maxLoadSize() const;
-    
+
     bool autoload(int size = 0) const;
-    
+
 public slots:
     void setAutoloadOverWifi(bool load);
     void setMaxLoadSize(int size);
-    
+
     void clearUnusedImages();
 
 private:
     CacheManager(QNetworkAccessManager* web = nullptr);
 
     QHash<QString, CachedImage*>    _images;
-    
+
     QNetworkAccessManager*          _web; //-V122
     QFutureWatcher<void>            _watcher;
     QString                         _path;
-    
+
     int                             _maxWidth;
     int                             _maxLoadSize;
     bool                            _autoloadOverWifi;
-    
-    void _clearUnusedImages();    
+
+    void _clearUnusedImages();
 };
 
 #endif // CACHEMANAGER_H

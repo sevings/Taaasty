@@ -40,7 +40,7 @@
 
 
 
-CachedImage::CachedImage(CacheManager* parent, QString url)
+CachedImage::CachedImage(CacheManager* parent, const QString& url)
     : QObject(parent)
     , _man(parent)
     , _headReply(nullptr)
@@ -65,7 +65,7 @@ CachedImage::CachedImage(CacheManager* parent, QString url)
         that->_available = true;
         emit that->available();
     }, Qt::QueuedConnection));
-    
+
     if (!_man || _url.isEmpty())
         return;
 

@@ -135,7 +135,7 @@ void CacheManager::clearUnusedImages()
 
 
 
-CachedImage* CacheManager::image(QString url)
+CachedImage* CacheManager::image(const QString& url)
 {
     if (_images.contains(url))
     {
@@ -175,7 +175,7 @@ void CacheManager::_clearUnusedImages()
     {
         if (images.contains(file))
             continue;
-        
+
         if (!QFile::remove(_path + "/" + file))
             qDebug() << "Could not remove image" << file;
     }

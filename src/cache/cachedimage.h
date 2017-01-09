@@ -45,7 +45,7 @@ public:
     enum ImageFormat { UnknownFormat, GifFormat, JpegFormat, PngFormat };
     Q_ENUMS(ImageFormat)
 
-    explicit CachedImage(CacheManager* parent = nullptr, QString url = QString());
+    explicit CachedImage(CacheManager* parent = nullptr, const QString& url = QString());
 
     QUrl    source() const;
     QString sourceFileName() const;
@@ -62,7 +62,7 @@ public:
     QString fileName() const;
 
     ImageFormat format() const;
-    
+
 signals:
     void available();
     void receivedChanged();
