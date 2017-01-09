@@ -70,13 +70,12 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url)
         return;
 
     if (_url.startsWith("//"))
-        _url = "http:" + _url;
+        _url.prepend("http:");
 
     _hash = qHash(_url);
     if (_exists())
     {
         _available = true;
-        emit available();
         return;
     }
 
@@ -164,7 +163,7 @@ QString CachedImage::fileName() const
 
 void CachedImage::getInfo()
 {
-    if (_headReply || _reply)
+    if (_headReply || _reply || _available)
         return;
 
     _headReply = _man->web()->head(QNetworkRequest(_url));
@@ -182,10 +181,7 @@ void CachedImage::download()
         return;
 
     if (_available)
-    {
-        emit available();
         return;
-    }
 
     if (_headReply)
         _headReply->abort();
