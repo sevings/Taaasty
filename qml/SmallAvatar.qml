@@ -36,11 +36,9 @@ MyImage {
     property string defaultSource: ''
     url: user && (Screen.pixelDensity <= 8 ? user.thumb64 : user.thumb128) || defaultSource
     backgroundColor: user && user.backgroundColor || '#373737'
-    onAvailable: {
-        letter.visible = false;
-    }
     Text {
         id: letter
+        visible: !avatar.available
         color: user && user.nameColor || Material.foreground
         font.pixelSize: avatar.width / 2
         anchors.centerIn: parent

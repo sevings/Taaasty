@@ -23,103 +23,68 @@ import QtQuick.Controls 2.0 as Q
 import QtQuick.Controls.Material 2.0
 import ImageCache 2.0
 
-Loader {
+Item {
     id: image
-    asynchronous: false
     property string url: ''
     property string extension: ''
     property alias backgroundColor: back.color
     property bool savable: false
-    property bool acceptClick: true
+    property alias acceptClick: pop.enabled
     property alias popBody: pop.body
     property CachedImage cachedImage
-    signal available
+    readonly property bool available: cachedImage && cachedImage.available
     signal clicked
     Component.onCompleted: {
-        if (!cachedImage)
+        if (!cachedImage || cachedImage.available)
             return;
 
-        if (cachedImage.available)
-            showImage();
-        else if ((width > 0 && width < 12 * mm)
+        if ((width > 0 && width < 12 * mm)
                 || (height > 0 && height < 12 * mm)) {
             cachedImage.download();
         }
-    }
-    Component.onDestruction: {
-        image.sourceComponent = undefined;
     }
     onUrlChanged: {
         cachedImage = Cache.image(image.url);
 
         if (!cachedImage.extension)
             cachedImage.extension = image.extension
-
-        if (cachedImage.available)
-            showImage();
-        else
-            hideImage();
     }
-    onLoaded: {
-        if (cachedImage)
-            item.source = cachedImage.source
-    }
-    function showImage() {
-        if (!cachedImage)
-            return;
-
-        back.visible = false;
-        image.sourceComponent = cachedImage.format == CachedImage.GifFormat
-                ? animatedImage : staticImage
-        if (image.status === Loader.Ready)
-            item.source = cachedImage.source;
-        image.available()
-    }
-    function hideImage() {
-        back.visible = true;
-        image.sourceComponent = undefined;
-    }
-    Connections {
-        target: cachedImage
-        onAvailable: {
-            showImage();
-        }
-    }
-    Component {
+    AnimatedImage {
         id: animatedImage
-        AnimatedImage {
-            cache: true
-            smooth: true
-            asynchronous: true
-            fillMode: Image.PreserveAspectCrop
-        }
+        anchors.fill: parent
+        cache: true
+        smooth: true
+        asynchronous: true
+        fillMode: Image.PreserveAspectCrop
+        visible: image.available && cachedImage.format == CachedImage.GifFormat
+        source: visible ? cachedImage.source : ''
     }
-    Component {
+    Image {
         id: staticImage
-        Image {
-            cache: true
-            smooth: true
-            asynchronous: true
-            fillMode: Image.PreserveAspectCrop
-        }
+        anchors.fill: parent
+        cache: true
+        smooth: true
+        asynchronous: true
+        fillMode: Image.PreserveAspectCrop
+        visible: image.available && cachedImage.format != CachedImage.GifFormat
+        source: visible ? cachedImage.source : ''
     }
     Poppable {
         id: pop
-        focus: true
-        enabled: acceptClick
         onClicked: {
             mouse.accepted = acceptClick;
             if (acceptClick)
                 image.clicked();
         }
         onPressAndHold: {
-            if (image.savable && cachedImage && cachedImage.available)
+            if (image.savable && image.available)
                 window.saveImage(cachedImage);
         }
     }
     Rectangle {
         id: back
         anchors.fill: parent
+        visible: !animatedImage.visible && !staticImage.visible
         color: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
         Rectangle {
             id: downloadButton
