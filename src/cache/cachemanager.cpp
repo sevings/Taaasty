@@ -129,6 +129,9 @@ void CacheManager::setMaxLoadSize(int size)
 
 void CacheManager::clearUnusedImages()
 {
+    if (_path.isEmpty())
+        _setPath();
+
     auto future = QtConcurrent::run(this, &CacheManager::_clearUnusedImages);
     _watcher.setFuture(future);
 }
@@ -146,12 +149,7 @@ CachedImage* CacheManager::image(const QString& url)
     }
 
     if (_path.isEmpty())
-    {
-        auto cachePath = QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
-        cachePath.mkpath("images");
-        cachePath.cd("images");
-        _path = cachePath.absolutePath();
-    }
+        _setPath();
 
     if (_watcher.isRunning())
         _watcher.waitForFinished();
@@ -159,6 +157,16 @@ CachedImage* CacheManager::image(const QString& url)
     auto image = new CachedImage(this, url);
     _images.insert(url, image);
     return image;
+}
+
+
+
+void CacheManager::_setPath()
+{
+    auto cachePath = QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
+    cachePath.mkpath("images");
+    cachePath.cd("images");
+    _path = cachePath.absolutePath();
 }
 
 

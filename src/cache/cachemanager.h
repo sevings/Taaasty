@@ -69,6 +69,7 @@ private:
     int                             _maxLoadSize;
     bool                            _autoloadOverWifi;
 
+    void _setPath();
     void _clearUnusedImages();
 };
 

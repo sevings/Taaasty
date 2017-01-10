@@ -236,7 +236,7 @@ void CachedImage::saveToFile(const QString& filename)
     if (QFile::exists(to))// && !QFile::remove(to))
     {
         qDebug() << "File exists" << to;
-        emit Tasty::instance()->error(0, QString("Файл уже существует:\n%1").arg(to));
+        emit pTasty->error(0, QString("Файл уже существует:\n%1").arg(to));
         emit savingError();
         return;
     }
@@ -244,12 +244,12 @@ void CachedImage::saveToFile(const QString& filename)
     if (!QFile::copy(_path(), to))
     {
         qDebug() << "Error copying" << to;
-        emit Tasty::instance()->error(0, QString("Не удалось сохранить изображение в %1").arg(to));
+        emit pTasty->error(0, QString("Не удалось сохранить изображение в %1").arg(to));
         emit savingError();
         return;
     }
 
-    emit Tasty::instance()->info(QString("Изображение сохранено в %1").arg(to));
+    emit pTasty->info(QString("Изображение сохранено в %1").arg(to));
     emit fileSaved();
 }
 
@@ -297,7 +297,7 @@ void CachedImage::_saveData()
     if (!_reply)
         return;
 
-    if (_reply->error() != QNetworkReply::NoError )
+    if (_reply->error() != QNetworkReply::NoError)
     {
         _reply->deleteLater();
         _reply = nullptr;
