@@ -55,7 +55,7 @@ CacheManager *CacheManager::instance(QNetworkAccessManager* web)
 
 
 CacheManager::CacheManager(QNetworkAccessManager* web)
-    : _provider(new CachedImageProvider)
+    : _provider(new CachedImageProvider(this))
     , _web(web ? web : new QNetworkAccessManager(this))
     , _maxWidth(0)
     , _maxLoadSize(-1)

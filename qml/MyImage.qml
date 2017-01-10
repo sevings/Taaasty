@@ -33,7 +33,7 @@ Item {
     property alias popBody: pop.body
     property CachedImage cachedImage
     readonly property bool available: cachedImage && cachedImage.available
-    readonly property providerSource: "image://cached/" + url
+    readonly property string providerSource: "image://cached/" + url
     signal clicked
     Component.onCompleted: {
         if (!cachedImage || cachedImage.available)

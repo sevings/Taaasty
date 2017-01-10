@@ -36,5 +36,5 @@ public:
     virtual QPixmap requestPixmap(const QString& id, QSize* size, const QSize& requestedSize) override;
 
 private:
-    CacheManager* _man;
+    CacheManager* _man; //-V122
 };

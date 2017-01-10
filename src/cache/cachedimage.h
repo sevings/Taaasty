@@ -91,18 +91,19 @@ private slots:
     void _changeBytes(qint64 bytesReceived, qint64 bytesTotal);
     void _printError(QNetworkReply::NetworkError code);
     void _printErrors(const QList<QSslError>& errors);
+    void _readPixmap(const QPixmap& pm);
 
 private:
     QString _filePath() const;
     QString _path() const;
-    QPixmap _saveFile(QByteArray* data) const;
+    void    _saveFile(QByteArray* data);
     QPixmap _loadFile();
 
-    CacheManager*           _man;       //-V122
-    QNetworkReply*          _headReply; //-V122
-    QNetworkReply*          _reply;     //-V122
-    QFutureWatcher<QPixmap> _saveWatcher;
-    QFutureWatcher<QPixmap> _loadWatcher;
+    CacheManager*        _man;       //-V122
+    QNetworkReply*       _headReply; //-V122
+    QNetworkReply*       _reply;     //-V122
+    QFutureWatcher<void> _watcher;
+    QPixmap              _pixmap;
 
     ImageFormat _format;
 
@@ -112,6 +113,9 @@ private:
 
     int     _kbytesReceived;
     int     _kbytesTotal;
+    bool    _autoload;
+    bool    _available;
+    bool    _loaded;
 };
 
 #endif // CACHEDIMAGE_H

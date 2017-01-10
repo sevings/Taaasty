@@ -47,5 +47,7 @@ QPixmap CachedImageProvider::requestPixmap(const QString& id, QSize* size, const
     if (size)
         *size = pixmap.size();
 
+    Q_ASSERT(!pixmap.isNull());
+
     return pixmap;
 }
