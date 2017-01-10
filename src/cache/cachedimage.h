@@ -24,6 +24,7 @@
 #include <QNetworkReply>
 #include <QSslError>
 #include <QFutureWatcher>
+#include <QPixmap>
 
 class CacheManager;
 
@@ -47,6 +48,10 @@ public:
 
     explicit CachedImage(CacheManager* parent = nullptr, const QString& url = QString());
 
+    void    loadFile();
+
+    QPixmap pixmap();
+
     QUrl    source() const;
     QString sourceFileName() const;
 
@@ -54,12 +59,13 @@ public:
     int     total() const       { return _kbytesTotal; }
 
     bool    isDownloading() const;
-    bool    isAvailable() const { return _available; }
+    bool    isAvailable() const;
 
     QString extension() const   { return _extension; }
     void    setExtension(QString format);
 
     QString fileName() const;
+    QString url() const         { return _url; }
 
     ImageFormat format() const;
 
@@ -87,14 +93,16 @@ private slots:
     void _printErrors(const QList<QSslError>& errors);
 
 private:
-    bool    _exists();
+    QString _filePath() const;
     QString _path() const;
-    void    _saveFile(QByteArray* data) const;
+    QPixmap _saveFile(QByteArray* data) const;
+    QPixmap _loadFile();
 
-    CacheManager*        _man;       //-V122
-    QNetworkReply*       _headReply; //-V122
-    QNetworkReply*       _reply;     //-V122
-    QFutureWatcher<void> _saveWatcher;
+    CacheManager*           _man;       //-V122
+    QNetworkReply*          _headReply; //-V122
+    QNetworkReply*          _reply;     //-V122
+    QFutureWatcher<QPixmap> _saveWatcher;
+    QFutureWatcher<QPixmap> _loadWatcher;
 
     ImageFormat _format;
 
@@ -104,7 +112,6 @@ private:
 
     int     _kbytesReceived;
     int     _kbytesTotal;
-    bool    _available;
 };
 
 #endif // CACHEDIMAGE_H

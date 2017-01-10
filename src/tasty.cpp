@@ -42,6 +42,7 @@
 #include "tastydatacache.h"
 #include "cache/cachemanager.h"
 #include "cache/cachedimage.h"
+#include "cache/cachedimageprovider.h"
 #include "models/feedmodel.h"
 #include "models/calendarmodel.h"
 #include "models/commentsmodel.h"
@@ -359,6 +360,8 @@ void Tasty::_init()
     cache->setAutoloadOverWifi(_settings->loadImagesOverWifi());
     cache->setMaxLoadSize(_settings->maxLoadImageSize());
     root->setContextProperty("Cache", cache);
+
+    _engine->addImageProvider("cached", cache->provider());
 
     Q_TEST(QObject::connect(_settings, SIGNAL(loadImagesOverWifiChanged(bool)), cache, SLOT(setAutoloadOverWifi(bool))));
     Q_TEST(QObject::connect(_settings, SIGNAL(maxLoadImageSizeChanged(int)),    cache, SLOT(setMaxLoadSize(int))));

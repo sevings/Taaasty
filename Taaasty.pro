@@ -22,6 +22,7 @@ SOURCES += src/main.cpp \
     src/models/calendarmodel.cpp \
     src/cache/cachemanager.cpp \
     src/cache/cachedimage.cpp \
+    src/cache/cachedimageprovider.cpp \
     src/nbc/stemmerv.cpp \
     src/data/AttachedImage.cpp \
     src/data/Author.cpp \
@@ -78,6 +79,7 @@ HEADERS += \
     src/models/calendarmodel.h \
     src/cache/cachemanager.h \
     src/cache/cachedimage.h \
+    src/cache/cachedimageprovider.h \
     src/defines.h \
     src/nbc/stemmerv.h \
     src/data/AttachedImage.h \

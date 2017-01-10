@@ -27,6 +27,7 @@
 #include <QFile>
 #include <QDir>
 #include <QImage>
+#include <QPixmapCache>
 #include <QBuffer>
 #include <QtConcurrent>
 #include <QStandardPaths>
@@ -50,20 +51,43 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url)
     , _url(url)
     , _kbytesReceived(0)
     , _kbytesTotal(0)
-    , _available(false)
 {
     Q_ASSERT(_man);
 
-    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, &CachedImage::downloadingChanged, Qt::QueuedConnection));
+    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<QPixmap>::finished, this, &CachedImage::downloadingChanged, Qt::QueuedConnection));
 
     QPointer<CachedImage> that(this);
-    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<void>::finished, this, [that]()
+    Q_TEST(connect(&_saveWatcher, &QFutureWatcher<QPixmap>::finished, this, [that]()
     {
         if (!that)
             return;
 
-        that->_available = true;
+        auto pixmap = that->_saveWatcher.result();
+        if (!pixmap.isNull())
+            QPixmapCache::insert(that->url(), pixmap);
+
         emit that->available();
+    }, Qt::QueuedConnection));
+
+    Q_TEST(connect(&_loadWatcher, &QFutureWatcher<QPixmap>::finished, this, [that]()
+    {
+        if (!that)
+            return;
+
+        auto pixmap = that->_loadWatcher.result();
+        if (pixmap.isNull())
+        {
+            if (that->_man->autoload())
+                that->download();
+            else
+                that->getInfo();
+        }
+        else
+        {
+            QPixmapCache::insert(that->url(), pixmap);
+
+            emit that->available();
+        }
     }, Qt::QueuedConnection));
 
     if (!_man || _url.isEmpty())
@@ -73,18 +97,32 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url)
         _url.prepend("http:");
 
     _hash = qHash(_url);
-    if (_exists())
-    {
-        _available = true;
+
+    loadFile();
+}
+
+
+
+void CachedImage::loadFile()
+{
+    if (_loadWatcher.isRunning() || isAvailable())
         return;
-    }
 
-    qDebug() << "CachedImage from url: " << url;
+    auto future = QtConcurrent::run(this, &CachedImage::_loadFile, data);
+    _loadWatcher.setFuture(future);
+}
 
-    if (_man->autoload())
-        download();
-    else
-        getInfo();
+
+
+QPixmap CachedImage::pixmap()
+{
+    QPixmap pixmap;
+    Q_TEST(QPixmapCache::find(_url, &pixmap));
+
+    if (pixmap.isNull())
+        loadFile();
+
+    return pixmap;
 }
 
 
@@ -106,6 +144,14 @@ QString CachedImage::sourceFileName() const
 bool CachedImage::isDownloading() const
 {
     return (_reply && _reply->isRunning()) || _saveWatcher.isRunning();
+}
+
+
+
+bool CachedImage::isAvailable() const
+{
+    QPixmap pixmap;
+    return QPixmapCache::find(_url, &pixmap);
 }
 
 
@@ -163,7 +209,7 @@ QString CachedImage::fileName() const
 
 void CachedImage::getInfo()
 {
-    if (_headReply || _reply || _available)
+    if (_headReply || _reply || isAvailable())
         return;
 
     _headReply = _man->web()->head(QNetworkRequest(_url));
@@ -180,7 +226,7 @@ void CachedImage::download()
     if (_url.isEmpty() || isDownloading())
         return;
 
-    if (_available)
+    if (isAvailable())
         return;
 
     if (_headReply)
@@ -372,27 +418,18 @@ CachedImage::ImageFormat CachedImage::format() const
 
 
 
-bool CachedImage::_exists()
+QString CachedImage::_filePath() const
 {
     const auto path = QString("%1/%2.%3").arg(_man->path()).arg(_hash);
 
     if (QFile::exists(path.arg("jpg")))
-    {
-        setExtension("jpeg");
-        return true;
-    }
+        return path.arg("jpg"));
     if (QFile::exists(path.arg("png")))
-    {
-        setExtension("png");
-        return true;
-    }
+        return path.arg("png");
     if (QFile::exists(path.arg("gif")))
-    {
-        setExtension("gif");
-        return true;
-    }
+        return path.arg("gif");
 
-    return false;
+    return QString();
 }
 
 
@@ -404,15 +441,16 @@ QString CachedImage::_path() const
 
 
 
-void CachedImage::_saveFile(QByteArray* data) const
+QPixmap CachedImage::_saveFile(QByteArray* data) const
 {
     auto path = _path();
 
     qDebug() << "Saving image from" << _url << "to" << path;
 
+    QPixmap pic;
     if (_man->maxWidth() && _format != UnknownFormat && _format != GifFormat)
     {
-        auto pic = QImage::fromData(*data);
+        pic.loadFromData(*data);
         if (pic.width() > _man->maxWidth())
         {
             pic = pic.scaledToWidth(_man->maxWidth(), Qt::SmoothTransformation);
@@ -432,4 +470,26 @@ void CachedImage::_saveFile(QByteArray* data) const
         qDebug() << "Cannot open file for writing:" << path;
 
     delete data;
+
+    return pic;
+}
+
+
+
+QPixmap CachedImage::_loadFile()
+{
+    QPixmap pixmap;
+
+    const auto path = _filePath();
+    if (path.isEmpty())
+        return pixmap;
+
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly))
+        return pixmap;
+
+    auto data = file.readAll();
+    pixmap.loadFromData(data);
+
+    return pixmap;
 }

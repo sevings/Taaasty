@@ -35,6 +35,14 @@
 
 #include "../defines.h"
 #include "cachedimage.h"
+#include "cachedimageprovider.h"
+
+
+
+CacheManager::~CacheManager()
+{
+    delete _provider;
+}
 
 
 
@@ -47,15 +55,22 @@ CacheManager *CacheManager::instance(QNetworkAccessManager* web)
 
 
 CacheManager::CacheManager(QNetworkAccessManager* web)
-    : _maxWidth(0)
+    : _provider(new CachedImageProvider)
+    , _web(web ? web : new QNetworkAccessManager(this))
+    , _maxWidth(0)
     , _maxLoadSize(-1)
     , _autoloadOverWifi(true)
 {
     qDebug() << "CacheManager";
 
-    _web = web ? web : new QNetworkAccessManager(this);
-
     Q_ASSERT(QSslSocket::supportsSsl());
+}
+
+
+
+CachedImageProvider* CacheManager::provider() const
+{
+    return _provider;
 }
 
 
@@ -143,8 +158,7 @@ CachedImage* CacheManager::image(const QString& url)
     if (_images.contains(url))
     {
         auto image = _images.value(url);
-        if (!image->isAvailable() && autoload(image->total()))
-            image->download();
+        image->loadFile();
         return image;
     }
 

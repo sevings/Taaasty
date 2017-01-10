@@ -27,7 +27,7 @@
 
 class QNetworkAccessManager;
 class CachedImage;
-
+class CachedImageProvider;
 
 
 class CacheManager : public QObject
@@ -35,10 +35,13 @@ class CacheManager : public QObject
     Q_OBJECT
 
 public:
+    ~CacheManager();
+
     static CacheManager* instance(QNetworkAccessManager* web = nullptr);
 
     Q_INVOKABLE CachedImage* image(const QString& url = QString());
 
+    CachedImageProvider* provider() const;
     QNetworkAccessManager* web() const;
     QString path() const;
 
@@ -61,6 +64,7 @@ private:
 
     QHash<QString, CachedImage*>    _images;
 
+    CachedImageProvider*            _provider; //-V122
     QNetworkAccessManager*          _web; //-V122
     QFutureWatcher<void>            _watcher;
     QString                         _path;
