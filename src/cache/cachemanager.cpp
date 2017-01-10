@@ -158,7 +158,8 @@ CachedImage* CacheManager::image(const QString& url)
     if (_images.contains(url))
     {
         auto image = _images.value(url);
-        image->loadFile();
+        if (!image->isAvailable() && autoload(image->total()))
+            image->download();
         return image;
     }
 

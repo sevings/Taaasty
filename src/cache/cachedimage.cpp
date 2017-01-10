@@ -56,7 +56,8 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url)
 {
     Q_ASSERT(_man);
 
-    Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished, this, &CachedImage::downloadingChanged));
+    Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished,
+                   this, &CachedImage::downloadingChanged));
 
     if (!_man || _url.isEmpty())
         return;
@@ -467,12 +468,12 @@ void CachedImage::_saveFile(QByteArray* data)
 
 QPixmap CachedImage::_loadFile()
 {
-    const auto path = _filePath();
-    if (path.isEmpty())
-        return QPixmap();
-
     QPixmap pixmap;
-    pixmap.load(path);
+    const auto path = _filePath();
+    if (path.endsWith(".gif"))
+        pixmap = QPixmap(1, 1);
+    else if (!path.isEmpty())
+        pixmap.load(path);
 
     Q_TEST(QMetaObject::invokeMethod(this, "_readPixmap", Qt::QueuedConnection, Q_ARG(QPixmap, pixmap)));
 

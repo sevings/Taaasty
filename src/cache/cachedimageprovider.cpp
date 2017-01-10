@@ -22,6 +22,7 @@
 
 #include "cachedimageprovider.h"
 
+#include <QPixmapCache>
 #include <QDebug>
 
 #include "cachemanager.h"
@@ -33,7 +34,7 @@ CachedImageProvider::CachedImageProvider(CacheManager* man)
     : QQuickImageProvider(QQuickImageProvider::Pixmap)
     , _man(man)
 {
-
+    QPixmapCache::setCacheLimit(20480);
 }
 
 

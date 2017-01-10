@@ -33,7 +33,6 @@ Item {
     property alias popBody: pop.body
     property CachedImage cachedImage
     readonly property bool available: cachedImage && cachedImage.available
-    readonly property string providerSource: "image://cached/" + url
     signal clicked
     Component.onCompleted: {
         if (!cachedImage || cachedImage.available)
@@ -53,22 +52,22 @@ Item {
     AnimatedImage {
         id: animatedImage
         anchors.fill: parent
-        cache: false
+        cache: true
         smooth: true
         asynchronous: false
         fillMode: Image.PreserveAspectCrop
         visible: image.available && cachedImage.format == CachedImage.GifFormat
-        source: visible ? providerSource : ''
+        source: visible ? cachedImage.source : ''
     }
     Image {
         id: staticImage
         anchors.fill: parent
-        cache: false
+        cache: true
         smooth: true
         asynchronous: false
         fillMode: Image.PreserveAspectCrop
         visible: image.available && cachedImage.format != CachedImage.GifFormat
-        source: visible ? providerSource : ''
+        source: visible ? "image://cached/" + url : ''
     }
     Poppable {
         id: pop
