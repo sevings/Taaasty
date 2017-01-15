@@ -368,7 +368,7 @@ Pane {
                             switch (entryType)
                             {
                             case TlogEntry.ImageEntry:
-                                poster.postImage(titleInput.text, back.privacy, whereBox.tlog);
+                                poster.postImage(textInput.text, back.privacy, whereBox.tlog);
                                 break;
                             case TlogEntry.QuoteEntry:
                                 poster.postQuote(textInput.text, sourceInput.text, back.privacy, whereBox.tlog);
