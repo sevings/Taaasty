@@ -27,7 +27,7 @@ Pane {
     id: back
     hasMenu: true
     readonly property bool isEntryEditor: true
-    property int entryType
+    property int entryType: Settings.lastEntryType;
     readonly property int privacy: lockButton.locked && lockButton.visible
                                    ? Poster.Private : fireButton.voting
                                      ? Poster.Voting : Poster.Public;
@@ -50,7 +50,6 @@ Pane {
         sourceInput.text  = Settings.lastSource;
         fireButton.voting = Settings.lastPrivacy == Poster.Voting;
         lockButton.locked = Settings.lastPrivacy == Poster.Private;
-        back.entryType    = Settings.lastEntryType;
 
         whereBox.setLastTlog();
     }
