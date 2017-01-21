@@ -333,7 +333,7 @@ int Trainer::_findTlog(int& type, int id) const
 
 void Trainer::_initDb()
 {
-    QSqlQuery query;
+    QSqlQuery query(_bayes->db());
     Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes_tlogs   (type INTEGER, tlog INTEGER, latest INTEGER, n INTEGER, PRIMARY KEY(tlog))"));
 }
 
@@ -347,7 +347,7 @@ void Trainer::_loadDb()
 
     Q_TEST(_bayes->db().transaction());
 
-    QSqlQuery query;
+    QSqlQuery query(_bayes->db());
     Q_TEST(query.exec("SELECT type, tlog, latest, n FROM bayes_tlogs WHERE tlog > 0 ORDER BY n"));
     while (query.next())
         _tlogs[query.value(0).toInt()] << BayesTlog(query.value(1).toInt(),
@@ -368,7 +368,7 @@ void Trainer::_saveDb()
 
     Q_TEST(_bayes->db().transaction());
 
-    QSqlQuery query;
+    QSqlQuery query(_bayes->db());
     for (int type = 0; type < 2; type++)
     {
         if (_tlogs[type].isEmpty())

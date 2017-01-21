@@ -110,7 +110,8 @@ HEADERS += \
     src/reposter.h \
     src/tastydatacache.h \
     src/models/uploadmodel.h \
-    src/models/availabletlogsmodel.h
+    src/models/availabletlogsmodel.h \
+    src/cache/lrucache.hpp
 
 android: HEADERS += src/android/androidimagepicker.h \
     src/android/androidnotifier.h

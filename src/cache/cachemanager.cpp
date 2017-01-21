@@ -30,6 +30,12 @@
 #include <QDebug>
 #include <QtConcurrent>
 #include <QFuture>
+#include <QSqlQuery>
+#include <QSqlError>
+
+#ifdef QT_DEBUG
+#   include <QDateTime>
+#endif
 
 #include <QSslSocket>
 
@@ -37,11 +43,15 @@
 #include "cachedimage.h"
 #include "cachedimageprovider.h"
 
+#define BORDER_NAME QStringLiteral("<border_name>")
+
 
 
 CacheManager::~CacheManager()
 {
-    delete _provider;
+//    delete _provider;
+
+    saveDb();
 }
 
 
@@ -55,15 +65,79 @@ CacheManager *CacheManager::instance(QNetworkAccessManager* web)
 
 
 CacheManager::CacheManager(QNetworkAccessManager* web)
-    : _provider(new CachedImageProvider(this))
+    : QObject()
+    , _images(100000)
+    , _provider(new CachedImageProvider(this))
     , _web(web ? web : new QNetworkAccessManager(this))
+    , _loaded(false)
+    , _maxDbRow(0)
     , _maxWidth(0)
     , _maxLoadSize(-1)
     , _autoloadOverWifi(true)
 {
     qDebug() << "CacheManager";
 
+    _loadDb();
+
     Q_ASSERT(QSslSocket::supportsSsl());
+}
+
+
+
+void CacheManager::_initDb()
+{
+    _db = QSqlDatabase::addDatabase("QSQLITE", "cache");
+    _db.setDatabaseName(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/cache");
+    Q_TEST(_db.open());
+
+    QSqlQuery query(_db);
+    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS images(url TEXT, size INTEGER, row INTEGER, PRIMARY KEY(url))"));
+}
+
+
+
+void CacheManager::_loadDb()
+{
+    if (_loaded)
+        return;
+
+#ifdef QT_DEBUG
+    auto now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+#endif
+
+    _initDb();
+
+    Q_TEST(_db.transaction());
+
+    QSqlQuery query(_db);
+    Q_TEST(query.exec("SELECT url, size, row FROM images ORDER BY row ASC"));
+    while (query.next())
+    {
+        auto image = new CachedImage(this, query.value(0).toString(),
+                                           query.value(1).toInt(),
+                                           query.value(2).value<quint64>());
+        image->moveToThread(this->thread());
+        _images.insert(image->url(), image, image->fileSize());
+    }
+
+    _images.insert(BORDER_NAME, new CachedImage(this), 0);
+
+    Q_TEST(query.exec("SELECT MAX(row) FROM images"));
+    if (query.next())
+        _maxDbRow = query.value(0).value<quint64>();
+
+    query.finish();
+
+    Q_TEST(_db.commit());
+
+#ifdef QT_DEBUG
+    auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
+    qDebug() << "Cache loaded in" << ms << "ms";
+#else
+    qDebug() << "Cache loaded";
+#endif
+
+    _loaded = true;
 }
 
 
@@ -147,8 +221,60 @@ void CacheManager::clearUnusedImages()
     if (_path.isEmpty())
         _setPath();
 
-    auto future = QtConcurrent::run(this, &CacheManager::_clearUnusedImages);
-    _watcher.setFuture(future);
+//    auto future = QtConcurrent::run(this, &CacheManager::_clearUnusedImages);
+    //    _watcher.setFuture(future);
+}
+
+
+
+void CacheManager::saveDb()
+{
+    if (!_loaded)
+        return;
+
+#ifdef QT_DEBUG
+    auto now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+#endif
+
+    auto images = _images.valuesAfter(BORDER_NAME);
+
+    Q_TEST(_db.transaction());
+
+    QSqlQuery query(_db);
+    Q_TEST(query.prepare("INSERT OR REPLACE INTO images VALUES (?, ?, ?)"));
+    foreach (auto image, images)
+    {
+        query.addBindValue(image->url());
+        query.addBindValue(image->fileSize());
+        query.addBindValue(++_maxDbRow);
+        Q_TEST(query.exec());
+    }
+
+    query.finish();
+
+    Q_TEST(_db.commit());
+
+    if (!_images.object(BORDER_NAME))
+        _images.insert(BORDER_NAME, new CachedImage(this), 0);
+
+#ifdef QT_DEBUG
+    auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
+    qDebug() << "Cache saved in" << ms << "ms";
+#else
+    qDebug() << "Cache saved";
+#endif
+}
+
+
+
+void CacheManager::_insertAvailableImage()
+{
+    auto image = qobject_cast<CachedImage*>(sender());
+    Q_ASSERT(image);
+    if (!image || _images.contains(image->url()))
+        return;
+
+    _images.insert(image->url(), image, image->fileSize());
 }
 
 
@@ -157,7 +283,7 @@ CachedImage* CacheManager::image(const QString& url)
 {
     if (_images.contains(url))
     {
-        auto image = _images.value(url);
+        auto image = _images.object(url);
         if (!image->isAvailable() && autoload(image->total()))
             image->download();
         return image;
@@ -170,7 +296,9 @@ CachedImage* CacheManager::image(const QString& url)
         _watcher.waitForFinished();
 
     auto image = new CachedImage(this, url);
-    _images.insert(url, image);
+
+    Q_TEST(connect(image, &CachedImage::available, this, &CacheManager::_insertAvailableImage));
+
     return image;
 }
 
@@ -188,17 +316,17 @@ void CacheManager::_setPath()
 
 void CacheManager::_clearUnusedImages()
 {
-    QSet<QString> images;
-    foreach (auto image, _images)
-        images << image->sourceFileName();
 
+}
+
+
+
+void CacheManager::_clearOldVersion()
+{
     QDir dir(_path);
     auto files = dir.entryList(QDir::Files | QDir::NoDotAndDotDot, QDir::Size);
     foreach (auto file, files)
     {
-        if (images.contains(file))
-            continue;
-
         if (!QFile::remove(_path + "/" + file))
             qDebug() << "Could not remove image" << file;
     }

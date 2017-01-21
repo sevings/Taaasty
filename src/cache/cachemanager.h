@@ -22,12 +22,15 @@
 #define CACHEMANAGER_H
 
 #include <QObject>
-#include <QHash>
 #include <QFutureWatcher>
+#include <QSqlDatabase>
+
+#include "lrucache.hpp"
 
 class QNetworkAccessManager;
 class CachedImage;
 class CachedImageProvider;
+
 
 
 class CacheManager : public QObject
@@ -59,22 +62,37 @@ public slots:
 
     void clearUnusedImages();
 
+    void saveDb();
+
+private slots:
+    void _insertAvailableImage();
+
 private:
     CacheManager(QNetworkAccessManager* web = nullptr);
 
-    QHash<QString, CachedImage*>    _images;
+    void _initDb();
+    void _loadDb();
+
+    void _setPath();
+    void _clearUnusedImages();
+    void _clearOldVersion();
+
+    LruCache<QString, CachedImage>  _images;
 
     CachedImageProvider*            _provider; //-V122
     QNetworkAccessManager*          _web; //-V122
     QFutureWatcher<void>            _watcher;
     QString                         _path;
 
+    QSqlDatabase                    _db;
+    bool                            _loaded;
+    quint64                         _maxDbRow;
+
     int                             _maxWidth;
     int                             _maxLoadSize;
     bool                            _autoloadOverWifi;
 
-    void _setPath();
-    void _clearUnusedImages();
+
 };
 
 #endif // CACHEMANAGER_H

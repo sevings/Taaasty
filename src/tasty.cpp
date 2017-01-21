@@ -488,7 +488,10 @@ void Tasty::_saveOrReconnect(Qt::ApplicationState state)
         NotificationsModel::instance()->check();
     }
     else
+    {
+        CacheManager::instance()->saveDb();
         Bayes::instance()->saveDb();
+    }
 }
 
 

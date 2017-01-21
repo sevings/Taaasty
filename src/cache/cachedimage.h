@@ -46,7 +46,7 @@ public:
     enum ImageFormat { UnknownFormat, GifFormat, JpegFormat, PngFormat };
     Q_ENUMS(ImageFormat)
 
-    explicit CachedImage(CacheManager* parent = nullptr, const QString& url = QString());
+    explicit CachedImage(CacheManager* parent = nullptr, const QString& url = QString(), int size = 0, quint64 dbRow = 0);
 
     void    loadFile();
 
@@ -57,6 +57,7 @@ public:
 
     int     received() const    { return _kbytesReceived; }
     int     total() const       { return _kbytesTotal; }
+    int     fileSize() const    { return _fileSize; }
 
     bool    isDownloading() const;
     bool    isAvailable() const;
@@ -113,6 +114,8 @@ private:
 
     int     _kbytesReceived;
     int     _kbytesTotal;
+    int     _fileSize;
+    quint64 _dbRow;
     bool    _autoload;
     bool    _available;
     bool    _loaded;

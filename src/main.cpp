@@ -30,6 +30,7 @@
 
 #include "tasty.h"
 #include "tastydatacache.h"
+#include "cache/cachemanager.h"
 
 
 
@@ -54,6 +55,8 @@ int main(int argc, char *argv[])
     auto cache = tasty->dataCache();
     delete tasty;
     delete cache;
+
+    delete CacheManager::instance();
 
     return res;
 }

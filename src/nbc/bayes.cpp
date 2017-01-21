@@ -144,7 +144,7 @@ void Bayes::saveDb()
 
     Q_TEST(_db.transaction());
 
-    QSqlQuery query;
+    QSqlQuery query(_db);
     for (int type = 0; type < Unclassified; type++)
     {
         foreach (auto word, _wordCounts[type].keys())
@@ -177,7 +177,7 @@ void Bayes::saveDb()
 
 #ifdef QT_DEBUG
     auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
-    qDebug() << "Saved in" << ms << "ms";
+    qDebug() << "Bayes saved in" << ms << "ms";
 #else
     qDebug() << "Bayes saved";
 #endif
@@ -187,11 +187,11 @@ void Bayes::saveDb()
 
 void Bayes::_initDb()
 {
-    _db = QSqlDatabase::addDatabase("QSQLITE");
+    _db = QSqlDatabase::addDatabase("QSQLITE", "bayes");
     _db.setDatabaseName(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/bayes");
     Q_TEST(_db.open());
 
-    QSqlQuery query;
+    QSqlQuery query(_db);
     Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes         (type INTEGER, word TEXT, total INTEGER, PRIMARY KEY(type, word))"));
     Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes_entries (type INTEGER, entry INTEGER, PRIMARY KEY(entry))"));
 }
@@ -213,7 +213,7 @@ void Bayes::_loadDb()
 
     Q_TEST(_db.transaction());
 
-    QSqlQuery query;
+    QSqlQuery query(_db);
     Q_TEST(query.exec("SELECT type, word, total FROM bayes"));
     while (query.next())
         _wordCounts[query.value(0).toInt()][query.value(1).toString()] //-V807
@@ -235,7 +235,7 @@ void Bayes::_loadDb()
 
 #ifdef QT_DEBUG
     auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
-    qDebug() << "Loaded in" << ms << "ms";
+    qDebug() << "Bayes loaded in" << ms << "ms";
 #else
     qDebug() << "Bayes loaded";
 #endif

@@ -40,8 +40,8 @@
 
 
 
-CachedImage::CachedImage(CacheManager* parent, const QString& url)
-    : QObject(parent)
+CachedImage::CachedImage(CacheManager* parent, const QString& url, int size, quint64 dbRow)
+    : QObject()
     , _man(parent)
     , _headReply(nullptr)
     , _reply(nullptr)
@@ -50,6 +50,8 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url)
     , _url(url)
     , _kbytesReceived(0)
     , _kbytesTotal(0)
+    , _fileSize(size)
+    , _dbRow(dbRow)
     , _autoload(false)
     , _available(false)
     , _loaded(false)
@@ -66,8 +68,6 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url)
         _url.prepend("http:");
 
     _hash = qHash(_url);
-
-    loadFile();
 }
 
 
@@ -449,6 +449,8 @@ void CachedImage::_saveFile(QByteArray* data)
         buffer.open(QIODevice::WriteOnly | QIODevice::Truncate);
         pic.save(&buffer, _extension.toLatin1().data());
     }
+
+    _fileSize = data->size();
 
     Q_TEST(QMetaObject::invokeMethod(this, "_readPixmap", Qt::QueuedConnection, Q_ARG(QPixmap, pic)));
 
