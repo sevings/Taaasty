@@ -650,17 +650,17 @@ Q.Drawer {
                          && !window.notifsShows
                          && page.isEntryEditor === true
             }
-//            MenuItem {
-//                text: 'Изображение'
-//                onTriggered: {
-//                    page.entryType = TlogEntry.ImageEntry;
-//                    drawer.close();
-//                }
-//                highlighted: page.entryType === TlogEntry.ImageEntry
-//                visible: !window.chatsShows
-//                         && !window.notifsShows
-//                         && page.isEntryEditor === true
-//            }
+            MenuItem {
+                text: 'Изображение'
+                onTriggered: {
+                    page.entryType = TlogEntry.ImageEntry;
+                    drawer.close();
+                }
+                highlighted: page.entryType === TlogEntry.ImageEntry
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isEntryEditor === true
+            }
             MenuItem {
                 text: 'Анонимка'
                 onTriggered: {

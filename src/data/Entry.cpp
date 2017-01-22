@@ -293,11 +293,11 @@ void Entry::init(const QJsonObject& data)
 
 //    _imagePreview    = data.value("preview_image").toObject();
 
-    QRegularExpression wordRe("\\s[^\\s]+\\s");
+    QRegularExpression wsRe("[^a-zA-Zа-яА-ЯёЁ\\d&#;]+");
+    QRegularExpression linkRe("(?:http[s]?:\\/\\/[^\\s]*)");
     QRegularExpression tagRe("<[^>]*>");
-//    QRegularExpression wordRe("\\b\\w+\\b");
-    auto content = _title + _text;
-    _wordCount   = content.remove(tagRe).count(wordRe);
+    auto content = _title + " " + _text;
+    _wordCount   = content.remove(tagRe).remove(linkRe).count(wsRe);
 
     _correctHtml();
 
