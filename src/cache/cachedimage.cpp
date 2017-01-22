@@ -95,7 +95,7 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url,
 
 CachedImage::~CachedImage()
 {
-    QFile::remove(_filePath());
+
 }
 
 

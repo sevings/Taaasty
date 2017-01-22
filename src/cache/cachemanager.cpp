@@ -129,6 +129,14 @@ void CacheManager::saveDb()
         Q_TEST(query.exec());
     }
 
+    auto removed = _images.removedValues();
+    Q_TEST(query.prepare("DELETE FROM images WHERE url = ?"));
+    foreach (auto image, removed)
+    {
+        query.addBindValue(image->url());
+        Q_TEST(query.exec());
+    }
+
     query.finish();
 
     Q_TEST(_db.commit());

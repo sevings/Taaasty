@@ -68,7 +68,7 @@ class LruCache
         total -= n.c;
         T *obj = n.t;
         hash.remove(*n.keyPtr);
-        delete obj;
+        removed << obj;
     }
     inline T *relink(const Key &key) {
         auto i = hash.find(key);
@@ -92,7 +92,7 @@ class LruCache
 
 public:
     inline explicit LruCache(int maxCost = 100) Q_DECL_NOTHROW;
-    inline ~LruCache() { clear(); }
+    inline ~LruCache() { clear(); qDeleteAll(removed); }
 
     inline int maxCost() const { return mx; }
     void setMaxCost(int m);
@@ -126,7 +126,7 @@ inline LruCache<Key, T>::LruCache(int amaxCost) Q_DECL_NOTHROW
 
 template <class Key, class T>
 inline void LruCache<Key,T>::clear()
-{ while (f) { delete f->t; f = f->n; }
+{ while (f) { removed << f->t; f = f->n; }
  hash.clear(); l = 0; total = 0; }
 
 template <class Key, class T>
@@ -194,7 +194,7 @@ bool LruCache<Key,T>::insert(const Key &akey, T *aobject, int acost)
 {
     remove(akey);
     if (acost > mx) {
-        delete aobject;
+        removed << aobject;
         return false;
     }
     trim(mx - acost);
