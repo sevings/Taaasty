@@ -80,7 +80,7 @@ CachedImage* CacheManager::image(const QString& url)
     auto image = new CachedImage(this, url);
     _images.insert(url, image, 0);
 
-    Q_TEST(connect(image, &CachedImage::available, this, &CacheManager::_insertAvailableImage));
+    Q_TEST(connect(image, &CachedImage::availableChanged, this, &CacheManager::_insertAvailableImage));
 
     return image;
 }

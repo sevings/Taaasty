@@ -33,11 +33,11 @@ class CachedImage : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QUrl         source              READ source                         NOTIFY available)
+    Q_PROPERTY(QUrl         source              READ source                         NOTIFY availableChanged)
     Q_PROPERTY(int          kbytesReceived      READ received                       NOTIFY receivedChanged)
     Q_PROPERTY(int          kbytesTotal         READ total                          NOTIFY totalChanged)
     Q_PROPERTY(bool         isDownloading       READ isDownloading                  NOTIFY downloadingChanged)
-    Q_PROPERTY(bool         available           READ isAvailable                    NOTIFY available)
+    Q_PROPERTY(bool         available           READ isAvailable                    NOTIFY availableChanged)
     Q_PROPERTY(QString      extension           READ extension   WRITE setExtension NOTIFY extensionChanged)
     Q_PROPERTY(ImageFormat  format              READ format                         NOTIFY extensionChanged)
     Q_PROPERTY(QString      fileName            READ fileName                       CONSTANT)
@@ -75,7 +75,7 @@ public:
     ImageFormat format() const  { return _format; }
 
 signals:
-    void available();
+    void availableChanged();
     void receivedChanged();
     void totalChanged();
     void downloadingChanged();
@@ -87,6 +87,7 @@ signals:
 public slots:
     void getInfo();
     void download();
+
     void abortDownload();
     void saveToFile(const QString& filename);
 

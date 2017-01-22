@@ -57,7 +57,7 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url)
     if (!_init())
         return;
 
-    if (_man->autoload())
+    if (_man->autoload(_kbytesTotal))
         download();
     else
         getInfo();
@@ -116,7 +116,15 @@ void CachedImage::removeFile()
 QPixmap CachedImage::pixmap()
 {
     if (_pixmap.isNull())
+    {
+//        _available = false;
+//        emit availableChanged();
+
+//        loadFile();
+
+//        return QPixmap(1, 1);
         _pixmap = _loadFile();
+    }
 
     QPixmap pm;
     _pixmap.swap(pm);
@@ -201,6 +209,7 @@ QString CachedImage::fileName() const
 
     return full.at(full.size() - 2);
 }
+
 
 
 
@@ -412,6 +421,12 @@ void CachedImage::_readPixmap(const QPixmap& pm)
 
     if (pm.isNull())
     {
+        if (_available)
+        {
+            _available = false;
+            emit availableChanged();
+        }
+
         if (_man->autoload(_kbytesTotal))
             download();
         else if (!_kbytesTotal)
@@ -422,7 +437,7 @@ void CachedImage::_readPixmap(const QPixmap& pm)
         QPixmapCache::insert(pm);
 
         _available = true;
-        emit available();
+        emit availableChanged();
     }
 }
 
@@ -504,19 +519,17 @@ QPixmap CachedImage::_loadFile()
 {
     Q_ASSERT(_format != UnknownFormat);
 
-    QPixmap pixmap;
-    const auto path = _filePath();
-    if (_format == GifFormat)
-        pixmap = QPixmap(1, 1);
-    else if (!path.isEmpty())
+    QPixmap pixmap(1, 1);
+    if (_format != GifFormat)
     {
+        const auto path = _filePath();
         QFile file(path);
-        if (!file.open(QIODevice::ReadOnly))
-            return pixmap;
-
-        auto data = file.readAll();
-        auto format = _extension.toLatin1().constData();
-        pixmap.loadFromData(data, format);
+        if (file.open(QIODevice::ReadOnly))
+        {
+            auto data = file.readAll();
+            auto format = _extension.toLatin1().constData();
+            pixmap.loadFromData(data, format);
+        }
     }
 
     Q_TEST(QMetaObject::invokeMethod(this, "_readPixmap", Qt::QueuedConnection, Q_ARG(QPixmap, pixmap)));
