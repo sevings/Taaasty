@@ -91,8 +91,6 @@ private:
     int                             _maxWidth;
     int                             _maxLoadSize;
     bool                            _autoloadOverWifi;
-
-
 };
 
 #endif // CACHEMANAGER_H

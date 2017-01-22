@@ -91,7 +91,7 @@ void CacheManager::_initDb()
     Q_TEST(_db.open());
 
     QSqlQuery query(_db);
-    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS images(url TEXT, size INTEGER, row INTEGER, PRIMARY KEY(url))"));
+    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS images(url TEXT, format TEXT, size INTEGER, row INTEGER, PRIMARY KEY(url))"));
 }
 
 
@@ -110,12 +110,13 @@ void CacheManager::_loadDb()
     Q_TEST(_db.transaction());
 
     QSqlQuery query(_db);
-    Q_TEST(query.exec("SELECT url, size, row FROM images ORDER BY row ASC"));
+    Q_TEST(query.exec("SELECT url, format, size, row FROM images ORDER BY row ASC"));
     while (query.next())
     {
         auto image = new CachedImage(this, query.value(0).toString(),
-                                           query.value(1).toInt(),
-                                           query.value(2).value<quint64>());
+                                           query.value(1).toString(),
+                                           query.value(2).toInt(),
+                                           query.value(3).value<quint64>());
         image->moveToThread(this->thread());
         _images.insert(image->url(), image, image->fileSize());
     }
@@ -241,10 +242,11 @@ void CacheManager::saveDb()
     Q_TEST(_db.transaction());
 
     QSqlQuery query(_db);
-    Q_TEST(query.prepare("INSERT OR REPLACE INTO images VALUES (?, ?, ?)"));
+    Q_TEST(query.prepare("INSERT OR REPLACE INTO images VALUES (?, ?, ?, ?)"));
     foreach (auto image, images)
     {
         query.addBindValue(image->url());
+        query.addBindValue(image->extension());
         query.addBindValue(image->fileSize());
         query.addBindValue(++_maxDbRow);
         Q_TEST(query.exec());

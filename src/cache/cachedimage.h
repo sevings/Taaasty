@@ -46,7 +46,9 @@ public:
     enum ImageFormat { UnknownFormat, GifFormat, JpegFormat, PngFormat };
     Q_ENUMS(ImageFormat)
 
-    explicit CachedImage(CacheManager* parent = nullptr, const QString& url = QString(), int size = 0, quint64 dbRow = 0);
+    explicit CachedImage(CacheManager* parent = nullptr, const QString& url = QString());
+    CachedImage(CacheManager* parent, const QString& url,
+                const QString& format, int size, quint64 dbRow);
 
     void    loadFile();
 

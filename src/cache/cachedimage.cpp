@@ -40,7 +40,40 @@
 
 
 
-CachedImage::CachedImage(CacheManager* parent, const QString& url, int size, quint64 dbRow)
+CachedImage::CachedImage(CacheManager* parent, const QString& url)
+    : QObject()
+    , _man(parent)
+    , _headReply(nullptr)
+    , _reply(nullptr)
+    , _format(UnknownFormat)
+    , _hash(0)
+    , _url(url)
+    , _kbytesReceived(0)
+    , _kbytesTotal(0)
+    , _fileSize(0)
+    , _dbRow(0)
+    , _autoload(false)
+    , _available(false)
+    , _loaded(false)
+{
+    Q_ASSERT(_man);
+
+    Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished,
+                   this, &CachedImage::downloadingChanged));
+
+    if (!_man || _url.isEmpty())
+        return;
+
+    if (_url.startsWith("//"))
+        _url.prepend("http:");
+
+    _hash = qHash(_url);
+}
+
+
+
+CachedImage::CachedImage(CacheManager* parent, const QString& url,
+                         const QString& format, int size, quint64 dbRow)
     : QObject()
     , _man(parent)
     , _headReply(nullptr)
@@ -68,6 +101,8 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url, int size, qui
         _url.prepend("http:");
 
     _hash = qHash(_url);
+
+    setExtension(format);
 }
 
 
