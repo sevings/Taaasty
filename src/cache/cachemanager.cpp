@@ -64,6 +64,105 @@ CacheManager *CacheManager::instance(QNetworkAccessManager* web)
 
 
 
+CachedImage* CacheManager::image(const QString& url)
+{
+    if (_images.contains(url))
+    {
+        auto image = _images.object(url);
+        if (!image->isAvailable() && autoload(image->total()))
+            image->download();
+        return image;
+    }
+
+    if (_path.isEmpty())
+        _setPath();
+
+    if (_watcher.isRunning())
+        _watcher.waitForFinished();
+
+    auto image = new CachedImage(this, url);
+
+    Q_TEST(connect(image, &CachedImage::available, this, &CacheManager::_insertAvailableImage));
+
+    return image;
+}
+
+
+
+bool CacheManager::autoload(int size) const
+{
+    return _maxLoadSize < 0
+        || (size <= _maxLoadSize && size > 0)
+        || (_autoloadOverWifi && _web->activeConfiguration().bearerType()
+                                    == QNetworkConfiguration::BearerWLAN);
+}
+
+
+
+void CacheManager::clearUnusedImages()
+{
+    if (_path.isEmpty())
+        _setPath();
+
+//    auto future = QtConcurrent::run(this, &CacheManager::_clearUnusedImages);
+    //    _watcher.setFuture(future);
+}
+
+
+
+void CacheManager::saveDb()
+{
+    if (!_loaded)
+        return;
+
+#ifdef QT_DEBUG
+    auto now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+#endif
+
+    auto images = _images.valuesAfter(BORDER_NAME);
+
+    Q_TEST(_db.transaction());
+
+    QSqlQuery query(_db);
+    Q_TEST(query.prepare("INSERT OR REPLACE INTO images VALUES (?, ?, ?, ?)"));
+    foreach (auto image, images)
+    {
+        query.addBindValue(image->url());
+        query.addBindValue(image->extension());
+        query.addBindValue(image->fileSize());
+        query.addBindValue(++_maxDbRow);
+        Q_TEST(query.exec());
+    }
+
+    query.finish();
+
+    Q_TEST(_db.commit());
+
+    if (!_images.object(BORDER_NAME))
+        _images.insert(BORDER_NAME, new CachedImage(this), 0);
+
+#ifdef QT_DEBUG
+    auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
+    qDebug() << "Cache saved in" << ms << "ms";
+#else
+    qDebug() << "Cache saved";
+#endif
+}
+
+
+
+void CacheManager::_insertAvailableImage()
+{
+    auto image = qobject_cast<CachedImage*>(sender());
+    Q_ASSERT(image);
+    if (!image || _images.contains(image->url()))
+        return;
+
+    _images.insert(image->url(), image, image->fileSize());
+}
+
+
+
 CacheManager::CacheManager(QNetworkAccessManager* web)
     : QObject()
     , _images(100000)
@@ -139,169 +238,6 @@ void CacheManager::_loadDb()
 #endif
 
     _loaded = true;
-}
-
-
-
-CachedImageProvider* CacheManager::provider() const
-{
-    return _provider;
-}
-
-
-
-QNetworkAccessManager* CacheManager::web() const
-{
-    return _web;
-}
-
-
-
-QString CacheManager::path() const
-{
-    return _path;
-}
-
-
-
-int CacheManager::maxWidth() const
-{
-    return _maxWidth;
-}
-
-
-
-void CacheManager::setMaxWidth(int maxWidth)
-{
-    if (maxWidth >= 0)
-        _maxWidth = maxWidth;
-}
-
-
-
-bool CacheManager::autoloadOverWifi() const
-{
-    return _autoloadOverWifi;
-}
-
-
-
-int CacheManager::maxLoadSize() const
-{
-    return _maxLoadSize;
-}
-
-
-
-bool CacheManager::autoload(int size) const
-{
-    return _maxLoadSize < 0
-        || (size <= _maxLoadSize && size > 0)
-        || (_autoloadOverWifi && _web->activeConfiguration().bearerType()
-                                    == QNetworkConfiguration::BearerWLAN);
-}
-
-
-
-void CacheManager::setAutoloadOverWifi(bool autoload)
-{
-    _autoloadOverWifi = autoload;
-}
-
-
-
-void CacheManager::setMaxLoadSize(int size)
-{
-    _maxLoadSize = size;
-}
-
-
-
-void CacheManager::clearUnusedImages()
-{
-    if (_path.isEmpty())
-        _setPath();
-
-//    auto future = QtConcurrent::run(this, &CacheManager::_clearUnusedImages);
-    //    _watcher.setFuture(future);
-}
-
-
-
-void CacheManager::saveDb()
-{
-    if (!_loaded)
-        return;
-
-#ifdef QT_DEBUG
-    auto now = QDateTime::currentDateTime().toMSecsSinceEpoch();
-#endif
-
-    auto images = _images.valuesAfter(BORDER_NAME);
-
-    Q_TEST(_db.transaction());
-
-    QSqlQuery query(_db);
-    Q_TEST(query.prepare("INSERT OR REPLACE INTO images VALUES (?, ?, ?, ?)"));
-    foreach (auto image, images)
-    {
-        query.addBindValue(image->url());
-        query.addBindValue(image->extension());
-        query.addBindValue(image->fileSize());
-        query.addBindValue(++_maxDbRow);
-        Q_TEST(query.exec());
-    }
-
-    query.finish();
-
-    Q_TEST(_db.commit());
-
-    if (!_images.object(BORDER_NAME))
-        _images.insert(BORDER_NAME, new CachedImage(this), 0);
-
-#ifdef QT_DEBUG
-    auto ms = QDateTime::currentDateTime().toMSecsSinceEpoch() - now;
-    qDebug() << "Cache saved in" << ms << "ms";
-#else
-    qDebug() << "Cache saved";
-#endif
-}
-
-
-
-void CacheManager::_insertAvailableImage()
-{
-    auto image = qobject_cast<CachedImage*>(sender());
-    Q_ASSERT(image);
-    if (!image || _images.contains(image->url()))
-        return;
-
-    _images.insert(image->url(), image, image->fileSize());
-}
-
-
-
-CachedImage* CacheManager::image(const QString& url)
-{
-    if (_images.contains(url))
-    {
-        auto image = _images.object(url);
-        if (!image->isAvailable() && autoload(image->total()))
-            image->download();
-        return image;
-    }
-
-    if (_path.isEmpty())
-        _setPath();
-
-    if (_watcher.isRunning())
-        _watcher.waitForFinished();
-
-    auto image = new CachedImage(this, url);
-
-    Q_TEST(connect(image, &CachedImage::available, this, &CacheManager::_insertAvailableImage));
-
-    return image;
 }
 
 

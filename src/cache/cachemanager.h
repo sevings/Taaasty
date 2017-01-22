@@ -44,21 +44,21 @@ public:
 
     Q_INVOKABLE CachedImage* image(const QString& url = QString());
 
-    CachedImageProvider* provider() const;
-    QNetworkAccessManager* web() const;
-    QString path() const;
+    CachedImageProvider* provider() const   { return _provider; }
+    QNetworkAccessManager* web()    const   { return _web; }
+    QString path()                  const   { return _path; }
 
-    int  maxWidth() const;
-    void setMaxWidth(int maxWidth);
+    int  maxWidth()                 const   { return _maxWidth; }
+    void setMaxWidth(int maxWidth)          { if (maxWidth >= 0) _maxWidth = maxWidth; }
 
-    bool autoloadOverWifi() const;
-    int  maxLoadSize() const;
+    bool autoloadOverWifi()         const   { return _autoloadOverWifi; }
+    int  maxLoadSize()              const   { return _maxLoadSize; }
 
-    bool autoload(int size = 0) const;
+    bool autoload(int size = 0)     const;
 
 public slots:
-    void setAutoloadOverWifi(bool load);
-    void setMaxLoadSize(int size);
+    void setAutoloadOverWifi(bool autoload) { _autoloadOverWifi = autoload; }
+    void setMaxLoadSize(int size)           { _maxLoadSize = size; }
 
     void clearUnusedImages();
 
