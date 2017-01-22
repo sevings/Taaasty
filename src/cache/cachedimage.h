@@ -48,10 +48,11 @@ public:
 
     explicit CachedImage(CacheManager* parent = nullptr, const QString& url = QString());
     CachedImage(CacheManager* parent, const QString& url,
-                const QString& format, int size, quint64 dbRow);
+                const QString& format, int size);
     ~CachedImage();
 
     void    loadFile();
+    void    removeFile();
 
     QPixmap pixmap();
 
@@ -98,7 +99,7 @@ private slots:
     void _readPixmap(const QPixmap& pm);
 
 private:
-    void    _init();
+    bool    _init();
 
     QString _filePath() const;
     QString _path() const;
@@ -123,7 +124,6 @@ private:
     int     _kbytesReceived;
     int     _kbytesTotal;
     int     _fileSize;
-    quint64 _dbRow;
     bool    _available;
 };
 

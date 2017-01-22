@@ -140,16 +140,37 @@ Pane {
                 onCheckedChanged: { Settings.loadImagesOverWifi = checked; }
                 checked: Settings.loadImagesOverWifi
             }
-            ThemedButton {
-                anchors.horizontalCenter: parent.horizontalCenter
-                implicitWidth: 40 * mm
-                highlighted: true
-                text: 'Очистить кэш'
-                onClicked: {
-                    enabled = false;
-                    Cache.clearUnusedImages();
-                }
+            ThemedText {
+                id: cacheSize
+                width: parent.width - parent.padding * 2
+                text: 'Максимальный размер кэша: ' + cacheSizeSlider.size + ' МБ'
             }
+            Q.Slider {
+                id: cacheSizeSlider
+                width: parent.width - parent.padding * 2
+                snapMode: Q.Slider.SnapAlways
+                stepSize: 1
+                from: 50
+                to: 500
+                value: Settings.maxCacheSize
+                onValueChanged: { Settings.maxCacheSize = value; }
+                readonly property int size: position * 450 + 50
+            }
+            ThemedText {
+                id: curCacheSize
+                width: parent.width - parent.padding * 2
+                text: 'Сейчас занято: ' + Cache.size + ' МБ'
+            }
+//            ThemedButton {
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                implicitWidth: 40 * mm
+//                highlighted: true
+//                text: 'Очистить кэш'
+//                onClicked: {
+//                    enabled = false;
+//                    Cache.clearUnusedImages();
+//                }
+//            }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2
                 height: 3 * mm

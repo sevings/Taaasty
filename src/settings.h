@@ -43,6 +43,7 @@ class Settings : public QObject
     Q_PROPERTY(bool         autoloadImages      READ autoloadImages         WRITE setAutoloadImages         NOTIFY autoloadImagesChanged)
     Q_PROPERTY(bool         loadImagesOverWifi  READ loadImagesOverWifi     WRITE setLoadImagesOverWifi     NOTIFY loadImagesOverWifiChanged)
     Q_PROPERTY(int          maxLoadImageSize    READ maxLoadImageSize       WRITE setMaxLoadImageSize       NOTIFY maxLoadImageSizeChanged)
+    Q_PROPERTY(int          maxCacheSize        READ maxCacheSize           WRITE setMaxCacheSize           NOTIFY maxCacheSizeChanged)
 
     Q_PROPERTY(bool         hideShortPosts      READ hideShortPosts         WRITE setHideShortPosts         NOTIFY hideShortPostsChanged)
     Q_PROPERTY(bool         hideNegativeRated   READ hideNegativeRated      WRITE setHideNegativeRated      NOTIFY hideNegativeRatedChanged)
@@ -111,6 +112,12 @@ public:
     int maxLoadImageSize() const;
     void setMaxLoadImageSize(int size);
     
+    int maxCacheSize() const;
+    void setMaxCacheSize(int size);
+
+    quint8 cacheVersion() const;
+    void setCacheVersion(quint8 v);
+
     bool hideShortPosts() const;
     void setHideShortPosts(bool hide);
 
@@ -153,9 +160,6 @@ public:
     quint8 lastEntryType() const;
     void setLastEntryType(quint8 type);
 
-    quint8 cacheVersion() const;
-    void setCacheVersion(quint8 v);
-
 signals:
     void loginChanged();
     void accessTokenChanged();
@@ -169,6 +173,7 @@ signals:
     void autoloadImagesChanged(bool);
     void loadImagesOverWifiChanged(bool);
     void maxLoadImageSizeChanged(int);
+    void maxCacheSizeChanged(int);
     
     void hideShortPostsChanged();
     void hideNegativeRatedChanged();

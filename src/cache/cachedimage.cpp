@@ -52,13 +52,10 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url)
     , _kbytesReceived(0)
     , _kbytesTotal(0)
     , _fileSize(0)
-    , _dbRow(0)
     , _available(false)
 {
-    if (!_man || _url.isEmpty())
+    if (!_init())
         return;
-
-    _init();
 
     if (_man->autoload())
         download();
@@ -69,7 +66,7 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url)
 
 
 CachedImage::CachedImage(CacheManager* parent, const QString& url,
-                         const QString& format, int size, quint64 dbRow)
+                         const QString& format, int size)
     : QObject()
     , _man(parent)
     , _headReply(nullptr)
@@ -79,13 +76,10 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url,
     , _kbytesReceived(0)
     , _kbytesTotal(0)
     , _fileSize(size)
-    , _dbRow(dbRow)
     , _available(false)
 {
-    if (!_man || _url.isEmpty())
+    if (!_init())
         return;
-
-    _init();
 
     setExtension(format);
 
@@ -108,6 +102,13 @@ void CachedImage::loadFile()
 
     auto future = QtConcurrent::run(this, &CachedImage::_loadFile);
     _watcher.setFuture(future);
+}
+
+
+
+void CachedImage::removeFile()
+{
+    QFile::remove(_filePath());
 }
 
 
@@ -432,9 +433,12 @@ void CachedImage::_readPixmap(const QPixmap& pm)
 
 
 
-void CachedImage::_init()
+bool CachedImage::_init()
 {
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
+    if (!_man || _url.isEmpty())
+        return false;
 
     Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished,
                    this, &CachedImage::downloadingChanged, Qt::UniqueConnection));
@@ -444,6 +448,8 @@ void CachedImage::_init()
 
     _fileName.setNum(qHash(_url), 16);
     _folder = _fileName.at(0);
+
+    return true;
 }
 
 

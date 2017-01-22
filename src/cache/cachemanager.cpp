@@ -56,9 +56,9 @@ CacheManager::~CacheManager()
 
 
 
-CacheManager *CacheManager::instance(QNetworkAccessManager* web)
+CacheManager *CacheManager::instance(int maxSize, QNetworkAccessManager* web)
 {
-    static auto manager = new CacheManager(web);
+    static auto manager = new CacheManager(maxSize, web);
     return manager;
 }
 
@@ -97,6 +97,35 @@ bool CacheManager::autoload(int size) const
 
 
 
+void CacheManager::setMaxSize(int size)
+{
+    _images.setMaxCost(size * 1024 * 1024);
+
+    auto removed = _images.removedValues();
+    if (removed.isEmpty())
+        return;
+
+    Q_TEST(_db.transaction());
+
+    QSqlQuery query(_db);
+    Q_TEST(query.prepare("DELETE FROM images WHERE url = ?"));
+    foreach (auto image, removed)
+    {
+        image->removeFile();
+
+        query.addBindValue(image->url());
+        Q_TEST(query.exec());
+    }
+
+    query.finish();
+
+    Q_TEST(_db.commit());
+
+    emit sizeChanged();
+}
+
+
+
 void CacheManager::clearUnusedImages()
 {
 
@@ -128,6 +157,9 @@ void CacheManager::saveDb()
     Q_TEST(query.prepare("INSERT OR REPLACE INTO images VALUES (?, ?, ?, ?)"));
     foreach (auto image, images)
     {
+        if (image->url().isEmpty())
+            continue;
+
         query.addBindValue(image->url());
         query.addBindValue(image->extension());
         query.addBindValue(image->fileSize());
@@ -139,6 +171,8 @@ void CacheManager::saveDb()
     Q_TEST(query.prepare("DELETE FROM images WHERE url = ?"));
     foreach (auto image, removed)
     {
+        image->removeFile();
+
         query.addBindValue(image->url());
         Q_TEST(query.exec());
     }
@@ -164,17 +198,19 @@ void CacheManager::_insertAvailableImage()
 {
     auto image = qobject_cast<CachedImage*>(sender());
     Q_ASSERT(image);
-    if (!image || _images.contains(image->url()))
+    if (!image)
         return;
 
     _images.insert(image->url(), image, image->fileSize());
+
+    emit sizeChanged();
 }
 
 
 
-CacheManager::CacheManager(QNetworkAccessManager* web)
+CacheManager::CacheManager(int maxSize, QNetworkAccessManager* web)
     : QObject()
-    , _images(100000)
+    , _images(maxSize * 1024 * 1024)
     , _provider(new CachedImageProvider(this))
     , _web(web ? web : new QNetworkAccessManager(this))
     , _loaded(false)
@@ -223,10 +259,13 @@ void CacheManager::_loadDb()
     Q_TEST(query.exec("SELECT url, format, size, row FROM images ORDER BY row ASC"));
     while (query.next())
     {
+        auto url = query.value(1).toString();
+        if (url.isEmpty())
+            continue;
+
         auto image = new CachedImage(this, query.value(0).toString(),
-                                           query.value(1).toString(),
-                                           query.value(2).toInt(),
-                                           query.value(3).value<quint64>());
+                                           url,
+                                           query.value(2).toInt());
         image->moveToThread(this->thread());
         _images.insert(image->url(), image, image->fileSize());
     }

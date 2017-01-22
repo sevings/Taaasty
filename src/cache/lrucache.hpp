@@ -192,7 +192,31 @@ inline T *LruCache<Key,T>::take(const Key &key)
 template <class Key, class T>
 bool LruCache<Key,T>::insert(const Key &akey, T *aobject, int acost)
 {
-    remove(akey);
+    if (contains(akey))
+    {
+        auto& node = hash[akey];
+        auto old = node.t;
+        Q_ASSERT(old == aobject);
+        if (old == aobject)
+        {
+            relink(akey);
+
+            total -= node.c;
+            total += acost;
+            node.c = acost;
+
+            if (acost > mx) {
+                removed << aobject;
+                return false;
+            }
+            trim(mx - acost);
+
+            return true;
+        }
+
+        remove(akey);
+    }
+
     if (acost > mx) {
         removed << aobject;
         return false;

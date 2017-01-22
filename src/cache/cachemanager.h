@@ -37,10 +37,12 @@ class CacheManager : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(int size READ size NOTIFY sizeChanged)
+
 public:
     ~CacheManager();
 
-    static CacheManager* instance(QNetworkAccessManager* web = nullptr);
+    static CacheManager* instance(int maxSize = 100, QNetworkAccessManager* web = nullptr);
 
     Q_INVOKABLE CachedImage* image(const QString& url = QString());
 
@@ -54,14 +56,19 @@ public:
     bool autoloadOverWifi()         const   { return _autoloadOverWifi; }
     int  maxLoadSize()              const   { return _maxLoadSize; }
 
+    int size()                      const   { return _images.totalCost() / 1024 / 1024; }
+
     bool autoload(int size = 0)     const;
 
 signals:
     void oldVersionCleared();
+    void sizeChanged();
 
 public slots:
     void setAutoloadOverWifi(bool autoload) { _autoloadOverWifi = autoload; }
     void setMaxLoadSize(int size)           { _maxLoadSize = size; }
+
+    void setMaxSize(int size);
 
     void clearUnusedImages();
     void clearOldVersion();
@@ -72,7 +79,7 @@ private slots:
     void _insertAvailableImage();
 
 private:
-    CacheManager(QNetworkAccessManager* web = nullptr);
+    CacheManager(int maxSize, QNetworkAccessManager* web);
 
     void _initDb();
     void _loadDb();

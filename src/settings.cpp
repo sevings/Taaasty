@@ -364,6 +364,42 @@ void Settings::setMaxLoadImageSize(int size)
 
 
 
+int Settings::maxCacheSize() const
+{
+    return _settings.value("max_cache_size", 100).toInt();
+}
+
+
+
+void Settings::setMaxCacheSize(int size)
+{
+    if (size == maxCacheSize())
+        return;
+
+    _settings.setValue("max_cache_size", size);
+
+    emit maxCacheSizeChanged(size);
+}
+
+
+
+quint8 Settings::cacheVersion() const
+{
+    return _settings.value("cache_version", 1).value<quint8>();
+}
+
+
+
+void Settings::setCacheVersion(quint8 v)
+{
+    if (v == cacheVersion())
+        return;
+
+    _settings.setValue("cache_version", v);
+}
+
+
+
 bool Settings::hideShortPosts() const
 {
     return _settings.value("hide_short_posts").toBool();
@@ -626,21 +662,4 @@ void Settings::setLastEntryType(quint8 type)
     _settings.setValue("last_entry_type", type);
 
     emit lastEntryTypeChanged();
-}
-
-
-
-quint8 Settings::cacheVersion() const
-{
-    return _settings.value("cache_version", 1).value<quint8>();
-}
-
-
-
-void Settings::setCacheVersion(quint8 v)
-{
-    if (v == cacheVersion())
-        return;
-
-    _settings.setValue("cache_version", v);
 }
