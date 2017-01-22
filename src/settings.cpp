@@ -627,3 +627,20 @@ void Settings::setLastEntryType(quint8 type)
 
     emit lastEntryTypeChanged();
 }
+
+
+
+quint8 Settings::cacheVersion() const
+{
+    return _settings.value("cache_version", 1).value<quint8>();
+}
+
+
+
+void Settings::setCacheVersion(quint8 v)
+{
+    if (v == cacheVersion())
+        return;
+
+    _settings.setValue("cache_version", v);
+}

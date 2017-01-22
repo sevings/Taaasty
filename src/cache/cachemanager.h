@@ -56,11 +56,15 @@ public:
 
     bool autoload(int size = 0)     const;
 
+signals:
+    void oldVersionCleared();
+
 public slots:
     void setAutoloadOverWifi(bool autoload) { _autoloadOverWifi = autoload; }
     void setMaxLoadSize(int size)           { _maxLoadSize = size; }
 
     void clearUnusedImages();
+    void clearOldVersion();
 
     void saveDb();
 

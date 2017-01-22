@@ -99,8 +99,14 @@ bool CacheManager::autoload(int size) const
 
 void CacheManager::clearUnusedImages()
 {
-//    auto future = QtConcurrent::run(this, &CacheManager::_clearUnusedImages);
-    //    _watcher.setFuture(future);
+
+}
+
+
+
+void CacheManager::clearOldVersion()
+{
+    QtConcurrent::run(this, &CacheManager::_clearOldVersion);
 }
 
 
@@ -263,4 +269,6 @@ void CacheManager::_clearOldVersion()
         if (!QFile::remove(_path + "/" + file))
             qDebug() << "Could not remove image" << file;
     }
+
+    Q_TEST(QMetaObject::invokeMethod(this, "oldVersionCleared", Qt::QueuedConnection));
 }

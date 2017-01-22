@@ -153,6 +153,9 @@ public:
     quint8 lastEntryType() const;
     void setLastEntryType(quint8 type);
 
+    quint8 cacheVersion() const;
+    void setCacheVersion(quint8 v);
+
 signals:
     void loginChanged();
     void accessTokenChanged();

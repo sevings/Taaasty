@@ -361,6 +361,15 @@ void Tasty::_init()
     cache->setMaxLoadSize(_settings->maxLoadImageSize());
     root->setContextProperty("Cache", cache);
 
+    if (_settings->cacheVersion() < 2)
+    {
+        cache->clearOldVersion();
+        Q_TEST(connect(cache, &CacheManager::oldVersionCleared, []()
+        {
+            pTasty->settings()->setCacheVersion(2);
+        }));
+    }
+
     _engine->addImageProvider("cached", cache->provider());
 
     Q_TEST(QObject::connect(_settings, SIGNAL(loadImagesOverWifiChanged(bool)), cache, SLOT(setAutoloadOverWifi(bool))));
