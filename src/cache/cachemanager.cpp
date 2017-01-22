@@ -74,13 +74,11 @@ CachedImage* CacheManager::image(const QString& url)
         return image;
     }
 
-    if (_path.isEmpty())
-        _setPath();
-
     if (_watcher.isRunning())
         _watcher.waitForFinished();
 
     auto image = new CachedImage(this, url);
+    _images.insert(url, image, 0);
 
     Q_TEST(connect(image, &CachedImage::available, this, &CacheManager::_insertAvailableImage));
 
@@ -101,9 +99,6 @@ bool CacheManager::autoload(int size) const
 
 void CacheManager::clearUnusedImages()
 {
-    if (_path.isEmpty())
-        _setPath();
-
 //    auto future = QtConcurrent::run(this, &CacheManager::_clearUnusedImages);
     //    _watcher.setFuture(future);
 }
@@ -176,6 +171,8 @@ CacheManager::CacheManager(QNetworkAccessManager* web)
 {
     qDebug() << "CacheManager";
 
+    _path = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)).arg("images");
+
     _loadDb();
 
     Q_ASSERT(QSslSocket::supportsSsl());
@@ -238,16 +235,6 @@ void CacheManager::_loadDb()
 #endif
 
     _loaded = true;
-}
-
-
-
-void CacheManager::_setPath()
-{
-    auto cachePath = QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
-    cachePath.mkpath("images");
-    cachePath.cd("images");
-    _path = cachePath.absolutePath();
 }
 
 

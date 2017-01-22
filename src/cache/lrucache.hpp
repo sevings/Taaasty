@@ -50,13 +50,14 @@ template <class Key, class T>
 class LruCache
 {
     struct Node {
-        inline Node() : keyPtr(0) {}
+        inline Node() : keyPtr(0), t(0), c(0), p(0), n(0) {}
         inline Node(T *data, int cost)
             : keyPtr(0), t(data), c(cost), p(0), n(0) {}
-        const Key *keyPtr; T *t; int c; Node *p,*n;
+        const Key *keyPtr; T *t; int c; Node *p,*n; //-V122
     };
-    Node *f, *l;
+    Node *f, *l; //-V122
     QHash<Key, Node> hash;
+    QSet<T*> removed;
     int mx, total;
 
     inline void unlink(Node &n) {
@@ -70,8 +71,8 @@ class LruCache
         delete obj;
     }
     inline T *relink(const Key &key) {
-        typename QHash<Key, Node>::iterator i = hash.find(key);
-        if (typename QHash<Key, Node>::const_iterator(i) == hash.constEnd())
+        auto i = hash.find(key);
+        if (i == hash.constEnd())
             return 0;
 
         Node &n = *i;
@@ -103,6 +104,7 @@ public:
     inline QList<Key> keys() const { return hash.keys(); }
 
     QList<T*> valuesAfter(const Key &key) const;
+    QList<T*> removedValues();
 
     void clear();
 
@@ -145,6 +147,14 @@ QList<T*> LruCache<Key, T>::valuesAfter(const Key& key) const
     return values;
 }
 
+template<class Key, class T>
+QList<T*> LruCache<Key, T>::removedValues()
+{
+    const auto list = QList<T*>::fromSet(removed);
+    removed.clear();
+    return list;
+}
+
 template <class Key, class T>
 inline T *LruCache<Key,T>::object(const Key &key) const
 { return const_cast<LruCache<Key,T>*>(this)->relink(key); }
@@ -156,8 +166,8 @@ inline T *LruCache<Key,T>::operator[](const Key &key) const
 template <class Key, class T>
 inline bool LruCache<Key,T>::remove(const Key &key)
 {
-    typename QHash<Key, Node>::iterator i = hash.find(key);
-    if (typename QHash<Key, Node>::const_iterator(i) == hash.constEnd()) {
+    auto i = hash.find(key);
+    if (i == hash.constEnd()) {
         return false;
     } else {
         unlink(*i);

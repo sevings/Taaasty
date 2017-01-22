@@ -49,6 +49,7 @@ public:
     explicit CachedImage(CacheManager* parent = nullptr, const QString& url = QString());
     CachedImage(CacheManager* parent, const QString& url,
                 const QString& format, int size, quint64 dbRow);
+    ~CachedImage();
 
     void    loadFile();
 
@@ -70,7 +71,7 @@ public:
     QString fileName() const;
     QString url() const         { return _url; }
 
-    ImageFormat format() const;
+    ImageFormat format() const  { return _format; }
 
 signals:
     void available();
@@ -97,8 +98,11 @@ private slots:
     void _readPixmap(const QPixmap& pm);
 
 private:
+    void    _init();
+
     QString _filePath() const;
     QString _path() const;
+
     void    _saveFile(QByteArray* data);
     QPixmap _loadFile();
 
@@ -110,17 +114,17 @@ private:
 
     ImageFormat _format;
 
-    uint    _hash;
     QString _url;
+
+    QChar   _folder;
+    QString _fileName;
     QString _extension;
 
     int     _kbytesReceived;
     int     _kbytesTotal;
     int     _fileSize;
     quint64 _dbRow;
-    bool    _autoload;
     bool    _available;
-    bool    _loaded;
 };
 
 #endif // CACHEDIMAGE_H

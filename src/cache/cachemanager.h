@@ -73,7 +73,6 @@ private:
     void _initDb();
     void _loadDb();
 
-    void _setPath();
     void _clearUnusedImages();
     void _clearOldVersion();
 
