@@ -31,6 +31,7 @@
 #include <QBuffer>
 #include <QtConcurrent>
 #include <QStandardPaths>
+#include <QQmlEngine>
 
 #include <QDebug>
 
@@ -433,6 +434,8 @@ void CachedImage::_readPixmap(const QPixmap& pm)
 
 void CachedImage::_init()
 {
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
     Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished,
                    this, &CachedImage::downloadingChanged, Qt::UniqueConnection));
 
@@ -447,7 +450,7 @@ void CachedImage::_init()
 
 QString CachedImage::_filePath() const
 {
-    return QString("%1/%2").arg(_path()).arg(sourceFileName());
+    return QString("%1%2").arg(_path()).arg(sourceFileName());
 }
 
 
