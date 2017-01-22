@@ -26,8 +26,8 @@
 #include <QNetworkRequest>
 #include <QFile>
 #include <QDir>
-#include <QImage>
 #include <QImageReader>
+#include <QPixmapCache>
 #include <QBuffer>
 #include <QtConcurrent>
 #include <QStandardPaths>
@@ -358,13 +358,6 @@ void CachedImage::_saveData()
     auto format = reader.format();
     setExtension(QString::fromLatin1(format));
 
-//    if (data->startsWith((char)0x89))      //-V2005
-//        setExtension("png");
-//    else if (data->startsWith((char)0xFF)) //-V2005
-//        setExtension("jpeg");
-//    else if (data->startsWith((char)0x47)) //-V2005
-//        setExtension("gif");
-
     auto future = QtConcurrent::run(this, &CachedImage::_saveFile, data);
     _watcher.setFuture(future);
 
@@ -417,7 +410,7 @@ void CachedImage::_readPixmap(const QPixmap& pm)
 {
     _pixmap = pm;
 
-    if (_pixmap.isNull())
+    if (pm.isNull())
     {
         if (_man->autoload(_kbytesTotal))
             download();
@@ -426,6 +419,8 @@ void CachedImage::_readPixmap(const QPixmap& pm)
     }
     else
     {
+        QPixmapCache::insert(pm);
+
         _available = true;
         emit available();
     }
@@ -514,7 +509,15 @@ QPixmap CachedImage::_loadFile()
     if (_format == GifFormat)
         pixmap = QPixmap(1, 1);
     else if (!path.isEmpty())
-        pixmap.load(path);
+    {
+        QFile file(path);
+        if (!file.open(QIODevice::ReadOnly))
+            return pixmap;
+
+        auto data = file.readAll();
+        auto format = _extension.toLatin1().constData();
+        pixmap.loadFromData(data, format);
+    }
 
     Q_TEST(QMetaObject::invokeMethod(this, "_readPixmap", Qt::QueuedConnection, Q_ARG(QPixmap, pixmap)));
 
