@@ -62,7 +62,7 @@ Item {
     Image {
         id: staticImage
         anchors.fill: parent
-        cache: true
+        cache: false
         smooth: true
         asynchronous: false
         fillMode: Image.PreserveAspectCrop
@@ -84,7 +84,7 @@ Item {
     Rectangle {
         id: back
         anchors.fill: parent
-        visible: !animatedImage.visible && !staticImage.visible
+        visible: !image.available
         color: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
         Rectangle {
             id: downloadButton

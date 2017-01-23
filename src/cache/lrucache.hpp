@@ -1,6 +1,5 @@
 // This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-
 /****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
@@ -92,11 +91,13 @@ class LruCache
 
 public:
     inline explicit LruCache(int maxCost = 100) Q_DECL_NOTHROW;
-    inline ~LruCache() { clear(); qDeleteAll(removed); }
+    inline ~LruCache() { clear(); qDeleteAll(removed); removed.clear(); }
 
     inline int maxCost() const { return mx; }
     void setMaxCost(int m);
     inline int totalCost() const { return total; }
+
+    bool setCost(const Key &key, int cost);
 
     inline int size() const { return hash.size(); }
     inline int count() const { return hash.size(); }
@@ -105,6 +106,7 @@ public:
 
     QList<T*> valuesAfter(const Key &key) const;
     QList<T*> removedValues();
+    inline int removedCount() const { return removed.size(); }
 
     void clear();
 
@@ -133,8 +135,28 @@ template <class Key, class T>
 inline void LruCache<Key,T>::setMaxCost(int m)
 { mx = m; trim(mx); }
 
+template <class Key, class T>
+bool LruCache<Key,T>::setCost(const Key &key, int acost)
+{
+    auto& node = hash[key];
+    if (!node.t)
+        return false;
+
+    if (acost > mx) {
+        unlink(node);
+        return false;
+    }
+
+    total -= node.c;
+    total += acost;
+    node.c = acost;
+
+    trim(mx);
+    return true;
+}
+
 template<class Key, class T>
-QList<T*> LruCache<Key, T>::valuesAfter(const Key& key) const
+QList<T*> LruCache<Key, T>::valuesAfter(const Key &key) const
 {
     QList<T*> values;
     values.reserve(count());
@@ -192,31 +214,7 @@ inline T *LruCache<Key,T>::take(const Key &key)
 template <class Key, class T>
 bool LruCache<Key,T>::insert(const Key &akey, T *aobject, int acost)
 {
-    if (contains(akey))
-    {
-        auto& node = hash[akey];
-        auto old = node.t;
-        Q_ASSERT(old == aobject);
-        if (old == aobject)
-        {
-            relink(akey);
-
-            total -= node.c;
-            total += acost;
-            node.c = acost;
-
-            if (acost > mx) {
-                removed << aobject;
-                return false;
-            }
-            trim(mx - acost);
-
-            return true;
-        }
-
-        remove(akey);
-    }
-
+    remove(akey);
     if (acost > mx) {
         removed << aobject;
         return false;

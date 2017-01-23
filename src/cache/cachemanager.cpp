@@ -80,7 +80,7 @@ CachedImage* CacheManager::image(const QString& url)
     auto image = new CachedImage(this, url);
     _images.insert(url, image, 0);
 
-    Q_TEST(connect(image, &CachedImage::availableChanged, this, &CacheManager::_insertAvailableImage));
+    Q_TEST(connect(image, &CachedImage::fileSizeChanged, this, &CacheManager::_setImageCost, Qt::QueuedConnection));
 
     return image;
 }
@@ -100,25 +100,11 @@ bool CacheManager::autoload(int size) const
 void CacheManager::setMaxSize(int size)
 {
     _images.setMaxCost(size * 1024 * 1024);
-
-    auto removed = _images.removedValues();
-    if (removed.isEmpty())
+    if (!_images.removedCount())
         return;
 
     Q_TEST(_db.transaction());
-
-    QSqlQuery query(_db);
-    Q_TEST(query.prepare("DELETE FROM images WHERE url = ?"));
-    foreach (auto image, removed)
-    {
-        image->removeFile();
-
-        query.addBindValue(image->url());
-        Q_TEST(query.exec());
-    }
-
-    query.finish();
-
+    _deleteRemoved();
     Q_TEST(_db.commit());
 
     emit sizeChanged();
@@ -167,15 +153,7 @@ void CacheManager::saveDb()
         Q_TEST(query.exec());
     }
 
-    auto removed = _images.removedValues();
-    Q_TEST(query.prepare("DELETE FROM images WHERE url = ?"));
-    foreach (auto image, removed)
-    {
-        image->removeFile();
-
-        query.addBindValue(image->url());
-        Q_TEST(query.exec());
-    }
+    _deleteRemoved();
 
     query.finish();
 
@@ -194,14 +172,14 @@ void CacheManager::saveDb()
 
 
 
-void CacheManager::_insertAvailableImage()
+void CacheManager::_setImageCost()
 {
     auto image = qobject_cast<CachedImage*>(sender());
     Q_ASSERT(image);
     if (!image)
         return;
 
-    _images.insert(image->url(), image, image->fileSize());
+    Q_TEST(_images.setCost(image->url(), image->fileSize()));
 
     emit sizeChanged();
 }
@@ -223,7 +201,8 @@ CacheManager::CacheManager(int maxSize, QNetworkAccessManager* web)
 
     _path = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)).arg("images");
 
-    _loadDb();
+    auto future = QtConcurrent::run(this, &CacheManager::_loadDb);
+    _watcher.setFuture(future);
 
     Q_ASSERT(QSslSocket::supportsSsl());
 }
@@ -310,4 +289,23 @@ void CacheManager::_clearOldVersion()
     }
 
     Q_TEST(QMetaObject::invokeMethod(this, "oldVersionCleared", Qt::QueuedConnection));
+}
+
+
+
+void CacheManager::_deleteRemoved()
+{
+    QSqlQuery query(_db);
+    Q_TEST(query.prepare("DELETE FROM images WHERE url = ?"));
+    auto removed = _images.removedValues();
+    foreach (auto image, removed)
+    {
+        image->removeFile();
+        image->deleteLater();
+
+        query.addBindValue(image->url());
+        Q_TEST(query.exec());
+    }
+
+    query.finish();
 }

@@ -25,6 +25,7 @@
 #include <QSslError>
 #include <QFutureWatcher>
 #include <QPixmap>
+#include <QPixmapCache>
 
 class CacheManager;
 
@@ -78,6 +79,7 @@ signals:
     void availableChanged();
     void receivedChanged();
     void totalChanged();
+    void fileSizeChanged();
     void downloadingChanged();
     void extensionChanged();
 
@@ -106,13 +108,13 @@ private:
     QString _path() const;
 
     void    _saveFile(QByteArray* data);
-    QPixmap _loadFile();
+    void    _loadFile();
 
     CacheManager*        _man;       //-V122
     QNetworkReply*       _headReply; //-V122
     QNetworkReply*       _reply;     //-V122
     QFutureWatcher<void> _watcher;
-    QPixmap              _pixmap;
+    QPixmapCache::Key    _pmKey;
 
     ImageFormat _format;
 

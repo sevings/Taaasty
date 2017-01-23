@@ -76,7 +76,7 @@ public slots:
     void saveDb();
 
 private slots:
-    void _insertAvailableImage();
+    void _setImageCost();
 
 private:
     CacheManager(int maxSize, QNetworkAccessManager* web);
@@ -86,6 +86,8 @@ private:
 
     void _clearUnusedImages();
     void _clearOldVersion();
+
+    void _deleteRemoved();
 
     LruCache<QString, CachedImage>  _images;
 
