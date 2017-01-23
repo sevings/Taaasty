@@ -81,8 +81,6 @@ CachedImage::CachedImage(CacheManager* parent, const QString& url,
         return;
 
     setExtension(format);
-
-    loadFile();
 }
 
 
@@ -118,15 +116,11 @@ void CachedImage::removeFile()
 QPixmap CachedImage::pixmap()
 {
     Q_ASSERT(_format != GifFormat);
+    Q_ASSERT(_available);
 
     QPixmap pm(1, 1);
     if (!QPixmapCache::find(_pmKey, &pm))
-    {
-        _available = false;
-        emit availableChanged();
-
-        loadFile();
-    }
+        return _loadFile();
 
     return pm;
 }
@@ -154,9 +148,10 @@ bool CachedImage::isDownloading() const
 
 
 
-bool CachedImage::isAvailable() const
+bool CachedImage::isCached() const
 {
-    return _available;
+    QPixmap pm;
+    return QPixmapCache::find(_pmKey, &pm);
 }
 
 
@@ -164,6 +159,8 @@ bool CachedImage::isAvailable() const
 void CachedImage::setExtension(QString format)
 {
     format = format.toLower();
+
+    ImageFormat oldFormat = _format;
 
     if (format == "jpeg" || format == "jpg")
     {
@@ -190,7 +187,8 @@ void CachedImage::setExtension(QString format)
     else
         qDebug() << "mime:" << format << "\nurl:" << _url;
 
-    emit extensionChanged();
+    if (_format != oldFormat)
+        emit extensionChanged();
 }
 
 
@@ -519,7 +517,7 @@ void CachedImage::_saveFile(QByteArray* data)
 
 
 
-void CachedImage::_loadFile()
+QPixmap CachedImage::_loadFile()
 {
     Q_ASSERT(_format != UnknownFormat);
 
@@ -539,4 +537,6 @@ void CachedImage::_loadFile()
         pixmap = QPixmap(1, 1);
 
     Q_TEST(QMetaObject::invokeMethod(this, "_readPixmap", Qt::QueuedConnection, Q_ARG(QPixmap, pixmap)));
+
+    return pixmap;
 }

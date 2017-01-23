@@ -52,7 +52,7 @@ Item {
     AnimatedImage {
         id: animatedImage
         anchors.fill: parent
-        cache: true
+        cache: (width > 0 && width < 12 * mm) || (height > 0 && height < 12 * mm)
         smooth: true
         asynchronous: false
         fillMode: Image.PreserveAspectCrop
