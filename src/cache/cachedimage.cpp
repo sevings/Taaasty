@@ -31,6 +31,7 @@
 #include <QtConcurrent>
 #include <QStandardPaths>
 #include <QQmlEngine>
+#include <QtMath>
 
 #include <QDebug>
 
@@ -143,6 +144,13 @@ QUrl CachedImage::source() const
 QString CachedImage::sourceFileName() const
 {
     return QString("%1.%2").arg(_fileName).arg(_extension);
+}
+
+
+
+int CachedImage::diskSpace() const
+{
+    return qCeil(_fileSize / 4096.0) * 4096;
 }
 
 

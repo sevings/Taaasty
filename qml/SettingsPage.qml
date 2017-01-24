@@ -112,7 +112,7 @@ Pane {
             ThemedText {
                 id: imageText
                 width: parent.width - parent.padding * 2
-                text: imageSlider.position < 1 
+                text: imageSlider.position < 1
                     ? imageSlider.size > 0
                     ? 'Загружать до ' + imageSlider.size + ' КБ'
                     : 'Не загружать'
@@ -156,21 +156,24 @@ Pane {
                 onValueChanged: { Settings.maxCacheSize = value; }
                 readonly property int size: position * 450 + 50
             }
-            ThemedText {
+            ThemedProgressBar {
                 id: curCacheSize
                 width: parent.width - parent.padding * 2
-                text: 'Сейчас занято: ' + Cache.size + ' МБ'
+                text: 'Сейчас занято'
+                value: Cache.size
+                units: 'МБ'
+                to: Settings.maxCacheSize
             }
-//            ThemedButton {
-//                anchors.horizontalCenter: parent.horizontalCenter
-//                implicitWidth: 40 * mm
-//                highlighted: true
-//                text: 'Очистить кэш'
-//                onClicked: {
-//                    enabled = false;
-//                    Cache.clearUnusedImages();
-//                }
-//            }
+           ThemedButton {
+               anchors.horizontalCenter: parent.horizontalCenter
+               implicitWidth: 40 * mm
+               highlighted: true
+               text: 'Очистить'
+               onClicked: {
+                   enabled = false;
+                   Cache.clear();
+               }
+           }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2
                 height: 3 * mm

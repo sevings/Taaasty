@@ -63,6 +63,7 @@ public:
     int     received() const    { return _kbytesReceived; }
     int     total() const       { return _kbytesTotal; }
     int     fileSize() const    { return _fileSize; }
+    int     diskSpace() const;
 
     bool    isDownloading() const;
     bool    isAvailable() const;

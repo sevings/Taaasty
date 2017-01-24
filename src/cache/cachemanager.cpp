@@ -33,6 +33,12 @@
 #include <QSqlQuery>
 #include <QSqlError>
 
+#ifdef Q_OS_ANDROID
+#   include <QGuiApplication>
+#else
+#   include <QApplication>
+#endif
+
 #ifdef QT_DEBUG
 #   include <QDateTime>
 #endif
@@ -112,9 +118,23 @@ void CacheManager::setMaxSize(int size)
 
 
 
-void CacheManager::clearUnusedImages()
+void CacheManager::clear()
 {
+    auto keys = _images.keys();
+    int i = 0;
+    for (auto key: keys) //! \todo LruCache::iterator
+    {
+        _images.object(key)->removeFile();
+        if (++i % 20 == 0)
+            qApp->processEvents();
+    }
 
+    Q_TEST(QDir(_path()).removeRecursively());
+
+    QSqlQuery query(_db);
+    Q_TEST(query.exec("DELETE * FROM images"));
+
+    _maxDbRow = 0;
 }
 
 
@@ -179,7 +199,7 @@ void CacheManager::_setImageCost()
     if (!image)
         return;
 
-    Q_TEST(_images.setCost(image->url(), image->fileSize()));
+    Q_TEST(_images.setCost(image->url(), image->diskSpace()));
 
     emit sizeChanged();
 }
@@ -246,7 +266,7 @@ void CacheManager::_loadDb()
                                            url,
                                            query.value(2).toInt());
         image->moveToThread(this->thread());
-        _images.insert(image->url(), image, image->fileSize());
+        _images.insert(image->url(), image, image->diskSpace());
     }
 
     _images.insert(BORDER_NAME, new CachedImage(this), 0);
@@ -267,13 +287,6 @@ void CacheManager::_loadDb()
 #endif
 
     _loaded = true;
-}
-
-
-
-void CacheManager::_clearUnusedImages()
-{
-
 }
 
 

@@ -56,7 +56,7 @@ public:
     bool autoloadOverWifi()         const   { return _autoloadOverWifi; }
     int  maxLoadSize()              const   { return _maxLoadSize; }
 
-    int size()                      const   { return _images.totalCost() / 1024 / 1024; }
+    int  size()                     const   { return _images.totalCost() / 1024 / 1024; }
 
     bool autoload(int size = 0)     const;
 
@@ -70,7 +70,7 @@ public slots:
 
     void setMaxSize(int size);
 
-    void clearUnusedImages();
+    void clear();
     void clearOldVersion();
 
     void saveDb();
@@ -84,7 +84,6 @@ private:
     void _initDb();
     void _loadDb();
 
-    void _clearUnusedImages();
     void _clearOldVersion();
 
     void _deleteRemoved();
