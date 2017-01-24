@@ -282,7 +282,7 @@ void CacheManager::_loadDb()
                                            url,
                                            query.value(2).toInt());
         image->moveToThread(this->thread());
-        _images.insert(image->url(), image, image->diskSpace());
+        Q_TEST(_images.insert(image->url(), image, image->diskSpace()));
     }
 
     _images.insert(BORDER_NAME, new CachedImage(this), 0);
