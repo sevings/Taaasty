@@ -24,12 +24,11 @@ import QtQuick.Controls.Material 2.0
 Rectangle {
     property alias text: content.text
     property int entryId: 0
-    property Pane popBody
+    property alias popBody: pop.body
     color: pop.pressed ? Material.primary : 'transparent'
     height: content.height + 3 * mm
     Poppable {
         id: pop
-        body: popBody
         onClicked: {
             window.pushFullEntryById(entryId);
         }

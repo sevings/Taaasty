@@ -113,6 +113,15 @@ Pane {
                 onClicked: Tasty.authorize(mail.text, password.text, saveBox.checked)
                 enabled: mail.text && password.text
             }
+            HelpPageItem {
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: 40 * mm
+                popBody: dialog
+                text: 'ВКонтакте или Facebook'
+                entryId: 21623665
+            }
         //    ThemedButton {
         //        id: registerButton
         //        text: 'Зарегистрироваться'

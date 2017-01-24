@@ -52,6 +52,7 @@ Pane {
             }
             HelpPageItem {
                 width: parent.width - parent.padding * 2
+                popBody: back
                 text: 'Здесь можно минусовать?\nЧто такое НБК?'
                 entryId: 21449890
             }
@@ -66,6 +67,12 @@ Pane {
                 popBody: back
                 text: 'Как работает скрытие коротких постов?'
                 entryId: 21449894
+            }
+            HelpPageItem {
+                width: parent.width - parent.padding * 2
+                popBody: back
+                text: 'Я регистрировался через ВКонтакте или Facebook'
+                entryId: 21623665
             }
             HelpPageItem {
                 width: parent.width - parent.padding * 2
