@@ -108,6 +108,9 @@ void CachedImage::removeFile()
 {
     QFile::remove(_filePath());
 
+    _available = false;
+    emit availableChanged();
+
     _fileSize = 0;
     emit fileSizeChanged();
 }

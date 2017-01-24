@@ -141,14 +141,14 @@ void CacheManager::clear()
     for (auto key: keys) //! \todo LruCache::iterator
     {
         _images.object(key)->removeFile();
-        if (++i % 20 == 0)
+        if (++i % 100 == 0)
             qApp->processEvents();
     }
 
-    Q_TEST(QDir(_path()).removeRecursively());
+    Q_TEST(QDir(_path).removeRecursively());
 
     QSqlQuery query(_db);
-    Q_TEST(query.exec("DELETE * FROM images"));
+    Q_TEST(query.exec("DELETE FROM images"));
 
     _maxDbRow = 0;
 }
@@ -215,7 +215,8 @@ void CacheManager::_setImageCost()
     if (!image)
         return;
 
-    Q_TEST(_images.setCost(image->url(), image->diskSpace()));
+    //! \todo delete removed
+    _images.setCost(image->url(), image->diskSpace());
 
     emit sizeChanged();
 }
