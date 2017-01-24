@@ -75,7 +75,12 @@ CachedImage* CacheManager::image(const QString& url)
     if (_images.contains(url))
     {
         auto image = _images.object(url);
-        if (!image->isAvailable() && autoload(image->total()))
+        if (image->fileSize())
+        {
+            if (!image->isCached())
+                image->loadFile();
+        }
+        else if (autoload(image->total()))
             image->download();
         return image;
     }
@@ -84,11 +89,22 @@ CachedImage* CacheManager::image(const QString& url)
         _watcher.waitForFinished();
 
     auto image = new CachedImage(this, url);
-    _images.insert(url, image, 0);
+    Q_TEST(_images.insert(url, image, 0));
 
     Q_TEST(connect(image, &CachedImage::fileSizeChanged, this, &CacheManager::_setImageCost, Qt::QueuedConnection));
 
     return image;
+}
+
+
+
+void CacheManager::setMaxWidth(int maxWidth)
+{
+    if (maxWidth < 0)
+        return;
+
+    _maxWidth = maxWidth;
+    _provider->setCacheSize(qMax(20480, _maxWidth * _maxWidth * 3 * 3 / 1024));
 }
 
 
@@ -163,7 +179,7 @@ void CacheManager::saveDb()
     Q_TEST(query.prepare("INSERT OR REPLACE INTO images VALUES (?, ?, ?, ?)"));
     foreach (auto image, images)
     {
-        if (image->url().isEmpty())
+        if (!image->fileSize() || image->url().isEmpty())
             continue;
 
         query.addBindValue(image->url());

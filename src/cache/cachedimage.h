@@ -66,7 +66,8 @@ public:
     int     diskSpace() const;
 
     bool    isDownloading() const;
-    bool    isAvailable() const;
+    bool    isAvailable() const { return _available; }
+    bool    isCached() const;
 
     QString extension() const   { return _extension; }
     void    setExtension(QString format);
@@ -109,7 +110,7 @@ private:
     QString _path() const;
 
     void    _saveFile(QByteArray* data);
-    void    _loadFile();
+    QPixmap _loadFile();
 
     CacheManager*        _man;       //-V122
     QNetworkReply*       _headReply; //-V122

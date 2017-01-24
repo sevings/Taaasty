@@ -34,7 +34,7 @@ CachedImageProvider::CachedImageProvider(CacheManager* man)
     : QQuickImageProvider(QQuickImageProvider::Pixmap)
     , _man(man)
 {
-    QPixmapCache::setCacheLimit(20480);
+
 }
 
 
@@ -51,4 +51,11 @@ QPixmap CachedImageProvider::requestPixmap(const QString& id, QSize* size, const
     Q_ASSERT(!pixmap.isNull());
 
     return pixmap;
+}
+
+
+
+void CachedImageProvider::setCacheSize(int kb)
+{
+    QPixmapCache::setCacheLimit(kb);
 }

@@ -51,7 +51,7 @@ public:
     QString path()                  const   { return _path; }
 
     int  maxWidth()                 const   { return _maxWidth; }
-    void setMaxWidth(int maxWidth)          { if (maxWidth >= 0) _maxWidth = maxWidth; }
+    void setMaxWidth(int maxWidth);
 
     bool autoloadOverWifi()         const   { return _autoloadOverWifi; }
     int  maxLoadSize()              const   { return _maxLoadSize; }
