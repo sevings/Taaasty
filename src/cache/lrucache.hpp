@@ -138,9 +138,12 @@ inline void LruCache<Key,T>::setMaxCost(int m)
 template <class Key, class T>
 bool LruCache<Key,T>::setCost(const Key &key, int acost)
 {
-    auto& node = hash[key];
-    if (!node.t)
+    auto it = hash.find(key);
+    if (it == hash.constEnd())
         return false;
+
+    auto& node = *it;
+    Q_ASSERT(node.t);
 
     if (acost > mx) {
         unlink(node);

@@ -95,7 +95,7 @@ CachedImage::~CachedImage()
 
 void CachedImage::loadFile()
 {
-    if (_watcher.isRunning() || isAvailable())
+    if (_watcher.isRunning() || isCached())
         return;
 
     auto future = QtConcurrent::run(this, &CachedImage::_loadFile);
@@ -106,6 +106,11 @@ void CachedImage::loadFile()
 
 void CachedImage::removeFile()
 {
+    abortDownload();
+
+    if (!_fileSize)
+        return;
+
     QFile::remove(_filePath());
 
     _available = false;
@@ -161,8 +166,7 @@ bool CachedImage::isDownloading() const
 
 bool CachedImage::isCached() const
 {
-    QPixmap pm;
-    return QPixmapCache::find(_pmKey, &pm);
+    return _pmKey.isValid();
 }
 
 
@@ -219,6 +223,15 @@ QString CachedImage::fileName() const
     return full.at(full.size() - 2);
 }
 
+
+
+void CachedImage::load(bool force)
+{
+    if (_fileSize)
+        loadFile();
+    else if (force || _man->autoload(_kbytesTotal))
+        download();
+}
 
 
 
@@ -448,7 +461,7 @@ void CachedImage::_readPixmap(const QPixmap& pm)
         if (_format != GifFormat)
             _pmKey = QPixmapCache::insert(pm);
 
-        if (!_available)
+        if (!_available && _fileSize)
         {
             _available = true;
             emit availableChanged();
@@ -509,8 +522,6 @@ void CachedImage::_saveFile(QByteArray* data)
     _fileSize = data->size();
     Q_TEST(QMetaObject::invokeMethod(this, "fileSizeChanged", Qt::QueuedConnection));
 
-    Q_TEST(QMetaObject::invokeMethod(this, "_readPixmap", Qt::QueuedConnection, Q_ARG(QPixmap, pic)));
-
     QDir().mkpath(_path());
 
     const auto filePath = _filePath();
@@ -524,6 +535,8 @@ void CachedImage::_saveFile(QByteArray* data)
         qDebug() << "Cannot open file for writing:" << filePath;
 
     delete data;
+
+    Q_TEST(QMetaObject::invokeMethod(this, "_readPixmap", Qt::QueuedConnection, Q_ARG(QPixmap, pic)));
 }
 
 

@@ -72,27 +72,26 @@ CacheManager *CacheManager::instance(int maxSize, QNetworkAccessManager* web)
 
 CachedImage* CacheManager::image(const QString& url)
 {
-    if (_images.contains(url))
-    {
-        auto image = _images.object(url);
-        if (image->fileSize())
-        {
-            if (!image->isCached())
-                image->loadFile();
-        }
-        else if (autoload(image->total()))
-            image->download();
-        return image;
-    }
-
     if (_watcher.isRunning())
         _watcher.waitForFinished();
 
-    auto image = new CachedImage(this, url);
-    Q_TEST(_images.insert(url, image, 0));
+    CachedImage* image = nullptr;
+    if (_images.contains(url))
+    {
+        image = _images.object(url);
+        Q_ASSERT(image);
+    }
 
-    Q_TEST(connect(image, &CachedImage::fileSizeChanged, this, &CacheManager::_setImageCost, Qt::QueuedConnection));
+    if (!image)
+    {
+        image = new CachedImage(this, url);
+        Q_TEST(_images.insert(url, image, 0));
 
+        Q_TEST(connect(image, &CachedImage::fileSizeChanged,
+                       this, &CacheManager::_setImageCost, Qt::QueuedConnection));
+    }
+
+    image->load();
     return image;
 }
 

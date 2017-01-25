@@ -89,6 +89,8 @@ signals:
     void fileSaved();
 
 public slots:
+    void load(bool force = false);
+
     void getInfo();
     void download();
 

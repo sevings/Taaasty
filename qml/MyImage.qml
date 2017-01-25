@@ -33,17 +33,22 @@ Item {
     property alias popBody: pop.body
     property CachedImage cachedImage
     readonly property bool available: cachedImage && cachedImage.available
+    readonly property bool isSmall: (width > 0 && width < 12 * mm)
+                                    || (height > 0 && height < 12 * mm)
     signal clicked
     Component.onCompleted: {
         if (!cachedImage || cachedImage.available)
             return;
 
-        if ((width > 0 && width < 12 * mm)
-                || (height > 0 && height < 12 * mm)) {
-            cachedImage.download();
-        }
+        if (isSmall)
+            cachedImage.load();
     }
-    onUrlChanged: {
+    onUrlChanged: setImage()
+    onCachedImageChanged: {
+        if (!cachedImage)
+            setImage();
+    }
+    function setImage() {
         cachedImage = Cache.image(image.url);
 
         if (!cachedImage.extension)
