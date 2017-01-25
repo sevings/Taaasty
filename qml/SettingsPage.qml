@@ -18,9 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.7
-import QtQuick.Controls 2.0 as Q
-import QtQuick.Controls.Material 2.0
+import QtQuick 2.8
+import QtQuick.Controls 2.1 as Q
+import QtQuick.Controls.Material 2.1
 import org.binque.taaasty 1.0
 
 Pane {
@@ -101,7 +101,6 @@ Pane {
             }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2
-                height: 3 * mm
             }
             ThemedText {
                 text: 'Изображения'
@@ -164,7 +163,7 @@ Pane {
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-                highlighted: true
+//                highlighted: true
                 text: 'Очистить'
                 onClicked: {
                     enabled = false;
@@ -173,7 +172,6 @@ Pane {
             }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2
-                height: 3 * mm
             }
             ThemedText {
                 width: parent.width - parent.padding * 2
@@ -184,7 +182,7 @@ Pane {
                 id: prevLoginButton
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-                highlighted: true
+//                highlighted: true
                 text: Settings.prevLogin
                 visible: Settings.prevLogin.length > 0
                 onClicked: {
@@ -201,33 +199,32 @@ Pane {
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-                highlighted: true
+//                highlighted: true
                 text: Tasty.isAuthorized ? 'Сменить тлог' : 'Войти'
                 onClicked: window.pushLoginDialog()
             }
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-                highlighted: true
+//                highlighted: true
                 visible: Tasty.isAuthorized
                 text: 'Выйти'
                 onClicked: Tasty.logout()
             }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2
-                height: 3 * mm
             }
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-                highlighted: true
+//                highlighted: true
                 text: 'Помощь'
                 onClicked: { window.pushHelp(); }
             }
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-                highlighted: true
+//                highlighted: true
                 text: 'О клиенте'
                 onClicked: { window.pushAbout(); }
             }

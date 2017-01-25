@@ -18,9 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.7
-import QtQuick.Controls 2.0 as Q
-import QtQuick.Controls.Material 2.0
+import QtQuick 2.8
+import QtQuick.Controls 2.1 as Q
+import QtQuick.Controls.Material 2.1
 
 Q.TextField {
     id: back

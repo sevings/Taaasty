@@ -18,17 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.7
-import QtQuick.Controls.Material 2.0
+import QtQuick 2.8
+import QtQuick.Controls 2.1 as Q
 
-Item {
-    implicitWidth: parent.width - 3 * mm
-    implicitHeight: 0.3 * mm
-    anchors.horizontalCenter: parent.horizontalCenter
-    Rectangle {
-        color: Material.primary
-        width: parent.width
-        height: 0.3 * mm
-        anchors.verticalCenter: parent.verticalCenter
-    }
+Q.MenuSeparator {
+    implicitWidth: parent.width
 }

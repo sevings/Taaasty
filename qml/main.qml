@@ -18,9 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.7
-import QtQuick.Controls 2.0
-import QtQuick.Controls.Material 2.0
+import QtQuick 2.8
+import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
 
 import org.binque.taaasty 1.0
 import ImageCache 2.0

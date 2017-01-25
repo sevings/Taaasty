@@ -34,15 +34,14 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.7
-import QtQuick.Templates 2.0 as T
-import QtQuick.Controls.Material 2.0
+import QtQuick 2.8
+import QtQuick.Templates 2.1 as T
+import QtQuick.Controls.Material 2.1
+import QtQuick.Controls.Material.impl 2.1
 
 T.ToolButton {
     id: control
-
     anchors.margins: 1.5 * mm
-//    implicitWidth: 10 * mm
     property url icon: ''
     property int iconHeight: 20 * sp
     font.pixelSize: window.fontNormal
@@ -54,7 +53,6 @@ T.ToolButton {
 
     padding: 6
 
-    //! [contentItem]
     contentItem: Item {
         implicitHeight: Math.max(control.iconHeight, contentText.height)
         implicitWidth: row.width + 3 * mm
@@ -71,22 +69,29 @@ T.ToolButton {
                 id: contentText
                 text: control.text
                 font: control.font
-                color: control.enabled ? control.Material.primaryTextColor : control.Material.hintTextColor
+                color: !control.enabled ? control.Material.hintTextColor :
+                                          control.checked || control.highlighted ? control.Material.accent : control.Material.foreground
                 visible: control.text.length
                 verticalAlignment: Text.AlignVCenter
                 height: parent.height
             }
         }
     }
-    //! [contentItem]
 
-    //! [background]
-    background: Rectangle {
+    background: Ripple {
         implicitWidth: 48 * sp
         implicitHeight: 48 * sp
 
-        color: control.down || control.highlighted ? control.Material.buttonPressColor : control.Material.buttonColor
-        visible: control.enabled && (control.down || control.visualFocus || control.checked || control.highlighted)
+        readonly property bool square: control.contentItem.implicitWidth <= control.contentItem.implicitHeight
+
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        clip: !square
+        width: square ? parent.height / 2 : parent.width
+        height: square ? parent.height / 2 : parent.height
+        pressed: control.pressed
+        anchor: control
+        active: control.enabled && (control.down || control.visualFocus || control.hovered)
+        color: control.Material.rippleColor
     }
-    //! [background]
 }

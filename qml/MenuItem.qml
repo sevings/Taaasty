@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.7
-import QtQuick.Controls 2.0 as Q
+import QtQuick 2.8
+import QtQuick.Controls 2.1 as Q
 
 Q.MenuItem {
     implicitWidth: parent.width
