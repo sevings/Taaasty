@@ -25,6 +25,7 @@
 #include <QHash>
 #include <QSqlDatabase>
 #include <QReadWriteLock>
+#include <QRegularExpression>
 
 class EntryBase;
 class Trainer;
@@ -89,6 +90,16 @@ private:
     StemmerV* _stemmer; //-V122
     QSqlDatabase _db;
     mutable QReadWriteLock _lock;
+
+    QRegularExpression _imgRe;
+    QRegularExpression _tagRe;
+    QRegularExpression _htmlSeqRe;
+    QRegularExpression _linkExtRe;
+    QRegularExpression _linkRe;
+    QRegularExpression _punctRe;
+    QRegularExpression _caseRe1;
+    QRegularExpression _caseRe2;
+    QRegularExpression _spaceRe;
 };
 
 #endif // BAYES_H

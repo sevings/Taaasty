@@ -23,7 +23,6 @@
 #include "tasty.h"
 
 #include <QGuiApplication>
-#include <QRegularExpression>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickStyle>
@@ -73,6 +72,12 @@
 #include "data/User.h"
 #include "data/Flow.h"
 
+QRegularExpression Tasty::_firstSlugRe("^(~|@)([a-zA-Z0-9_\\-\\.]+)");
+QRegularExpression Tasty::_slugRe("([^'/>\\w\\-\\.])(~|@)([a-zA-Z0-9_\\-\\.]+)");
+QRegularExpression Tasty::_imageLinkRe("<a[^>]*>(<img[^>]*>)</a>");
+QRegularExpression Tasty::_imgRe("<img (?:width=\"\\d+\" )?");
+QRegularExpression Tasty::_tagRe("<[^>]*>");
+
 
 
 Tasty::Tasty()
@@ -91,6 +96,12 @@ Tasty::Tasty()
     , _saveProfile(false)
 {
     qDebug() << "Tasty";
+
+    _firstSlugRe.optimize();
+    _slugRe.optimize();
+    _imageLinkRe.optimize();
+    _imgRe.optimize();
+    _tagRe.optimize();
 
     Q_TEST(QMetaObject::invokeMethod(this, "_init"));
 }
@@ -161,29 +172,23 @@ QString Tasty::parseDate(const QString& d, const bool bigLetter)
 
 void Tasty::correctHtml(QString& html, bool isEntry)
 {
-    QRegularExpression firstSlugRe("^(~|@)([a-zA-Z0-9_\\-\\.]+)");
-    html.replace(firstSlugRe, "<a href='http://taaasty.com/~\\2'>\\1\\2</a>");
+    html.replace(_firstSlugRe, "<a href='http://taaasty.com/~\\2'>\\1\\2</a>");
+    html.replace(_slugRe, "\\1<a href='http://taaasty.com/~\\3'>\\2\\3</a>");
+    html.replace(_imageLinkRe, "\\1");
 
-    QRegularExpression slugRe("([^'/>\\w\\-\\.])(~|@)([a-zA-Z0-9_\\-\\.]+)");
-    html.replace(slugRe, "\\1<a href='http://taaasty.com/~\\3'>\\2\\3</a>");
-
-    QRegularExpression imageLinkRe("<a[^>]*>(<img[^>]*>)</a>");
-    html.replace(imageLinkRe, "\\1");
-
-    html.replace("class=\"embeded__image\"", QString());
+//    html.replace("class=\"embeded__image\"", QString());
 
     auto width = isEntry ? pTasty->_entryImageWidth
                          : pTasty->_commentImageWidth;
-    QRegularExpression imgRe("<img (?:width=\"\\d+\" )?");
-    html.replace(imgRe, QString("<img width=\"%1\" ").arg(width));
+
+    html.replace(_imgRe, QString("<img width=\"%1\" ").arg(width));
 }
 
 
 
 QString Tasty::truncateHtml(QString html, int length)
 {
-    html.remove(QRegularExpression("<[^>]*>"))
-            .replace('\n', ' ').truncate(length);
+    html.remove(_tagRe).replace('\n', ' ').truncate(length);
     return html;
 }
 

@@ -25,7 +25,6 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
-#include <QRegularExpression>
 #include <QtMath>
 #include <QStandardPaths>
 #include <QtConcurrent>
@@ -48,12 +47,31 @@ Bayes::Bayes(QObject *parent)
     , _loaded(false)
     , _trainer(new Trainer(this))
     , _stemmer(StemmerV::instance())
-
+    , _imgRe("<\\s*(?:a|img)[^>]+(?:href|src)\\s*=\\s*['\"]([^\\s'\"]+)['\"][^>]*>",
+             QRegularExpression::CaseInsensitiveOption)
+    , _tagRe("<[^>]*>")
+    , _htmlSeqRe("&\\w+;")
+    , _linkExtRe("https?:\\/\\/([\\w\\-\\.]+)\\.\\w+\\/[^\\s]*\\.(\\w+)\\s")
+    , _linkRe("https?:\\/\\/([\\w\\-\\.]+)\\.\\w+\\/?[^\\s]*\\s")
+    , _punctRe("[\\.!?]")
+    , _caseRe1("^\\s*[A-ZА-ЯЁ]")
+    , _caseRe2("[\\.!?]\\s*[A-ZА-ЯЁ]")
+    , _spaceRe("[A-ZА-ЯЁa-zа-яё][\\.,!?]\\s+[A-ZА-ЯЁa-zа-яё]")
 {
     qDebug() << "Bayes";
 
     _total[Water] = 0;
     _total[Fire]  = 0;
+
+    _imgRe.optimize();
+    _tagRe.optimize();
+    _htmlSeqRe.optimize();
+    _linkExtRe.optimize();
+    _linkRe.optimize();
+    _punctRe.optimize();
+    _caseRe1.optimize();
+    _caseRe2.optimize();
+    _spaceRe.optimize();
 
     QtConcurrent::run(this, &Bayes::_loadDb);
 }
@@ -260,24 +278,22 @@ int Bayes::_calcText(QString text, QHash<QString, Bayes::FeatureCount>& wordCoun
     if (text.isEmpty())
         return 0;
 
-    text.replace(QRegularExpression("<\\s*(?:a|img)[^>]+(?:href|src)\\s*=\\s*['\"]([^\\s'\"]+)['\"][^>]*>",
-                                    QRegularExpression::CaseInsensitiveOption), " \\1 ")
-            .replace(QRegularExpression("<[^>]*>"), " ")
-            .replace(QRegularExpression("&\\w+;"), " ")
-            .replace(QRegularExpression("https?:\\/\\/([\\w\\-\\.]+)\\.\\w+\\/[^\\s]*\\.(\\w+)\\s"), " \\1 \\2 ")
-            .replace(QRegularExpression("https?:\\/\\/([\\w\\-\\.]+)\\.\\w+\\/?[^\\s]*\\s"), " \\1 ");
+    text.replace(_imgRe, " \\1 ")
+            .replace(_tagRe, " ")
+            .replace(_htmlSeqRe, " ")
+            .replace(_linkExtRe, " \\1 \\2 ")
+            .replace(_linkRe, " \\1 ");
 
     int length = 0;
-    if (text.contains(QRegularExpression("[\\.!?]")))
+    if (text.contains(_punctRe))
     {
         length = 2;
-        if (text.contains(QRegularExpression("^\\s*[A-ZА-ЯЁ]"))
-                || text.contains(QRegularExpression("[\\.!?]\\s*[A-ZА-ЯЁ]")))
+        if (text.contains(_caseRe1) || text.contains(_caseRe2))
             ++wordCounts[".normal_case"];
         else
             ++wordCounts[".lower_case"];
 
-        if (text.contains(QRegularExpression("[A-ZА-ЯЁa-zа-яё][\\.,!?]\\s+[A-ZА-ЯЁa-zа-яё]")))
+        if (text.contains(_spaceRe))
             ++wordCounts[".correct_spaces"];
         else
             ++wordCounts[".wrong_spaces"];

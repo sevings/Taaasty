@@ -25,6 +25,7 @@
 #include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QQmlApplicationEngine>
+#include <QRegularExpression>
 
 #include "settings.h"
 
@@ -116,6 +117,8 @@ private slots:
     void _saveOrReconnect(Qt::ApplicationState state);
 
 private:
+    void _finishLogin();
+
     QQmlApplicationEngine* _engine;     //-V122
     Settings*              _settings;   //-V122
     QNetworkAccessManager* _manager;    //-V122
@@ -133,7 +136,11 @@ private:
 
     bool _saveProfile;
 
-    void _finishLogin();
+    static QRegularExpression _firstSlugRe;
+    static QRegularExpression _slugRe;
+    static QRegularExpression _imageLinkRe;
+    static QRegularExpression _imgRe;
+    static QRegularExpression _tagRe;
 };
 
 #endif // TASTY_H
