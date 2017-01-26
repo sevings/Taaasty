@@ -363,7 +363,6 @@ Pane {
                 height: visible ? implicitHeight : 0 // changing height forces layout
                 width: 20 * mm
                 visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
-                highlighted: true
                 onClicked: commentsModel.loadMore()
             }
             Q.BusyIndicator {

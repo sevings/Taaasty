@@ -163,7 +163,6 @@ Pane {
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-//                highlighted: true
                 text: 'Очистить'
                 onClicked: {
                     enabled = false;
@@ -182,7 +181,6 @@ Pane {
                 id: prevLoginButton
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-//                highlighted: true
                 text: Settings.prevLogin
                 visible: Settings.prevLogin.length > 0
                 onClicked: {
@@ -199,14 +197,12 @@ Pane {
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-//                highlighted: true
                 text: Tasty.isAuthorized ? 'Сменить тлог' : 'Войти'
                 onClicked: window.pushLoginDialog()
             }
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-//                highlighted: true
                 visible: Tasty.isAuthorized
                 text: 'Выйти'
                 onClicked: Tasty.logout()
@@ -217,14 +213,12 @@ Pane {
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-//                highlighted: true
                 text: 'Помощь'
                 onClicked: { window.pushHelp(); }
             }
             ThemedButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitWidth: 40 * mm
-//                highlighted: true
                 text: 'О клиенте'
                 onClicked: { window.pushAbout(); }
             }

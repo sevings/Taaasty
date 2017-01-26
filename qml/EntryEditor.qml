@@ -152,7 +152,6 @@ Pane {
                             horizontalCenter: parent.horizontalCenter
                         }
                         width: implicitWidth + 5 * mm
-                        highlighted: true
                         text: 'Добавить'
                         onClicked: poster.images.append()
                     }

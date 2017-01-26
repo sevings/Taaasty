@@ -61,7 +61,6 @@ Item {
             horizontalCenter: parent.horizontalCenter
         }
         implicitWidth: 40 * mm
-        highlighted: true
         text: 'Обновить'
         visible: model && model.networkError
         onClicked: {
