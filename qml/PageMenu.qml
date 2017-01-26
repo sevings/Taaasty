@@ -579,6 +579,7 @@ Q.Drawer {
                          && page.isProfileView === true
                          && !page.tlog.errorString
                          && !page.author.isFlow
+                         && page.tlog.hisRelationship !== Tlog.Ignored
                          && Tasty.isAuthorized
                 enabled: visible
             }
