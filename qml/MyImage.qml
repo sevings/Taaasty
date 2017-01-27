@@ -36,16 +36,14 @@ Item {
     readonly property bool isSmall: (width > 0 && width < 12 * mm)
                                     || (height > 0 && height < 12 * mm)
     signal clicked
-    Component.onCompleted: {
-        if (!cachedImage || cachedImage.available)
+    onUrlChanged: setImage()
+    onAvailableChanged: {
+        if (available)
             return;
 
-        if (isSmall)
-            cachedImage.load();
-    }
-    onUrlChanged: setImage()
-    onCachedImageChanged: {
-        if (!cachedImage)
+        if (cachedImage)
+            cachedImage.load(isSmall);
+        else
             setImage();
     }
     function setImage() {
@@ -53,6 +51,8 @@ Item {
 
         if (!cachedImage.extension)
             cachedImage.extension = image.extension
+
+        cachedImage.load(isSmall);
     }
     AnimatedImage {
         id: animatedImage

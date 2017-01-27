@@ -282,6 +282,10 @@ void CacheManager::_loadDb()
                                            url,
                                            query.value(2).toInt());
         image->moveToThread(this->thread());
+
+        Q_TEST(connect(image, &CachedImage::fileSizeChanged,
+                       this, &CacheManager::_setImageCost, Qt::QueuedConnection));
+
         Q_TEST(_images.insert(image->url(), image, image->diskSpace()));
     }
 
