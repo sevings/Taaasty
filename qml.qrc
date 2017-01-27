@@ -57,8 +57,6 @@
         <file>icons/send-light-128.png</file>
         <file>qml/HelpPage.qml</file>
         <file>qml/HelpPageItem.qml</file>
-        <file>qml/SelectionHandle.qml</file>
-        <file>qml/TextEditorMenu.qml</file>
         <file>qml/VerticalMenuSeparator.qml</file>
         <file>icons/copy-black-128.png</file>
         <file>icons/copy-white-128.png</file>

@@ -291,14 +291,6 @@ Pane {
                             listView.positionViewAtEnd();
                     }
                 }
-                Connections {
-                    target: listView
-                    onMovingVerticallyChanged: messageEditor.hideMenu()
-                }
-                Connections {
-                    target: menu
-                    onOpened: messageEditor.hideMenu()
-                }
             }
         }
     }

@@ -28,9 +28,6 @@ TextArea {
     property Flickable flickable
     property TextHandler handler
     property alias popBody: pop.body
-    property bool canCopyPaste: false
-    readonly property bool richEditing: textFormat === TextEdit.RichText
-    readonly property bool hasSelection: selectedText
     font.pixelSize: window.fontNormal
 //    text: handler.text
     textFormat:  TextEdit.PlainText
@@ -53,17 +50,8 @@ TextArea {
         else if (flickable.contentY + flickable.height <= textEdit.y + cursor.bottom)
             flickable.contentY = textEdit.y + cursor.bottom - flickable.height;
     }
-    function setHandlePositions() {
-        leftSelectionHandle.setPosition();
-        rightSelectionHandle.setPosition();
-    }
-    onHasSelectionChanged: {
-        if (hasSelection)
-            canCopyPaste = true;
-    }
     onCursorPositionChanged: {
-        if (!hasSelection) {
-            canCopyPaste = false;
+        if (!selectedText) {
             ensureVisible(cursorRectangle);
         }
     }
@@ -85,36 +73,13 @@ TextArea {
                 Qt.inputMethod.show()
 
             moveCursor(mouse.x, mouse.y);
-            textEdit.canCopyPaste = true;
+            mouse.accepted = true;
         }
         onPressAndHold: {
             moveCursor(mouse.x, mouse.y);
             textEdit.selectWord();
-            textEdit.setHandlePositions();
 
             mouse.accepted = true;
-        }
-    }
-    property SelectionHandle leftSelectionHandle: SelectionHandle {
-        textEdit: textEdit
-        textPosition: textEdit.selectionStart
-        onMoved: {
-            if (currentPosition >= textEdit.selectionEnd)
-                return;
-
-            textEdit.select(currentPosition, textEdit.selectionEnd);
-            textEdit.ensureVisible(textEdit.positionToRectangle(textPosition));
-        }
-    }
-    property SelectionHandle rightSelectionHandle: SelectionHandle {
-        textEdit: textEdit
-        textPosition: textEdit.selectionEnd
-        onMoved: {
-            if (currentPosition <= textEdit.selectionStart)
-                return;
-
-            textEdit.select(textEdit.selectionStart, currentPosition);
-            textEdit.ensureVisible(textEdit.positionToRectangle(textPosition));
         }
     }
 }

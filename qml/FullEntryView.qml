@@ -420,14 +420,6 @@ Pane {
                         fullEntry.positionViewAtEnd();
                 }
             }
-            Connections {
-                target: fullEntry
-                onMovingVerticallyChanged: commentEditor.hideMenu()
-            }
-            Connections {
-                target: menu
-                onOpened: commentEditor.hideMenu()
-            }
         }
     }
     Popup {

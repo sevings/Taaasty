@@ -31,9 +31,6 @@ Pane {
     readonly property int privacy: lockButton.locked && lockButton.visible
                                    ? Poster.Private : fireButton.voting
                                      ? Poster.Voting : Poster.Public;
-    onEntryTypeChanged: {
-        editMenu.hideMenu();
-    }
     Component.onCompleted: load()
     Component.onDestruction: save()
     onHeightChanged: {
@@ -80,7 +77,6 @@ Pane {
             right: parent.right
         }
         height: Math.min(back.height, contentHeight + 1.5 * mm)
-        onVerticalVelocityChanged: editMenu.hideMenu()
         bottomMargin: 1.5 * mm
         contentWidth: parent.width
         contentHeight: column.height
@@ -193,7 +189,6 @@ Pane {
                                               : '../icons/paste-black')
                           + '-128.png'
                     onClicked: {
-                        editMenu.hideMenu();
 
                     }
                 }
@@ -213,9 +208,6 @@ Pane {
                 onActiveFocusChanged: {
                     if (!activeFocus)
                         return;
-
-                    editMenu.textEdit = titleInput;
-                    editMenu.handler  = titleHandler;
 
                     window.hideFooter();
                 }
@@ -269,9 +261,6 @@ Pane {
                     if (!activeFocus)
                         return;
 
-                    editMenu.textEdit = textInput;
-                    editMenu.handler  = textHandler;
-
                     window.hideFooter();
                 }
             }
@@ -290,9 +279,6 @@ Pane {
                 onActiveFocusChanged: {
                     if (!activeFocus)
                         return;
-
-                    editMenu.textEdit = sourceInput;
-                    editMenu.handler  = sourceHandler;
 
                     window.hideFooter();
                 }
@@ -319,7 +305,6 @@ Pane {
                                       : '../icons/flame-outline-')
                               + '72.png'
                         onClicked: {
-                            editMenu.hideMenu();
                             voting = !voting;
                         }
                     }
@@ -333,7 +318,6 @@ Pane {
                                                           : '../icons/unlock-black-'))
                               + '128.png'
                         onClicked: {
-                            editMenu.hideMenu();
                             locked = !locked;
                         }
                     }
@@ -361,8 +345,6 @@ Pane {
                                                 : '../icons/send-dark-')
                               + '128.png'
                         onClicked: {
-                            editMenu.hideMenu();
-
                             switch (entryType)
                             {
                             case TlogEntry.ImageEntry:
@@ -425,9 +407,6 @@ Pane {
                         whereBox.currentIndex = i;
                         tlogSet = true;
                     }
-                    onPressedChanged: {
-                        editMenu.hideMenu();
-                    }
                     onActivated: {
                         tlogSet = true;
                     }
@@ -473,14 +452,6 @@ Pane {
         onError: {
             console.error(message);
         }
-    }
-    TextEditorMenu {
-        id: editMenu
-        z: 7
-        flickable: flick
-        textEdit: titleInput
-        handler: titleHandler
-        boundItem: bound
     }
     Item {
         id: bound

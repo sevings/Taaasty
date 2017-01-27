@@ -45,9 +45,6 @@ FocusScope {
         input.addGreeting(slug);
         editor.focus = true;
     }
-    function hideMenu() {
-        editMenu.hideMenu();
-    }
     Poppable {
         body: popBody
     }
@@ -94,12 +91,6 @@ FocusScope {
         onError: {
             console.error(message);
         }
-    }
-    TextEditorMenu {
-        id: editMenu
-        textEdit: input
-        flickable: flickable
-        handler: handler
     }
     IconButton {
         id: button
