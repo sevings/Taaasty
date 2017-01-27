@@ -112,7 +112,7 @@ private slots:
 
     void _setUnreadChats(int count);
     void _setUnreadNotifications(int count);
-    void _incUnreadFriendsEntries();
+    void _setLastFriendEntry(int entryId);
 
     void _saveOrReconnect(Qt::ApplicationState state);
 

@@ -34,10 +34,12 @@ class Settings : public QObject
     Q_PROPERTY(QString      login               READ login                  WRITE setLogin                  NOTIFY loginChanged)
     Q_PROPERTY(QString      accessToken         READ accessToken            WRITE setAccessToken            NOTIFY accessTokenChanged)
     Q_PROPERTY(int          userId              READ userId                 WRITE setUserId                 NOTIFY userIdChanged)
+    Q_PROPERTY(int          lastFriendEntry     READ lastFriendEntry        WRITE setLastFriendEntry        NOTIFY lastFriendEntryChanged)
 
     Q_PROPERTY(QString      prevLogin           READ prevLogin              WRITE setPrevLogin              NOTIFY prevLoginChanged)
     Q_PROPERTY(QString      prevAccessToken     READ prevAccessToken        WRITE setPrevAccessToken        NOTIFY prevAccessTokenChanged)
     Q_PROPERTY(int          prevUserId          READ prevUserId             WRITE setPrevUserId             NOTIFY prevUserIdChanged)
+    Q_PROPERTY(int          prevLastFriendEntry READ prevLastFriendEntry    WRITE setPrevLastFriendEntry    NOTIFY prevLastFriendEntryChanged)
 
     Q_PROPERTY(int          maxImageWidth       READ maxImageWidth          WRITE setMaxImageWidth          NOTIFY maxImageWidthChanged)
     Q_PROPERTY(bool         autoloadImages      READ autoloadImages         WRITE setAutoloadImages         NOTIFY autoloadImagesChanged)
@@ -84,6 +86,9 @@ public:
     bool saveProfile() const;
     void setSaveProfile(const bool save);
 
+    int lastFriendEntry() const;
+    void setLastFriendEntry(int entryId);
+
     QString prevLogin() const;
     void setPrevLogin(const QString& login);
 
@@ -100,6 +105,9 @@ public:
     bool prevSaveProfile() const;
     void setPrevSaveProfile(const bool save);
 
+    int prevLastFriendEntry() const;
+    void setPrevLastFriendEntry(int entryId);
+
     int maxImageWidth() const;
     void setMaxImageWidth(const int width);
 
@@ -108,10 +116,10 @@ public:
 
     bool loadImagesOverWifi() const;
     void setLoadImagesOverWifi(bool load);
-    
+
     int maxLoadImageSize() const;
     void setMaxLoadImageSize(int size);
-    
+
     int maxCacheSize() const;
     void setMaxCacheSize(int size);
 
@@ -164,17 +172,19 @@ signals:
     void loginChanged();
     void accessTokenChanged();
     void userIdChanged();
+    void lastFriendEntryChanged();
 
     void prevLoginChanged();
     void prevAccessTokenChanged();
     void prevUserIdChanged();
+    void prevLastFriendEntryChanged();
 
     void maxImageWidthChanged();
     void autoloadImagesChanged(bool);
     void loadImagesOverWifiChanged(bool);
     void maxLoadImageSizeChanged(int);
     void maxCacheSizeChanged(int);
-    
+
     void hideShortPostsChanged();
     void hideNegativeRatedChanged();
     void darkThemeChanged();

@@ -145,6 +145,7 @@ private:
     void _clear();
 
     void _loadRatings(const QList<EntryPtr>& entries);
+    void _checkLastFriendEntry();
     void _setUrl(Mode mode);
 
     QList<EntryPtr>      _entries;

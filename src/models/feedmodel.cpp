@@ -50,12 +50,12 @@ FeedModel::FeedModel(QObject* parent)
 {
     qDebug() << "FeedModel";
 
-    Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideShortPostsChanged,    this, &FeedModel::_changeHideSome));
-    Q_TEST(connect(Tasty::instance()->settings(), &Settings::hideNegativeRatedChanged, this, &FeedModel::_changeHideSome));
+    Q_TEST(connect(pTasty->settings(), &Settings::hideShortPostsChanged,    this, &FeedModel::_changeHideSome));
+    Q_TEST(connect(pTasty->settings(), &Settings::hideNegativeRatedChanged, this, &FeedModel::_changeHideSome));
 
-    Q_TEST(connect(Tasty::instance(), &Tasty::authorizedChanged, this, &FeedModel::_resetOrReloadRatings));
-    Q_TEST(connect(Tasty::instance(), &Tasty::entryCreated,      this, &FeedModel::_prependEntry));
-    Q_TEST(connect(Tasty::instance(), &Tasty::entryDeleted,      this, &FeedModel::_removeEntry));
+    Q_TEST(connect(pTasty, &Tasty::authorizedChanged, this, &FeedModel::_resetOrReloadRatings));
+    Q_TEST(connect(pTasty, &Tasty::entryCreated,      this, &FeedModel::_prependEntry));
+    Q_TEST(connect(pTasty, &Tasty::entryDeleted,      this, &FeedModel::_removeEntry));
 
     Q_TEST(connect(_reposter, &Reposter::reposted,   this, &FeedModel::_prepend));
     Q_TEST(connect(_reposter, &Reposter::unreposted, this, &FeedModel::_removeEntry));
@@ -172,8 +172,6 @@ bool FeedModel::contains(int entryId) const
 void FeedModel::setMode(const FeedModel::Mode mode)
 {
     reset(mode);
-    if (_mode == TlogMode && _tlog->id() <= 0 && _tlog->slug().isEmpty())
-        _hasMore = false;
 }
 
 
@@ -239,6 +237,12 @@ void FeedModel::reset(Mode mode, int tlog, const QString& slug, const QString& q
 {
     beginResetModel();
 
+    _prevDate.clear();
+
+    _hasMore = true;
+    _lastEntry = 0;
+    delete _loadRequest;
+
     if (tlog > 0)
     {
         _tlog->setId(tlog);
@@ -262,21 +266,20 @@ void FeedModel::reset(Mode mode, int tlog, const QString& slug, const QString& q
     {
         _mode = mode;
         emit modeChanged();
-    }
 
-    if (_mode == FriendsMode)
-        Tasty::instance()->clearUnreadFriendsEntries();
+        if (_mode == FriendsMode)
+        {
+            pTasty->clearUnreadFriendsEntries();
+            _checkLastFriendEntry();
+        }
+        else if (_mode == TlogMode && _tlog->id() <= 0 && _tlog->slug().isEmpty())
+            _hasMore = false;
+    }
 
     _setUrl(_mode);
 
     _errorString.clear();
     emit errorStringChanged();
-
-    _prevDate.clear();
-
-    _hasMore = true;
-    _lastEntry = 0;
-    delete _loadRequest;
 
     _clear();
 
@@ -667,6 +670,49 @@ void FeedModel::_loadRatings(const QList<EntryPtr>& entries)
     request->get();
 
     Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
+}
+
+
+
+void FeedModel::_checkLastFriendEntry()
+{
+    Q_ASSERT(_mode == FriendsMode);
+
+    auto url = _url + QString("?limit=1");
+    auto opt = _optionsForFetchMore(true);
+    _loadRequest = new ApiRequest(url, opt);
+
+    QPointer<FeedModel> that(this);
+    Q_TEST(connect(_loadRequest, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
+                   [that](const QJsonObject& data)
+    {
+        if (!that)
+            return;
+
+        auto feed =  data.contains("items") ? data.value("items").toArray()
+                                            : data.value("entries").toArray();
+        if (feed.isEmpty())
+            return;
+
+        auto obj = feed.at(0).toObject();
+        auto entry = obj.contains("entry") ? obj.value("entry").toObject()
+                                          : obj;
+        auto id = entry.value("id").toInt();
+        auto lastSaved = pTasty->settings()->lastFriendEntry();
+        if (id >= lastSaved)
+        {
+            pTasty->settings()->setLastFriendEntry(id);
+            that->_addItems(data);
+        }
+        else
+        {
+            that->_loadRequest = nullptr;
+            that->setSinceEntryId(lastSaved);
+            that->fetchMore(QModelIndex());
+        }
+    }));
+
+    _initLoad();
 }
 
 
