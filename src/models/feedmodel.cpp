@@ -117,6 +117,12 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 
     qDebug() << "FeedModel::fetchMore";
 
+    if (_mode == FriendsMode && !_lastEntry && _entries.isEmpty())
+    {
+        _checkLastFriendEntry();
+        return;
+    }
+
     QString url = _url;
     if (_mode == TlogMode || _mode == FavoritesMode)
     {
@@ -267,16 +273,13 @@ void FeedModel::reset(Mode mode, int tlog, const QString& slug, const QString& q
         _mode = mode;
         emit modeChanged();
 
+        _setUrl(_mode);
+
         if (_mode == FriendsMode)
-        {
             pTasty->clearUnreadFriendsEntries();
-            _checkLastFriendEntry();
-        }
         else if (_mode == TlogMode && _tlog->id() <= 0 && _tlog->slug().isEmpty())
             _hasMore = false;
     }
-
-    _setUrl(_mode);
 
     _errorString.clear();
     emit errorStringChanged();
