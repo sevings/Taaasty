@@ -30,6 +30,7 @@ PopupFill {
             Tasty.reconnectToPusher();
     }
     Splash {
+        id: splash
         model: ChatsModel
         visible: !listView.visible
         emptyString: 'Нет бесед'
@@ -172,5 +173,10 @@ PopupFill {
             running: ChatsModel.loading
             visible: ChatsModel.hasMore
         }
+    }
+    Q.BusyIndicator {
+        anchors.centerIn: parent
+        running: ChatsModel.checking
+        visible: !splash.visible
     }
 }

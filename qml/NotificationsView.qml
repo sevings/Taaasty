@@ -46,6 +46,7 @@ PopupFill {
         }
     }
     Splash {
+        id: splash
         model: notifsView.model
         visible: !notifsView.visible
         emptyString: 'Нет уведомлений'
@@ -227,5 +228,10 @@ PopupFill {
                 back.hideNotifs();
             }
         }
+    }
+    Q.BusyIndicator {
+        anchors.centerIn: parent
+        running: notifsView.model.checking
+        visible: !splash.visible
     }
 }

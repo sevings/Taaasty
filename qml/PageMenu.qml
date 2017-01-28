@@ -286,6 +286,18 @@ Q.Drawer {
                 highlighted: ChatsModel.mode == 2 //= ChatsModel.EntryChatsMode
                 visible: window.chatsShows
             }
+            MenuSeparator {
+                visible: window.chatsShows
+            }
+            MenuItem {
+                text: 'Обновить'
+                onTriggered: {
+                    ChatsModel.loadLast();
+                    drawer.close();
+                }
+                enabled: visible && !ChatsModel.checking
+                visible: window.chatsShows
+            }
 
             // NOTIFICATIONS SECTION
             MenuItem {
@@ -304,6 +316,18 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: window.friendActivity
+                visible: window.notifsShows
+            }
+            MenuSeparator {
+                visible: window.notifsShows
+            }
+            MenuItem {
+                text: 'Обновить'
+                onTriggered: {
+                    (window.friendActivity ? FriendActivityModel : NotifsModel).check();
+                    drawer.close();
+                }
+                enabled: visible && !(window.friendActivity ? FriendActivityModel : NotifsModel).checking
                 visible: window.notifsShows
             }
 
