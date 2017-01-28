@@ -126,7 +126,8 @@ DISTFILES += \
     android/gradlew.bat \
     android/src/org/binque/taaasty/NotificationClient.java \
     android/res/values/apptheme.xml \
-    android/res/drawable/splash.xml
+    android/res/drawable/splash.xml \
+    android/src/org/binque/taaasty/RealPathUtil.java
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
