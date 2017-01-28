@@ -72,7 +72,7 @@ Item {
         asynchronous: false
         fillMode: Image.PreserveAspectCrop
         visible: image.available && cachedImage.format != CachedImage.GifFormat
-        source: visible ? "image://cached/" + url : ''
+        source: visible ? cachedImage.source : ''
     }
     Poppable {
         id: pop
