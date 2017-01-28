@@ -345,7 +345,21 @@ Q.Drawer {
                          && page.chat.entry //&& page.chat.isInvolved
             }
             MenuSeparator {
-                visible: chatTopic.visible && leftChat.visible
+                visible: chatTopic.visible
+            }
+            MenuItem {
+                text: 'Перезагрузить'
+                onTriggered: {
+                    page.chat.messages.reset();
+                    page.reload();
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isMessagesView === true
+            }
+            MenuSeparator {
+                visible: leftChat.visible
             }
 
             // ENTRY SECTION

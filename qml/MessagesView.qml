@@ -34,7 +34,8 @@ Pane {
     readonly property bool isMessagesView: true
     property bool wasEmpty
     signal addGreeting(string slug)
-    Component.onCompleted: {
+    Component.onCompleted: reload()
+    function reload() {
         back.wasEmpty = !listView.visible;
         chat.messages.check();
         listView.positionViewAtEnd();
