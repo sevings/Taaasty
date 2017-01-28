@@ -98,12 +98,6 @@ void CachedImage::loadFile()
     if (_watcher.isRunning() || isCached())
         return;
 
-    if (_available)
-    {
-        _available = false;
-        emit availableChanged();
-    }
-
     auto future = QtConcurrent::run(this, &CachedImage::_loadFile);
     _watcher.setFuture(future);
 }
