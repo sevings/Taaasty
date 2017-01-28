@@ -43,6 +43,8 @@ class MessagesModel : public TastyListModel
 
     Q_PROPERTY(int chatId READ chatId)
 
+    Q_PROPERTY(int size   READ rowCount NOTIFY rowCountChanged)
+
 public:
     explicit MessagesModel(Conversation* chat = nullptr);
 
@@ -60,11 +62,12 @@ public:
 signals:
     void hasMoreChanged();
     void loadingChanged();
-    void totalCountChanged(int tc);
     void lastMessageChanged();
 
     void itemsAboutToBePrepended();
     void itemsPrepended(int prependedCount);
+
+    void rowCountChanged();
 
 public slots:
     void reset();
@@ -82,7 +85,6 @@ private slots:
     void _removeMessage(QObject* msg);
 
 private:
-    void            _setTotalCount(int tc);
     QList<Message*> _messagesList(const QJsonArray& feed);
 
     QList<Message*> _messages;

@@ -72,7 +72,7 @@ Pane {
             right: parent.right
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
-        visible: !chat.loading && (count > 0 || !model.hasMore)
+        visible: !chat.loading && (model.size > 0 || !model.hasMore)
         model: chat.messages
         readonly property int headerHeight: headerItem.visibleHeight
         property bool atYBegin
