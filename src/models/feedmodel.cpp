@@ -117,12 +117,6 @@ void FeedModel::fetchMore(const QModelIndex& parent)
 
     qDebug() << "FeedModel::fetchMore";
 
-    if (_mode == FriendsMode && !_lastEntry && _entries.isEmpty())
-    {
-        _checkLastFriendEntry();
-        return;
-    }
-
     QString url = _url;
     if (_mode == TlogMode || _mode == FavoritesMode)
     {
@@ -673,49 +667,6 @@ void FeedModel::_loadRatings(const QList<EntryPtr>& entries)
     request->get();
 
     Q_TEST(connect(request, SIGNAL(success(QJsonArray)), this, SLOT(_setRatings(QJsonArray))));
-}
-
-
-
-void FeedModel::_checkLastFriendEntry()
-{
-    Q_ASSERT(_mode == FriendsMode);
-
-    auto url = _url + QString("?limit=1");
-    auto opt = _optionsForFetchMore(true);
-    _loadRequest = new ApiRequest(url, opt);
-
-    QPointer<FeedModel> that(this);
-    Q_TEST(connect(_loadRequest, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
-                   [that](const QJsonObject& data)
-    {
-        if (!that)
-            return;
-
-        auto feed =  data.contains("items") ? data.value("items").toArray()
-                                            : data.value("entries").toArray();
-        if (feed.isEmpty())
-            return;
-
-        auto obj = feed.at(0).toObject();
-        auto entry = obj.contains("entry") ? obj.value("entry").toObject()
-                                          : obj;
-        auto id = entry.value("id").toInt();
-        auto lastSaved = pTasty->settings()->lastFriendEntry();
-        if (id >= lastSaved)
-        {
-            pTasty->settings()->setLastFriendEntry(id);
-            that->_addItems(data);
-        }
-        else
-        {
-            that->_loadRequest = nullptr;
-            that->setSinceEntryId(lastSaved);
-            that->fetchMore(QModelIndex());
-        }
-    }));
-
-    _initLoad();
 }
 
 

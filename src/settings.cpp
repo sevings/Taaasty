@@ -61,21 +61,18 @@ void Settings::swapProfiles()
     auto token = save ? accessToken()       : QString();
     auto until = save ? expiresAt()         : QDateTime();
     auto id    = save ? userId()            : 0;
-    auto entry = save ? lastFriendEntry()   : 0;
 
     setSaveProfile(prevSaveProfile());
     setLogin(prevLogin());
     setAccessToken(prevAccessToken());
     setExpiresAt(prevExpiresAt());
     setUserId(prevUserId());
-    setLastFriendEntry(prevLastFriendEntry());
 
     setPrevSaveProfile(save);
     setPrevLogin(login);
     setPrevAccessToken(token);
     setPrevExpiresAt(until);
     setPrevUserId(id);
-    setPrevLastFriendEntry(entry);
 }
 
 
@@ -87,7 +84,6 @@ void Settings::clearProfile()
     setAccessToken(QString());
     setExpiresAt(QDateTime());
     setUserId(0);
-    setLastFriendEntry(0);
 }
 
 
@@ -191,25 +187,6 @@ void Settings::setSaveProfile(const bool save)
 
 
 
-int Settings::lastFriendEntry() const
-{
-    return _settings.value("last_friend_entry").toInt();
-}
-
-
-
-void Settings::setLastFriendEntry(int entryId)
-{
-    if (entryId == lastFriendEntry())
-        return;
-
-    _settings.setValue("last_friend_entry", entryId);
-
-    emit lastFriendEntryChanged();
-}
-
-
-
 QString Settings::prevLogin() const
 {
     return _settings.value("prev_login").toString();
@@ -305,25 +282,6 @@ void Settings::setPrevSaveProfile(const bool save)
         return;
 
     _settings.setValue("prev_save_profile", save);
-}
-
-
-
-int Settings::prevLastFriendEntry() const
-{
-    return _settings.value("prev_last_friend_entry").toInt();
-}
-
-
-
-void Settings::setPrevLastFriendEntry(int entryId)
-{
-    if (entryId == prevLastFriendEntry())
-        return;
-
-    _settings.setValue("prev_last_friend_entry", entryId);
-
-    emit prevLastFriendEntryChanged();
 }
 
 

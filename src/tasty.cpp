@@ -311,7 +311,7 @@ void Tasty::_init()
 
     Q_TEST(connect(_pusher, SIGNAL(unreadChats(int)),          this, SLOT(_setUnreadChats(int))));
     Q_TEST(connect(_pusher, SIGNAL(unreadNotifications(int)),  this, SLOT(_setUnreadNotifications(int))));
-    Q_TEST(connect(_pusher, SIGNAL(unreadFriendsEntry(int)),   this, SLOT(_setLastFriendEntry(int))));
+    Q_TEST(connect(_pusher, SIGNAL(unreadFriendsEntry(int)),   this, SLOT(_incUnreadFriendEntries())));
 
     QQuickStyle::setStyle("Material");
 
@@ -485,10 +485,8 @@ void Tasty::_setUnreadNotifications(int count)
 
 
 
-void Tasty::_setLastFriendEntry(int entryId)
+void Tasty::_incUnreadFriendEntries()
 {
-    _settings->setLastFriendEntry(entryId);
-
     _unreadFriendsEntries++;
     emit unreadFriendsEntriesChanged();
 }
