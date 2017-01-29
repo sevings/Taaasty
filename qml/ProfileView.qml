@@ -19,6 +19,7 @@
  */
 
 import QtQuick 2.8
+import QtQuick.Controls 2.1 as Q
 import QtQuick.Controls.Material 2.1
 import org.binque.taaasty 1.0
 
@@ -38,6 +39,7 @@ Pane {
         body: profileView
     }
     Splash {
+        id: splash
         model: tlog
         visible: !column.visible
     }
@@ -291,5 +293,10 @@ Pane {
                 }
             }
         }
+    }
+    Q.BusyIndicator {
+        anchors.centerIn: parent
+        running: profileView.tlog.changingRelation
+        visible: !splash.visible
     }
 }
