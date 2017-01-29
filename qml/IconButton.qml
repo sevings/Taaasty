@@ -78,20 +78,10 @@ T.ToolButton {
         }
     }
 
-    background: Ripple {
+    background: Rectangle {
         implicitWidth: 48 * sp
         implicitHeight: 48 * sp
-
-        readonly property bool square: control.contentItem.implicitWidth <= control.contentItem.implicitHeight
-
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        clip: !square
-        width: square ? parent.height / 2 : parent.width
-        height: square ? parent.height / 2 : parent.height
-        pressed: control.pressed
-        anchor: control
-        active: control.enabled && (control.down || control.visualFocus || control.hovered)
-        color: control.Material.rippleColor
+        color: control.down || control.highlighted ? control.Material.rippleColor : control.Material.buttonColor
+        visible: control.enabled && (control.down || control.visualFocus || control.checked || control.highlighted)
     }
 }
