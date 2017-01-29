@@ -200,6 +200,90 @@ void TextHandler::setUnderline(bool arg)
 
 
 
+TextHandler::ListFormat TextHandler::list() const
+{
+    auto cursor = _textCursor();
+    if (cursor.isNull())
+        return ListNone;
+
+    auto list = cursor.currentList();
+    if (!list)
+        return ListNone;
+
+    return (ListFormat)list->format().style();
+}
+
+
+
+void TextHandler::setList(ListFormat list)
+{
+    auto cursor = _textCursor();
+    if (cursor.isNull())
+        return;
+
+    auto block = _doc->findBlock(cursor.selectionStart());
+    auto removeList = [&]()
+    {
+        while (block.position() < cursor.selectionEnd())
+        {
+            QTextCursor cursor(block);
+            block = block.next();
+            auto list = cursor.currentList();
+            if (!list)
+                continue;
+
+            list->remove(block);
+
+            auto format = cursor.blockFormat();
+            format.setIndent(format.indent() - 1);
+            cursor.mergeBlockFormat(format);
+        }
+    };
+
+    switch (list) {
+    case ListNone:
+        removeList();
+        break;
+    case ListDecimal:
+    case ListDisk:
+    {
+        QTextList* textList = nullptr;
+        auto b = block.previous();
+        while (!textList && b.position() < cursor.selectionEnd())
+        {
+            textList = b.textList();
+            b = b.next();
+        }
+
+        if (!textList)
+        {
+            auto tl = b.textList();
+            if (tl && tl->format().style() == (QTextListFormat::Style)list)
+                textList = tl;
+        }
+        else if (textList->format().style() != (QTextListFormat::Style)list)
+            removeList();
+
+        if (!textList)
+            textList = cursor.createList((QTextListFormat::Style)list);
+
+        while (block.position() < cursor.selectionEnd())
+        {
+            textList->add(block);
+            block = block.next();
+        }
+    }
+        break;
+    default:
+        qDebug() << "Unknown list format:" << list;
+        break;
+    }
+
+    emit listChanged();
+}
+
+
+
 QString TextHandler::text() const
 {
     return _text;

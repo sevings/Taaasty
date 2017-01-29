@@ -54,8 +54,10 @@
 #include <QObject>
 #include <QQuickTextDocument>
 #include <QTextCharFormat>
+#include <QTextListFormat>
 #include <QTextCodec>
 #include <QTextCursor>
+#include <QTextList>
 
 
 
@@ -73,9 +75,20 @@ class TextHandler : public QObject
     Q_PROPERTY(bool     italic          READ italic         WRITE setItalic         NOTIFY italicChanged)
     Q_PROPERTY(bool     underline       READ underline      WRITE setUnderline      NOTIFY underlineChanged)
 
+    Q_PROPERTY(ListFormat list          READ list           WRITE setList           NOTIFY listChanged)
+
     Q_PROPERTY(QString  text            READ text           WRITE setText           NOTIFY textChanged)
 
 public:
+    enum ListFormat
+    {
+        ListNone    = 0,
+        ListDisk    = QTextListFormat::ListDisc,
+        ListDecimal = QTextListFormat::ListDecimal
+    };
+
+    Q_ENUMS(ListFormat)
+
     explicit TextHandler(QObject *parent = 0);
 
     QQuickItem* target();
@@ -97,6 +110,9 @@ public:
     void    setItalic(bool arg);
     void    setUnderline(bool arg);
 
+    ListFormat list() const;
+    void setList(ListFormat list);
+
     QString text() const;
     void    setText(const QString& arg);
 
@@ -110,6 +126,8 @@ signals:
     void boldChanged();
     void italicChanged();
     void underlineChanged();
+
+    void listChanged();
 
     void textChanged();
 
