@@ -87,7 +87,7 @@ ApplicationWindow {
         return true;
     }
     function showMessage(txt, info, permanent) {
-        dialog.show(txt, info, permanent);
+        toast.show(txt, info, permanent);
     }
     function showNotifs() {
         notifsView.item.show();
@@ -126,6 +126,11 @@ ApplicationWindow {
     function hideLineInput() {
         inputDialog.state = "closed";
         inputDialog.clear();
+    }
+    function askUser(question, action) {
+        dialog.title = question;
+        dialog.action = action;
+        dialog.open();
     }
     function openLink(url) {
         var matches = /taaasty.com\/(?:~|%7E)?([^\/]+)(?:\/([\d]+))?/.exec(url);
@@ -539,24 +544,34 @@ ApplicationWindow {
         id: inputDialog
         anchors.margins: 2 * mm
     }
-    Dialog {
-        id: dialog
+    Toast {
+        id: toast
         z: 100
         Connections {
             target: Tasty
             onError: {
-                dialog.show((code ? code + '\n' : '') + text);
+                toast.show((code ? code + '\n' : '') + text);
             }
             onInfo: {
-                dialog.show(text, true);
+                toast.show(text, true);
             }
             onNetworkAccessible: {
-                if (dialog.permanent)
-                    dialog.close();
+                if (toast.permanent)
+                    toast.close();
             }
             onNetworkNotAccessible: {
-                dialog.show('Сеть недоступна', false)
+                toast.show('Сеть недоступна', false)
             }
         }
+    }
+    Dialog {
+        id: dialog
+        property var action
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        font.pixelSize: window.fontNormal
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        modal: true
+        onAccepted: if (action) action()
     }
 }

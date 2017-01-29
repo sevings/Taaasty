@@ -378,7 +378,9 @@ Q.Drawer {
             MenuItem {
                 text: 'Пожаловаться'
                 onTriggered: {
-                    page.entry.report();
+                    window.askUser('Отправить жалобу в службу поддержки?', function() {
+                      page.entry.report();
+                    });
                     drawer.close();
                 }
                 visible: !window.chatsShows
@@ -440,11 +442,12 @@ Q.Drawer {
                            && page.chat.type === Chat.PrivateConversation))
                       ? 'Удалить переписку' : 'Покинуть беседу'
                 onTriggered: {
-                    if (page.isFullEntryView)
-                        page.entry.chat.remove();
-                    else
-                        page.chat.remove();
-
+                    window.askUser(leftChat.text + '?', function() {
+                        if (page.isFullEntryView)
+                            page.entry.chat.remove();
+                        else
+                            page.chat.remove();
+                    });
                     drawer.close();
                 }
                 visible: !window.chatsShows
@@ -466,7 +469,9 @@ Q.Drawer {
             MenuItem {
                 text: 'Удалить запись'
                 onTriggered: {
-                    page.entry.deleteEntry();
+                    window.askUser('Удалить пост?', function() {
+                      page.entry.deleteEntry();
+                    });
                     drawer.close();
                 }
                 visible: !window.chatsShows
@@ -477,8 +482,10 @@ Q.Drawer {
             MenuItem {
                 text: 'Удалить репост'
                 onTriggered: {
-                    if (page.feedModel)
-                        page.feedModel.reposter.unrepost(page.entry.entryId);
+                    window.askUser('Удалить репост?', function() {
+                        if (page.feedModel)
+                            page.feedModel.reposter.unrepost(page.entry.entryId);
+                    });
                     drawer.close();
                 }
                 visible: !window.chatsShows
@@ -551,7 +558,9 @@ Q.Drawer {
             MenuItem {
                 text: 'Отписать'
                 onTriggered: {
-                    page.tlog.unsubscribeHim();
+                    window.askUser('Отписать от вас ' + page.tlog.author.name + '?', function() {
+                      page.tlog.unsubscribeHim();
+                    });
                     drawer.close();
                 }
                 visible: !window.chatsShows

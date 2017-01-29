@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/EntryEditor.qml</file>
-        <file>qml/Dialog.qml</file>
         <file>qml/FeedView.qml</file>
         <file>qml/Footer.qml</file>
         <file>qml/FullEntryView.qml</file>
@@ -83,5 +82,6 @@
         <file>icons/cross-black-128.png</file>
         <file>qml/Hello.qml</file>
         <file>qml/MyScrollIndicator.qml</file>
+        <file>qml/Toast.qml</file>
     </qresource>
 </RCC>
