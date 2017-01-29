@@ -201,7 +201,6 @@ Pane {
                 z: 6
                 readOnly: poster.loading
                 flickable: flick
-                handler: titleHandler
                 placeholderText: 'Заголовок'
                 font.pixelSize: window.fontBigger
                 popBody: back
@@ -237,7 +236,6 @@ Pane {
                 }
                 readOnly: poster.loading
                 flickable: flick
-                handler: textHandler
 //                textFormat: TextEdit.RichText
                 placeholderText: {
                     switch (entryType)
@@ -272,7 +270,6 @@ Pane {
                 z: 4
                 readOnly: poster.loading
                 flickable: flick
-                handler: titleHandler
                 placeholderText: 'Источник'
                 horizontalAlignment: Text.AlignRight
                 popBody: back
@@ -423,42 +420,6 @@ Pane {
         }
     }
     MyScrollIndicator { flick: flick }
-    TextHandler {
-        id: titleHandler
-        target: titleInput
-        cursorPosition: titleInput.cursorPosition
-        selectionStart: titleInput.selectionStart
-        selectionEnd: titleInput.selectionEnd
-        onError: {
-            console.error(message);
-        }
-    }
-    TextHandler {
-        id: textHandler
-        target: textInput
-        cursorPosition: textInput.cursorPosition
-        selectionStart: textInput.selectionStart
-        selectionEnd: textInput.selectionEnd
-        onError: {
-            console.error(message);
-        }
-    }
-    TextHandler {
-        id: sourceHandler
-        target: sourceInput
-        cursorPosition: sourceInput.cursorPosition
-        selectionStart: sourceInput.selectionStart
-        selectionEnd: sourceInput.selectionEnd
-        onError: {
-            console.error(message);
-        }
-    }
-    Item {
-        id: bound
-        width: parent.width
-        height: window.footerY
-        enabled: false
-    }
     Poster {
         id: poster
         onPosted: {

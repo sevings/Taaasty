@@ -68,7 +68,6 @@ FocusScope {
             anchors.fill: parent
             bottomPadding: 5 * mm
             flickable: flickable
-            handler: handler
             background: Item { }
         }
     }
@@ -81,16 +80,6 @@ FocusScope {
         }
         height: input.activeFocus ? 2 * sp : 1 * sp
         color: input.activeFocus ? Material.accentColor : Material.hintTextColor
-    }
-    TextHandler {
-        id: handler
-//        target: input
-//        cursorPosition: input.cursorPosition
-//        selectionStart: input.selectionStart
-//        selectionEnd: input.selectionEnd
-        onError: {
-            console.error(message);
-        }
     }
     IconButton {
         id: button

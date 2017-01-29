@@ -26,7 +26,6 @@ import org.binque.taaasty 1.0
 TextArea {
     id: textEdit
     property Flickable flickable
-    property TextHandler handler
     property alias popBody: pop.body
     font.pixelSize: window.fontNormal
 //    text: handler.text
@@ -80,6 +79,16 @@ TextArea {
             textEdit.selectWord();
 
             mouse.accepted = true;
+        }
+    }
+    TextHandler {
+        id: handler
+        target: textEdit
+        cursorPosition: textEdit.cursorPosition
+        selectionStart: textEdit.selectionStart
+        selectionEnd: textEdit.selectionEnd
+        onError: {
+            console.error(message);
         }
     }
 }
