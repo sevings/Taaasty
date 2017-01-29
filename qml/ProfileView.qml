@@ -296,6 +296,8 @@ Pane {
     }
     Q.BusyIndicator {
         anchors.centerIn: parent
+        height: 15 * mm
+        width: height
         running: profileView.tlog.changingRelation
         visible: !splash.visible
     }

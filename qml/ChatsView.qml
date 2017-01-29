@@ -176,6 +176,8 @@ PopupFill {
     }
     Q.BusyIndicator {
         anchors.centerIn: parent
+        height: 15 * mm
+        width: height
         running: ChatsModel.checking
         visible: !splash.visible
     }
