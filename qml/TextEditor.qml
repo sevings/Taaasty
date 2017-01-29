@@ -56,7 +56,14 @@ TextArea {
     }
     Poppable {
         id: pop
+        anchors.margins: -1 * mm
         function moveCursor(x, y) {
+            x -= 1 * mm;
+            y -= 1 * mm;
+
+            x = Math.max(0, Math.min(x, textEdit.width));
+            y = Math.max(0, Math.min(y, textEdit.height));
+
             textEdit.deselect();
             textEdit.cursorPosition = textEdit.positionAt(x, y);
             textEdit.forceActiveFocus();
