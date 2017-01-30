@@ -157,6 +157,7 @@ Pane {
                         anchors {
                             top: addImageButton.bottom
                             left: parent.left
+                            right: parent.right
                             margins: 1.5 * mm
                         }
                         text: 'Оптимизировать размер'
