@@ -268,12 +268,12 @@ void FeedModel::reset(Mode mode, int tlog, const QString& slug, const QString& q
         emit modeChanged();
 
         _setUrl(_mode);
-
-        if (_mode == FriendsMode)
-            pTasty->clearUnreadFriendsEntries();
-        else if (_mode == TlogMode && _tlog->id() <= 0 && _tlog->slug().isEmpty())
-            _hasMore = false;
     }
+
+    if (_mode == FriendsMode)
+        pTasty->clearUnreadFriendsEntries();
+    else if (_mode == TlogMode && _tlog->id() <= 0 && _tlog->slug().isEmpty())
+        _hasMore = false;
 
     _errorString.clear();
     emit errorStringChanged();
