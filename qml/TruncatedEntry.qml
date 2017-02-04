@@ -182,7 +182,7 @@ Item {
             right: parent.right
         }
         visible: entry && entry.source.length > 0
-        text: entry.source
+        text: entry ? entry.source : ''
         font.pixelSize: window.fontSmaller
         font.italic: true
         textFormat: Text.RichText
