@@ -298,7 +298,8 @@ Pane {
                     IconButton {
                         id: fireButton
                         property bool voting
-                        visible: entryType !== TlogEntry.AnonymousEntry && !lockButton.locked
+                        visible: entryType !== TlogEntry.AnonymousEntry
+                                 && (!lockButton.locked || whereBox.currentIndex > 0)
                         icon: (voting ? '../icons/flame-solid-'
                                       : '../icons/flame-outline-')
                               + '72.png'
