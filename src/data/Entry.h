@@ -182,6 +182,8 @@ private slots:
     void _deleteEntry(const QJsonObject& data);
 
 private:
+    static int _countWords(QString content);
+
     QString     _createdAt;
     QString     _url;
     bool        _isVotable;

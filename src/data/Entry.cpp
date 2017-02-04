@@ -293,11 +293,7 @@ void Entry::init(const QJsonObject& data)
 
 //    _imagePreview    = data.value(QStringLiteral("preview_image")).toObject();
 
-    QRegularExpression wsRe(QStringLiteral("[^a-zA-Zа-яА-ЯёЁ\\d&#;]+"));
-    QRegularExpression linkRe(QStringLiteral("(?:http[s]?:\\/\\/[^\\s]*)"));
-    QRegularExpression tagRe(QStringLiteral("<[^>]*>"));
-    auto content = _title + " " + _text;
-    _wordCount   = content.remove(tagRe).remove(linkRe).count(wsRe);
+    _wordCount   = _countWords(_title + ' ' + _text);
 
     _correctHtml();
 
@@ -548,6 +544,17 @@ void Entry::_deleteEntry(const QJsonObject& data)
     }
     else
         qDebug() << data;
+}
+
+
+
+int Entry::_countWords(QString content)
+{
+    static QRegularExpression wsRe(QStringLiteral("[^a-zA-Zа-яА-ЯёЁ\\d&#;]+"));
+    static QRegularExpression linkRe(QStringLiteral("(?:http[s]?:\\/\\/[^\\s]*)"));
+    static QRegularExpression tagRe(QStringLiteral("<[^>]*>"));
+
+    return content.remove(tagRe).remove(linkRe).count(wsRe);
 }
 
 
