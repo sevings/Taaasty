@@ -125,8 +125,8 @@ public:
     Entry(Conversation* chat);
     ~Entry();
 
-    Q_INVOKABLE CommentsModel*       commentsModel();
-    Q_INVOKABLE AttachedImagesModel* attachedImagesModel() { return _attachedImagesModel; }
+    CommentsModel*       commentsModel();
+    AttachedImagesModel* attachedImagesModel() { return _attachedImagesModel; }
 
     int wordCount() const;
 

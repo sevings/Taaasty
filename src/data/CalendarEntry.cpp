@@ -22,6 +22,8 @@
 
 #include "CalendarEntry.h"
 
+#include <QQmlEngine>
+
 #include "Entry.h"
 #include "Rating.h"
 
@@ -49,6 +51,8 @@ CalendarEntry::CalendarEntry(const QJsonObject& data, QObject *parent)
     , _base(nullptr)
     , _rating(new Rating(this))
 {
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
     _id              = data.value(QStringLiteral("entry_id")).toInt();
     auto d = data.value(QStringLiteral("created_at")).toString();
     _createdAt       = Tasty::parseDate(d);
