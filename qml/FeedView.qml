@@ -116,7 +116,7 @@ Pane {
                     window.pushFullEntry(entry, false, false, feedModel);
                 }
             }
-            ThemedText {
+            Loader {
                 id: repostText
                 anchors {
                     top: parent.top
@@ -125,24 +125,27 @@ Pane {
                     leftMargin: 5 * mm
                     rightMargin: anchors.leftMargin
                 }
-                color: window.secondaryTextColor
-                font.pixelSize: window.fontSmaller
-                visible: entry.author.id !== entry.tlog.tlogId
-                         && entry.tlog.tlogId !== tlog.tlogId
-                height: visible ? contentHeight : - 1.5 * mm
-                horizontalAlignment: Text.AlignHCenter
-                text: entry.tlog.author.name
-                      + (entry.tlog.author.title ? '\n' + entry.tlog.author.title : '')
-                Poppable {
-                    body: back
-                    onClicked: {
-                        if (back.x > 0) {
-                            mouse.accepted = false;
-                            return;
-                        }
+                active: entry.author.id !== entry.tlog.tlogId
+                        && entry.tlog.tlogId !== tlog.tlogId
+                asynchronous: false
+                sourceComponent: ThemedText {
+                    color: window.secondaryTextColor
+                    font.pixelSize: window.fontSmaller
+                    height: contentHeight
+                    horizontalAlignment: Text.AlignHCenter
+                    text: entry.tlog.author.name
+                          + (entry.tlog.author.title ? '\n' + entry.tlog.author.title : '')
+                    Poppable {
+                        body: back
+                        onClicked: {
+                            if (back.x > 0) {
+                                mouse.accepted = false;
+                                return;
+                            }
 
-                        mouse.accepted = true;
-                        window.pushTlog(entry.tlog.author.id);
+                            mouse.accepted = true;
+                            window.pushTlog(entry.tlog.author.id);
+                        }
                     }
                 }
             }

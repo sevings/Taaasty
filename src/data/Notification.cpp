@@ -66,7 +66,7 @@ Notification::Notification(const QJsonObject& data, QObject *parent)
         
         if (data.contains("entity"))
         {
-            _entry = EntryPtr::create();
+            _entry = EntryPtr::create(nullptr);
             _entry->init(data.value("entity").toObject());
         }
     }

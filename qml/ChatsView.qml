@@ -98,25 +98,28 @@ PopupFill {
                 elide: Text.AlignRight
                 wrapMode: Text.NoWrap
             }
-            SmallAvatar {
+            Loader {
                 id: lastMessageAvatar
                 anchors {
                     top: chatNick.bottom
                     left: chatAvatar.right
                     margins: 1.5 * mm
                 }
-                user: visible ? model.chat.lastMessage.user
-                              : chatAvatar.user
-                width: 4 * mm
-                height: 4 * mm
-                visible: !model.chat.isAnonymous && model.chat.lastMessage.userId !== model.chat.recipientId
+                active: !model.chat.isAnonymous && model.chat.lastMessage.userId !== model.chat.recipientId
                          && (model.chat.entry ? model.chat.lastMessage.userId !== model.chat.entry.author.id : true)
+                asynchronous: false
+                sourceComponent: SmallAvatar {
+                    width: 4 * mm
+                    height: 4 * mm
+                    user: lastMessageAvatar.active ? model.chat.lastMessage.user
+                                                   : chatAvatar.user
+                }
             }
             ThemedText {
                 id: lastMessage
                 anchors {
                     top: chatNick.bottom
-                    left: lastMessageAvatar.visible ? lastMessageAvatar.right : chatAvatar.right
+                    left: lastMessageAvatar.active ? lastMessageAvatar.right : chatAvatar.right
                     right: unreadMessages.visible ? unreadMessages.left : parent.right
                 }
                 font.pixelSize: window.fontSmallest

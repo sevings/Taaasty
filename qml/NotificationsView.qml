@@ -159,9 +159,11 @@ PopupFill {
                     leftMargin: window.friendActivity ? 3 * mm : 0
                     rightMargin: anchors.leftMargin
                 }
-                readonly property string textContent: notification.text
-                readonly property User notificationUser: notification.entityUser
-                readonly property TlogEntry notificationEntry: notification.entry
+                readonly property string textContent: window.friendActivity ? '' : notification.text
+                readonly property User notificationUser: window.friendActivity && notification.entityType === Notification.RelationshipType
+                                                         ? notification.entityUser : null
+                readonly property TlogEntry notificationEntry: window.friendActivity && notification.entityType === Notification.EntryType
+                                                               ? notification.entry : null
                 sourceComponent: {
                     if (!window.friendActivity)
                         notifText;

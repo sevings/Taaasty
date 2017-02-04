@@ -28,7 +28,7 @@ Item {
     height: wc.y + wc.height
     property TlogEntry entry
     property Pane popBody
-    property alias pinVisible: pin.visible
+    property alias pinVisible: pin.active
     signal avatarClicked
     SmallAvatar {
         id: entryAvatar
@@ -49,7 +49,7 @@ Item {
                 window.pushProfileById(entry.author.id);
         }
     }
-    Image {
+    Loader {
         id: pin
         anchors {
             top: parent.top
@@ -57,10 +57,13 @@ Item {
             margins: 1.5 * mm
         }
         height: 20 * sp
-        fillMode: Image.PreserveAspectFit
-        source: (window.darkTheme ? '../icons/pin-white-'
-                                  : '../icons/pin-black-')
-              + '128.png'
+        asynchronous: false
+        sourceComponent: Image {
+            fillMode: Image.PreserveAspectFit
+            source: (window.darkTheme ? '../icons/pin-white-'
+                                      : '../icons/pin-black-')
+                    + '128.png'
+        }
     }
     ThemedText {
         id: nick
@@ -89,7 +92,7 @@ Item {
         elide: Text.AlignRight
         wrapMode: Text.NoWrap
     }
-    MyImage {
+    Loader {
         id: firstImage
         anchors {
             top: entryAvatar.visible ? entryAvatar.bottom : date.bottom
@@ -98,32 +101,35 @@ Item {
             topMargin: 1.5 * mm
             bottomMargin: 1.5 * mm
         }
-        property AttachedImage image: entry ? entry.attachedImagesModel.first : null
-        visible: image
-        height: visible ? (image.height / image.width * width) : 0
-        url: image ? image.url : ''
-        extension: image ? image.type : ''
-        savable: true
-        popBody: truncEntry.popBody
-        acceptClick: false
-        ThemedText {
-            anchors {
-                bottom: parent.bottom
-                left: parent.left
-                right: parent.right
-                margins: 0.5 * mm
+        readonly property AttachedImage image: entry ? entry.attachedImagesModel.first : null
+        active: image
+        height: active ? (image.height / image.width * width) : 0
+        asynchronous: false
+        sourceComponent: MyImage {
+            url: firstImage.image ? firstImage.image.url : ''
+            extension: firstImage.image ? firstImage.image.type : ''
+            savable: true
+            popBody: truncEntry.popBody
+            acceptClick: false
+            ThemedText {
+                anchors {
+                    bottom: parent.bottom
+                    left: parent.left
+                    right: parent.right
+                    margins: 0.5 * mm
+                }
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: window.fontSmaller
+                style: Text.Outline
+                styleColor: window.backgroundColor
+                property int total: entry ? entry.attachedImagesModel.rowCount() : 0
+                text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
+                visible: total > 1
+                z: firstImage.z + 1
             }
-            horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: window.fontSmaller
-            style: Text.Outline
-            styleColor: window.backgroundColor
-            property int total: entry ? entry.attachedImagesModel.rowCount() : 0
-            text: Tasty.num2str(total, 'изображение', 'изображения', 'изображений')
-            visible: total > 1
-            z: firstImage.z + 1
         }
     }
-    MediaLink {
+    Loader {
         id: mediaLink
         anchors {
             top: firstImage.bottom
@@ -131,10 +137,13 @@ Item {
             right: parent.right
             bottomMargin: 1.5 * mm
         }
-        visible: media
-        media: entry ? entry.media : null
-        acceptClick: false
-        popBody: truncEntry.popBody
+        active: entry && entry.media
+        asynchronous: false
+        sourceComponent: MediaLink {
+            media: entry.media
+            acceptClick: false
+            popBody: truncEntry.popBody
+        }
     }
     ThemedText {
         id: entryTitle
@@ -167,17 +176,18 @@ Item {
     }
     ThemedText {
         id: quoteSource
-        text: entry ? entry.source : ''
         anchors {
             top: content.bottom
             left: parent.left
             right: parent.right
         }
+        visible: entry && entry.source.length > 0
+        text: entry.source
         font.pixelSize: window.fontSmaller
         font.italic: true
         textFormat: Text.RichText
-        height: entry && entry.source.length > 0 ? contentHeight : 0
         horizontalAlignment: Text.AlignRight
+        height: visible ? contentHeight : -1.5 * mm
     }
     Rectangle {
         id: wc

@@ -39,9 +39,9 @@ MyImage {
     Text {
         id: letter
         visible: !avatar.available
+        anchors.centerIn: parent
         color: user && user.nameColor || Material.foreground
         font.pixelSize: avatar.width / 2
-        anchors.centerIn: parent
-        text: parent.symbol.toUpperCase()
+        text: avatar.symbol.toUpperCase()
     }
 }
