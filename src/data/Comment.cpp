@@ -68,7 +68,7 @@ void Comment::edit(const QString& text)
     if (isLoading())
         return;
     
-    auto url  = QString("v1/comments/%1.json").arg(_id);
+    auto url  = QStringLiteral("v1/comments/%1.json").arg(_id);
     _request  = new ApiRequest(url, ApiRequest::AllOptions);
     _request->addFormData("text", text);
     _request->put();
@@ -85,7 +85,7 @@ void Comment::remove()
     if (isLoading())
         return;
     
-    auto url = QString("v1/comments/%1.json").arg(_id);
+    auto url = QStringLiteral("v1/comments/%1.json").arg(_id);
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->deleteResource();
 
@@ -98,18 +98,18 @@ void Comment::remove()
 
 void Comment::_init(const QJsonObject& data)
 {
-    _id             = data.value("id").toInt();
+    _id             = data.value(QStringLiteral("id")).toInt();
 
     delete _user;
-    _user           = new User(data.value("user").toObject(), this);
+    _user           = new User(data.value(QStringLiteral("user")).toObject(), this);
 
-    _text           = data.value("comment_html").toString();
-    auto d = data.value("created_at").toString();
+    _text           = data.value(QStringLiteral("comment_html")).toString();
+    auto d = data.value(QStringLiteral("created_at")).toString();
     _createdAt      = Tasty::parseDate(d);
     _setDate(d);
-    _isEditable     = data.value("can_edit").toBool();
-    _isReportable   = data.value("can_report").toBool();
-    _isDeletable    = data.value("can_delete").toBool();
+    _isEditable     = data.value(QStringLiteral("can_edit")).toBool();
+    _isReportable   = data.value(QStringLiteral("can_report")).toBool();
+    _isDeletable    = data.value(QStringLiteral("can_delete")).toBool();
 
     _correctHtml();
     _setTruncatedText();
@@ -126,7 +126,7 @@ void Comment::_init(const QJsonObject& data)
 
 void Comment::_update(const QJsonObject& data)
 {
-    auto list = data.value("comments").toArray();
+    auto list = data.value(QStringLiteral("comments")).toArray();
     if (list.isEmpty())
         return;
 

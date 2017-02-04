@@ -97,22 +97,22 @@ QStringList StemmerV::stem(const QString& text)
 
 
 StemmerV::StemmerV()
-    : _pvre("^(.*?[уеыаоэяию])(.*)$")
-    , _reflexive("(с[яьи])$")
+    : _pvre(QStringLiteral("^(.*?[уеыаоэяию])(.*)$"))
+    , _reflexive(QStringLiteral("(с[яьи])$"))
     , _suffix("([иы]?в(?:ши)?|[иыое][йме]|[ео]го|[ео]му|[ая]я|[еоую]?ю"
               "|[иы]х|[иы]ми|[ие]шь|[ие]т|[ие]м|[ие]те|[уюя]т|л[аои]?"
               "|[тч][ьи]|вши?|[ео]в|[ая]ми|еи|и|а|я|е|й|о|у|и?[ея]м"
               "|[ао]м|ах|и?ях|ы|ию|ь[юя]?|ия|ени|енем|от)$")
-    , _plural("и$")
+    , _plural(QStringLiteral("и$"))
     , _derivational("(е?[мн]?ост|лк|(?:ль)?[нчщ]?ик|и?к|льн|ь|енн|тор"
                     "|тель|овец|ист|ец|ач|[аея]нт|[ая]не?ц|ч?[ая]н(?:ин)?"
                     "|е?н[иь]|[ая]ци|фикаци|е?ств|изм|ур|аж|ч?ик|очк|"
                     "[еи]?ц|[уыю]шк|[ео]нь?к|ищ|ующ)$")
-    , _perfectivePrefix("^(наи)")
-    , _perfectiveSuffix("([ае]йш)$")
-    , _softSign("ь$")
-    , _doubleN("нн$")
-    , _separators("[^а-яА-ЯёЁa-zA-Z]+")
+    , _perfectivePrefix(QStringLiteral("^(наи)"))
+    , _perfectiveSuffix(QStringLiteral("([ае]йш)$"))
+    , _softSign(QStringLiteral("ь$"))
+    , _doubleN(QStringLiteral("нн$"))
+    , _separators(QStringLiteral("[^а-яА-ЯёЁa-zA-Z]+"))
 {
     qDebug() << "StemmerV";
 

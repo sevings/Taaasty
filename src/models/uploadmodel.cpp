@@ -104,7 +104,7 @@ void UploadModel::append()
     _picker->select();
 #else
     auto path = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
-    auto fileName = QFileDialog::getOpenFileName(nullptr, tr("Open Image"), path, tr("Image Files (*.png *.jpg *.bmp *.gif)"));
+    auto fileName = QFileDialog::getOpenFileName(nullptr, QStringLiteral("Open Image"), path, QStringLiteral("Image Files (*.png *.jpg *.bmp *.gif)"));
     _append(fileName);
 #endif
 }
@@ -224,7 +224,7 @@ void UploadModel::_loadFiles(bool optimize)
 
         QHttpPart imagePart;
         imagePart.setHeader(QNetworkRequest::ContentTypeHeader,
-                            QString("image/").append(QString::fromLatin1(format)));
+                            QStringLiteral("image/").append(QString::fromLatin1(format)));
         auto fileName = QFileInfo(it.key()).fileName();
         imagePart.setHeader(QNetworkRequest::ContentDispositionHeader,
                             QVariant(QString("form-data; name=\"files[]\"; filename=\"%1\"").arg(fileName)));

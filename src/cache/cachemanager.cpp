@@ -147,7 +147,7 @@ void CacheManager::clear()
     Q_TEST(QDir(_path).removeRecursively());
 
     QSqlQuery query(_db);
-    Q_TEST(query.exec("DELETE FROM images"));
+    Q_TEST(query.exec(QStringLiteral("DELETE FROM images")));
 
     _maxDbRow = 0;
 }
@@ -175,7 +175,7 @@ void CacheManager::saveDb()
     Q_TEST(_db.transaction());
 
     QSqlQuery query(_db);
-    Q_TEST(query.prepare("INSERT OR REPLACE INTO images VALUES (?, ?, ?, ?)"));
+    Q_TEST(query.prepare(QStringLiteral("INSERT OR REPLACE INTO images VALUES (?, ?, ?, ?)")));
     foreach (auto image, images)
     {
         if (!image->fileSize() || image->url().isEmpty())
@@ -235,7 +235,7 @@ CacheManager::CacheManager(int maxSize, QNetworkAccessManager* web)
 {
     qDebug() << "CacheManager";
 
-    _path = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)).arg("images");
+    _path = QStringLiteral("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)).arg(QStringLiteral("images"));
 
     auto future = QtConcurrent::run(this, &CacheManager::_loadDb);
     _watcher.setFuture(future);
@@ -252,7 +252,7 @@ void CacheManager::_initDb()
     Q_TEST(_db.open());
 
     QSqlQuery query(_db);
-    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS images(url TEXT, format TEXT, size INTEGER, row INTEGER, PRIMARY KEY(url))"));
+    Q_TEST(query.exec(QStringLiteral("CREATE TABLE IF NOT EXISTS images(url TEXT, format TEXT, size INTEGER, row INTEGER, PRIMARY KEY(url))")));
 }
 
 
@@ -271,7 +271,7 @@ void CacheManager::_loadDb()
     Q_TEST(_db.transaction());
 
     QSqlQuery query(_db);
-    Q_TEST(query.exec("SELECT url, format, size, row FROM images ORDER BY row ASC"));
+    Q_TEST(query.exec(QStringLiteral("SELECT url, format, size, row FROM images ORDER BY row ASC")));
     while (query.next())
     {
         auto url = query.value(1).toString();
@@ -291,7 +291,7 @@ void CacheManager::_loadDb()
 
     _images.insert(BORDER_NAME, new CachedImage(this), 0);
 
-    Q_TEST(query.exec("SELECT MAX(row) FROM images"));
+    Q_TEST(query.exec(QStringLiteral("SELECT MAX(row) FROM images")));
     if (query.next())
         _maxDbRow = query.value(0).value<quint64>();
 
@@ -329,7 +329,7 @@ void CacheManager::_clearOldVersion()
 void CacheManager::_deleteRemoved()
 {
     QSqlQuery query(_db);
-    Q_TEST(query.prepare("DELETE FROM images WHERE url = ?"));
+    Q_TEST(query.prepare(QStringLiteral("DELETE FROM images WHERE url = ?")));
     auto removed = _images.removedValues();
     foreach (auto image, removed)
     {

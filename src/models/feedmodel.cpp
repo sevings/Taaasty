@@ -133,22 +133,22 @@ void FeedModel::fetchMore(const QModelIndex& parent)
     else if (_mode == BetterThanMode)
         url = url.arg(_minRating);
 
-    auto splitter = url.endsWith(".json") ? "?" : "&";
+    auto splitter = url.endsWith(QStringLiteral(".json")) ? "?" : "&";
 
     if (!_query.isEmpty())
-        url += QString("%1q=%2&page=%3").arg(splitter).arg(_query).arg(_page++);
+        url += QStringLiteral("%1q=%2&page=%3").arg(splitter).arg(_query).arg(_page++);
     else if (!_tag.isEmpty() && (_mode == TlogMode || _mode == MyTlogMode))
-        url += QString("%1&page=%3").arg(splitter).arg(_page++);
+        url += QStringLiteral("%1&page=%3").arg(splitter).arg(_page++);
     else if (!_prevDate.isEmpty())
-        url += QString("%1date=%2").arg(splitter).arg(_prevDate);
+        url += QStringLiteral("%1date=%2").arg(splitter).arg(_prevDate);
     else if (_lastEntry)
-        url += QString("%1since_entry_id=%2").arg(splitter).arg(_lastEntry);
+        url += QStringLiteral("%1since_entry_id=%2").arg(splitter).arg(_lastEntry);
 
     if (_prevDate.isEmpty())
     {
-        splitter = url.endsWith(".json") ? "?" : "&";
+        splitter = url.endsWith(QStringLiteral(".json")) ? "?" : "&";
         int limit = _entries.isEmpty() && _query.isEmpty() && _tag.isEmpty() ? 10 : 20;
-        url += QString("%1limit=%2").arg(splitter).arg(limit);
+        url += QStringLiteral("%1limit=%2").arg(splitter).arg(limit);
     }
 
     auto opt = _optionsForFetchMore(_mode == MyTlogMode || _mode == MyFavoritesMode
@@ -361,15 +361,15 @@ void FeedModel::_addItems(const QJsonObject& data)
 {
     qDebug() << "FeedModel::_addItems";
 
-    auto feed =  data.contains("items") ? data.value("items").toArray()
-                                        : data.value("entries").toArray();
+    auto feed =  data.contains(QStringLiteral("items")) ? data.value(QStringLiteral("items")).toArray()
+                                        : data.value(QStringLiteral("entries")).toArray();
 
-    auto more = (data.contains("prev_date")
-                 && !data.value("prev_date").isNull())
-            || (data.contains("has_more")
-                ? data.value("has_more").toBool()
-                : (data.contains("next_since_entry_id")
-                   && !data.value("next_since_entry_id").isNull()));
+    auto more = (data.contains(QStringLiteral("prev_date"))
+                 && !data.value(QStringLiteral("prev_date")).isNull())
+            || (data.contains(QStringLiteral("has_more"))
+                ? data.value(QStringLiteral("has_more")).toBool()
+                : (data.contains(QStringLiteral("next_since_entry_id"))
+                   && !data.value(QStringLiteral("next_since_entry_id")).isNull()));
 
     if (more != _hasMore)
     {
@@ -384,9 +384,9 @@ void FeedModel::_addItems(const QJsonObject& data)
     foreach(auto item, feed)
     {
         auto obj = item.toObject();
-        auto json = obj.contains("entry") ? obj.value("entry").toObject()
+        auto json = obj.contains(QStringLiteral("entry")) ? obj.value(QStringLiteral("entry")).toObject()
                                           : obj;
-        auto id = json.value("id").toInt();
+        auto id = json.value(QStringLiteral("id")).toInt();
         auto entry = pTasty->dataCache()->entry(id);
         if (!entry)
             entry = EntryPtr::create(nullptr);
@@ -406,14 +406,14 @@ void FeedModel::_addItems(const QJsonObject& data)
     });
 
     // in live modes next_since_entry_id may be incorrect
-    if (fixed.isEmpty() && data.contains("next_since_entry_id"))
-        _lastEntry = data.value("next_since_entry_id").toInt();
+    if (fixed.isEmpty() && data.contains(QStringLiteral("next_since_entry_id")))
+        _lastEntry = data.value(QStringLiteral("next_since_entry_id")).toInt();
     else if (_prevDate.isEmpty() && !all.isEmpty())
         _lastEntry = all.last()->entryId();
 
-    if (data.contains("prev_date"))
+    if (data.contains(QStringLiteral("prev_date")))
     {
-        auto prev = data.value("prev_date");
+        auto prev = data.value(QStringLiteral("prev_date"));
         if (prev.isNull())
             _prevDate.clear();
         else
@@ -534,7 +534,7 @@ void FeedModel::_setRatings(const QJsonArray& data)
 
     for (auto rating: data)
     {
-        auto id = rating.toObject().value("entry_id").toInt();
+        auto id = rating.toObject().value(QStringLiteral("entry_id")).toInt();
         auto entry = _idEntries.value(id);
         Q_ASSERT(entry);
         if (!entry)
@@ -657,10 +657,10 @@ void FeedModel::_clear()
 
 void FeedModel::_loadRatings(const QList<EntryPtr>& entries)
 {
-    QString url("v1/ratings.json?ids=");
+    QString url(QStringLiteral("v1/ratings.json?ids="));
     url.reserve(entries.size() * 9 + 20);
     for (auto entry: entries)
-        url += QString("%1,").arg(entry->id());
+        url += QStringLiteral("%1,").arg(entry->id());
     url.remove(url.size() - 1, 1);
 
     auto request = new ApiRequest(url);
@@ -677,18 +677,18 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
     {
     case MyTlogMode:
         if (_tag.isEmpty())
-            _url = QString("v1/tlog/%1/entries/tlogs.json")
+            _url = QStringLiteral("v1/tlog/%1/entries/tlogs.json")
                     .arg(Tasty::instance()->settings()->userId());
         else
-            _url = QString("v1/tlog/%1/entries/tags_tlogs/%2.json")
+            _url = QStringLiteral("v1/tlog/%1/entries/tags_tlogs/%2.json")
                     .arg(Tasty::instance()->settings()->userId()).arg(_tag);
         break;
     case MyFavoritesMode:
-        _url = QString("v1/tlog/%1/favorites/tlogs.json")
+        _url = QStringLiteral("v1/tlog/%1/favorites/tlogs.json")
                 .arg(Tasty::instance()->settings()->userId());
         break;
     case MyPrivateMode:
-        _url = QString("v1/tlog/%1/privates/tlogs.json")
+        _url = QStringLiteral("v1/tlog/%1/privates/tlogs.json")
                 .arg(Tasty::instance()->settings()->userId());
         break;
     case FriendsMode:
@@ -720,9 +720,9 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
         break;
     case TlogMode:
         if (_tag.isEmpty())
-            _url = QString("v1/tlog/%1/entries/tlogs.json");
+            _url = QStringLiteral("v1/tlog/%1/entries/tlogs.json");
         else
-            _url = QString("v1/tlog/%2/entries/tags_tlogs/%1.json").arg(_tag);
+            _url = QStringLiteral("v1/tlog/%2/entries/tags_tlogs/%1.json").arg(_tag);
         break;
     case FavoritesMode:
         _url = "v1/tlog/%1/favorites/tlogs.json";

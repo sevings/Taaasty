@@ -48,7 +48,7 @@ ChatsModel* ChatsModel::instance(Tasty* tasty)
 ChatsModel::ChatsModel(Tasty* tasty)
     : TastyListModel(tasty)
     , _mode(AllChatsMode)
-    , _url("v2/messenger/conversations.json?limit=10&page=%1")
+    , _url(QStringLiteral("v2/messenger/conversations.json?limit=10&page=%1"))
     , _page(1)
 {
     qDebug() << "ChatsModel";
@@ -257,7 +257,7 @@ void ChatsModel::loadUnread()
 
     qDebug() << "ChatsModel::loadUnread";
 
-    QString url("v2/messenger/conversations.json?unread=true");
+    QString url(QStringLiteral("v2/messenger/conversations.json?unread=true"));
     _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
 
     Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonArray)), this, SLOT(_addUnread(QJsonArray))));
@@ -304,7 +304,7 @@ void ChatsModel::_addLast(const QJsonArray& data)
     QList<ChatPtr> chats;
     foreach(auto item, data)
     {
-        auto id = item.toObject().value("id").toInt();
+        auto id = item.toObject().value(QStringLiteral("id")).toInt();
         auto chat = pTasty->dataCache()->chat(id);
         if (!chat)
             chat = ChatPtr::create(nullptr);
@@ -353,7 +353,7 @@ void ChatsModel::_addUnread(const QJsonArray& data)
     QList<ChatPtr> chats;
     foreach(auto item, data)
     {
-        auto id = item.toObject().value("id").toInt();
+        auto id = item.toObject().value(QStringLiteral("id")).toInt();
         auto chat = pTasty->dataCache()->chat(id);
         if (!chat)
             chat = ChatPtr::create(nullptr);
@@ -416,7 +416,7 @@ void ChatsModel::_addChats(const QJsonArray& data)
     QList<ChatPtr> chats;
     foreach(auto item, data)
     {
-        auto id = item.toObject().value("id").toInt();
+        auto id = item.toObject().value(QStringLiteral("id")).toInt();
         if (_ids.contains(id))
             continue;
 

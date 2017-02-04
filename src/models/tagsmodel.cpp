@@ -82,7 +82,7 @@ void TagsModel::fetchMore(const QModelIndex& parent)
     if (isLoading() || !canFetchMore(parent))
         return;
     
-    _loadRequest = new ApiRequest(QString("v1/tlog/%1/tags.json").arg(_tlog));
+    _loadRequest = new ApiRequest(QStringLiteral("v1/tlog/%1/tags.json").arg(_tlog));
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonArray)), this, SLOT(_setData(QJsonArray))));
 
     _initLoad();
@@ -125,8 +125,8 @@ void TagsModel::_setData(const QJsonArray& data)
 
     foreach (auto tag, data)
     {
-        _names << tag.toObject().value("name").toString();
-        _counts << tag.toObject().value("taggings_count").toInt();
+        _names << tag.toObject().value(QStringLiteral("name")).toString();
+        _counts << tag.toObject().value(QStringLiteral("taggings_count")).toInt();
     }
     
     endResetModel();

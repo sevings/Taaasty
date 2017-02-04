@@ -50,33 +50,33 @@ Notification::Notification(const QJsonObject& data, QObject *parent)
     : TastyData(parent)
     , _entityUser(nullptr)
 {
-    _id         = data.value("id").toInt();
-    _createdAt  = Tasty::parseDate(data.value("created_at").toString());
-    _sender     = new User(data.value("sender").toObject(), this);
-    _read       = !data.value("read_at").isNull();
-    _action     = data.value("action").toString();
-    _actionText = data.value("action_text").toString();
-    _text       = data.value("text").toString();
-    _entityId   = data.value("entity_id").toInt();
+    _id         = data.value(QStringLiteral("id")).toInt();
+    _createdAt  = Tasty::parseDate(data.value(QStringLiteral("created_at")).toString());
+    _sender     = new User(data.value(QStringLiteral("sender")).toObject(), this);
+    _read       = !data.value(QStringLiteral("read_at")).isNull();
+    _action     = data.value(QStringLiteral("action")).toString();
+    _actionText = data.value(QStringLiteral("action_text")).toString();
+    _text       = data.value(QStringLiteral("text")).toString();
+    _entityId   = data.value(QStringLiteral("entity_id")).toInt();
 
-    auto entityType = data.value("entity_type").toString();
+    auto entityType = data.value(QStringLiteral("entity_type")).toString();
     if (entityType == "Entry")
     {
         _entityType = EntryType;
         
-        if (data.contains("entity"))
+        if (data.contains(QStringLiteral("entity")))
         {
             _entry = EntryPtr::create(nullptr);
-            _entry->init(data.value("entity").toObject());
+            _entry->init(data.value(QStringLiteral("entity")).toObject());
         }
     }
     else if (entityType == "Relationship")
     {
         _entityType = RelationshipType;
         
-        if (data.contains("entity"))
+        if (data.contains(QStringLiteral("entity")))
         {
-            auto userData = data.value("entity").toObject().value("user").toObject();
+            auto userData = data.value(QStringLiteral("entity")).toObject().value(QStringLiteral("user")).toObject();
             _entityUser = new Author(userData, this);
         }
     }
@@ -88,8 +88,8 @@ Notification::Notification(const QJsonObject& data, QObject *parent)
         _entityType = UnknownType;
     }
 
-    _parentId   = data.value("parent_id").toInt();
-    _parentType = data.value("parent_type").toString();
+    _parentId   = data.value(QStringLiteral("parent_id")).toInt();
+    _parentType = data.value(QStringLiteral("parent_type")).toString();
 
     pTasty->dataCache()->addNotification(this);
 
@@ -191,7 +191,7 @@ void Notification::read()
     if (_read || _id <= 0 || isLoading())
         return;
 
-    auto url = QString("v2/messenger/notifications/%1/read.json").arg(_id);
+    auto url = QStringLiteral("v2/messenger/notifications/%1/read.json").arg(_id);
     _request = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     _request->put();
 
@@ -204,9 +204,9 @@ void Notification::read()
 
 void Notification::_updateRead(const QJsonObject& data)
 {
-    if (_read || data.value("id").toInt() != _id)
+    if (_read || data.value(QStringLiteral("id")).toInt() != _id)
         return;
 
-    _read = !data.value("read_at").isNull();
+    _read = !data.value(QStringLiteral("read_at")).isNull();
     emit readChanged();
 }

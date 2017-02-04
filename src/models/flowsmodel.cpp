@@ -179,14 +179,14 @@ void FlowsModel::_addItems(const QJsonObject& data)
 {
     qDebug() << "FlowsModel::_addItems";
 
-    auto hasMore = data.value("has_more").toBool();
+    auto hasMore = data.value(QStringLiteral("has_more")).toBool();
     if (hasMore != _hasMore)
     {
         _hasMore = hasMore;
         emit hasMoreChanged();
     }
 
-    auto flows = data.value("items").toArray();
+    auto flows = data.value(QStringLiteral("items")).toArray();
     if (flows.isEmpty())
         return;
 
@@ -195,7 +195,7 @@ void FlowsModel::_addItems(const QJsonObject& data)
     foreach (auto flowData, flows)
     {
         auto flow = new Flow(this);
-        flow->init(flowData.toObject().value("flow").toObject());
+        flow->init(flowData.toObject().value(QStringLiteral("flow")).toObject());
         _flows << flow;
     }
 

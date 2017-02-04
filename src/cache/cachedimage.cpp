@@ -146,7 +146,7 @@ QUrl CachedImage::source() const
 
 QString CachedImage::sourceFileName() const
 {
-    return QString("%1.%2").arg(_fileName).arg(_extension);
+    return QStringLiteral("%1.%2").arg(_fileName).arg(_extension);
 }
 
 
@@ -195,7 +195,7 @@ void CachedImage::setExtension(QString format)
     }
     else if (format.isEmpty() && !_url.isEmpty())
     {
-        auto ext = _url.split(".").last();
+        auto ext = _url.split('.').last();
         if (!ext.isEmpty() && ext.size() != _url.size())
             setExtension(ext);
         return;
@@ -214,7 +214,7 @@ QString CachedImage::fileName() const
     if (_url.isEmpty())
         return _url;
 
-    auto full = _url.split("/").last().split(".");
+    auto full = _url.split('/').last().split('.');
     if (full.isEmpty())
         return QString();
 
@@ -300,12 +300,12 @@ void CachedImage::saveToFile(const QString& filename)
     if (filename.isEmpty())
         return;
 
-    auto pathTo = QString("%1/Taaasty/")
+    auto pathTo = QStringLiteral("%1/Taaasty/")
             .arg(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
 
     QDir().mkpath(pathTo);
 
-    auto to = QString("%1%2%3%4")
+    auto to = QStringLiteral("%1%2%3%4")
             .arg(pathTo)
             .arg(filename)
             .arg(_extension.isEmpty() ? QString() : ".")
@@ -314,7 +314,7 @@ void CachedImage::saveToFile(const QString& filename)
     if (QFile::exists(to))// && !QFile::remove(to))
     {
         qDebug() << "File exists" << to;
-        emit pTasty->error(0, QString("Файл уже существует:\n%1").arg(to));
+        emit pTasty->error(0, QStringLiteral("Файл уже существует:\n%1").arg(to));
         emit savingError();
         return;
     }
@@ -322,12 +322,12 @@ void CachedImage::saveToFile(const QString& filename)
     if (!QFile::copy(_filePath(), to))
     {
         qDebug() << "Error copying" << to;
-        emit pTasty->error(0, QString("Не удалось сохранить изображение в %1").arg(to));
+        emit pTasty->error(0, QStringLiteral("Не удалось сохранить изображение в %1").arg(to));
         emit savingError();
         return;
     }
 
-    emit pTasty->info(QString("Изображение сохранено в %1").arg(to));
+    emit pTasty->info(QStringLiteral("Изображение сохранено в %1").arg(to));
     emit fileSaved();
 }
 
@@ -482,8 +482,8 @@ bool CachedImage::_init()
     Q_TEST(connect(&_watcher, &QFutureWatcher<void>::finished,
                    this, &CachedImage::downloadingChanged, Qt::UniqueConnection));
 
-    if (_url.startsWith("//"))
-        _url.prepend("http:");
+    if (_url.startsWith(QStringLiteral("//")))
+        _url.prepend(QStringLiteral("http:"));
 
     _fileName.setNum(qHash(_url), 16);
     _folder = _fileName.at(0);
@@ -495,14 +495,14 @@ bool CachedImage::_init()
 
 QString CachedImage::_filePath() const
 {
-    return QString("%1%2").arg(_path()).arg(sourceFileName());
+    return QStringLiteral("%1%2").arg(_path()).arg(sourceFileName());
 }
 
 
 
 QString CachedImage::_path() const
 {
-    return QString("%1/%2/").arg(_man->path()).arg(_folder);
+    return QStringLiteral("%1/%2/").arg(_man->path()).arg(_folder);
 }
 
 

@@ -99,7 +99,7 @@ bool ApiRequest::setUrl(const QString& url)
 
     qDebug() << "ApiRequest to" << url;
 
-    _request.setUrl(QString("http://api.taaasty.com:80/").append(url));
+    _request.setUrl(QStringLiteral("http://api.taaasty.com:80/").append(url));
     return true;
 }
 
@@ -273,9 +273,9 @@ void ApiRequest::_handleResult()
     else
     {
         auto jsonObject = json.object();
-        auto errorString = jsonObject.contains("long_message") ? jsonObject.value("long_message").toString()
-                                                               : jsonObject.value("error").toString();
-        auto code = jsonObject.value("response_code").toInt();
+        auto errorString = jsonObject.contains(QStringLiteral("long_message")) ? jsonObject.value(QStringLiteral("long_message")).toString()
+                                                               : jsonObject.value(QStringLiteral("error")).toString();
+        auto code = jsonObject.value(QStringLiteral("response_code")).toInt();
 
         emit error(code, errorString);
 
@@ -323,7 +323,7 @@ bool ApiRequest::_setOptions(const QString& accessToken, const ApiRequest::Optio
             emit pTasty->error(0, "Сетевая ошибка");
         }));    
     
-    _request.setRawHeader(QByteArray("X-User-Token"), accessToken.toUtf8());
+    _request.setRawHeader(QByteArrayLiteral("X-User-Token"), accessToken.toUtf8());
     
     return true;
 }

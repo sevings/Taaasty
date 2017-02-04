@@ -16,13 +16,14 @@ AndroidImagePicker::AndroidImagePicker(QObject* parent)
 
 
 void AndroidImagePicker::select() {
-    auto actionPick = QAndroidJniObject::fromString("android.intent.action.GET_CONTENT");
+    auto actionPick = QAndroidJniObject::fromString(QStringLiteral("android.intent.action.GET_CONTENT"));
     QAndroidJniObject intent("android/content/Intent");
     if (!actionPick.isValid() || !intent.isValid())
         return;
 
     intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;", actionPick.object<jstring>());
-    intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", QAndroidJniObject::fromString("image/*").object<jstring>());
+    intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;",
+                            QAndroidJniObject::fromString(QStringLiteral("image/*")).object<jstring>());
     QtAndroid::startActivity(intent.object<jobject>(), 101, this);
 }
 

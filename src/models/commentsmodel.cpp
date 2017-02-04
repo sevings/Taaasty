@@ -42,7 +42,7 @@ CommentsModel::CommentsModel(Entry *entry)
     : TastyListModel(entry)
     , _entryId(0)
     , _totalCount(0)
-    , _url("v1/comments.json?entry_id=%1&limit=50")
+    , _url(QStringLiteral("v1/comments.json?entry_id=%1&limit=50"))
     , _entry(entry)
 {
     if (!entry)
@@ -149,7 +149,7 @@ void CommentsModel::check()
 
     QString url = _url.arg(_entryId);
     if (!_comments.isEmpty())
-        url += QString("&from_comment_id=%1").arg(_comments.last()->id());
+        url += QStringLiteral("&from_comment_id=%1").arg(_comments.last()->id());
 
     _checkRequest = new ApiRequest(url);
 
@@ -167,7 +167,7 @@ void CommentsModel::loadMore()
 
     QString url = _url.arg(_entryId);
     if (!_comments.isEmpty())
-        url += QString("&to_comment_id=%1").arg(_comments.first()->id());
+        url += QStringLiteral("&to_comment_id=%1").arg(_comments.first()->id());
 
     _loadRequest = new ApiRequest(url, ApiRequest::ShowMessageOnError);
     
@@ -189,7 +189,7 @@ QHash<int, QByteArray> CommentsModel::roleNames() const
 
 void CommentsModel::_addComments(const QJsonObject& data)
 {
-    auto feed = data.value("comments").toArray();
+    auto feed = data.value(QStringLiteral("comments")).toArray();
     if (feed.isEmpty())
     {
         _setTotalCount(_comments.size());
@@ -197,7 +197,7 @@ void CommentsModel::_addComments(const QJsonObject& data)
         return;
     }
 
-    _setTotalCount(data.value("total_count").toInt());
+    _setTotalCount(data.value(QStringLiteral("total_count")).toInt());
 
     _addComments(feed);
 }
@@ -227,7 +227,7 @@ void CommentsModel::_addComments(const QJsonArray& feed)
 
 void CommentsModel::_addLastComments(const QJsonObject& data)
 {
-    auto feed = data.value("comments").toArray();
+    auto feed = data.value(QStringLiteral("comments")).toArray();
     if (feed.isEmpty())
         return;
 
@@ -235,7 +235,7 @@ void CommentsModel::_addLastComments(const QJsonObject& data)
     if (cmts.isEmpty())
         return;
     
-    _setTotalCount(data.value("total_count").toInt());
+    _setTotalCount(data.value(QStringLiteral("total_count")).toInt());
 
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size() + cmts.size() - 1);
 

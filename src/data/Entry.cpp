@@ -61,7 +61,7 @@ void EntryBase::load(int id)
     _id = id;
     emit idChanged();
 
-    _request = new ApiRequest(QString("v1/entries/%1.json").arg(_id));
+    _request = new ApiRequest(QStringLiteral("v1/entries/%1.json").arg(_id));
     _request->get();
 
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initBase(QJsonObject))));
@@ -74,17 +74,17 @@ void EntryBase::load(int id)
 
 void EntryBase::_initBase(const QJsonObject& data)
 {
-    _id     = data.value("id").toInt();
+    _id     = data.value(QStringLiteral("id")).toInt();
 
-    auto authorData = data.value("author").toObject();
-    if (_author && authorData.contains("slug"))
+    auto authorData = data.value(QStringLiteral("author")).toObject();
+    if (_author && authorData.contains(QStringLiteral("slug")))
         _author->init(authorData);
     else if (!authorData.isEmpty())
         _author = new Author(authorData, this);
     else
         _author = new Author(this);
 
-    auto type = data.value("type").toString();
+    auto type = data.value(QStringLiteral("type")).toString();
     if (     type == "image"     || type == "ImageEntry")
         _type = ImageEntry;
     else if (type == "quote"     || type == "QuoteEntry")
@@ -100,8 +100,8 @@ void EntryBase::_initBase(const QJsonObject& data)
 
     Q_ASSERT(_type != UnknownEntryType);
 
-    _text   = data.value("text").toString().trimmed();
-    _title  = data.value("title").toString().trimmed();
+    _text   = data.value(QStringLiteral("text")).toString().trimmed();
+    _title  = data.value(QStringLiteral("title")).toString().trimmed();
 
     emit idChanged();
     emit loaded();
@@ -243,59 +243,59 @@ void Entry::init(const QJsonObject& data)
 {
     _initBase(data);
 
-    _createdAt       = Tasty::parseDate(data.value("created_at").toString());
-    _url             = data.value("entry_url").toString();
-    _isVotable       = data.value("is_voteable").toBool();
-    _isFavoritable   = data.value("can_favorite").toBool(pTasty->isAuthorized());
-    _isFavorited     = data.value("is_favorited").toBool();
-    _isWatchable     = data.value("can_watch").toBool();
-    _isWatched       = data.value("is_watching").toBool();
-    _isPrivate       = data.value("is_private").toBool();
-    _isFixed         = data.value("fixed_state").toString() == "fixed";
-    _isReportable    = data.value("can_report").toBool(pTasty->isAuthorized());
+    _createdAt       = Tasty::parseDate(data.value(QStringLiteral("created_at")).toString());
+    _url             = data.value(QStringLiteral("entry_url")).toString();
+    _isVotable       = data.value(QStringLiteral("is_voteable")).toBool();
+    _isFavoritable   = data.value(QStringLiteral("can_favorite")).toBool(pTasty->isAuthorized());
+    _isFavorited     = data.value(QStringLiteral("is_favorited")).toBool();
+    _isWatchable     = data.value(QStringLiteral("can_watch")).toBool();
+    _isWatched       = data.value(QStringLiteral("is_watching")).toBool();
+    _isPrivate       = data.value(QStringLiteral("is_private")).toBool();
+    _isFixed         = data.value(QStringLiteral("fixed_state")).toString() == "fixed";
+    _isReportable    = data.value(QStringLiteral("can_report")).toBool(pTasty->isAuthorized());
 
-    auto fixDate = data.value("fixed_up_at").toString();
+    auto fixDate = data.value(QStringLiteral("fixed_up_at")).toString();
     _fixedAt         = QDateTime::fromString(fixDate.left(19), "yyyy-MM-ddTHH:mm:ss");
 
-    auto tlogData = data.value("tlog").toObject();
+    auto tlogData = data.value(QStringLiteral("tlog")).toObject();
     if (!_tlog)
         _tlog        = new Tlog(tlogData, this);
-    else if (_tlog->slug().isEmpty() || tlogData.contains("slug"))
+    else if (_tlog->slug().isEmpty() || tlogData.contains(QStringLiteral("slug")))
         _tlog->init(tlogData);
 
     auto isMy = _author->id() == pTasty->settings()->userId();
     auto isModer = _tlog->flow() && _tlog->flow()->isEditable();
-    _isDeletable     = data.value("can_delete").toBool(isMy || isModer);
-    _isEditable      = data.value("can_edit").toBool(isMy);
+    _isDeletable     = data.value(QStringLiteral("can_delete")).toBool(isMy || isModer);
+    _isEditable      = data.value(QStringLiteral("can_edit")).toBool(isMy);
 
     if (!_rating->id())
-        _rating->init(data.value("rating").toObject());
+        _rating->init(data.value(QStringLiteral("rating")).toObject());
 
-    _commentsCount   = data.value("comments_count").toInt();
+    _commentsCount   = data.value(QStringLiteral("comments_count")).toInt();
 
-    if (data.contains("title_truncated"))
-        _truncatedTitle = data.value("title_truncated").toString();
+    if (data.contains(QStringLiteral("title_truncated")))
+        _truncatedTitle = data.value(QStringLiteral("title_truncated")).toString();
     else if (_truncatedTitle.isEmpty())
         _truncatedTitle = Tasty::truncateHtml(_title, 100);
 
-    if (data.contains("text_truncated"))
-        _truncatedText  = data.value("text_truncated").toString();
+    if (data.contains(QStringLiteral("text_truncated")))
+        _truncatedText  = data.value(QStringLiteral("text_truncated")).toString();
     else if (_truncatedText.isEmpty())
         _truncatedText = Tasty::truncateHtml(_text, 300);
 
-    _source          = data.value("source").toString(); // quote author
+    _source          = data.value(QStringLiteral("source")).toString(); // quote author
 
     delete _media;
     if (_type == VideoEntry)
-        _media = new Media(data.value("iframely").toObject(), this);
+        _media = new Media(data.value(QStringLiteral("iframely")).toObject(), this);
     else
         _media = nullptr;
 
-//    _imagePreview    = data.value("preview_image").toObject();
+//    _imagePreview    = data.value(QStringLiteral("preview_image")).toObject();
 
-    QRegularExpression wsRe("[^a-zA-Zа-яА-ЯёЁ\\d&#;]+");
-    QRegularExpression linkRe("(?:http[s]?:\\/\\/[^\\s]*)");
-    QRegularExpression tagRe("<[^>]*>");
+    QRegularExpression wsRe(QStringLiteral("[^a-zA-Zа-яА-ЯёЁ\\d&#;]+"));
+    QRegularExpression linkRe(QStringLiteral("(?:http[s]?:\\/\\/[^\\s]*)"));
+    QRegularExpression tagRe(QStringLiteral("<[^>]*>"));
     auto content = _title + " " + _text;
     _wordCount   = content.remove(tagRe).remove(linkRe).count(wsRe);
 
@@ -303,14 +303,14 @@ void Entry::init(const QJsonObject& data)
 
     pTasty->dataCache()->addEntry(sharedFromThis());
 
-    _commentsData    = data.value("comments").toArray();
+    _commentsData    = data.value(QStringLiteral("comments")).toArray();
     if (_commentsModel && _commentsModel->entryId() == _id)
     {
         _commentsModel->init(_commentsData, _commentsCount);
         _commentsData = QJsonArray();
     }
 
-    auto imageAttach = data.value("image_attachments").toArray();
+    auto imageAttach = data.value(QStringLiteral("image_attachments")).toArray();
     delete _attachedImagesModel;
     _attachedImagesModel = new AttachedImagesModel(imageAttach, this);
 
@@ -345,7 +345,7 @@ void Entry::reload()
     if (isLoading())
         return;
 
-    auto url = QString("v1/entries/%1.json?include_comments=true").arg(_id);
+    auto url = QStringLiteral("v1/entries/%1.json?include_comments=true").arg(_id);
     _request = new ApiRequest(url);
     _request->get();
 
@@ -383,13 +383,13 @@ void Entry::watch()
 
     if (_isWatched)
     {
-        auto url      = QString("v1/watching.json?entry_id=%1").arg(_id);
+        auto url      = QStringLiteral("v1/watching.json?entry_id=%1").arg(_id);
         _entryRequest = new ApiRequest(url, ApiRequest::AllOptions);
         _entryRequest->deleteResource();
     }
     else
     {
-        auto url      = QString("v1/watching.json");
+        auto url      = QStringLiteral("v1/watching.json");
         _entryRequest = new ApiRequest(url, ApiRequest::AllOptions);
         _entryRequest->addFormData("entry_id", _id);
         _entryRequest->post();
@@ -407,13 +407,13 @@ void Entry::favorite()
 
     if (_isFavorited)
     {
-        auto url      = QString("v1/favorites.json?entry_id=%1").arg(_id);
+        auto url      = QStringLiteral("v1/favorites.json?entry_id=%1").arg(_id);
         _entryRequest = new ApiRequest(url, ApiRequest::AllOptions);
         _entryRequest->deleteResource();
     }
     else
     {
-        auto url      = QString("v1/favorites.json");
+        auto url      = QStringLiteral("v1/favorites.json");
         _entryRequest = new ApiRequest(url, ApiRequest::AllOptions);
         _entryRequest->addFormData("entry_id", _id);
         _entryRequest->post();
@@ -429,7 +429,7 @@ void Entry::report()
     if (_entryRequest || _id <= 0)
         return;
 
-    auto url      = QString("v1/entries/%1/report.json").arg(_id);
+    auto url      = QStringLiteral("v1/entries/%1/report.json").arg(_id);
     _entryRequest = new ApiRequest(url, ApiRequest::AllOptions);
     _entryRequest->post();
 
@@ -440,10 +440,10 @@ void Entry::report()
         if (!ptr)
             return;
 
-        ptr->_isReportable = data.value("can_report").toBool();
+        ptr->_isReportable = data.value(QStringLiteral("can_report")).toBool();
         emit ptr->isReportableChanged();
 
-        emit pTasty->info("Жалоба на пост отправлена");
+        emit pTasty->info(QStringLiteral("Жалоба на пост отправлена"));
     }));
 }
 
@@ -454,7 +454,7 @@ void Entry::deleteEntry()
     if (isLoading() || _id <= 0 || !_isDeletable)
         return;
 
-    auto url = QString("v1/entries/%1.json").arg(_id);
+    auto url = QStringLiteral("v1/entries/%1.json").arg(_id);
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->deleteResource();
 
@@ -467,7 +467,7 @@ void Entry::deleteEntry()
 
 void Entry::_changeWatched(const QJsonObject& data)
 {
-    if (data.value("status").toString() != "success")
+    if (data.value(QStringLiteral("status")).toString() != "success")
     {
         qDebug() << data;
         return;
@@ -481,7 +481,7 @@ void Entry::_changeWatched(const QJsonObject& data)
 
 void Entry::_changeFavorited(const QJsonObject& data)
 {
-    if (data.value("status").toString() != "success")
+    if (data.value(QStringLiteral("status")).toString() != "success")
     {
         qDebug() << data;
         return;
@@ -491,9 +491,9 @@ void Entry::_changeFavorited(const QJsonObject& data)
     emit favoritedChanged();
 
     if (_isFavorited)
-        emit Tasty::instance()->info("Запись добавлена в избранное");
+        emit Tasty::instance()->info(QStringLiteral("Запись добавлена в избранное"));
     else
-        emit Tasty::instance()->info("Запись удалена из избранного");
+        emit Tasty::instance()->info(QStringLiteral("Запись удалена из избранного"));
 }
 
 
@@ -538,11 +538,11 @@ void Entry::_setChatId()
 
 void Entry::_deleteEntry(const QJsonObject& data)
 {
-    if (data.value("status") == "success")
+    if (data.value(QStringLiteral("status")) == "success")
     {
         emit entryDeleted();
         emit Tasty::instance()->entryDeleted(_id);
-        emit Tasty::instance()->info("Запись удалена");
+        emit Tasty::instance()->info(QStringLiteral("Запись удалена"));
 
         _chat.clear();
     }

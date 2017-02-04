@@ -44,18 +44,18 @@ Media::Media(QObject* parent)
 Media::Media(const QJsonObject& data, QObject* parent)
     : QObject(parent)
 {
-    auto meta = data.value("meta").toObject();
-    _title    = meta.value("title").toString();
-    _duration = meta.value("duration").toInt();
+    auto meta = data.value(QStringLiteral("meta")).toObject();
+    _title    = meta.value(QStringLiteral("title")).toString();
+    _duration = meta.value(QStringLiteral("duration")).toInt();
 
-    auto links = data.value("links").toObject();
-    _url = links.value("player").toArray().first().toObject().value("href").toString();
+    auto links = data.value(QStringLiteral("links")).toObject();
+    _url = links.value(QStringLiteral("player")).toArray().first().toObject().value(QStringLiteral("href")).toString();
 
-    auto imageData = links.contains("thumbnail")
-            ? links.value("thumbnail") : links.value("image");
+    auto imageData = links.contains(QStringLiteral("thumbnail"))
+            ? links.value(QStringLiteral("thumbnail")) : links.value(QStringLiteral("image"));
     auto thumb = imageData.toArray().first().toObject();
     _thumbnail = new AttachedImage(thumb, this);
 
-    auto icon = links.value("icon").toArray().first().toObject();
+    auto icon = links.value(QStringLiteral("icon")).toArray().first().toObject();
     _icon     = new AttachedImage(icon, this);
 }

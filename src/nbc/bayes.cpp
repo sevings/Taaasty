@@ -49,14 +49,14 @@ Bayes::Bayes(QObject *parent)
     , _stemmer(StemmerV::instance())
     , _imgRe("<\\s*(?:a|img)[^>]+(?:href|src)\\s*=\\s*['\"]([^\\s'\"]+)['\"][^>]*>",
              QRegularExpression::CaseInsensitiveOption)
-    , _tagRe("<[^>]*>")
-    , _htmlSeqRe("&\\w+;")
-    , _linkExtRe("https?:\\/\\/([\\w\\-\\.]+)\\.\\w+\\/[^\\s]*\\.(\\w+)\\s")
-    , _linkRe("https?:\\/\\/([\\w\\-\\.]+)\\.\\w+\\/?[^\\s]*\\s")
-    , _punctRe("[\\.!?]")
-    , _caseRe1("^\\s*[A-ZА-ЯЁ]")
-    , _caseRe2("[\\.!?]\\s*[A-ZА-ЯЁ]")
-    , _spaceRe("[A-ZА-ЯЁa-zа-яё][\\.,!?]\\s+[A-ZА-ЯЁa-zа-яё]")
+    , _tagRe(QStringLiteral("<[^>]*>"))
+    , _htmlSeqRe(QStringLiteral("&\\w+;"))
+    , _linkExtRe(QStringLiteral("https?:\\/\\/([\\w\\-\\.]+)\\.\\w+\\/[^\\s]*\\.(\\w+)\\s"))
+    , _linkRe(QStringLiteral("https?:\\/\\/([\\w\\-\\.]+)\\.\\w+\\/?[^\\s]*\\s"))
+    , _punctRe(QStringLiteral("[\\.!?]"))
+    , _caseRe1(QStringLiteral("^\\s*[A-ZА-ЯЁ]"))
+    , _caseRe2(QStringLiteral("[\\.!?]\\s*[A-ZА-ЯЁ]"))
+    , _spaceRe(QStringLiteral("[A-ZА-ЯЁa-zа-яё][\\.,!?]\\s+[A-ZА-ЯЁa-zа-яё]"))
 {
     qDebug() << "Bayes";
 
@@ -168,7 +168,7 @@ void Bayes::saveDb()
         foreach (auto word, _wordCounts[type].keys())
             if (_wordCounts[type][word].changed)
             {
-                Q_TEST(query.prepare("INSERT OR REPLACE INTO bayes VALUES (?, ?, ?)"));
+                Q_TEST(query.prepare(QStringLiteral("INSERT OR REPLACE INTO bayes VALUES (?, ?, ?)")));
                 query.addBindValue(type);
                 query.addBindValue(word);
                 query.addBindValue(_wordCounts[type][word].count);
@@ -180,7 +180,7 @@ void Bayes::saveDb()
         foreach (auto entry, _entriesChanged[type].keys())
             if (_entriesChanged[type][entry])
             {
-                Q_TEST(query.prepare("INSERT OR REPLACE INTO bayes_entries VALUES (?, ?)"));
+                Q_TEST(query.prepare(QStringLiteral("INSERT OR REPLACE INTO bayes_entries VALUES (?, ?)")));
                 query.addBindValue(type);
                 query.addBindValue(entry);
                 Q_TEST(query.exec());
@@ -210,8 +210,8 @@ void Bayes::_initDb()
     Q_TEST(_db.open());
 
     QSqlQuery query(_db);
-    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes         (type INTEGER, word TEXT, total INTEGER, PRIMARY KEY(type, word))"));
-    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes_entries (type INTEGER, entry INTEGER, PRIMARY KEY(entry))"));
+    Q_TEST(query.exec(QStringLiteral("CREATE TABLE IF NOT EXISTS bayes         (type INTEGER, word TEXT, total INTEGER, PRIMARY KEY(type, word))")));
+    Q_TEST(query.exec(QStringLiteral("CREATE TABLE IF NOT EXISTS bayes_entries (type INTEGER, entry INTEGER, PRIMARY KEY(entry))")));
 }
 
 
@@ -232,7 +232,7 @@ void Bayes::_loadDb()
     Q_TEST(_db.transaction());
 
     QSqlQuery query(_db);
-    Q_TEST(query.exec("SELECT type, word, total FROM bayes"));
+    Q_TEST(query.exec(QStringLiteral("SELECT type, word, total FROM bayes")));
     while (query.next())
         _wordCounts[query.value(0).toInt()][query.value(1).toString()] //-V807
                 = FeatureCount(query.value(2).toInt());
@@ -241,7 +241,7 @@ void Bayes::_loadDb()
     while (query.next())
         _total[query.value(0).toInt()] = query.value(1).toInt();
 
-    Q_TEST(query.exec("SELECT type, entry FROM bayes_entries"));
+    Q_TEST(query.exec(QStringLiteral("SELECT type, entry FROM bayes_entries")));
     while (query.next())
         _entriesChanged[query.value(0).toInt()][query.value(1).toInt()] = false;
 
@@ -324,8 +324,8 @@ int Bayes::_calcEntry(const EntryBase* entry, QHash<QString, FeatureCount>& word
 
     const auto author = entry->author();
 
-    ++wordCounts[QString(".type_%1").arg(entry->strType())];
-    ++wordCounts[QString(".author_%1").arg(author->slug())];
+    ++wordCounts[QStringLiteral(".type_%1").arg(entry->strType())];
+    ++wordCounts[QStringLiteral(".author_%1").arg(author->slug())];
 
     if (author->isFemale())
         ++wordCounts[".female"];

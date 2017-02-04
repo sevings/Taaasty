@@ -136,7 +136,7 @@ void NotificationsModel::fetchMore(const QModelIndex& parent)
     if (!_notifs.isEmpty())
     {
         auto lastId = _notifs.last()->id();
-        url += QString("0&to_notification_id=%1").arg(lastId); // load ten times more
+        url += QStringLiteral("0&to_notification_id=%1").arg(lastId); // load ten times more
     }
 
     _loadRequest = new ApiRequest(url, _optionsForFetchMore());
@@ -167,7 +167,7 @@ void NotificationsModel::markAsRead()
     if (_notifs.isEmpty() || !unread())
         return;
 
-    QString url("v2/messenger/notifications/read.json");
+    QString url(QStringLiteral("v2/messenger/notifications/read.json"));
     auto request = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     request->addFormData("last_id", _notifs.first()->id());
     request->post();
@@ -188,7 +188,7 @@ void NotificationsModel::check()
     if (!_notifs.isEmpty())
     {
         auto firstId = _notifs.first()->id();
-        url += QString("&from_notification_id=%1").arg(firstId);
+        url += QStringLiteral("&from_notification_id=%1").arg(firstId);
     }
 
     _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
@@ -227,12 +227,12 @@ QHash<int, QByteArray> NotificationsModel::roleNames() const
 
 void NotificationsModel::_addItems(const QJsonObject& data)
 {
-    auto array = data.value("notifications").toArray();
+    auto array = data.value(QStringLiteral("notifications")).toArray();
     QList<Notification*> notifs;
     for (auto notifData: array)
     {
         auto notifObj = notifData.toObject();
-        auto id = notifObj.value("id").toInt();
+        auto id = notifObj.value(QStringLiteral("id")).toInt();
         if (_ids.contains(id))
             continue;
 
@@ -249,7 +249,7 @@ void NotificationsModel::_addItems(const QJsonObject& data)
         return;
     }
 
-    _totalCount = data.value("total_count").toInt();
+    _totalCount = data.value(QStringLiteral("total_count")).toInt();
 
     beginInsertRows(QModelIndex(), size, size + notifs.size() - 1);
 
@@ -267,7 +267,7 @@ void NotificationsModel::_addItems(const QJsonObject& data)
 
 void NotificationsModel::_addPush(QJsonObject data)
 {
-    auto id = data.value("id").toInt();
+    auto id = data.value(QStringLiteral("id")).toInt();
     if (_ids.contains(id))
         return;
 
@@ -280,7 +280,7 @@ void NotificationsModel::_addPush(QJsonObject data)
 #ifdef Q_OS_ANDROID
     if (!notification->isRead() && pTasty->settings()->systemNotifications())
     {
-        auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
+        auto text = QStringLiteral("%1 %2\n%3").arg(notification->sender()->name())
                 .arg(notification->actionText()).arg(notification->text());
         _androidNotifier->setNotification(text);
     }
@@ -295,17 +295,17 @@ void NotificationsModel::_addPush(QJsonObject data)
 
 void NotificationsModel::_addNewest(const QJsonObject& data)
 {
-    auto list = data.value("notifications").toArray();
+    auto list = data.value(QStringLiteral("notifications")).toArray();
     if (list.isEmpty())
         return;
 
-    _totalCount = data.value("total_count").toInt();
+    _totalCount = data.value(QStringLiteral("total_count")).toInt();
 
     QList<Notification*> notifs;
     foreach(auto notif, list)
     {
         auto obj = notif.toObject();
-        auto id = obj.value("id").toInt();
+        auto id = obj.value(QStringLiteral("id")).toInt();
         if (!_ids.contains(id))
         {
             notifs << new Notification(obj, this);
@@ -322,7 +322,7 @@ void NotificationsModel::_addNewest(const QJsonObject& data)
 #ifdef Q_OS_ANDROID
         if (!notification->isRead() && pTasty->settings()->systemNotifications())
         {
-            auto text = QString("%1 %2\n%3").arg(notification->sender()->name())
+            auto text = QStringLiteral("%1 %2\n%3").arg(notification->sender()->name())
                     .arg(notification->actionText()).arg(notification->text());
             _androidNotifier->setNotification(text);
         }

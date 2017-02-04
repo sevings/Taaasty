@@ -102,7 +102,7 @@ void Message::read()
     if (_read || _id <= 0 || _userId == _chat->userId())
         return;
 
-    auto url  = QString("v2/messenger/conversations/by_id/%1/messages/read.json").arg(_conversationId);
+    auto url  = QStringLiteral("v2/messenger/conversations/by_id/%1/messages/read.json").arg(_conversationId);
     _request  = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     _request->addFormData("ids", _id);
     _request->put();
@@ -116,22 +116,22 @@ void Message::read()
 
 void Message::_init(const QJsonObject& data)
 {
-    _id             = data.value("id").toInt();
-    _userId         = data.value("user_id").toInt();
-    _recipientId    = data.value("recipient_id").toInt();
-    _conversationId = data.value("conversation_id").toInt();
-    _read           = !data.value("read_at").isNull();
-    auto d = data.value("created_at").toString();
+    _id             = data.value(QStringLiteral("id")).toInt();
+    _userId         = data.value(QStringLiteral("user_id")).toInt();
+    _recipientId    = data.value(QStringLiteral("recipient_id")).toInt();
+    _conversationId = data.value(QStringLiteral("conversation_id")).toInt();
+    _read           = !data.value(QStringLiteral("read_at")).isNull();
+    auto d = data.value(QStringLiteral("created_at")).toString();
     _createdAt      = Tasty::parseDate(d, _chat && _chat->type() == Conversation::PrivateConversation);
     _setDate(d);
-    _text           = data.value("content_html").toString().replace("&amp;", "&"); // TODO: SystemMessage
+    _text           = data.value(QStringLiteral("content_html")).toString().replace("&amp;", "&"); // TODO: SystemMessage
 
     _user = _chat->user(_userId);
     Q_ASSERT(_user);
 
     _setType(data);
 
-    auto imageAttach = data.value("attachments").toArray();
+    auto imageAttach = data.value(QStringLiteral("attachments")).toArray();
     delete _attachedImagesModel;
     if (_type == SystemMessage || imageAttach.isEmpty())
         _attachedImagesModel = nullptr;
@@ -144,8 +144,8 @@ void Message::_init(const QJsonObject& data)
     if (_attachedImagesModel)
         _containsImage = true;
 
-    auto reply = data.value("reply_message").toObject();
-    _replyUserId = reply.value("user_id").toInt();
+    auto reply = data.value(QStringLiteral("reply_message")).toObject();
+    _replyUserId = reply.value(QStringLiteral("user_id")).toInt();
 
     pTasty->dataCache()->addMessage(this);
 
@@ -169,7 +169,7 @@ void Message::_correctHtml()
 
 void Message::_markRead(const QJsonObject& data)
 {
-    if (data.value("status").toString() != "success")
+    if (data.value(QStringLiteral("status")).toString() != "success")
     {
         qDebug() << "error read message" << _id;
         return;
@@ -205,10 +205,10 @@ void Message::_updateUser()
 
 void Message::_updateRead(const QJsonObject& data)
 {
-    if (_read || data.value("id").toInt() != _id)
+    if (_read || data.value(QStringLiteral("id")).toInt() != _id)
         return;
 
-    _read = !data.value("read_at").isNull();
+    _read = !data.value(QStringLiteral("read_at")).isNull();
     emit readChanged(_read);
 }
 
@@ -216,10 +216,10 @@ void Message::_updateRead(const QJsonObject& data)
 
 void Message::_markRemoved(const QJsonObject& data)
 {
-    if (data.value("id").toInt() != _id)
+    if (data.value(QStringLiteral("id")).toInt() != _id)
         return;
 
-    _text = data.value("content").toString();
+    _text = data.value(QStringLiteral("content")).toString();
     _setType(data);
     _setTruncatedText();
 
@@ -230,7 +230,7 @@ void Message::_markRemoved(const QJsonObject& data)
 
 void Message::_setType(const QJsonObject& data)
 {
-    auto type = data.value("type").toString();
+    auto type = data.value(QStringLiteral("type")).toString();
     if (type == "Message")
         _type = NormalMessage;
     else if (type == "SystemMessage")

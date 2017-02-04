@@ -126,7 +126,7 @@ void Reposter::repost(int entryId)
     _entryId = entryId;
 
     int tlog = _tlogId();
-    auto url = QString("v1/reposts.json");
+    auto url = QStringLiteral("v1/reposts.json");
 
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->addFormData("tlog_id", tlog);
@@ -146,7 +146,7 @@ void Reposter::unrepost(int entryId)
     _entryId = entryId;
 
     int tlog = _tlogId();
-    auto url = QString("v1/reposts.json?tlog_id=%1&entry_id=%2").arg(tlog).arg(entryId);
+    auto url = QStringLiteral("v1/reposts.json?tlog_id=%1&entry_id=%2").arg(tlog).arg(entryId);
 
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->deleteResource();
@@ -166,9 +166,9 @@ int Reposter::_tlogId() const
 
 void Reposter::_addRepost(const QJsonObject& data)
 {
-    emit pTasty->info("Репост добавлен");
+    emit pTasty->info(QStringLiteral("Репост добавлен"));
 
-    int id = data.value("id").toInt();
+    int id = data.value(QStringLiteral("id")).toInt();
     auto entry = pTasty->dataCache()->entry(id);
     if (!entry)
         entry = EntryPtr::create(nullptr);
@@ -182,9 +182,9 @@ void Reposter::_addRepost(const QJsonObject& data)
 
 void Reposter::_removeRepost(const QJsonObject& data)
 {
-    if (data.value("status").toString() == "success")
+    if (data.value(QStringLiteral("status")).toString() == "success")
     {
-        emit pTasty->info("Репост удален");
+        emit pTasty->info(QStringLiteral("Репост удален"));
         emit unreposted(_entryId);
     }
     else

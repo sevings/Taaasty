@@ -93,7 +93,7 @@ void UsersModel::fetchMore(const QModelIndex& parent)
 
     QString url = _url;
     if (_lastPosition)
-        url += QString("&since_position=%1").arg(_lastPosition);
+        url += QStringLiteral("&since_position=%1").arg(_lastPosition);
 
     auto opt = _optionsForFetchMore(_mode == MyFollowersMode
                                     || _mode == MyFollowingsMode || _mode == MyIgnoredMode);
@@ -120,23 +120,23 @@ void UsersModel::setMode(const UsersModel::Mode mode)
     switch(mode)
     {
     case FollowersMode:
-        _url = QString("v1/tlog/%1/followers.json?limit=20").arg(_tlog);
+        _url = QStringLiteral("v1/tlog/%1/followers.json?limit=20").arg(_tlog);
         _field = "reader";
         break;
     case FollowingsMode:
-        _url = QString("v1/tlog/%1/followings.json?limit=20").arg(_tlog);
+        _url = QStringLiteral("v1/tlog/%1/followings.json?limit=20").arg(_tlog);
         _field = "user";
         break;
     case MyFollowingsMode:
-        _url = QString("v1/relationships/to/friend.json?limit=20");
+        _url = QStringLiteral("v1/relationships/to/friend.json?limit=20");
         _field = "user";
         break;
     case MyFollowersMode:
-        _url = QString("v1/relationships/by/friend.json?limit=20"); //! \todo test me
+        _url = QStringLiteral("v1/relationships/by/friend.json?limit=20"); //! \todo test me
         _field = "reader";
         break;
     case MyIgnoredMode:
-        _url = QString("v1/relationships/to/ignored.json?limit=20");
+        _url = QStringLiteral("v1/relationships/to/ignored.json?limit=20");
         _field = "user";
         break;
     default:
@@ -180,9 +180,9 @@ void UsersModel::downloadAll()
 
 void UsersModel::_addItems(const QJsonObject& data)
 {
-    _total = data.value("total_count").toInt();
+    _total = data.value(QStringLiteral("total_count")).toInt();
 
-    auto list = data.value("relationships").toArray();
+    auto list = data.value(QStringLiteral("relationships")).toArray();
     if (list.isEmpty())
     {
         _total = _users.size();
@@ -197,7 +197,7 @@ void UsersModel::_addItems(const QJsonObject& data)
         return;
     }
 
-    _lastPosition = list.last().toObject().value("position").toInt();
+    _lastPosition = list.last().toObject().value(QStringLiteral("position")).toInt();
 
     QList<User*> users;
     users.reserve(list.size());

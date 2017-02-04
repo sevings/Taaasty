@@ -49,7 +49,7 @@ void Flow::setId(const int id)
     _id = id;
     emit idChanged();
 
-    _request = new ApiRequest(QString("v1/flows/%1.json").arg(_id));
+    _request = new ApiRequest(QStringLiteral("v1/flows/%1.json").arg(_id));
     _request->get();
     
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(init(QJsonObject))));
@@ -82,19 +82,19 @@ QString Flow::name() const
 
 void Flow::init(const QJsonObject& data)
 {
-    _id             = data.value("id").toInt();
-    _name           = data.value("name").toString();
-    _slug           = data.value("slug").toString();
-    _title          = data.value("title").toString();
-    _url            = data.value("tlog_url").toString();
-    _pic            = data.value("flowpic").toObject().value("original_url").toString();
-    _isPrivate      = data.value("is_privacy").toBool();
-    _isPremoderate  = data.value("is_premoderate").toBool();
-    _isEditable     = data.value("can_edit").toBool();
-    _isWritable     = data.value("can_write").toBool();
-    _followersCount = Tasty::num2str(data.value("followers_count").toInt(),
+    _id             = data.value(QStringLiteral("id")).toInt();
+    _name           = data.value(QStringLiteral("name")).toString();
+    _slug           = data.value(QStringLiteral("slug")).toString();
+    _title          = data.value(QStringLiteral("title")).toString();
+    _url            = data.value(QStringLiteral("tlog_url")).toString();
+    _pic            = data.value(QStringLiteral("flowpic")).toObject().value(QStringLiteral("original_url")).toString();
+    _isPrivate      = data.value(QStringLiteral("is_privacy")).toBool();
+    _isPremoderate  = data.value(QStringLiteral("is_premoderate")).toBool();
+    _isEditable     = data.value(QStringLiteral("can_edit")).toBool();
+    _isWritable     = data.value(QStringLiteral("can_write")).toBool();
+    _followersCount = Tasty::num2str(data.value(QStringLiteral("followers_count")).toInt(),
                                      "подписчик", "подписчика", "подписчиков");
-    _entriesCount   = Tasty::num2str(data.value("public_tlog_entries_count").toInt(),
+    _entriesCount   = Tasty::num2str(data.value(QStringLiteral("public_tlog_entries_count")).toInt(),
                                      "запись", "записи", "записей");
 
     emit idChanged();

@@ -75,7 +75,7 @@ void User::setId(int id)
     _id = id;
     emit idChanged();
 
-    _request = new ApiRequest(QString("v1/tlog/%1.json").arg(_id));
+    _request = new ApiRequest(QStringLiteral("v1/tlog/%1.json").arg(_id));
     _request->get();
     
     Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
@@ -134,29 +134,29 @@ User& User::operator=(User other)
 
 void User::_init(const QJsonObject& data)
 {
-    _id         = data.value("id").toInt();
-    _tlogUrl    = data.value("tlog_url").toString();
-    _name       = data.value("name").toString();
-    _slug       = data.value("slug").toString();
+    _id         = data.value(QStringLiteral("id")).toInt();
+    _tlogUrl    = data.value(QStringLiteral("tlog_url")).toString();
+    _name       = data.value(QStringLiteral("name")).toString();
+    _slug       = data.value(QStringLiteral("slug")).toString();
 
-    auto userpic = data.value("userpic").toObject();
+    auto userpic = data.value(QStringLiteral("userpic")).toObject();
 
-    _originalPic    = userpic.value("original_url").toString();
+    _originalPic    = userpic.value(QStringLiteral("original_url")).toString();
     if (!_originalPic.isEmpty())
     {
-        _largePic   = userpic.contains("large_url")    ? userpic.value("large_url").toString()
-                        : QString("http://thumbor4.tasty0.ru/unsafe/800x800/%1").arg(_originalPic);
-        _thumb128   = userpic.contains("thumb128_url") ? userpic.value("thumb128_url").toString()
-                        : QString("http://thumbor4.tasty0.ru/unsafe/128x128/%1").arg(_originalPic);
-        _thumb64    = userpic.contains("thumb64_url")  ? userpic.value("thumb64_url").toString()
-                        : QString("http://thumbor4.tasty0.ru/unsafe/64x64/%1").arg(_originalPic);
+        _largePic   = userpic.contains(QStringLiteral("large_url"))    ? userpic.value(QStringLiteral("large_url")).toString()
+                        : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/800x800/%1").arg(_originalPic);
+        _thumb128   = userpic.contains(QStringLiteral("thumb128_url")) ? userpic.value(QStringLiteral("thumb128_url")).toString()
+                        : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/128x128/%1").arg(_originalPic);
+        _thumb64    = userpic.contains(QStringLiteral("thumb64_url"))  ? userpic.value(QStringLiteral("thumb64_url")).toString()
+                        : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/64x64/%1").arg(_originalPic);
     }
-    _symbol         = userpic.value("symbol").toString();
+    _symbol         = userpic.value(QStringLiteral("symbol")).toString();
 
-    auto colors = userpic.value("default_colors").toObject();
+    auto colors = userpic.value(QStringLiteral("default_colors")).toObject();
 
-    _backgroundColor = colors.value("background").toString();
-    _nameColor       = colors.value("name").toString();
+    _backgroundColor = colors.value(QStringLiteral("background")).toString();
+    _nameColor       = colors.value(QStringLiteral("name")).toString();
 
     emit idChanged();
     emit updated();
@@ -166,6 +166,6 @@ void User::_init(const QJsonObject& data)
 
 void User::_initFromTlog(const QJsonObject& data)
 {
-    auto author = data.value("author").toObject();
+    auto author = data.value(QStringLiteral("author")).toObject();
     _init(author);
 }

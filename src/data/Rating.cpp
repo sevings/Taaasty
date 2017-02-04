@@ -136,7 +136,7 @@ void Rating::update()
     if (isLoading())
         return;
 
-    auto url = QString("v1/ratings.json?ids=%1").arg(_id);
+    auto url = QStringLiteral("v1/ratings.json?ids=%1").arg(_id);
     _request = new ApiRequest(url);
     _request->get();
 
@@ -157,7 +157,7 @@ void Rating::vote()
     if (!_isVotable || !pTasty->isAuthorized())
         return;
 
-    auto url = QString("v1/entries/%1/votes.json").arg(_id);
+    auto url = QStringLiteral("v1/entries/%1/votes.json").arg(_id);
     _request = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
     if (_isVoted)
         _request->deleteResource();
@@ -210,17 +210,17 @@ void Rating::voteAgainst()
 
 void Rating::init(const QJsonObject& data)
 {
-    int id = data.value("entry_id").toInt();
+    int id = data.value(QStringLiteral("entry_id")).toInt();
     if (id && id != _id)
     {
         _id = id;
         emit idChanged();
     }
 
-    _votes      = data.value("votes").toInt();
-    _rating     = data.value("rating").toInt();
-    _isVoted    = data.value("is_voted").toBool();
-    _isVotable  = data.value("is_voteable").toBool() && (!_parent || (_parent->isVotable()
+    _votes      = data.value(QStringLiteral("votes")).toInt();
+    _rating     = data.value(QStringLiteral("rating")).toInt();
+    _isVoted    = data.value(QStringLiteral("is_voted")).toBool();
+    _isVotable  = data.value(QStringLiteral("is_voteable")).toBool() && (!_parent || (_parent->isVotable()
             && _parent->type() != EntryBase::AnonymousEntry
             && _parent->author()->id() != pTasty->settings()->userId()));
 

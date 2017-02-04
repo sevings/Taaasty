@@ -80,7 +80,7 @@ void CalendarModel::fetchMore(const QModelIndex& parent)
     if (isLoading() || !canFetchMore(parent))
         return;
 
-    QString url = QString("v1/tlog/%1/calendar.json").arg(_tlog);
+    QString url = QStringLiteral("v1/tlog/%1/calendar.json").arg(_tlog);
     _loadRequest = new ApiRequest(url);
 
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_setCalendar(QJsonObject))));
@@ -191,10 +191,10 @@ void CalendarModel::_setCalendar(const QJsonObject& data)
 {
     beginResetModel();
 
-    auto periods = data.value("periods").toArray();
+    auto periods = data.value(QStringLiteral("periods")).toArray();
     for (int i = periods.size() - 1; i >= 0; i--)
     {
-        auto markers = periods.at(i).toObject().value("markers").toArray();
+        auto markers = periods.at(i).toObject().value(QStringLiteral("markers")).toArray();
         for (int j = 0; j < markers.size(); j++)
         {
             auto entry = new CalendarEntry(markers.at(j).toObject(), this);
@@ -226,7 +226,7 @@ void CalendarModel::_setRatings(const QJsonArray& data)
 {
     for (auto rating: data)
     {
-        auto id = rating.toObject().value("entry_id").toInt();
+        auto id = rating.toObject().value(QStringLiteral("entry_id")).toInt();
         auto entry = _idEntries.value(id);
         Q_ASSERT(entry);
         if (!entry)
@@ -248,7 +248,7 @@ void CalendarModel::_setRatings(const QJsonArray& data)
 
 void CalendarModel::_loadRatings()
 {
-    QString url("v1/ratings.json?ids=");
+    QString url(QStringLiteral("v1/ratings.json?ids="));
     url.reserve(200 * 9 + 20);
 
     auto addRequest = [&]()
@@ -268,7 +268,7 @@ void CalendarModel::_loadRatings()
     int i = 0;
     for (auto entry: _calendar)
     {
-        url += QString("%1,").arg(entry->id());
+        url += QStringLiteral("%1,").arg(entry->id());
 
         if (++i % 200 == 0)
             addRequest();

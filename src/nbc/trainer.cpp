@@ -334,7 +334,7 @@ int Trainer::_findTlog(int& type, int id) const
 void Trainer::_initDb()
 {
     QSqlQuery query(_bayes->db());
-    Q_TEST(query.exec("CREATE TABLE IF NOT EXISTS bayes_tlogs   (type INTEGER, tlog INTEGER, latest INTEGER, n INTEGER, PRIMARY KEY(tlog))"));
+    Q_TEST(query.exec(QStringLiteral("CREATE TABLE IF NOT EXISTS bayes_tlogs   (type INTEGER, tlog INTEGER, latest INTEGER, n INTEGER, PRIMARY KEY(tlog))")));
 }
 
 
@@ -348,12 +348,12 @@ void Trainer::_loadDb()
     Q_TEST(_bayes->db().transaction());
 
     QSqlQuery query(_bayes->db());
-    Q_TEST(query.exec("SELECT type, tlog, latest, n FROM bayes_tlogs WHERE tlog > 0 ORDER BY n"));
+    Q_TEST(query.exec(QStringLiteral("SELECT type, tlog, latest, n FROM bayes_tlogs WHERE tlog > 0 ORDER BY n")));
     while (query.next())
         _tlogs[query.value(0).toInt()] << BayesTlog(query.value(1).toInt(),
                                                     query.value(2).toInt());
 
-//    Q_TEST(query.exec("SELECT latest FROM bayes_tlogs WHERE tlog = -1"));
+//    Q_TEST(query.exec(QStringLiteral("SELECT latest FROM bayes_tlogs WHERE tlog = -1")));
 //    if (query.next())
 //        _lastFavorite = query.value(0).toInt();
 
@@ -374,13 +374,13 @@ void Trainer::_saveDb()
         if (_tlogs[type].isEmpty())
             continue; // TODO: but what if they all were deleted?
 
-        Q_TEST(query.prepare("DELETE FROM bayes_tlogs WHERE type = ?"));
+        Q_TEST(query.prepare(QStringLiteral("DELETE FROM bayes_tlogs WHERE type = ?")));
         query.addBindValue(type);
         Q_TEST(query.exec());
 
         for (int tlog = 0; tlog < _tlogs[type].size(); tlog++)
             {
-                Q_TEST(query.prepare("INSERT OR REPLACE INTO bayes_tlogs VALUES (?, ?, ?, ?)"));
+                Q_TEST(query.prepare(QStringLiteral("INSERT OR REPLACE INTO bayes_tlogs VALUES (?, ?, ?, ?)")));
                 query.addBindValue(type);
                 query.addBindValue(_tlogs[type].at(tlog).id);
                 query.addBindValue(_tlogs[type].at(tlog).latest);

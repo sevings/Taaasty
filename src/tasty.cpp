@@ -72,11 +72,11 @@
 #include "data/User.h"
 #include "data/Flow.h"
 
-QRegularExpression Tasty::_firstSlugRe("^(~|@)([a-zA-Z0-9_\\-\\.]+)");
-QRegularExpression Tasty::_slugRe("([^'/>\\w\\-\\.])(~|@)([a-zA-Z0-9_\\-\\.]+)");
-QRegularExpression Tasty::_imageLinkRe("<a[^>]*>(<img[^>]*>)</a>");
+QRegularExpression Tasty::_firstSlugRe(QStringLiteral("^(~|@)([a-zA-Z0-9_\\-\\.]+)"));
+QRegularExpression Tasty::_slugRe(QStringLiteral("([^'/>\\w\\-\\.])(~|@)([a-zA-Z0-9_\\-\\.]+)"));
+QRegularExpression Tasty::_imageLinkRe(QStringLiteral("<a[^>]*>(<img[^>]*>)</a>"));
 QRegularExpression Tasty::_imgRe("<img (?:width=\"\\d+\" )?");
-QRegularExpression Tasty::_tagRe("<[^>]*>");
+QRegularExpression Tasty::_tagRe(QStringLiteral("<[^>]*>"));
 
 
 
@@ -140,7 +140,7 @@ void Tasty::clearUnreadFriendsEntries()
 
 QString Tasty::num2str(const int n, const QString& str1, const QString& str234, const QString& str5)
 {
-    QString res = QString("%1 %2").arg(n);
+    QString res = QStringLiteral("%1 %2").arg(n);
     if (n % 10 == 1 && n % 100 != 11)
         res = res.arg(str1);
     else if ((n % 10 > 1 && n % 10 < 5) && (n % 100 < 10 || n % 100 > 20))
@@ -159,9 +159,9 @@ QString Tasty::parseDate(const QString& d, const bool bigLetter)
     auto today = QDate::currentDate();
 
     if (today == date)
-        return datetime.toString(QString("%1егодня в H:mm").arg(bigLetter ? "С" : "с"));
+        return datetime.toString(QStringLiteral("%1егодня в H:mm").arg(bigLetter ? "С" : "с"));
     if (today == date.addDays(1))
-        return datetime.toString(QString("%1чера в H:mm").arg(bigLetter ? "В" : "в"));
+        return datetime.toString(QStringLiteral("%1чера в H:mm").arg(bigLetter ? "В" : "в"));
 
     bool showYear = date.year() != today.year();
     QString format = showYear ? "d MMM yyyy" : "d MMM в H:mm";
@@ -296,9 +296,9 @@ void Tasty::_init()
 
     for (int i = 0; i < 6; i++)
     {
-        _manager->connectToHost("http://api.taaasty.com");
-        _manager->connectToHost("http://thumbor4.tasty0.ru");
-        _manager->connectToHostEncrypted("https://tasty-prod.s3.amazonaws.com");
+        _manager->connectToHost(QStringLiteral("http://api.taaasty.com"));
+        _manager->connectToHost(QStringLiteral("http://thumbor4.tasty0.ru"));
+        _manager->connectToHostEncrypted(QStringLiteral("https://tasty-prod.s3.amazonaws.com"));
     }
 
     _entryImageWidth   = _settings->maxImageWidth();
@@ -313,7 +313,7 @@ void Tasty::_init()
     Q_TEST(connect(_pusher, SIGNAL(unreadNotifications(int)),  this, SLOT(_setUnreadNotifications(int))));
     Q_TEST(connect(_pusher, SIGNAL(unreadFriendsEntry(int)),   this, SLOT(_incUnreadFriendEntries())));
 
-    QQuickStyle::setStyle("Material");
+    QQuickStyle::setStyle(QStringLiteral("Material"));
 
     qmlRegisterType<FeedModel>          ("org.binque.taaasty", 1, 0, "FeedModel");
     qmlRegisterType<CalendarModel>      ("org.binque.taaasty", 1, 0, "CalendarModel");
@@ -436,11 +436,11 @@ void Tasty::_readAccessToken(const QJsonObject& data)
     if (_settings->saveProfile())
         _settings->swapProfiles();
 
-    auto apiKey      = data.value("api_key").toObject();
-    auto accessToken = apiKey.value("access_token").toString();
-    auto expiresAt   = apiKey.value("expires_at").toString();
-    auto userId      = apiKey.value("user_id").toInt();
-    auto login       = data.value("slug").toString();
+    auto apiKey      = data.value(QStringLiteral("api_key")).toObject();
+    auto accessToken = apiKey.value(QStringLiteral("access_token")).toString();
+    auto expiresAt   = apiKey.value(QStringLiteral("expires_at")).toString();
+    auto userId      = apiKey.value(QStringLiteral("user_id")).toInt();
+    auto login       = data.value(QStringLiteral("slug")).toString();
 
     _settings->setAccessToken(accessToken);
     _settings->setExpiresAt(expiresAt);

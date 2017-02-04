@@ -123,26 +123,26 @@ void Tlog::setSlug(const QString& slug)
 
 void Tlog::init(const QJsonObject& data)
 {
-    _id = data.value("id").toInt();
-    _slug = data.value("slug").toString();
-    _title = data.value("title").toString();
-    _entriesCount = "<h1>" + Tasty::num2str(data.value("total_entries_count").toInt(),
+    _id = data.value(QStringLiteral("id")).toInt();
+    _slug = data.value(QStringLiteral("slug")).toString();
+    _title = data.value(QStringLiteral("title")).toString();
+    _entriesCount = "<h1>" + Tasty::num2str(data.value(QStringLiteral("total_entries_count")).toInt(),
                                             "</h1>запись", "</h1>записи", "</h1>записей");
-    _publicEntriesCount = "<h1>" + Tasty::num2str(data.value("public_entries_count").toInt(),
+    _publicEntriesCount = "<h1>" + Tasty::num2str(data.value(QStringLiteral("public_entries_count")).toInt(),
                                                   "</h1>запись", "</h1>записи", "</h1>записей");
-    _privateEntriesCount = "<h1>" + Tasty::num2str(data.value("private_entries_count").toInt(),
+    _privateEntriesCount = "<h1>" + Tasty::num2str(data.value(QStringLiteral("private_entries_count")).toInt(),
                                                    "</h1>скрыта", "</h1>скрыто", "</h1>скрыто");
 
-    if (data.contains("stats"))
+    if (data.contains(QStringLiteral("stats")))
     {
-        auto stats = data.value("stats").toObject();
-        _favoritesCount = QString("<h1>%1</h1>в избранном")
-                .arg(stats.value("favorites_count").toInt());
-        _commentsCount = Tasty::num2str(stats.value("comments_count").toInt(),
+        auto stats = data.value(QStringLiteral("stats")).toObject();
+        _favoritesCount = QStringLiteral("<h1>%1</h1>в избранном")
+                .arg(stats.value(QStringLiteral("favorites_count")).toInt());
+        _commentsCount = Tasty::num2str(stats.value(QStringLiteral("comments_count")).toInt(),
                                         "комментарий", "комментария", "комментариев");
-        _tagsCount = "<h1>" + Tasty::num2str(stats.value("tags_count").toInt(),
+        _tagsCount = "<h1>" + Tasty::num2str(stats.value(QStringLiteral("tags_count")).toInt(),
                                     "</h1>тег", "</h1>тега", "</h1>тегов");
-        _daysCount = Tasty::num2str(stats.value("days_count").toInt(),
+        _daysCount = Tasty::num2str(stats.value(QStringLiteral("days_count")).toInt(),
                                     "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
     }
     else
@@ -151,36 +151,36 @@ void Tlog::init(const QJsonObject& data)
         _commentsCount.clear();
         _tagsCount = "Теги";
 
-        auto date = QDateTime::fromString(data.value("created_at").toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+        auto date = QDateTime::fromString(data.value(QStringLiteral("created_at")).toString().left(19), "yyyy-MM-ddTHH:mm:ss");
         auto today = QDateTime::currentDateTime();
         int days = (today.toMSecsSinceEpoch() - date.toMSecsSinceEpoch()) / (24 * 60 * 60 * 1000);
         _daysCount = Tasty::num2str(days, "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
     }
 
-    auto relations = data.value("relationships_summary").toObject();
-    _followersCount = "<h1>" + Tasty::num2str(relations.value("followers_count").toInt(),
+    auto relations = data.value(QStringLiteral("relationships_summary")).toObject();
+    _followersCount = "<h1>" + Tasty::num2str(relations.value(QStringLiteral("followers_count")).toInt(),
                                               "</h1>подписчик", "</h1>подписчика", "</h1>подписчиков");
-    _followingsCount = "<h1>" + Tasty::num2str(relations.value("followings_count").toInt(),
+    _followingsCount = "<h1>" + Tasty::num2str(relations.value(QStringLiteral("followings_count")).toInt(),
                                                "</h1>подписка", "</h1>подписки", "</h1>подписок");
-    _ignoredCount = "<h1>" + Tasty::num2str(relations.value("ignored_count").toInt(),
+    _ignoredCount = "<h1>" + Tasty::num2str(relations.value(QStringLiteral("ignored_count")).toInt(),
                                             "</h1>блокирован", "</h1>блокировано", "</h1>блокировано");
 
     _hisRelation = _relationship(data, "his_relationship");
     _myRelation =  _relationship(data, "my_relationship");
 
-    auto authorData = data.contains("author")
-            ? data.value("author").toObject() : data;
+    auto authorData = data.contains(QStringLiteral("author"))
+            ? data.value(QStringLiteral("author")).toObject() : data;
     if (_author)
         _author->init(authorData);
     else
         _author = new Author(authorData, this);
 
-    auto myRelationObj = data.value("my_relationship_object").toObject();
-    if (myRelationObj.contains("flow"))
+    auto myRelationObj = data.value(QStringLiteral("my_relationship_object")).toObject();
+    if (myRelationObj.contains(QStringLiteral("flow")))
     {
         if (!_flow)
             _flow = new Flow(this);
-        _flow->init(myRelationObj.value("flow").toObject());
+        _flow->init(myRelationObj.value(QStringLiteral("flow")).toObject());
     }
     
     if (_chat)
@@ -199,7 +199,7 @@ void Tlog::reload()
     if ((_slug.isEmpty() && !_id) || isLoading())
             return;
 
-    auto url = QString("v1/tlog/%1.json");
+    auto url = QStringLiteral("v1/tlog/%1.json");
     if (_id)
         url = url.arg(_id);
     else
@@ -221,7 +221,7 @@ void Tlog::follow()
     if (_myRelation == Friend || _myRelation == Requested)
         return;
 
-    _changeMyRelation("v1/relationships/to/tlog/%1/follow.json");
+    _changeMyRelation(QStringLiteral("v1/relationships/to/tlog/%1/follow.json"));
 }
 
 
@@ -232,7 +232,7 @@ void Tlog::unfollow()
     if (_myRelation != Friend && _myRelation != Requested)
         return;
 
-    _changeMyRelation("v1/relationships/to/tlog/%1/unfollow.json");
+    _changeMyRelation(QStringLiteral("v1/relationships/to/tlog/%1/unfollow.json"));
 }
 
 
@@ -243,7 +243,7 @@ void Tlog::ignore()
     if (_myRelation == Ignored)
         return;
 
-    _changeMyRelation("v1/relationships/to/tlog/%1/ignore.json");
+    _changeMyRelation(QStringLiteral("v1/relationships/to/tlog/%1/ignore.json"));
 }
 
 
@@ -254,7 +254,7 @@ void Tlog::cancelIgnoring()
     if (_myRelation != Ignored)
         return;
 
-    _changeMyRelation("v1/relationships/to/tlog/%1/cancel.json");
+    _changeMyRelation(QStringLiteral("v1/relationships/to/tlog/%1/cancel.json"));
 }
 
 
@@ -268,7 +268,7 @@ void Tlog::unsubscribeHim()
     if (_relationRequest || !Tasty::instance()->isAuthorized())
         return;
 
-    auto url = QString("v1/relationships/by/tlog/%1.json");
+    auto url = QStringLiteral("v1/relationships/by/tlog/%1.json");
     _relationRequest = new ApiRequest(url.arg(_id), ApiRequest::AllOptions);
     _relationRequest->deleteResource();
 
@@ -283,14 +283,14 @@ void Tlog::unsubscribeHim()
 
 void Tlog::approveFriendRequest()
 {
-    _handleFriendRequest("v1/relationships/by/tlog/%1/approve.json");
+    _handleFriendRequest(QStringLiteral("v1/relationships/by/tlog/%1/approve.json"));
 }
 
 
 
 void Tlog::disapproveFriendRequest()
 {
-    _handleFriendRequest("v1/relationships/by/tlog/%1/disapprove.json");
+    _handleFriendRequest(QStringLiteral("v1/relationships/by/tlog/%1/disapprove.json"));
 }
 
 

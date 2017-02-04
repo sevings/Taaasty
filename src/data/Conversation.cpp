@@ -97,7 +97,7 @@ void Conversation::setRecipientId(int id)
 
     _recipientId = id;
 
-    auto url = QString("v2/messenger/conversations/by_user_id/%1.json").arg(_recipientId);
+    auto url = QStringLiteral("v2/messenger/conversations/by_user_id/%1.json").arg(_recipientId);
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->post();
 
@@ -113,7 +113,7 @@ void Conversation::setSlug(const QString& slug)
     if (isLoading() || slug.isEmpty())
         return;
 
-    auto url = QString("v2/messenger/conversations/by_slug/%1.json").arg(slug);
+    auto url = QStringLiteral("v2/messenger/conversations/by_slug/%1.json").arg(slug);
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->post();
 
@@ -134,7 +134,7 @@ void Conversation::setEntryId(int entryId)
 
     pTasty->dataCache()->addChat(sharedFromThis());
 
-    auto url = QString("v2/messenger/conversations/by_entry_id.json");
+    auto url = QStringLiteral("v2/messenger/conversations/by_entry_id.json");
     _request = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     _request->addFormData("id", entryId);
     _request->post();
@@ -148,7 +148,7 @@ void Conversation::setEntryId(int entryId)
 
 void Conversation::_markRead(const QJsonObject& data)
 {
-    if (data.value("status").toString() != "success")
+    if (data.value(QStringLiteral("status")).toString() != "success")
     {
         qDebug() << "error read chat" << _id;
         return;
@@ -276,9 +276,9 @@ int Conversation::totalCount() const
 
 void Conversation::init(const QJsonObject& data)
 {
-     _id                = data.value("id").toInt();
+     _id                = data.value(QStringLiteral("id")).toInt();
 
-     auto type = data.value("type").toString();
+     auto type = data.value(QStringLiteral("type")).toString();
      if (type == "PublicConversation")
          _type = PublicConversation;
      else if (type == "PrivateConversation")
@@ -291,16 +291,16 @@ void Conversation::init(const QJsonObject& data)
          _type = UninitializedConversation;
      }
 
-     _unreadCount       = data.value("unread_messages_count").toInt();
-     _unreceivedCount   = data.value("unreceived_messages_count").toInt();
-     _totalCount        = data.value("messages_count").toInt();
-     _userId            = data.value("user_id").toInt();
-     _recipientId       = data.value("recipient_id").toInt();
-     _isDisabled        = data.value("is_disabled").toBool();
-     _notDisturb        = data.value("not_disturb").toBool();
-     _canTalk           = data.value("can_talk").toBool(true);
-     _canDelete         = data.value("can_delete").toBool(true);
-     _isAnonymous       = data.value("is_anonymous").toBool();
+     _unreadCount       = data.value(QStringLiteral("unread_messages_count")).toInt();
+     _unreceivedCount   = data.value(QStringLiteral("unreceived_messages_count")).toInt();
+     _totalCount        = data.value(QStringLiteral("messages_count")).toInt();
+     _userId            = data.value(QStringLiteral("user_id")).toInt();
+     _recipientId       = data.value(QStringLiteral("recipient_id")).toInt();
+     _isDisabled        = data.value(QStringLiteral("is_disabled")).toBool();
+     _notDisturb        = data.value(QStringLiteral("not_disturb")).toBool();
+     _canTalk           = data.value(QStringLiteral("can_talk")).toBool(true);
+     _canDelete         = data.value(QStringLiteral("can_delete")).toBool(true);
+     _isAnonymous       = data.value(QStringLiteral("is_anonymous")).toBool();
 
      auto dataCache = pTasty->dataCache();
      dataCache->addChat(sharedFromThis());
@@ -314,10 +314,10 @@ void Conversation::init(const QJsonObject& data)
          Q_TEST(connect(_messages, SIGNAL(lastMessageChanged()), this, SIGNAL(lastMessageChanged())));
      }
 
-     if (!_entry && data.contains("entry"))
+     if (!_entry && data.contains(QStringLiteral("entry")))
      {
-         auto entryData = data.value("entry").toObject();
-         _entryId = entryData.value("id").toInt();
+         auto entryData = data.value(QStringLiteral("entry")).toObject();
+         _entryId = entryData.value(QStringLiteral("id")).toInt();
          _entry = dataCache->entry(_entryId);
          if (!_entry)
          {
@@ -330,11 +330,11 @@ void Conversation::init(const QJsonObject& data)
          Q_TEST(connect(_entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
      }
 
-     if (!_recipient && data.contains("recipient"))
-         _recipient     = new Author(data.value("recipient").toObject(), this);
+     if (!_recipient && data.contains(QStringLiteral("recipient")))
+         _recipient     = new Author(data.value(QStringLiteral("recipient")).toObject(), this);
 
-     if (data.contains("topic"))
-         _topic         = data.value("topic").toString();
+     if (data.contains(QStringLiteral("topic")))
+         _topic         = data.value(QStringLiteral("topic")).toString();
      else if (_recipient)
          _topic         = _recipient->name();
      else if (_entryId)
@@ -343,30 +343,30 @@ void Conversation::init(const QJsonObject& data)
          _topic         = e->title().trimmed().isEmpty() ? e->text() : e->title();
          _topic = Tasty::truncateHtml(_topic);
          if (_topic.trimmed().isEmpty())
-             _topic = QString("(запись %1)").arg(e->author()->name());
+             _topic = QStringLiteral("(запись %1)").arg(e->author()->name());
      }
      else
          _topic.clear();
 
-     auto users = data.value("users").toArray();
+     auto users = data.value(QStringLiteral("users")).toArray();
      _initUsers(users);
 
-     users = data.value("users_deleted").toArray();
+     users = data.value(QStringLiteral("users_deleted")).toArray();
      foreach(auto userData, users)
      {
         auto user = new User(userData.toObject(), this);
         _deletedUsers.insert(user->id(), user);
      }
 
-     users = data.value("users_left").toArray();
+     users = data.value(QStringLiteral("users_left")).toArray();
      foreach(auto userData, users)
      {
         auto user = new User(userData.toObject(), this);
         _leftUsers.insert(user->id(), user);
      }
 
-     auto last = data.value("last_message").toObject();
-     auto lastId = last.value("id").toInt();
+     auto last = data.value(QStringLiteral("last_message")).toObject();
+     auto lastId = last.value(QStringLiteral("id")).toInt();
      _lastMessage = dataCache->message(lastId);
      if (!_lastMessage)
      {
@@ -389,7 +389,7 @@ void Conversation::update()
     if (_id <= 0 || isLoading())
         return;
 
-    auto url = QString("v2/messenger/conversations/by_id/%1.json").arg(_id);
+    auto url = QStringLiteral("v2/messenger/conversations/by_id/%1.json").arg(_id);
     _request = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     _request->get();
 
@@ -410,7 +410,7 @@ void Conversation::sendMessage(const QString& text)
         _typedTimer->stop();
 
     auto uuid    = QUuid::createUuid().toString().remove('{').remove('}');
-    auto url     = QString("v2/messenger/conversations/by_id/%1/messages.json").arg(_id);
+    auto url     = QStringLiteral("v2/messenger/conversations/by_id/%1/messages.json").arg(_id);
 
     _sendRequest = new ApiRequest(url, ApiRequest::AllOptions);
     _sendRequest->addFormData("uuid", uuid);
@@ -434,7 +434,7 @@ void Conversation::readAll()
     if (_readRequest || _unreadCount <= 0 || _id <= 0)// || !isInvolved())
         return;
 
-    auto url = QString("v2/messenger/conversations/by_id/%1/messages/read_all.json").arg(_id);
+    auto url = QStringLiteral("v2/messenger/conversations/by_id/%1/messages/read_all.json").arg(_id);
     _readRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     _readRequest->put();
 
@@ -449,7 +449,7 @@ void Conversation::leave()
     if (isLoading() || !isInvolved())
         return;
 
-    auto url = QString("v2/messenger/conversations/by_id/%1/leave.json").arg(_id);
+    auto url = QStringLiteral("v2/messenger/conversations/by_id/%1/leave.json").arg(_id);
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->put();
 
@@ -465,7 +465,7 @@ void Conversation::remove()
     if (isLoading() || !isInvolved())
         return;
 
-    auto url = QString("v2/messenger/conversations/by_id/%1.json").arg(_id);
+    auto url = QStringLiteral("v2/messenger/conversations/by_id/%1.json").arg(_id);
     _request = new ApiRequest(url, ApiRequest::AllOptions);
     _request->deleteResource();
 
@@ -504,7 +504,7 @@ void Conversation::sendTyped()
 
 void Conversation::_emitLeft(const QJsonObject& data)
 {
-    if (data.value("status").toString() != "success")
+    if (data.value(QStringLiteral("status")).toString() != "success")
     {
         qDebug() << "error leave chat" << _id;
         return;
@@ -520,7 +520,7 @@ void Conversation::_emitLeft(const QJsonObject& data)
     _leftUsers.insert(user->id(), user);
     emit isInvolvedChanged();
 
-    emit Tasty::instance()->info("Беседа удалена");
+    emit Tasty::instance()->info(QStringLiteral("Беседа удалена"));
 
     emit left(_id);
 }
@@ -560,7 +560,7 @@ void Conversation::_sendTyped()
 
     _hadTyped = false;
 
-    auto url = QString("v2/messenger/conversations/by_id/%1/typed.json").arg(_id);
+    auto url = QStringLiteral("v2/messenger/conversations/by_id/%1/typed.json").arg(_id);
     _typedRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     _typedRequest->post();
 
@@ -568,7 +568,7 @@ void Conversation::_sendTyped()
     Q_TEST(connect(_typedRequest, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
                    [](const QJsonObject& data)
     {
-        auto status = data.value("status").toString();
+        auto status = data.value(QStringLiteral("status")).toString();
         if (status != "success")
             qDebug() << "Error sending typed:" << data;
     }));
@@ -581,7 +581,7 @@ void Conversation::_initUsers(const QJsonArray& data)
 {
     foreach(auto userData, data)
     {
-        auto id = userData.toObject().value("id").toInt();
+        auto id = userData.toObject().value(QStringLiteral("id")).toInt();
         if (_users.contains(id))
             continue;
 
@@ -687,7 +687,7 @@ void Conversation::updateUsers()
             || (_type != GroupConversation && _type != PublicConversation))
         return;
 
-    auto url = QString("v2/messenger/conversations/by_id/%1/users.json").arg(_id);
+    auto url = QStringLiteral("v2/messenger/conversations/by_id/%1/users.json").arg(_id);
     _usersRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     _usersRequest->get();
 

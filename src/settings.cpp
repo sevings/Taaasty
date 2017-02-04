@@ -36,7 +36,7 @@ Settings::Settings(QObject *parent)
 {
     qDebug() << "Settings";
 
-    if (!_settings.contains("max_image_width"))
+    if (!_settings.contains(QStringLiteral("max_image_width")))
     {
         auto screen = qApp->primaryScreen();
         auto width = screen->size().width() * screen->devicePixelRatio();
@@ -90,7 +90,7 @@ void Settings::clearProfile()
 
 QString Settings::login() const
 {
-    return _settings.value("login").toString();
+    return _settings.value(QStringLiteral("login")).toString();
 }
 
 
@@ -109,7 +109,7 @@ void Settings::setLogin(const QString& login)
 
 QString Settings::accessToken() const
 {
-    return _settings.value("access_token").toString();
+    return _settings.value(QStringLiteral("access_token")).toString();
 }
 
 
@@ -128,7 +128,7 @@ void Settings::setAccessToken(const QString& token)
 
 QDateTime Settings::expiresAt() const
 {
-    return _settings.value("expires_at").toDateTime();
+    return _settings.value(QStringLiteral("expires_at")).toDateTime();
 }
 
 
@@ -153,7 +153,7 @@ void Settings::setExpiresAt(const QString& date)
 
 int Settings::userId() const
 {
-    return _settings.value("user_id").toInt();
+    return _settings.value(QStringLiteral("user_id")).toInt();
 }
 
 
@@ -189,7 +189,7 @@ void Settings::setSaveProfile(const bool save)
 
 QString Settings::prevLogin() const
 {
-    return _settings.value("prev_login").toString();
+    return _settings.value(QStringLiteral("prev_login")).toString();
 }
 
 
@@ -208,7 +208,7 @@ void Settings::setPrevLogin(const QString& login)
 
 QString Settings::prevAccessToken() const
 {
-    return _settings.value("prev_access_token").toString();
+    return _settings.value(QStringLiteral("prev_access_token")).toString();
 }
 
 
@@ -227,7 +227,7 @@ void Settings::setPrevAccessToken(const QString& token)
 
 QDateTime Settings::prevExpiresAt() const
 {
-    return _settings.value("prev_expires_at").toDateTime();
+    return _settings.value(QStringLiteral("prev_expires_at")).toDateTime();
 }
 
 
@@ -252,7 +252,7 @@ void Settings::setPrevExpiresAt(const QString& date)
 
 int Settings::prevUserId() const
 {
-    return _settings.value("prev_user_id").toInt();
+    return _settings.value(QStringLiteral("prev_user_id")).toInt();
 }
 
 
@@ -288,7 +288,7 @@ void Settings::setPrevSaveProfile(const bool save)
 
 int Settings::maxImageWidth() const
 {
-    return _settings.value("max_image_width").toInt();
+    return _settings.value(QStringLiteral("max_image_width")).toInt();
 }
 
 
@@ -402,7 +402,7 @@ void Settings::setCacheVersion(quint8 v)
 
 bool Settings::hideShortPosts() const
 {
-    return _settings.value("hide_short_posts").toBool();
+    return _settings.value(QStringLiteral("hide_short_posts")).toBool();
 }
 
 
@@ -421,7 +421,7 @@ void Settings::setHideShortPosts(bool hide)
 
 bool Settings::hideNegativeRated() const
 {
-    return _settings.value("hide_negative_rated").toBool();
+    return _settings.value(QStringLiteral("hide_negative_rated")).toBool();
 }
 
 
@@ -440,7 +440,7 @@ void Settings::setHideNegativeRated(bool hide)
 
 bool Settings::darkTheme() const
 {
-    return _settings.value("dark_theme").toBool();
+    return _settings.value(QStringLiteral("dark_theme")).toBool();
 }
 
 
@@ -516,7 +516,7 @@ void Settings::setPredictiveText(bool enable)
 
 QString Settings::lastTitle() const
 {
-    return _settings.value("last_title").toString();
+    return _settings.value(QStringLiteral("last_title")).toString();
 }
 
 
@@ -535,7 +535,7 @@ void Settings::setLastTitle(const QString& title)
 
 QString Settings::lastText() const
 {
-    return _settings.value("last_text").toString();
+    return _settings.value(QStringLiteral("last_text")).toString();
 }
 
 
@@ -554,7 +554,7 @@ void Settings::setLastText(const QString& text)
 
 QString Settings::lastSource() const
 {
-    return _settings.value("last_source").toString();
+    return _settings.value(QStringLiteral("last_source")).toString();
 }
 
 
@@ -573,7 +573,7 @@ void Settings::setLastSource(const QString& source)
 
 QStringList Settings::lastImages() const
 {
-    return _settings.value("last_images").toStringList();
+    return _settings.value(QStringLiteral("last_images")).toStringList();
 }
 
 
@@ -611,7 +611,7 @@ void Settings::setLastOptimizeImages(bool opt)
 
 int Settings::lastPrivacy() const
 {
-    return _settings.value("last_privacy").toInt();
+    return _settings.value(QStringLiteral("last_privacy")).toInt();
 }
 
 
@@ -630,7 +630,7 @@ void Settings::setLastPrivacy(int privacy)
 
 int Settings::lastPostingTlog() const
 {
-    return _settings.value("last_posting_tlog").toInt();
+    return _settings.value(QStringLiteral("last_posting_tlog")).toInt();
 }
 
 

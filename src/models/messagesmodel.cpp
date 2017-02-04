@@ -47,7 +47,7 @@ MessagesModel::MessagesModel(Conversation* chat)
     : TastyListModel(chat)
     , _chat(chat)
     , _chatId(0)
-    , _url("v2/messenger/conversations/by_id/%1/messages.json?limit=%2&order=desc")
+    , _url(QStringLiteral("v2/messenger/conversations/by_id/%1/messages.json?limit=%2&order=desc"))
 #ifdef Q_OS_ANDROID
     , _androidNotifier(new AndroidNotifier(this))
 #endif
@@ -148,7 +148,7 @@ void MessagesModel::check()
 
     QString url = _url.arg(_chatId).arg(20);
     if (!_messages.isEmpty())
-        url += QString("&from_message_id=%1").arg(_messages.last()->id());
+        url += QStringLiteral("&from_message_id=%1").arg(_messages.last()->id());
 
     _checkRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired);
     Q_TEST(connect(_checkRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addLastMessages(QJsonObject))));
@@ -172,7 +172,7 @@ void MessagesModel::loadMore()
     int limit = qBound(20, _chat->unreadCount() - _messages.size(), 200);
     QString url = _url.arg(_chatId).arg(limit);
     if (!_messages.isEmpty())
-        url += QString("&to_message_id=%1").arg(_messages.first()->id());
+        url += QStringLiteral("&to_message_id=%1").arg(_messages.first()->id());
 
     _loadRequest = new ApiRequest(url, ApiRequest::AccessTokenRequired | ApiRequest::ShowMessageOnError);
     Q_TEST(connect(_loadRequest, SIGNAL(success(QJsonObject)), this, SLOT(_addMessages(QJsonObject))));
@@ -193,7 +193,7 @@ QHash<int, QByteArray> MessagesModel::roleNames() const
 
 void MessagesModel::_addMessages(const QJsonObject& data)
 {
-    auto feed = data.value("messages").toArray();
+    auto feed = data.value(QStringLiteral("messages")).toArray();
     if (feed.isEmpty())
     {
         _totalCount = _messages.size();
@@ -209,7 +209,7 @@ void MessagesModel::_addMessages(const QJsonObject& data)
 
     beginInsertRows(QModelIndex(), 0, msgs.size() - 1);
 
-    _totalCount = data.value("total_count").toInt();
+    _totalCount = data.value(QStringLiteral("total_count")).toInt();
 
     _messages = msgs + _messages;
 
@@ -230,7 +230,7 @@ void MessagesModel::_addMessages(const QJsonObject& data)
 
 void MessagesModel::_addLastMessages(const QJsonObject& data)
 {
-    auto feed = data.value("messages").toArray();
+    auto feed = data.value(QStringLiteral("messages")).toArray();
     if (feed.isEmpty())
         return;
 
@@ -240,7 +240,7 @@ void MessagesModel::_addLastMessages(const QJsonObject& data)
 
     beginInsertRows(QModelIndex(), _messages.size(), _messages.size() + msgs.size() - 1);
 
-    _totalCount = data.value("total_count").toInt();
+    _totalCount = data.value(QStringLiteral("total_count")).toInt();
 
     _messages << msgs;
 
@@ -257,7 +257,7 @@ void MessagesModel::_addLastMessages(const QJsonObject& data)
 
 void MessagesModel::_addMessage(const QJsonObject& data)
 {
-    auto id = data.value("id").toInt();
+    auto id = data.value(QStringLiteral("id")).toInt();
     if (_ids.contains(id))
         return;
 
@@ -283,7 +283,7 @@ void MessagesModel::_addMessage(const QJsonObject& data)
 #ifdef Q_OS_ANDROID
     if (!msg->isRead() && msg->userId() != _chat->userId() && pTasty->settings()->systemNotifications())
     {
-        auto text = QString("%1:\n%2").arg(msg->user()->name())
+        auto text = QStringLiteral("%1:\n%2").arg(msg->user()->name())
                 .arg(msg->text());
         _androidNotifier->setNotification(text);
     }

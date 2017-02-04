@@ -83,7 +83,7 @@ void Poster::postImage(QString title, Poster::Privacy privacy, int tlogId)
     
     _prepare(title, tlogId);
 
-    _request->setUrl("v1/entries/image.json");
+    _request->setUrl(QStringLiteral("v1/entries/image.json"));
     _request->addFormData("title", title);
     _request->addFormData("privacy", _privacyValue(privacy));
     _request->addImages(_images);
@@ -99,7 +99,7 @@ void Poster::postQuote(QString text, QString source, Privacy privacy, int tlogId
     
     _prepare(tlogId);
 
-    _request->setUrl("v1/entries/quote.json");
+    _request->setUrl(QStringLiteral("v1/entries/quote.json"));
     _request->addFormData("text", text.trimmed());
     _request->addFormData("source", source.trimmed());
     _request->addFormData("privacy", _privacyValue(privacy));
@@ -115,7 +115,7 @@ void Poster::postVideo(QString title, QString url, Privacy privacy, int tlogId)
     
     _prepare(title, tlogId);
 
-    _request->setUrl("v1/entries/video.json");
+    _request->setUrl(QStringLiteral("v1/entries/video.json"));
     _request->addFormData("titlle", title);
     _request->addFormData("video_url", url);
     _request->addFormData("privacy", _privacyValue(privacy));
@@ -135,7 +135,7 @@ void Poster::postText(QString title, QString content, Poster::Privacy privacy, i
 
     _prepare(title, content, tlogId);
 
-    _request->setUrl("v1/entries/text.json");
+    _request->setUrl(QStringLiteral("v1/entries/text.json"));
     _request->addFormData("title", title);
     _request->addFormData("text", content);
     _request->addFormData("privacy", _privacyValue(privacy));
@@ -149,7 +149,7 @@ void Poster::postAnonymous(QString title, QString content)
 {
     _prepare(title, content, -1);
 
-    _request->setUrl("v1/entries/anonymous.json");
+    _request->setUrl(QStringLiteral("v1/entries/anonymous.json"));
     _request->addFormData("title", title);
     _request->addFormData("text", content);
 
@@ -236,9 +236,9 @@ void Poster::_prepare(QString& title, QString& content, int tlogId)
     auto ps = content.split('\n');
     for (auto it = ps.begin(); it != ps.end(); ++it)
         if (it->isEmpty())
-            *it = QString("<br>");
+            *it = QStringLiteral("<br>");
         else
-            it->prepend("<p>").append("</p>");
+            it->prepend(QStringLiteral("<p>")).append(QStringLiteral("</p>"));
 
     content = ps.join(QString());
 }
