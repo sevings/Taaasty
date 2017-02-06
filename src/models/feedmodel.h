@@ -137,6 +137,7 @@ private slots:
     void _prependEntry(int id, int tlogId);
     void _removeEntry(int id);
 
+    void _prependFriendsEntries();
     void _prepend(const EntryPtr& entry);
 
 private:
