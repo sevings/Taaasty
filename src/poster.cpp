@@ -77,7 +77,7 @@ void Poster::postImage(QString title, Poster::Privacy privacy, int tlogId)
     
     if (!_images || !_images->rowCount())
     {
-        emit pTasty->error(0, "Добавьте хотя бы одно изображение");
+        emit pTasty->error(0, QStringLiteral("Добавьте хотя бы одно изображение"));
         return;
     }
     

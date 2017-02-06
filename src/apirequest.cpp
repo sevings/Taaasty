@@ -320,7 +320,7 @@ bool ApiRequest::_setOptions(const QString& accessToken, const ApiRequest::Optio
     if (options & ShowNetworkError)
         Q_TEST(connect(this, &ApiRequest::networkError, []()
         {
-            emit pTasty->error(0, "Сетевая ошибка");
+            emit pTasty->error(0, QStringLiteral("Сетевая ошибка"));
         }));    
     
     _request.setRawHeader(QByteArrayLiteral("X-User-Token"), accessToken.toUtf8());

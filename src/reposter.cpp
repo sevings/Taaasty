@@ -189,7 +189,7 @@ void Reposter::_removeRepost(const QJsonObject& data)
     }
     else
     {
-        emit pTasty->error(0, "При удалении репоста произошла ошибка");
+        emit pTasty->error(0, QStringLiteral("При удалении репоста произошла ошибка"));
         qDebug() << data;
     }
 }
