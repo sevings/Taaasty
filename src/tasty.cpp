@@ -310,9 +310,9 @@ void Tasty::_init()
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
 
-    Q_TEST(connect(_pusher, &PusherClient::unreadChats,          this, &Tasty::_setUnreadChats;
-    Q_TEST(connect(_pusher, &PusherClient::unreadNotifications,  this, &Tasty::_setUnreadNotifications;
-    Q_TEST(connect(_pusher, &PusherClient::unreadFriendsEntry,   this, &Tasty::_addUnreadFriendEntry;
+    Q_TEST(connect(_pusher, &PusherClient::unreadChats,          this, &Tasty::_setUnreadChats));
+    Q_TEST(connect(_pusher, &PusherClient::unreadNotifications,  this, &Tasty::_setUnreadNotifications));
+    Q_TEST(connect(_pusher, &PusherClient::unreadFriendsEntry,   this, &Tasty::_addUnreadFriendEntry));
 
     QQuickStyle::setStyle(QStringLiteral("Material"));
 
