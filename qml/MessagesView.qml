@@ -156,7 +156,7 @@ Pane {
                 width: textWidth > maxWidth || messageImages.visible ? maxWidth : textWidth
                 height: messageDate.y + messageDate.contentHeight + 1.5 * mm
                 color: window.darkTheme ? '#404040' : window.backgroundColor
-                ListView {
+                Loader {
                     id: messageImages
                     anchors {
                         top: parent.top
@@ -164,20 +164,23 @@ Pane {
                         right: parent.right
                         margins: 1.5 * mm
                     }
-                    interactive: false
-                    spacing: 1.5 * mm
-                    property AttachedImagesModel imagesModel: message.attachedImagesModel
-                    height: visible ? contentHeight : -1.5 * mm
-                    model: imagesModel
-                    visible: imagesModel && count > 0
-                    delegate: MyImage {
-                        id: picture
-                        width: messageImages.width
-                        height: image.height / image.width * width
-                        url: image.url
-                        extension: image.type
-                        savable: true
-                        popBody: back
+                    asynchronous: false
+                    readonly property AttachedImagesModel imagesModel: message.attachedImagesModel
+                    active: imagesModel && imagesModel.rowCount() > 0
+                    sourceComponent: ListView {
+                        interactive: false
+                        spacing: 1.5 * mm
+                        height: visible ? contentHeight : -1.5 * mm
+                        model: messageImages.imagesModel
+                        delegate: MyImage {
+                            id: picture
+                            width: messageImages.width
+                            height: image.height / image.width * width
+                            url: image.url
+                            extension: image.type
+                            savable: true
+                            popBody: back
+                        }
                     }
                 }
                 ThemedText {

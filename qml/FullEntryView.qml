@@ -184,7 +184,7 @@ Pane {
             Poppable {
                 body: back
             }
-            ListView {
+            Loader {
                 id: fullEntryImages
                 anchors {
                     top: parent.top
@@ -192,24 +192,27 @@ Pane {
                     right: parent.right
                     bottomMargin: 1.5 * mm
                 }
-                interactive: false
-                spacing: 1.5 * mm
                 property AttachedImagesModel imagesModel: entry.attachedImagesModel
-                height: contentHeight
-                model: imagesModel
-                delegate: MyImage {
-                    id: picture
-                    width: window.width
-                    height: image.height / image.width * width
-                    url: image.url
-                    extension: image.type
-                    savable: true
-                    popBody: back
+                asynchronous: false
+                active: imagesModel && imagesModel.rowCount() > 0
+                sourceComponent: ListView {
+                    interactive: false
+                    spacing: 1.5 * mm
+                    height: contentHeight
+                    model: fullEntryImages.imagesModel
+                    delegate: MyImage {
+                        id: picture
+                        width: window.width
+                        height: image.height / image.width * width
+                        url: image.url
+                        extension: image.type
+                        savable: true
+                        popBody: back
+                    }
                 }
             }
-            MediaLink {
+            Loader {
                 id: mediaLink
-                visible: entry.media
                 anchors {
                     top: fullEntryImages.bottom
                     left: parent.left
@@ -217,11 +220,15 @@ Pane {
 //                    topMargin: 1.5 * mm
                     bottomMargin: 1.5 * mm
                 }
-                media: entry.media
-                acceptClick: mediaLink.url
-                popBody: back
-                onClicked: {
-                    mediaLink.play();
+                asynchronous: false
+                active: entry.media
+                sourceComponent: MediaLink {
+                    media: entry.media
+                    acceptClick: url
+                    popBody: back
+                    onClicked: {
+                        play();
+                    }
                 }
             }
             ThemedText {
