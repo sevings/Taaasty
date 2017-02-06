@@ -271,7 +271,7 @@ void FeedModel::reset(Mode mode, int tlog, const QString& slug, const QString& q
     }
 
     if (_mode == FriendsMode)
-        pTasty->clearUnreadFriendsEntries();
+        Q_TEST(QMetaObject::invokeMethod(this, "_prependFriendsEntries", Qt::QueuedConnection));
     else if (_mode == TlogMode && _tlog->id() <= 0 && _tlog->slug().isEmpty())
         _hasMore = false;
 
@@ -581,8 +581,24 @@ void FeedModel::_removeEntry(int id)
 
 
 
+void FeedModel::_prependFriendsEntries()
+{
+    Q_ASSERT(_mode == FriendsMode);
+    if (_mode != FriendsMode)
+        return;
+
+    auto entries = pTasty->clearUnreadFriendsEntries();
+    while (!entries.isEmpty())
+        _prepend(entries.last());
+}
+
+
+
 void FeedModel::_prepend(const EntryPtr& entry)
 {
+    if (_idEntries.contains(entry->id()))
+        return;
+
     beginInsertRows(QModelIndex(), _fixedCount, _fixedCount);
 
     _entries.insert(_fixedCount, entry);

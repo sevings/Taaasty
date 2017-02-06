@@ -29,8 +29,6 @@
 #include <QDateTime>
 #include <QDebug>
 
-#include "defines.h"
-
 #include "tasty.h"
 #include "apirequest.h"
 #include "settings.h"
@@ -91,7 +89,6 @@ Tasty::Tasty()
     , _commentImageWidth(0)
     , _unreadChats(0)
     , _unreadNotifications(0)
-    , _unreadFriendsEntries(0)
     , _me(nullptr)
     , _saveProfile(false)
 {
@@ -130,10 +127,14 @@ bool Tasty::isAuthorized() const
 
 
 
-void Tasty::clearUnreadFriendsEntries()
+QList<EntryPtr> Tasty::clearUnreadFriendsEntries()
 {
-    _unreadFriendsEntries = 0;
+    auto list = _unreadFriendsEntries;
+
+    _unreadFriendsEntries.clear();
     emit unreadFriendsEntriesChanged();
+
+    return list;
 }
 
 
@@ -309,9 +310,9 @@ void Tasty::_init()
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
 
-    Q_TEST(connect(_pusher, SIGNAL(unreadChats(int)),          this, SLOT(_setUnreadChats(int))));
-    Q_TEST(connect(_pusher, SIGNAL(unreadNotifications(int)),  this, SLOT(_setUnreadNotifications(int))));
-    Q_TEST(connect(_pusher, SIGNAL(unreadFriendsEntry(int)),   this, SLOT(_incUnreadFriendEntries())));
+    Q_TEST(connect(_pusher, &PusherClient::unreadChats,          this, &Tasty::_setUnreadChats;
+    Q_TEST(connect(_pusher, &PusherClient::unreadNotifications,  this, &Tasty::_setUnreadNotifications;
+    Q_TEST(connect(_pusher, &PusherClient::unreadFriendsEntry,   this, &Tasty::_addUnreadFriendEntry;
 
     QQuickStyle::setStyle("Material");
 
@@ -485,9 +486,16 @@ void Tasty::_setUnreadNotifications(int count)
 
 
 
-void Tasty::_incUnreadFriendEntries()
+void Tasty::_addUnreadFriendEntry(int entryId)
 {
-    _unreadFriendsEntries++;
+    auto entry = _dataCache->entry(entryId);
+    if (!entry)
+    {
+        entry = EntryPtr::create(nullptr);
+        entry->setId(entryId);
+    }
+
+    _unreadFriendsEntries << entry;
     emit unreadFriendsEntriesChanged();
 }
 
@@ -519,7 +527,7 @@ void Tasty::_finishLogin()
     _unreadNotifications = 0;
     emit unreadNotificationsChanged();
 
-    _unreadFriendsEntries = 0;
+    _unreadFriendsEntries.clear();
     emit unreadFriendsEntriesChanged();
 
     if (_me)

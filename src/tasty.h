@@ -27,6 +27,8 @@
 #include <QQmlApplicationEngine>
 #include <QRegularExpression>
 
+#include "defines.h"
+
 #include "settings.h"
 
 #define pTasty Tasty::instance()
@@ -63,9 +65,9 @@ public:
 
     int unreadChats()          const { return _unreadChats; }
     int unreadNotifications()  const { return _unreadNotifications; }
-    int unreadFriendsEntries() const { return _unreadFriendsEntries; }
+    int unreadFriendsEntries() const { return _unreadFriendsEntries.size(); }
 
-    void clearUnreadFriendsEntries();
+    QList<EntryPtr> clearUnreadFriendsEntries();
 
     Q_INVOKABLE static QString num2str(const int n, const QString& str1,
                     const QString& str234, const QString& str5);
@@ -112,7 +114,7 @@ private slots:
 
     void _setUnreadChats(int count);
     void _setUnreadNotifications(int count);
-    void _incUnreadFriendEntries();
+    void _addUnreadFriendEntry(int entryId);
 
     void _saveOrReconnect(Qt::ApplicationState state);
 
@@ -130,7 +132,8 @@ private:
 
     int _unreadChats;
     int _unreadNotifications;
-    int _unreadFriendsEntries;
+
+    QList<EntryPtr> _unreadFriendsEntries;
 
     User* _me; //-V122
 
