@@ -17,14 +17,14 @@ class TastyDataCache
 public:
     explicit TastyDataCache();
 
-    void addChat(ChatPtr& chat);
+    void addChat(ChatPtr chat);
     void removeChat(Conversation* chat);
 
     ChatPtr chat(int id) const;
     ChatPtr chatByEntry(int entryId) const;
     ChatPtr chatByTlog(int tlogId) const;
 
-    void addEntry(EntryPtr& entry);
+    void addEntry(EntryPtr entry);
     void removeEntry(int id);
 
     EntryPtr entry(int id) const;
