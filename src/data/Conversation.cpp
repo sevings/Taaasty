@@ -58,7 +58,7 @@ Conversation::Conversation(QObject* parent)
     , _isAnonymous(false)
     , _entryId(0)
     , _recipient(nullptr)
-    , _messages(nullptr)
+    , _messages(new MessagesModel(this))
     , _typedTimer(nullptr)
     , _hadTyped(false)
 {

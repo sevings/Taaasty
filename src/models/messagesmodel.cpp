@@ -59,7 +59,7 @@ MessagesModel::MessagesModel(Conversation* chat)
 
 void MessagesModel::init(Conversation* chat)
 {
-    if (!chat || _chatId)
+    if (!chat || !chat->id() || _chatId)
         return;
 
     _chat = chat;

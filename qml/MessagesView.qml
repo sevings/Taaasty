@@ -164,13 +164,14 @@ Pane {
                         right: parent.right
                         margins: 1.5 * mm
                     }
+                    height: active ? item.height : - 1.5 * mm
                     asynchronous: false
                     readonly property AttachedImagesModel imagesModel: message.attachedImagesModel
                     active: imagesModel && imagesModel.rowCount() > 0
                     sourceComponent: ListView {
                         interactive: false
                         spacing: 1.5 * mm
-                        height: visible ? contentHeight : -1.5 * mm
+                        height: contentHeight
                         model: messageImages.imagesModel
                         delegate: MyImage {
                             id: picture
