@@ -15,7 +15,7 @@ TastyDataCache::TastyDataCache()
 
 
 
-void TastyDataCache::addChat(const ChatPtr& chat)
+void TastyDataCache::addChat(ChatPtr& chat)
 {
     if (!chat)
         return;
@@ -23,6 +23,8 @@ void TastyDataCache::addChat(const ChatPtr& chat)
     Q_ASSERT(!chat->parent());
 
     _chats.insert(chat->id(), chat.data());
+
+    chat->setCppOwnership();
 
     if (chat->entryId())
         _chatsByEntry.insert(chat->entryId(), chat.data());
@@ -78,9 +80,11 @@ ChatPtr TastyDataCache::chatByTlog(int tlogId) const
 
 
 
-void TastyDataCache::addEntry(const EntryPtr& entry)
+void TastyDataCache::addEntry(EntryPtr& entry)
 {
     Q_ASSERT(!entry || !entry->parent());
+
+    entry->setCppOwnership();
 
     if (entry)
         _entries.insert(entry->entryId(), entry.data());
@@ -108,6 +112,8 @@ EntryPtr TastyDataCache::entry(int id) const
 
 void TastyDataCache::addMessage(Message* msg)
 {
+    message->setCppOwnership();
+
     _messages.insert(msg->id(), msg);
 }
 
@@ -129,6 +135,8 @@ Message* TastyDataCache::message(int id) const
 
 void TastyDataCache::addComment(Comment* cmt)
 {
+    cmt->setCppOwnership();
+
     _comments.insert(cmt->id(), cmt);
 }
 
@@ -143,6 +151,8 @@ void TastyDataCache::removeComment(int id)
 
 void TastyDataCache::addNotification(Notification* notif)
 {
+    notif->setCppOwnership();
+
     _notifications.insert(notif->id(), notif);
 }
 

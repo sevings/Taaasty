@@ -22,6 +22,7 @@
 
 #include "TastyData.h"
 
+#include <QQmlEngine>
 #include <QDebug>
 
 #include "../defines.h"
@@ -35,6 +36,13 @@ TastyData::TastyData(QObject* parent)
     , _networkError(false)
 {
 
+}
+
+
+
+void TastyData::setCppOwnership()
+{
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 }
 
 
@@ -68,7 +76,7 @@ QString TastyData::errorString() const
 
 
 void TastyData::_setErrorString(int errorCode, QString str)
-{    
+{
     qDebug() << "TastyData error code" << errorCode;
 
     _errorString = str;
@@ -86,22 +94,22 @@ void TastyData::_setErrorString(int errorCode, QString str)
 void TastyData::_initRequest()
 {
     emit loadingChanged();
-    
+
     if (!_request)
         return;
-    
+
     _errorString.clear();
     emit errorStringChanged();
 
     _networkError = false;
     emit networkErrorChanged();
 
-    Q_TEST(connect(_request, &QObject::destroyed, 
+    Q_TEST(connect(_request, &QObject::destroyed,
             this, &TastyData::loadingChanged, Qt::QueuedConnection));
 
     Q_TEST(connect(_request, SIGNAL(error(int,QString)),
                    this, SLOT(_setErrorString(int,QString))));
-                   
+
     QPointer<TastyData> that(this);
     Q_TEST(connect(_request, &ApiRequest::networkError, [that]()
     {

@@ -39,6 +39,8 @@ class TastyData: public QObject
 public:
     TastyData(QObject* parent = nullptr);
 
+    void    setCppOwnership();
+
     int     id() const;
     bool    isLoading() const;
     bool    networkError() const;
@@ -58,6 +60,6 @@ protected:
     QPointer<ApiRequest> _request;
     bool                 _networkError;
     QString              _errorString;
-    
+
     void _initRequest();
 };
