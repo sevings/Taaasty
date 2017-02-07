@@ -140,7 +140,7 @@ Item {
         active: entry && entry.media
         asynchronous: false
         sourceComponent: MediaLink {
-            media: entry.media
+            media: entry ? entry.media : null
             acceptClick: false
             popBody: truncEntry.popBody
         }

@@ -387,6 +387,9 @@ void FeedModel::_addItems(const QJsonObject& data)
         auto json = obj.contains(QStringLiteral("entry")) ? obj.value(QStringLiteral("entry")).toObject()
                                           : obj;
         auto id = json.value(QStringLiteral("id")).toInt();
+        if (_idEntries.contains(id))
+            continue;
+
         auto entry = pTasty->dataCache()->entry(id);
         if (!entry)
             entry = EntryPtr::create(nullptr);
@@ -589,7 +592,7 @@ void FeedModel::_prependFriendsEntries()
 
     auto entries = pTasty->clearUnreadFriendsEntries();
     while (!entries.isEmpty())
-        _prepend(entries.last());
+        _prepend(entries.takeLast());
 }
 
 
