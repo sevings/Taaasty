@@ -153,7 +153,7 @@ Pane {
                 readonly property int dateWidth: messageDate.contentWidth
                                                  + (unreadMessage.visible ? unreadMessage.width + 1.5 * mm : 0)
                 readonly property int textWidth: Math.max(messageText.contentWidth, dateWidth) + 3 * mm
-                width: textWidth > maxWidth || messageImages.visible ? maxWidth : textWidth
+                width: textWidth > maxWidth || messageImages.active ? maxWidth : textWidth
                 height: messageDate.y + messageDate.contentHeight + 1.5 * mm
                 color: window.darkTheme ? '#404040' : window.backgroundColor
                 Loader {
