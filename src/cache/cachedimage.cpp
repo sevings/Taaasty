@@ -35,6 +35,15 @@
 
 #include <QDebug>
 
+#include <QThread>
+
+#ifdef Q_OS_ANDROID
+#   include <QGuiApplication>
+#else
+#   include <QApplication>
+#endif
+
+
 #include "../defines.h"
 
 #include "cachemanager.h"
@@ -126,6 +135,7 @@ QPixmap CachedImage::pixmap()
 {
     Q_ASSERT(_format != GifFormat);
     Q_ASSERT(_available);
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
 
     QPixmap pm(1, 1);
     if (!QPixmapCache::find(_pmKey, &pm))

@@ -127,7 +127,8 @@ Pane {
                 }
                 active: entry.author.id !== entry.tlog.tlogId
                         && entry.tlog.tlogId !== tlog.tlogId
-                asynchronous: false
+                asynchronous: true
+                Component.onDestruction: sourceComponent = undefined
                 sourceComponent: ThemedText {
                     color: window.secondaryTextColor
                     font.pixelSize: window.fontSmaller

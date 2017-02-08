@@ -165,7 +165,8 @@ Pane {
                         margins: 1.5 * mm
                     }
                     height: active ? item.height : - 1.5 * mm
-                    asynchronous: false
+                    asynchronous: true
+                    Component.onDestruction: sourceComponent = undefined
                     readonly property AttachedImagesModel imagesModel: message.attachedImagesModel
                     active: imagesModel && imagesModel.rowCount() > 0
                     sourceComponent: ListView {

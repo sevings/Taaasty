@@ -107,8 +107,13 @@ PopupFill {
                 }
                 active: !model.chat.isAnonymous && model.chat.lastMessage.userId !== model.chat.recipientId
                          && (model.chat.entry ? model.chat.lastMessage.userId !== model.chat.entry.author.id : true)
-                asynchronous: false
+                asynchronous: true
+                Component.onDestruction: sourceComponent = undefined
                 sourceComponent: SmallAvatar {
+                    anchors {
+                        top: undefined
+                        left: undefined
+                    }
                     width: 4 * mm
                     height: 4 * mm
                     user: lastMessageAvatar.active ? model.chat.lastMessage.user

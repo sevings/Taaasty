@@ -159,6 +159,8 @@ PopupFill {
                     leftMargin: window.friendActivity ? 3 * mm : 0
                     rightMargin: anchors.leftMargin
                 }
+                asynchronous: true
+                Component.onDestruction: sourceComponent = undefined
                 readonly property string textContent: window.friendActivity ? '' : notification.text
                 readonly property User notificationUser: window.friendActivity && notification.entityType === Notification.RelationshipType
                                                          ? notification.entityUser : null

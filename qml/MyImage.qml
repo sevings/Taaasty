@@ -76,11 +76,12 @@ Item {
     }
     Loader {
         anchors.fill: parent
-        asynchronous: false
+        asynchronous: true
         active: image.available
         sourceComponent: active ? (cachedImage.format == CachedImage.GifFormat
                                    ? animatedImage : staticImage)
                                 : undefined
+        Component.onDestruction: sourceComponent = undefined
     }
     Poppable {
         id: pop
@@ -98,7 +99,8 @@ Item {
         id: back
         anchors.fill: parent
         active: !image.available
-        asynchronous: false
+        asynchronous: true
+        Component.onDestruction: sourceComponent = undefined
         sourceComponent: Rectangle {
             color: image.backgroundColor
             Rectangle {

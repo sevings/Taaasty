@@ -57,7 +57,8 @@ Item {
             margins: 1.5 * mm
         }
         height: 20 * sp
-        asynchronous: false
+        asynchronous: true
+        Component.onDestruction: sourceComponent = undefined
         sourceComponent: Image {
             fillMode: Image.PreserveAspectFit
             source: (window.darkTheme ? '../icons/pin-white-'
@@ -104,7 +105,8 @@ Item {
         readonly property AttachedImage image: entry ? entry.attachedImagesModel.first : null
         active: image
         height: active ? (image.height / image.width * width) : 0
-        asynchronous: false
+        asynchronous: true
+        Component.onDestruction: sourceComponent = undefined
         sourceComponent: MyImage {
             url: firstImage.image ? firstImage.image.url : ''
             extension: firstImage.image ? firstImage.image.type : ''
@@ -138,7 +140,8 @@ Item {
             bottomMargin: 1.5 * mm
         }
         active: entry && entry.media
-        asynchronous: false
+        asynchronous: true
+        Component.onDestruction: sourceComponent = undefined
         sourceComponent: MediaLink {
             media: entry ? entry.media : null
             acceptClick: false
