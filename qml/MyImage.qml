@@ -76,7 +76,7 @@ Item {
     }
     Loader {
         anchors.fill: parent
-        asynchronous: true
+        asynchronous: false
         active: image.available
         sourceComponent: active ? (cachedImage.format == CachedImage.GifFormat
                                    ? animatedImage : staticImage)
@@ -99,7 +99,7 @@ Item {
         id: back
         anchors.fill: parent
         active: !image.available
-        asynchronous: true
+        asynchronous: false
         Component.onDestruction: sourceComponent = undefined
         sourceComponent: Rectangle {
             color: image.backgroundColor

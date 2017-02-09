@@ -57,7 +57,7 @@ Item {
             margins: 1.5 * mm
         }
         height: 20 * sp
-        asynchronous: true
+        asynchronous: false
         Component.onDestruction: sourceComponent = undefined
         sourceComponent: Image {
             fillMode: Image.PreserveAspectFit
@@ -105,7 +105,7 @@ Item {
         readonly property AttachedImage image: entry ? entry.attachedImagesModel.first : null
         active: image
         height: active ? (image.height / image.width * width) : 0
-        asynchronous: true
+        asynchronous: false
         Component.onDestruction: sourceComponent = undefined
         sourceComponent: MyImage {
             url: firstImage.image ? firstImage.image.url : ''
@@ -140,7 +140,7 @@ Item {
             bottomMargin: 1.5 * mm
         }
         active: entry && entry.media
-        asynchronous: true
+        asynchronous: false
         Component.onDestruction: sourceComponent = undefined
         sourceComponent: MediaLink {
             media: entry ? entry.media : null

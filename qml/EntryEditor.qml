@@ -108,7 +108,7 @@ Pane {
                     width: images.width
                     cache: true
                     smooth: true
-                    asynchronous: true
+                    asynchronous: false
                     autoTransform: true
                     fillMode: Image.PreserveAspectFit
                     source: model.display

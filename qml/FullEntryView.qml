@@ -193,7 +193,7 @@ Pane {
                     bottomMargin: 1.5 * mm
                 }
                 property AttachedImagesModel imagesModel: entry.attachedImagesModel
-                asynchronous: true
+                asynchronous: false
                 Component.onDestruction: sourceComponent = undefined
                 active: imagesModel && imagesModel.rowCount() > 0
                 sourceComponent: ListView {
@@ -221,7 +221,7 @@ Pane {
 //                    topMargin: 1.5 * mm
                     bottomMargin: 1.5 * mm
                 }
-                asynchronous: true
+                asynchronous: false
                 active: entry.media
                 Component.onDestruction: sourceComponent = undefined
                 sourceComponent: MediaLink {
