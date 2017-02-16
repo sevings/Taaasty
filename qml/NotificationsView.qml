@@ -54,7 +54,7 @@ PopupFill {
     MyListView {
         id: notifsView
         anchors.fill: parent
-        visible: count > 0
+        visible: model.size > 0
         model: window.friendActivity ? FriendActivityModel : NotifsModel
         spacing: 3 * mm
         cacheBuffer: back.visible ? 2 * window.height : 0

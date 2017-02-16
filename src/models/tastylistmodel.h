@@ -17,6 +17,7 @@ class TastyListModel : public QAbstractListModel
     Q_PROPERTY(bool loading         READ isLoading      NOTIFY loadingChanged)
     Q_PROPERTY(bool checking        READ isChecking     NOTIFY checkingChanged)
     Q_PROPERTY(bool hasMore         READ hasMore        NOTIFY hasMoreChanged)
+    Q_PROPERTY(int size             READ rowCount       NOTIFY rowCountChanged)
     Q_PROPERTY(bool networkError    READ networkError   NOTIFY networkErrorChanged)
     Q_PROPERTY(QString errorString  READ errorString    NOTIFY errorStringChanged)
 
@@ -35,6 +36,7 @@ signals:
     void loadingChanged();
     void checkingChanged();
     void hasMoreChanged();
+    void rowCountChanged();
     void errorStringChanged();
     void networkErrorChanged();
 

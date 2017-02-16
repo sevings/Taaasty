@@ -38,7 +38,7 @@ PopupFill {
     MyListView {
         id: listView
         anchors.fill: parent
-        visible: count > 0
+        visible: model.size > 0
         model: ChatsModel
         spacing: 2 * mm
         cacheBuffer: back.visible ? 2 * window.height : 0

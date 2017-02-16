@@ -147,6 +147,8 @@ void ChatsModel::setMode(ChatsModel::Mode mode)
         qDebug() << "Error ChatsModel::Mode" << mode;
     }
 
+    emit rowCountChanged();
+
     endResetModel();
 }
 
@@ -189,6 +191,8 @@ void ChatsModel::addChat(const ChatPtr& chat)
     _allChats.prepend(chat);
     _chats.prepend(chat);
     _ids << chat->id();
+
+    emit rowCountChanged();
 
     Q_TEST(connect(chat.data(), SIGNAL(left(int)), this, SLOT(_removeChat(int))));
 
@@ -275,6 +279,8 @@ void ChatsModel::reset()
     _chats.clear();
     _ids.clear();
     _entryChats.clear();
+
+    emit rowCountChanged();
 
     _hasMore = true;
     delete _checkRequest;
@@ -394,6 +400,8 @@ void ChatsModel::_addUnread(const QJsonArray& data)
     for (int i = 0; i < chats.size(); i++)
         _chats.insert(i, chats.at(i));
 
+    emit rowCountChanged();
+
     endInsertRows();
 }
 
@@ -448,6 +456,9 @@ void ChatsModel::_addChats(const QJsonArray& data)
 
     beginInsertRows(QModelIndex(), _chats.size(), _chats.size() + chats.size() - 1);
     _chats << chats;
+
+    emit rowCountChanged();
+
     endInsertRows();
 
     // requested 10 chats, but loaded less
@@ -483,6 +494,8 @@ void ChatsModel::_removeChat(int id)
 
     auto chat = _chats.takeAt(i);
     _entryChats.remove(chat->entryId());
+
+    emit rowCountChanged();
 
     endRemoveRows();
 }

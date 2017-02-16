@@ -257,6 +257,8 @@ void NotificationsModel::_addItems(const QJsonObject& data)
     for (auto notif: notifs)
         _notifs.insert(size, notif);
 
+    emit rowCountChanged();
+
     endInsertRows();
 
     if (_notifs.size() >= _totalCount)
@@ -285,6 +287,8 @@ void NotificationsModel::_addPush(QJsonObject data)
         _androidNotifier->setNotification(text);
     }
 #endif
+
+    emit rowCountChanged();
 
     endInsertRows();
 
@@ -329,6 +333,8 @@ void NotificationsModel::_addNewest(const QJsonObject& data)
 #endif
     }
 
+    emit rowCountChanged();
+
     endInsertRows();
 
     emit unreadChanged();
@@ -347,6 +353,8 @@ void NotificationsModel::_reloadAll()
     qDeleteAll(_notifs);
     _notifs.clear();
     _ids.clear();
+
+    emit rowCountChanged();
 
     endResetModel();
 

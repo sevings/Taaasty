@@ -49,7 +49,7 @@ Pane {
             right: parent.right
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
-        visible: count > 0 && !calendarModel.loadingRatings
+        visible: model.size > 0 && !calendarModel.loadingRatings
         model: CalendarModel {
             id: calendarModel
             sortOrder: back.sortOrder

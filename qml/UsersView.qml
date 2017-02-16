@@ -46,7 +46,7 @@ Pane {
             left: parent.left
             right: parent.right
         }
-        visible: count > 0
+        visible: model.size > 0
         height: contentHeight > parent.height ? parent.height : contentHeight
         model: UsersModel {
             mode: back.mode

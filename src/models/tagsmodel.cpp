@@ -102,6 +102,8 @@ void TagsModel::setTlog(int tlog)
     _names.clear();
     _counts.clear();
 
+    emit rowCountChanged();
+
     endResetModel();
     
     fetchMore(QModelIndex());
@@ -128,6 +130,8 @@ void TagsModel::_setData(const QJsonArray& data)
         _names << tag.toObject().value(QStringLiteral("name")).toString();
         _counts << tag.toObject().value(QStringLiteral("taggings_count")).toInt();
     }
-    
+
+    emit rowCountChanged();
+
     endResetModel();
 }

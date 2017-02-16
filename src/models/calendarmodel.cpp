@@ -112,6 +112,8 @@ void CalendarModel::setTlog(int tlog)
     _calendar.clear();
     _firstMonthEntries.clear();
 
+    emit rowCountChanged();
+
     endResetModel();
 
     fetchMore(QModelIndex());
@@ -211,6 +213,8 @@ void CalendarModel::_setCalendar(const QJsonObject& data)
                 _firstMonthEntries.insert(entry->month(), entry);
         }
     }
+
+    emit rowCountChanged();
 
     endResetModel();
 

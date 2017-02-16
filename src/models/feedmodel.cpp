@@ -489,6 +489,8 @@ void FeedModel::_changeHideSome()
         }
     }
 
+    emit rowCountChanged();
+
     endResetModel();
 }
 
@@ -578,6 +580,8 @@ void FeedModel::_removeEntry(int id)
             _idEntries.remove(id);
             endRemoveRows();
 
+            emit rowCountChanged();
+
             break;
         }
 }
@@ -606,6 +610,8 @@ void FeedModel::_prepend(const EntryPtr& entry)
 
     _entries.insert(_fixedCount, entry);
 
+    emit rowCountChanged();
+
     if (!_allEntries.isEmpty())
         _allEntries.insert(_allFixedCount, entry);
 
@@ -628,6 +634,8 @@ void FeedModel::_addAll(QList<EntryPtr>& all, int& from)
         _entries.insert(from++, e);
         _idEntries.insert(e->id(), e);
     }
+
+    emit rowCountChanged();
 
     endInsertRows();
 }
@@ -667,6 +675,8 @@ void FeedModel::_clear()
     _entries.clear();
     _allEntries.clear();
     _idEntries.clear();
+
+    emit rowCountChanged();
 
     _fixedCount = 0;
     _allFixedCount = 0;

@@ -126,6 +126,8 @@ void FlowsModel::setMode(const FlowsModel::Mode mode)
     qDeleteAll(_flows);
     _flows.clear();
 
+    emit rowCountChanged();
+
     _page = 1;
     _hasMore = true;
     emit hasMoreChanged();
@@ -154,6 +156,8 @@ void FlowsModel::reset()
 
     qDeleteAll(_flows);
     _flows.clear();
+
+    emit rowCountChanged();
 
     _page = 1;
     _hasMore = true;
@@ -198,6 +202,8 @@ void FlowsModel::_addItems(const QJsonObject& data)
         flow->init(flowData.toObject().value(QStringLiteral("flow")).toObject());
         _flows << flow;
     }
+
+    emit rowCountChanged();
 
     endInsertRows();
 }

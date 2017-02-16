@@ -162,6 +162,9 @@ void UsersModel::setTlog(const int tlog)
     setMode(_mode);
 
     qDeleteAll(_users);
+    _users.clear();
+
+    emit rowCountChanged();
 
     endResetModel();
 
@@ -211,6 +214,8 @@ void UsersModel::_addItems(const QJsonObject& data)
     beginInsertRows(QModelIndex(), _users.size(), _users.size() + list.size() - 1);
     _users << users;
     endInsertRows();
+
+    emit rowCountChanged();
 
     if (_users.size() >= _total)
         emit hasMoreChanged();

@@ -51,7 +51,7 @@ Pane {
             right: parent.right
         }
         height: contentHeight > parent.height ? parent.height : contentHeight
-        visible: count > 0
+        visible: model.size > 0
         model: tagsModel
         delegate: Rectangle {
             id: tagView

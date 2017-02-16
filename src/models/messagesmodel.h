@@ -43,8 +43,6 @@ class MessagesModel : public TastyListModel
 
     Q_PROPERTY(int chatId READ chatId)
 
-    Q_PROPERTY(int size   READ rowCount NOTIFY rowCountChanged)
-
 public:
     explicit MessagesModel(Conversation* chat = nullptr);
 
@@ -66,8 +64,6 @@ signals:
 
     void itemsAboutToBePrepended();
     void itemsPrepended(int prependedCount);
-
-    void rowCountChanged();
 
 public slots:
     void reset();

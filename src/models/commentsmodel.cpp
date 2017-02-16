@@ -82,6 +82,8 @@ void CommentsModel::init(const QJsonArray& feed, int totalCount)
             _comments << cmts;
     }
 
+    emit rowCountChanged();
+
     _totalCount = totalCount;
 
     if (reset)
@@ -214,6 +216,8 @@ void CommentsModel::_addComments(const QJsonArray& feed)
 
     _comments = cmts + _comments;
 
+    emit rowCountChanged();
+
     endInsertRows();
 
     if (_comments.size() <= feed.size())
@@ -240,7 +244,9 @@ void CommentsModel::_addLastComments(const QJsonObject& data)
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size() + cmts.size() - 1);
 
     _comments << cmts; 
-    
+
+    emit rowCountChanged();
+
     endInsertRows();
 
     emit lastCommentChanged();
@@ -268,6 +274,8 @@ void CommentsModel::_addComment(const QJsonObject& data)
     _comments << cmt;
     _ids << cmt->id();
 
+    emit rowCountChanged();
+
     Q_TEST(connect(cmt, SIGNAL(destroyed(QObject*)), this, SLOT(_removeComment(QObject*))));
 
     endInsertRows();
@@ -289,6 +297,8 @@ void CommentsModel::_removeComment(QObject* cmt)
 
     _comments.removeAt(i);
     _ids.remove(comment->id());
+
+    emit rowCountChanged();
 
     endRemoveRows();
 
