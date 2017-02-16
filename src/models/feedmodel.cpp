@@ -266,9 +266,9 @@ void FeedModel::reset(Mode mode, int tlog, const QString& slug, const QString& q
     {
         _mode = mode;
         emit modeChanged();
-
-        _setUrl(_mode);
     }
+
+    _setUrl(_mode);
 
     if (_mode == FriendsMode)
         Q_TEST(QMetaObject::invokeMethod(this, "_prependFriendsEntries", Qt::QueuedConnection));
