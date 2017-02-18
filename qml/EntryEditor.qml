@@ -25,12 +25,13 @@ import org.binque.taaasty 1.0
 
 Pane {
     id: back
-    hasMenu: true
+    hasMenu: !editEntry
     readonly property bool isEntryEditor: true
     property int entryType: Settings.lastEntryType;
     readonly property int privacy: lockButton.locked && lockButton.visible
                                    ? Poster.Private : fireButton.voting
                                      ? Poster.Voting : Poster.Public;
+    property TlogEntry editEntry
     Component.onCompleted: load()
     Component.onDestruction: save()
     onHeightChanged: {
@@ -42,6 +43,18 @@ Pane {
             sourceInput.ensureVisible(sourceInput.cursorRectangle)
     }
     function load() {
+        if (editEntry)
+        {
+            back.entryType    = editEntry.type;
+            titleInput.text   = editEntry.title;
+            textInput.text    = editEntry.text;
+            sourceInput.text  = editEntry.source;
+            fireButton.voting = editEntry.isVotable;
+            lockButton.locked = editEntry.isPrivate;
+
+            return;
+        }
+
         titleInput.text   = Settings.lastTitle;
         textInput.text    = Settings.lastText;
         sourceInput.text  = Settings.lastSource;
@@ -51,6 +64,9 @@ Pane {
         whereBox.setLastTlog();
     }
     function save() {
+        if (editEntry)
+            return;
+
         Settings.lastTitle       = titleInput.text;
         Settings.lastText        = textInput.text;
         Settings.lastSource      = sourceInput.text;
@@ -58,8 +74,14 @@ Pane {
         Settings.lastEntryType   = back.entryType;
         Settings.lastPostingTlog = whereBox.tlog;
     }
+    function clear() {
+        titleInput.clear();
+        textInput.clear();
+        sourceInput.clear();
+        window.popFromStack();
+    }
     Timer {
-        running: !poster.loading
+        running: !poster.loading && !editEntry
         interval: 30000
         repeat: true
         onTriggered: {
@@ -237,7 +259,7 @@ Pane {
                 }
                 readOnly: poster.loading
                 flickable: flick
-//                textFormat: TextEdit.RichText
+                textFormat: TextEdit.RichText
                 placeholderText: {
                     switch (entryType)
                     {
@@ -344,26 +366,48 @@ Pane {
                                                 : '../icons/send-dark-')
                               + '128.png'
                         onClicked: {
-                            switch (entryType)
-                            {
-                            case TlogEntry.ImageEntry:
-                                poster.postImage(textInput.text, back.privacy, whereBox.tlog);
-                                break;
-                            case TlogEntry.QuoteEntry:
-                                poster.postQuote(textInput.text, sourceInput.text, back.privacy, whereBox.tlog);
-                                break;
-                            case TlogEntry.VideoEntry:
-                                poster.postVideo(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
-                                break;
-                            case TlogEntry.TextEntry:
-                                poster.postText(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
-                                break;
-                            case TlogEntry.AnonymousEntry:
-                                poster.postAnonymous(titleInput.text, textInput.text);
-                                break;
-                            default:
-                                console.log('entry type', entryType);
-                            }
+                            if (editEntry)
+                                switch (editEntry.type)
+                                {
+                                case TlogEntry.ImageEntry:
+                                    poster.putImage(editEntry.id, textInput.text, back.privacy);
+                                    break;
+                                case TlogEntry.QuoteEntry:
+                                    poster.putQuote(editEntry.id, textInput.text, sourceInput.text, back.privacy);
+                                    break;
+                                case TlogEntry.VideoEntry:
+                                    poster.putVideo(editEntry.id, titleInput.text, textInput.text, back.privacy);
+                                    break;
+                                case TlogEntry.TextEntry:
+                                    poster.putText(editEntry.id, titleInput.text, textInput.text, back.privacy);
+                                    break;
+                                case TlogEntry.AnonymousEntry:
+                                    poster.putAnonymous(editEntry.id, titleInput.text, textInput.text);
+                                    break;
+                                default:
+                                    console.log('entry type', entryType);
+                                }
+                            else
+                                switch (entryType)
+                                {
+                                case TlogEntry.ImageEntry:
+                                    poster.postImage(textInput.text, back.privacy, whereBox.tlog);
+                                    break;
+                                case TlogEntry.QuoteEntry:
+                                    poster.postQuote(textInput.text, sourceInput.text, back.privacy, whereBox.tlog);
+                                    break;
+                                case TlogEntry.VideoEntry:
+                                    poster.postVideo(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
+                                    break;
+                                case TlogEntry.TextEntry:
+                                    poster.postText(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
+                                    break;
+                                case TlogEntry.AnonymousEntry:
+                                    poster.postAnonymous(titleInput.text, textInput.text);
+                                    break;
+                                default:
+                                    console.log('entry type', entryType);
+                                }
                         }
                     }
                 }
@@ -376,7 +420,9 @@ Pane {
                         leftMargin: 1.5 * mm
                         rightMargin: 1.5 * mm
                     }
-                    visible: back.entryType != TlogEntry.AnonymousEntry && count > 1
+                    visible: !back.editEntry
+                             && back.entryType != TlogEntry.AnonymousEntry
+                             && count > 1
                     textRole: "name"
                     font.pixelSize: window.fontSmaller
                     model: AvailableTlogsModel {
@@ -425,11 +471,12 @@ Pane {
     Poster {
         id: poster
         onPosted: {
-            titleInput.clear();
-            textInput.clear();
-            sourceInput.clear();
-            window.popFromStack();
+            back.clear();
             window.showMessage('Запись опубликована', true);
+        }
+        onEdited: {
+            back.clear();
+            window.showMessage('Запись отредактирована', true);
         }
     }
 }

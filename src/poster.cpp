@@ -23,11 +23,13 @@
 #include "poster.h"
 
 #include <QUrl>
+#include <QRegularExpression>
 
 #include "models/uploadmodel.h"
 
 #include "data/Entry.h"
 #include "tasty.h"
+#include "tastydatacache.h"
 #include "apirequest.h"
 
 
@@ -84,7 +86,6 @@ void Poster::postImage(QString title, Poster::Privacy privacy, int tlogId)
     _prepare(title, tlogId);
 
     _request->setUrl(QStringLiteral("v1/entries/image.json"));
-    _request->addFormData("title", title);
     _request->addFormData("privacy", _privacyValue(privacy));
     _request->addImages(_images);
 
@@ -98,9 +99,9 @@ void Poster::postQuote(QString text, QString source, Privacy privacy, int tlogId
     Q_ASSERT(tlogId >= 0);
     
     _prepare(tlogId);
+    _prepareText(text);
 
     _request->setUrl(QStringLiteral("v1/entries/quote.json"));
-    _request->addFormData("text", text.trimmed());
     _request->addFormData("source", source.trimmed());
     _request->addFormData("privacy", _privacyValue(privacy));
     
@@ -116,7 +117,6 @@ void Poster::postVideo(QString title, QString url, Privacy privacy, int tlogId)
     _prepare(title, tlogId);
 
     _request->setUrl(QStringLiteral("v1/entries/video.json"));
-    _request->addFormData("titlle", title);
     _request->addFormData("video_url", url);
     _request->addFormData("privacy", _privacyValue(privacy));
     
@@ -136,8 +136,6 @@ void Poster::postText(QString title, QString content, Poster::Privacy privacy, i
     _prepare(title, content, tlogId);
 
     _request->setUrl(QStringLiteral("v1/entries/text.json"));
-    _request->addFormData("title", title);
-    _request->addFormData("text", content);
     _request->addFormData("privacy", _privacyValue(privacy));
     
     _postPrepared();
@@ -150,10 +148,76 @@ void Poster::postAnonymous(QString title, QString content)
     _prepare(title, content, -1);
 
     _request->setUrl(QStringLiteral("v1/entries/anonymous.json"));
-    _request->addFormData("title", title);
-    _request->addFormData("text", content);
 
     _postPrepared();
+}
+
+
+
+void Poster::putImage(int id, QString title, Poster::Privacy privacy)
+{
+    if (!_images || !_images->rowCount())
+    {
+        emit pTasty->error(0, QStringLiteral("Добавьте хотя бы одно изображение"));
+        return;
+    }
+
+    _prepareTitle(title);
+
+    _request->setUrl(QStringLiteral("v1/entries/image.json").arg(id));
+    _request->addFormData("privacy", _privacyValue(privacy));
+    _request->addImages(_images);
+
+    _putPrepared();
+}
+
+
+
+void Poster::putQuote(int id, QString text, QString source, Poster::Privacy privacy)
+{
+    _prepareText(text);
+
+    _request->setUrl(QStringLiteral("v1/entries/quote/%1.json").arg(id));
+    _request->addFormData("source", source.trimmed());
+    _request->addFormData("privacy", _privacyValue(privacy));
+
+    _putPrepared();
+}
+
+
+
+void Poster::putVideo(int id, QString title, QString url, Poster::Privacy privacy)
+{
+    _prepareTitle(title);
+
+    _request->setUrl(QStringLiteral("v1/entries/video/%1.json").arg(id));
+    _request->addFormData("video_url", url);
+    _request->addFormData("privacy", _privacyValue(privacy));
+
+    _putPrepared();
+}
+
+
+
+void Poster::putText(int id, QString title, QString content, Poster::Privacy privacy)
+{
+    _prepare(title, content);
+
+    _request->setUrl(QStringLiteral("v1/entries/text/%1.json").arg(id));
+    _request->addFormData("privacy", _privacyValue(privacy));
+
+    _putPrepared();
+}
+
+
+
+void Poster::putAnonymous(int id, QString title, QString content)
+{
+    _prepare(title, content);
+
+    _request->setUrl(QStringLiteral("v1/entries/anonymous/%1.json").arg(id));
+
+    _putPrepared();
 }
 
 
@@ -189,6 +253,20 @@ void Poster::_createPostedEntry(const QJsonObject& data)
 
 
 
+void Poster::_updateEditedEntry(const QJsonObject& data)
+{
+    auto id = data.value("id").toInt();
+    auto entry = pTasty->dataCache()->entry(id);
+    if (!entry)
+        return;
+
+    entry->init(data);
+
+    emit edited();
+}
+
+
+
 QString Poster::_privacyValue(const Privacy& privacy) const
 {
     switch (privacy) 
@@ -201,46 +279,85 @@ QString Poster::_privacyValue(const Privacy& privacy) const
         return "private";
     default:
         return QString();
-    }    
+    }
+}
+
+
+
+void Poster::_prepare()
+{
+    if (_request)
+        return;
+
+    _request = new ApiRequest(ApiRequest::AllOptions);
+
+    Q_TEST(connect(_request, &ApiRequest::progress, this, &Poster::_setProgress));
+    Q_TEST(connect(_request, &QObject::destroyed,   this, &Poster::loadingChanged, Qt::QueuedConnection));
 }
 
 
 
 void Poster::_prepare(int tlogId)
 {
+    _prepare();
+
     _tlogId = tlogId;
-    
-    if (!_request)
-        _request = new ApiRequest(ApiRequest::AllOptions);
-    
     if (tlogId > 0)
         _request->addFormData("tlog_id", tlogId);
 }
 
 
 
-void Poster::_prepare(QString& title, int tlogId)
+void Poster::_prepareTitle(QString& title)
 {
-    _prepare(tlogId);
-    
+    _prepare();
+
     if (title.isEmpty())
         title = "&nbsp;";
+
+    _request->addFormData("title", title);
+}
+
+
+
+void Poster::_prepareText(QString& content)
+{
+    _prepare();
+
+    content.remove('\n');
+    content.remove(QRegularExpression("^.*<body[^>]*>"));
+    content.remove(QRegularExpression("</body></html>$"));
+    content.remove(QRegularExpression("\\s*style=\"[^\"]*\""));
+    content.remove(QRegularExpression("\\s*width=\"\\d*\\s*\""));
+    content.replace(QRegularExpression("<span>([^<]*)</span>"), "\\1");
+
+    qDebug() << "Post content:" << content;
+
+    _request->addFormData("text", content);
+}
+
+
+
+void Poster::_prepare(QString& title, int tlogId)
+{
+    _prepareTitle(title);
+    _prepare(tlogId);
+}
+
+
+
+void Poster::_prepare(QString& title, QString& content)
+{
+    _prepareTitle(title);
+    _prepareText(content);
 }
 
 
 
 void Poster::_prepare(QString& title, QString& content, int tlogId)
 {
-    _prepare(title, tlogId);
-
-    auto ps = content.split('\n');
-    for (auto it = ps.begin(); it != ps.end(); ++it)
-        if (it->isEmpty())
-            *it = QStringLiteral("<br>");
-        else
-            it->prepend(QStringLiteral("<p>")).append(QStringLiteral("</p>"));
-
-    content = ps.join(QString());
+    _prepare(title, content);
+    _prepare(tlogId);
 }
 
 
@@ -249,9 +366,18 @@ void Poster::_postPrepared()
 {
     _request->post();
 
-    Q_TEST(connect(_request, &ApiRequest::progress,              this, &Poster::_setProgress));
     Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_createPostedEntry(const QJsonObject))));
-    Q_TEST(connect(_request, &QObject::destroyed,                this, &Poster::loadingChanged, Qt::QueuedConnection));
 
-    emit loadingChanged();    
+    emit loadingChanged();
+}
+
+
+
+void Poster::_putPrepared()
+{
+    _request->put();
+
+    Q_TEST(connect(_request, SIGNAL(success(const QJsonObject)), this, SLOT(_updateEditedEntry(const QJsonObject))));
+
+    emit loadingChanged();
 }

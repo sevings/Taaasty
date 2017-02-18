@@ -319,8 +319,13 @@ ApplicationWindow {
     function pushFlows() {
         simplePush(stack.flows);
     }
-    function pushEntryEditor() {
-        simplePush(stack.entryEditor);
+    function pushEntryEditor(entry) {
+        stack.push(stack.entryEditor,
+                   {
+                       editEntry: entry,
+                       poppable: true
+                   }
+                   )
     }
     function popFromStack() {
         stack.pop();

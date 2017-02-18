@@ -467,6 +467,20 @@ Q.Drawer {
                          && (page.entry.isDeletable || page.isUnrepostable)
             }
             MenuItem {
+                text: 'Редактировать'
+                onTriggered: {
+                    window.pushEntryEditor(page.entry);
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isFullEntryView === true
+                         && page.entry.isEditable
+                         && (page.entry.type === TlogEntry.TextEntry
+                             || page.entry.type === TlogEntry.QuoteEntry
+                             || page.entry.type === TlogEntry.AnonymousEntry)
+            }
+            MenuItem {
                 text: 'Удалить запись'
                 onTriggered: {
                     window.askUser('Удалить пост?', function() {

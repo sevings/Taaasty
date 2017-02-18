@@ -58,6 +58,7 @@ public:
 
 signals:
     void posted(EntryPtr entry);
+    void edited();
     void loadingChanged();
 
     void kBytesSentChanged();
@@ -70,17 +71,29 @@ public slots:
     void postText( QString title, QString content, Privacy privacy, int tlogId = 0);
     void postAnonymous(QString title, QString content);
 
+    void putImage(int id, QString title,                  Privacy privacy);
+    void putQuote(int id, QString text,  QString source,  Privacy privacy);
+    void putVideo(int id, QString title, QString url,     Privacy privacy);
+    void putText( int id, QString title, QString content, Privacy privacy);
+    void putAnonymous(int id, QString title, QString content);
+
 private slots:
     void _setProgress(qint64 bytes, qint64 bytesTotal);
     void _createPostedEntry(const QJsonObject& data);
+    void _updateEditedEntry(const QJsonObject& data);
 
 private:
     QString _privacyValue(const Privacy& privacy) const;
 
+    void    _prepare();
     void    _prepare(int tlogId);
+    void    _prepareTitle(QString& title);
+    void    _prepareText(QString& content);
     void    _prepare(QString& title, int tlogId);
+    void    _prepare(QString& title, QString& content);
     void    _prepare(QString& title, QString& content, int tlogId);
     void    _postPrepared();
+    void    _putPrepared();
 
     int             _tlogId;
     EntryPtr        _entry;
