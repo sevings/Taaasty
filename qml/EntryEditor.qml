@@ -47,8 +47,9 @@ Pane {
         {
             back.entryType    = editEntry.type;
             titleInput.text   = editEntry.title;
-            textInput.text    = editEntry.text;
+            textInput.text    = editEntry.media ? editEntry.title : editEntry.text;
             sourceInput.text  = editEntry.source;
+            urlText.text      = editEntry.media ? editEntry.media.url : '';
             fireButton.voting = editEntry.isVotable;
             lockButton.locked = editEntry.isPrivate;
 
@@ -58,6 +59,7 @@ Pane {
         titleInput.text   = Settings.lastTitle;
         textInput.text    = Settings.lastText;
         sourceInput.text  = Settings.lastSource;
+        urlText.text      = Settings.lastUrl;
         fireButton.voting = Settings.lastPrivacy == Poster.Voting;
         lockButton.locked = Settings.lastPrivacy == Poster.Private;
 
@@ -70,6 +72,7 @@ Pane {
         Settings.lastTitle       = titleInput.text;
         Settings.lastText        = textInput.text;
         Settings.lastSource      = sourceInput.text;
+        Settings.lastUrl         = urlText.text;
         Settings.lastPrivacy     = back.privacy;
         Settings.lastEntryType   = back.entryType;
         Settings.lastPostingTlog = whereBox.tlog;
@@ -78,6 +81,7 @@ Pane {
         titleInput.clear();
         textInput.clear();
         sourceInput.clear();
+        urlText.clear();
         window.popFromStack();
     }
     Timer {
@@ -193,14 +197,17 @@ Pane {
                 visible: entryType == TlogEntry.VideoEntry
                 width: column.width
                 height: Math.max(urlText.height, pasteUrlButton.height)
-                ThemedText {
+                Q.TextField {
                     id: urlText
                     anchors {
                         top: parent.top
                         left: parent.left
                         right: pasteUrlButton.left
+                        margins: 1.5 * mm
                         topMargin: 0
                     }
+                    placeholderText: 'Вставьте ссылку'
+                    font.pixelSize: window.fontNormal
                 }
                 IconButton {
                     id: pasteUrlButton
@@ -208,11 +215,13 @@ Pane {
                         verticalCenter: parent.verticalCenter
                         right: parent.right
                     }
+                    enabled: urlText.canPaste
                     icon: (Settings.darkTheme ? '../icons/paste-white'
                                               : '../icons/paste-black')
                           + '-128.png'
                     onClicked: {
-
+                        urlText.selectAll();
+                        urlText.paste();
                     }
                 }
             }
@@ -264,11 +273,10 @@ Pane {
                     switch (entryType)
                     {
                     case TlogEntry.ImageEntry:
+                    case TlogEntry.VideoEntry:
                         'Подпись'; break;
                     case TlogEntry.QuoteEntry:
                         'Цитата'; break;
-                    case TlogEntry.VideoEntry:
-                        ''; break;
                     case TlogEntry.TextEntry:
                         'Текст поста'; break;
                     case TlogEntry.AnonymousEntry:
@@ -354,6 +362,8 @@ Pane {
                                 textInput.length;
                                 break;
                             case TlogEntry.VideoEntry:
+                                urlText.length;
+                                break;
                             case TlogEntry.TextEntry:
                             case TlogEntry.AnonymousEntry:
                                 titleInput.length || textInput.length
@@ -376,7 +386,7 @@ Pane {
                                     poster.putQuote(editEntry.id, textInput.text, sourceInput.text, back.privacy);
                                     break;
                                 case TlogEntry.VideoEntry:
-                                    poster.putVideo(editEntry.id, titleInput.text, textInput.text, back.privacy);
+                                    poster.putVideo(editEntry.id, textInput.text, urlText.text, back.privacy);
                                     break;
                                 case TlogEntry.TextEntry:
                                     poster.putText(editEntry.id, titleInput.text, textInput.text, back.privacy);
@@ -397,7 +407,7 @@ Pane {
                                     poster.postQuote(textInput.text, sourceInput.text, back.privacy, whereBox.tlog);
                                     break;
                                 case TlogEntry.VideoEntry:
-                                    poster.postVideo(titleInput.text, textInput.text, back.privacy, whereBox.tlog);
+                                    poster.postVideo(textInput.text, urlText.text, back.privacy, whereBox.tlog);
                                     break;
                                 case TlogEntry.TextEntry:
                                     poster.postText(titleInput.text, textInput.text, back.privacy, whereBox.tlog);

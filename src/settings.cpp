@@ -571,6 +571,25 @@ void Settings::setLastSource(const QString& source)
 
 
 
+QString Settings::lastUrl() const
+{
+    return _settings.value(QStringLiteral("last_url")).toString();
+}
+
+
+
+void Settings::setLastUrl(const QString& url)
+{
+    if (url == lastUrl())
+        return;
+
+    _settings.setValue("last_url", url);
+
+    emit lastUrlChanged();
+}
+
+
+
 QStringList Settings::lastImages() const
 {
     return _settings.value(QStringLiteral("last_images")).toStringList();

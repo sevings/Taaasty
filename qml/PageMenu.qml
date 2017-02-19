@@ -479,7 +479,8 @@ Q.Drawer {
                          && page.entry.isEditable
                          && (page.entry.type === TlogEntry.TextEntry
                              || page.entry.type === TlogEntry.QuoteEntry
-                             || page.entry.type === TlogEntry.AnonymousEntry)
+                             || page.entry.type === TlogEntry.AnonymousEntry
+                             || page.entry.type === TlogEntry.VideoEntry)
             }
             MenuItem {
                 text: 'Удалить запись'
@@ -720,6 +721,17 @@ Q.Drawer {
                     drawer.close();
                 }
                 highlighted: page.entryType === TlogEntry.ImageEntry
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isEntryEditor === true
+            }
+            MenuItem {
+                text: 'Ссылка'
+                onTriggered: {
+                    page.entryType = TlogEntry.VideoEntry;
+                    drawer.close();
+                }
+                highlighted: page.entryType === TlogEntry.VideoEntry
                 visible: !window.chatsShows
                          && !window.notifsShows
                          && page.isEntryEditor === true
