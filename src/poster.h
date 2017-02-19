@@ -85,6 +85,8 @@ private slots:
 private:
     QString _privacyValue(const Privacy& privacy) const;
 
+    void    _clearHtml(QString& text) const;
+
     void    _prepare();
     void    _prepare(int tlogId);
     void    _prepareTitle(QString& title);

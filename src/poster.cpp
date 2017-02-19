@@ -164,7 +164,7 @@ void Poster::putImage(int id, QString title, Poster::Privacy privacy)
 
     _prepareTitle(title);
 
-    _request->setUrl(QStringLiteral("v1/entries/image.json").arg(id));
+    _request->setUrl(QStringLiteral("v1/entries/image/%1.json").arg(id));
     _request->addFormData("privacy", _privacyValue(privacy));
     _request->addImages(_images);
 
@@ -284,6 +284,18 @@ QString Poster::_privacyValue(const Privacy& privacy) const
 
 
 
+void Poster::_clearHtml(QString& text) const
+{
+    text.remove('\n');
+    text.remove(QRegularExpression("^.*<body[^>]*>"));
+    text.remove(QRegularExpression("</body></html>$"));
+    text.remove(QRegularExpression("\\s*style=\"[^\"]*\""));
+    text.remove(QRegularExpression("\\s*width=\"\\d*\\s*\""));
+    text.replace(QRegularExpression("<span>([^<]*)</span>"), "\\1");
+}
+
+
+
 void Poster::_prepare()
 {
     if (_request)
@@ -314,6 +326,8 @@ void Poster::_prepareTitle(QString& title)
 
     if (title.isEmpty())
         title = "&nbsp;";
+    else
+        _clearHtml(title);
 
     _request->addFormData("title", title);
 }
@@ -323,13 +337,7 @@ void Poster::_prepareTitle(QString& title)
 void Poster::_prepareText(QString& content)
 {
     _prepare();
-
-    content.remove('\n');
-    content.remove(QRegularExpression("^.*<body[^>]*>"));
-    content.remove(QRegularExpression("</body></html>$"));
-    content.remove(QRegularExpression("\\s*style=\"[^\"]*\""));
-    content.remove(QRegularExpression("\\s*width=\"\\d*\\s*\""));
-    content.replace(QRegularExpression("<span>([^<]*)</span>"), "\\1");
+    _clearHtml(content);
 
     qDebug() << "Post content:" << content;
 
