@@ -590,7 +590,6 @@ void FeedModel::_removeEntry(int id)
 
 void FeedModel::_prependFriendsEntries()
 {
-    Q_ASSERT(_mode == FriendsMode);
     if (_mode != FriendsMode)
         return;
 

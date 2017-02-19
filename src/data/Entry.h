@@ -146,7 +146,7 @@ public:
     int       chatId() const;
 
 public slots:
-    void init(const QJsonObject& data);
+    void init(const QJsonObject& data, bool force = false);
 
     void setId(const int id);
     void reload();

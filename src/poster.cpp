@@ -260,7 +260,7 @@ void Poster::_updateEditedEntry(const QJsonObject& data)
     if (!entry)
         return;
 
-    entry->init(data);
+    entry->init(data, true);
 
     emit edited();
 }

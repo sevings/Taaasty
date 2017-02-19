@@ -239,7 +239,7 @@ CommentsModel* Entry::commentsModel()
 
 
 
-void Entry::init(const QJsonObject& data)
+void Entry::init(const QJsonObject& data, bool force)
 {
     _initBase(data);
 
@@ -275,12 +275,12 @@ void Entry::init(const QJsonObject& data)
 
     if (data.contains(QStringLiteral("title_truncated")))
         _truncatedTitle = data.value(QStringLiteral("title_truncated")).toString();
-    else if (_truncatedTitle.isEmpty())
+    else if (_truncatedTitle.isEmpty() || force)
         _truncatedTitle = Tasty::truncateHtml(_title, 100);
 
     if (data.contains(QStringLiteral("text_truncated")))
         _truncatedText  = data.value(QStringLiteral("text_truncated")).toString();
-    else if (_truncatedText.isEmpty())
+    else if (_truncatedText.isEmpty() || force)
         _truncatedText = Tasty::truncateHtml(_text, 300);
 
     _source          = data.value(QStringLiteral("source")).toString(); // quote author
