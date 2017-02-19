@@ -78,9 +78,10 @@ Item {
         anchors.fill: parent
         asynchronous: false
         active: image.available
-        sourceComponent: active ? (cachedImage.format == CachedImage.GifFormat
-                                   ? animatedImage : staticImage)
-                                : undefined
+        sourceComponent: image.available
+                         ? (cachedImage.format == CachedImage.GifFormat
+                            ? animatedImage : staticImage)
+                         : undefined
         Component.onDestruction: sourceComponent = undefined
     }
     Poppable {

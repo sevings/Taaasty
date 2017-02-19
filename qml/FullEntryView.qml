@@ -41,7 +41,7 @@ Pane {
     readonly property bool isUnrepostable: feedModel && feedModel.reposter.isUnrepostable(entry.entryId)
     signal addGreeting(string slug)
     function checkComments() {
-        if (fullEntry.count > 0 || !commentsModel.hasMore)
+        if (commentsModel.size > 0 || !commentsModel.hasMore)
             commentsModel.check();
         else
             commentsModel.loadMore();
@@ -50,7 +50,7 @@ Pane {
         if (!scrollToBottom && !scrollToFirst)
             return;
 
-        if (fullEntry.count == 0) {
+        if (commentsModel.size == 0) {
             //fullEntry.positionViewAtEnd();
             fullEntry.contentY = fullEntry.contentHeight;
             fullEntry.returnToBounds();
@@ -368,7 +368,7 @@ Pane {
                     margins: 1.5 * mm
                     topMargin: 2 * mm
                 }
-                text: enabled || fullEntry.count > 0 ? 'Еще' : ''
+                text: enabled || commentsModel.size > 0 ? 'Еще' : ''
                 height: visible ? implicitHeight : 0 // changing height forces layout
                 width: 20 * mm
                 visible: commentsModel && commentsModel.hasMore && !commentsModel.loading
@@ -390,8 +390,8 @@ Pane {
             id: commentEditor
             popBody: back
             visible: Tasty.isAuthorized
-            height: visible ? (fullEntry.count ? implicitHeight : 18 * mm) : 1.5 * mm
-            z: fullEntry.count + 10
+            height: visible ? (commentsModel.size ? implicitHeight : 18 * mm) : 1.5 * mm
+            z: commentsModel.size + 10
             onHeightChanged: {
                 if (commentEditor.focus)
                     fullEntry.positionViewAtEnd();
@@ -421,7 +421,7 @@ Pane {
                     if (!commentEditor.focus)
                         return;
 
-                    if (!fullEntry.count) {
+                    if (!commentsModel.size) {
                         fullEntry.contentY = fullEntry.contentHeight;
                         fullEntry.returnToBounds();
                     }

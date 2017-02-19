@@ -60,9 +60,9 @@ Pane {
     Splash {
         id: splash
         model: chat.messages
-        visible: !listView.visible || !listView.count
+        visible: !listView.visible || !chat.messages.size
         running: !listView.visible && (chat.loading || chat.messages.loading
-                                       || (!listView.count && chat.messages.checking))
+                                       || (!chat.messages.size && chat.messages.checking))
         emptyString: 'Нет сообщений'
     }
     MyListView {
@@ -229,7 +229,7 @@ Pane {
         footer: Item {
             height: typedText.height + messageEditor.height + 1.5 * mm
             width: window.width
-            z: listView.count + 10
+            z: chat.messages.size + 10
             onHeightChanged: {
                 if (messageEditor.activeFocus)
                     listView.positionViewAtEnd();
@@ -289,7 +289,7 @@ Pane {
                         if (!messageEditor.focus)
                             return;
 
-                        if (!listView.count) {
+                        if (!chat.messages.size) {
                             listView.contentY = listView.contentHeight;
                             listView.returnToBounds();
                         }

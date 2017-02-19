@@ -123,8 +123,9 @@ void MessagesModel::reset()
 
     _chatId = _chat->id();
 
-    qDeleteAll(_messages);
+    _ids.clear();
     _messages.clear();
+    qDeleteAll(_messages);
 
     emit rowCountChanged();
     emit lastMessageChanged();
