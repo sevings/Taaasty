@@ -160,6 +160,7 @@ Q.Drawer {
                 highlighted: page.mode === FeedModel.LiveMode
                 visible: !window.chatsShows
                          && !window.notifsShows
+                         && page.isFeedView === true
                          && (   page.mode === FeedModel.LiveMode
                              || page.mode === FeedModel.FlowsMode)
             }
@@ -172,12 +173,14 @@ Q.Drawer {
                 highlighted: page.mode === FeedModel.FlowsMode
                 visible: !window.chatsShows
                          && !window.notifsShows
+                         && page.isFeedView === true
                          && (   page.mode === FeedModel.LiveMode
                              || page.mode === FeedModel.FlowsMode)
             }
             MenuSeparator {
                 visible: !window.chatsShows
                          && !window.notifsShows
+                         && page.isFeedView === true
                          && (   page.mode === FeedModel.LiveMode
                              || page.mode === FeedModel.FlowsMode)
             }
@@ -358,9 +361,6 @@ Q.Drawer {
                 visible: !window.chatsShows
                          && !window.notifsShows
                          && page.isMessagesView === true
-            }
-            MenuSeparator {
-                visible: leftChat.visible
             }
 
             // ENTRY SECTION
