@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 #endif
 
     app.setApplicationName(QStringLiteral("Taaasty"));
-    app.setApplicationVersion(QStringLiteral("1.0"));
+    app.setApplicationVersion(QStringLiteral("1.1"));
     app.setOrganizationName(QStringLiteral("binque"));
 
     auto tasty = Tasty::instance();
