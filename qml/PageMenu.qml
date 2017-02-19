@@ -293,6 +293,7 @@ Q.Drawer {
                 text: 'Обновить'
                 onTriggered: {
                     ChatsModel.loadLast();
+                    Tasty.reconnectToPusher();
                     drawer.close();
                 }
                 enabled: visible && !ChatsModel.checking
