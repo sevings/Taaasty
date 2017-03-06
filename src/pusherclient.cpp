@@ -62,6 +62,13 @@ PusherClient::PusherClient(Tasty* tasty)
 
 
 
+bool PusherClient::isConnected() const
+{
+    return _pusher->isConnected();
+}
+
+
+
 void PusherClient::connect()
 {
     _pusher->connect();

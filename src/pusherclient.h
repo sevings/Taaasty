@@ -44,6 +44,8 @@ class PusherClient : public QObject
 public:
     explicit PusherClient(Tasty* tasty = nullptr);
 
+    bool isConnected() const;
+
 signals:
     void notification(const QJsonObject& data);
     void unreadChat();

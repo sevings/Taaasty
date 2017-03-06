@@ -305,7 +305,7 @@ void Tasty::_init()
     _entryImageWidth   = _settings->maxImageWidth();
     _commentImageWidth = _entryImageWidth;
 
-    Q_TEST(connect(qApp, &QGuiApplication::applicationStateChanged, this, &Tasty::_saveOrReconnect));
+    Q_TEST(connect(qApp, &QGuiApplication::applicationStateChanged, this, &Tasty::_saveOrReconnect, Qt::QueuedConnection));
 
     Q_TEST(connect(_manager, SIGNAL(networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility)),
                    this, SLOT(_showNetAccessibility(QNetworkAccessManager::NetworkAccessibility))));
@@ -505,6 +505,9 @@ void Tasty::_saveOrReconnect(Qt::ApplicationState state)
 {
     if (state == Qt::ApplicationActive)
     {
+        if (_pusher->isConnected())
+            return;
+
         _pusher->connect();
 
         ChatsModel::instance()->loadLast();
