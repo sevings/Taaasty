@@ -244,7 +244,6 @@ void Entry::init(const QJsonObject& data, bool force)
     _initBase(data);
 
     _createdAt       = Tasty::parseDate(data.value(QStringLiteral("created_at")).toString());
-    _url             = data.value(QStringLiteral("entry_url")).toString();
     _isVotable       = data.value(QStringLiteral("is_voteable")).toBool();
     _isFavoritable   = data.value(QStringLiteral("can_favorite")).toBool(pTasty->isAuthorized());
     _isFavorited     = data.value(QStringLiteral("is_favorited")).toBool();
@@ -262,6 +261,15 @@ void Entry::init(const QJsonObject& data, bool force)
         _tlog        = new Tlog(tlogData, this);
     else if (_tlog->slug().isEmpty() || tlogData.contains(QStringLiteral("slug")))
         _tlog->init(tlogData);
+
+    _url             = data.value(QStringLiteral("entry_url")).toString();
+    if (_url.isEmpty())
+    {
+        if (_type == AnonymousEntry)
+            _url = QStringLiteral("http://taaasty.com/anonymous/%2").arg(_id);
+        else if (!_tlog->tag().isEmpty())
+            _url = QStringLiteral("http://taaasty.com/%1/%2").arg(_tlog->tag()).arg(_id);
+    }
 
     auto isMy = _author->id() == pTasty->settings()->userId();
     auto isModer = _tlog->flow() && _tlog->flow()->isEditable();

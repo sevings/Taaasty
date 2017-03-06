@@ -126,6 +126,7 @@ void Tlog::init(const QJsonObject& data)
     _id = data.value(QStringLiteral("id")).toInt();
     _slug = data.value(QStringLiteral("slug")).toString();
     _title = data.value(QStringLiteral("title")).toString();
+    _tag = data.value(QStringLiteral("tag")).toString();
     _entriesCount = "<h1>" + Tasty::num2str(data.value(QStringLiteral("total_entries_count")).toInt(),
                                             "</h1>запись", "</h1>записи", "</h1>записей");
     _publicEntriesCount = "<h1>" + Tasty::num2str(data.value(QStringLiteral("public_entries_count")).toInt(),

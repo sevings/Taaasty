@@ -84,6 +84,8 @@ public:
     QString slug() const                { return _slug; }
     void    setSlug(const QString& slug);
 
+    QString tag() const                 { return _tag; }
+
 public slots:
     void init(const QJsonObject& data);
     void reload();
@@ -117,6 +119,7 @@ private:
 
     QString         _slug;
     QString         _title;
+    QString         _tag;
     QString         _entriesCount;
     QString         _publicEntriesCount;
     QString         _privateEntriesCount;
