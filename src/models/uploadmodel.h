@@ -48,6 +48,8 @@ public:
     UploadModel(QObject* parent = nullptr);
     ~UploadModel();
 
+    void setName(const QString& name);
+
     bool isLoading() const;
 
     const QList<QHttpPart>& parts() const;
@@ -75,6 +77,7 @@ private:
     QMap<QString, QImageReader*> _readers;
     QFutureWatcher<void>         _watcher;
     bool                         _savable;
+    QString                      _name;
 
 #ifdef Q_OS_ANDROID
     AndroidImagePicker*          _picker;
