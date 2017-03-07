@@ -52,7 +52,8 @@ SOURCES += src/main.cpp \
     src/reposter.cpp \
     src/tastydatacache.cpp \
     src/models/uploadmodel.cpp \
-    src/models/availabletlogsmodel.cpp
+    src/models/availabletlogsmodel.cpp \
+    src/floweditor.cpp
 
 android: SOURCES += src/android/androidimagepicker.cpp \
     src/android/androidnotifier.cpp
@@ -111,7 +112,8 @@ HEADERS += \
     src/tastydatacache.h \
     src/models/uploadmodel.h \
     src/models/availabletlogsmodel.h \
-    src/cache/lrucache.hpp
+    src/cache/lrucache.hpp \
+    src/floweditor.h
 
 android: HEADERS += src/android/androidimagepicker.h \
     src/android/androidnotifier.h

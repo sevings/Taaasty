@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "floweditpr.h"
+#include "floweditor.h"
 
 #include <QUrl>
 
@@ -55,7 +55,7 @@ FlowEditor::~FlowEditor()
 
 QString FlowEditor::pic() const
 {
-    return _images->data(UploadModel::index(0), Qt::DisplayRole).toString();
+    return _images->data(_images->index(0), Qt::DisplayRole).toString();
 }
 
 

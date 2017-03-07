@@ -36,6 +36,7 @@
 #include "texthandler.h"
 #include "poster.h"
 #include "reposter.h"
+#include "floweditor.h"
 #include "tastydatacache.h"
 #include "cache/cachemanager.h"
 #include "cache/cachedimage.h"
@@ -345,6 +346,7 @@ void Tasty::_init()
     qmlRegisterType<TextHandler>    ("org.binque.taaasty", 1, 0, "TextHandler");
     qmlRegisterType<Poster>         ("org.binque.taaasty", 1, 0, "Poster");
     qmlRegisterType<Reposter>       ("org.binque.taaasty", 1, 0, "Reposter");
+    qmlRegisterType<FlowEditor>     ("org.binque.taaasty", 1, 0, "FlowEditor");
 
     qmlRegisterType<CachedImage>("ImageCache", 2, 0, "CachedImage");
 
