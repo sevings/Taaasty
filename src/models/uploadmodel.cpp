@@ -44,6 +44,7 @@
 UploadModel::UploadModel(QObject* parent)
     : QStringListModel(parent)
     , _savable(false)
+    , _name(QStringLiteral("files[]"))
 #ifdef Q_OS_ANDROID
     , _picker(new AndroidImagePicker(this))
 #endif
@@ -63,6 +64,13 @@ UploadModel::~UploadModel()
 #ifdef Q_OS_ANDROID
     delete _picker;
 #endif
+}
+
+
+
+void UploadModel::setName(const QString& name)
+{
+    _name = name;
 }
 
 
@@ -227,7 +235,7 @@ void UploadModel::_loadFiles(bool optimize)
                             QStringLiteral("image/").append(QString::fromLatin1(format)));
         auto fileName = QFileInfo(it.key()).fileName();
         imagePart.setHeader(QNetworkRequest::ContentDispositionHeader,
-                            QVariant(QString("form-data; name=\"files[]\"; filename=\"%1\"").arg(fileName)));
+                            QVariant(QStringLiteral("form-data; name=\"%1\"; filename=\"%2\"").arg(_name).arg(fileName)));
         imagePart.setBody(body);
 
         _parts << imagePart;
