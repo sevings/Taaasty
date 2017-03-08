@@ -512,6 +512,21 @@ Q.Drawer {
 
             // FLOWS SECTION
             MenuItem {
+                text: 'Создать'
+                onTriggered: {
+                    window.pushFlowEditor();
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isFlowsView === true
+            }
+            MenuSeparator {
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isFlowsView === true
+            }
+            MenuItem {
                 text: 'Популярные'
                 onTriggered: {
                     page.mode = 0; //= FlowsModel.PopularMode
@@ -665,6 +680,24 @@ Q.Drawer {
                              || page.tlog.myRelationship === Tlog.Friend
                              || page.tlog.myRelationship === Tlog.Me)
                          && page.tlog.hisRelationship !== Tlog.Ignored
+            }
+            MenuSeparator {
+                visible: editFlow.visible
+                         && Tasty.isAuthorized
+            }
+            MenuItem {
+                id: editFlow
+                text: 'Редактировать'
+                onTriggered: {
+                    window.pushFlowEditor(page.tlog.flow);
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isProfileView === true
+                         && !page.tlog.errorString
+                         && page.tlog.flow
+                         && page.tlog.flow.isEditable
             }
 
             // CALENDAR SECTION

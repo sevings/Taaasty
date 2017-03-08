@@ -83,5 +83,6 @@
         <file>qml/Hello.qml</file>
         <file>qml/MyScrollIndicator.qml</file>
         <file>qml/Toast.qml</file>
+        <file>qml/FlowEditor.qml</file>
     </qresource>
 </RCC>

@@ -98,6 +98,8 @@ signals:
     void entryCreated(int entry, int tlog);
     void entryDeleted(int entry);
 
+    void flowCreated(const QJsonObject& data);
+
 public slots:
     void authorize(const QString& login, const QString& password, bool save);
     void logout();

@@ -80,6 +80,13 @@ QString Flow::name() const
 
 
 
+QString Flow::picUrl() const
+{
+    return _pic;
+}
+
+
+
 void Flow::init(const QJsonObject& data)
 {
     _id             = data.value(QStringLiteral("id")).toInt();

@@ -24,6 +24,8 @@
 
 #include "defines.h"
 
+class Flow;
+
 
 
 class FlowEditor : public QObject
@@ -38,7 +40,8 @@ class FlowEditor : public QObject
 
 public:
     explicit FlowEditor(QObject* parent = 0);
-    ~FlowEditor();
+
+    Q_INVOKABLE void setFlow(Flow* flow);
 
     QString pic()         const;
     bool    isLoading()   const;
@@ -61,6 +64,7 @@ public slots:
         const QString& slug, bool privacy, bool premoderate);
 
     void changePic();
+    void clearPic();
 
 private slots:
     void _setProgress(qint64 bytes, qint64 bytesTotal);
@@ -70,6 +74,5 @@ private:
     ApiRequestPtr   _request;
     qint64          _kBytesSent;
     qint64          _kBytesTotal;
-
-    bool _lastOpt;
+    QString         _picUrl;
 };

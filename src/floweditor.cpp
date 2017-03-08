@@ -26,6 +26,11 @@
 
 #include "models/uploadmodel.h"
 
+#include "data/Flow.h"
+
+#include "cache/cachedimage.h"
+#include "cache/cachemanager.h"
+
 #include "tasty.h"
 #include "apirequest.h"
 #include "settings.h"
@@ -40,22 +45,33 @@ FlowEditor::FlowEditor(QObject* parent)
 {
     _images->setName(QStringLiteral("flowpic"));
 
-    _lastOpt = pTasty->settings()->lastOptimizeImages();
-    pTasty->settings()->setLastOptimizeImages(false);
+    Q_TEST(connect(this, &FlowEditor::created, pTasty, &Tasty::flowCreated));
 }
 
 
 
-FlowEditor::~FlowEditor()
+void FlowEditor::setFlow(Flow* flow)
 {
-    pTasty->settings()->setLastOptimizeImages(_lastOpt);
+    if (!flow)
+        return;
+
+    _picUrl = flow->picUrl();
+
+    auto image = CacheManager::instance()->image(_picUrl);
+    if (image->isAvailable())
+        _picUrl = image->source().toString();
+
+    emit picChanged();
+
+    Q_TEST(connect(this, &FlowEditor::edited, flow, &Flow::init));
 }
 
 
 
 QString FlowEditor::pic() const
 {
-    return _images->data(_images->index(0), Qt::DisplayRole).toString();
+    return _images && _images->rowCount()
+            ? _images->data(_images->index(0), Qt::DisplayRole).toString() : _picUrl;
 }
 
 
@@ -95,12 +111,6 @@ void FlowEditor::create(const QString& name, const QString& title)
 void FlowEditor::update(int id, const QString& name, const QString& title,
     const QString& slug, bool privacy, bool premoderate)
 {
-    if (!_images || !_images->rowCount())
-    {
-        emit pTasty->error(0, QStringLiteral("Установите фон потока"));
-        return;
-    }
-
 #define STR(x) ((x) ? QStringLiteral("true") : QStringLiteral("false"))
 
     _request = new ApiRequest(ApiRequest::AllOptions);
@@ -125,8 +135,31 @@ void FlowEditor::update(int id, const QString& name, const QString& title,
 
 void FlowEditor::changePic()
 {
+    if (!_images)
+    {
+        _images = new UploadModel(this);
+        _images->setName(QStringLiteral("flowpic"));
+    }
+
+    _picUrl.clear();
     _images->remove(0);
     _images->append();
+
+    emit picChanged();
+}
+
+
+
+void FlowEditor::clearPic()
+{
+    if (!_images)
+    {
+        _images = new UploadModel(this);
+        _images->setName(QStringLiteral("flowpic"));
+    }
+
+    _picUrl.clear();
+    _images->remove(0);
 
     emit picChanged();
 }

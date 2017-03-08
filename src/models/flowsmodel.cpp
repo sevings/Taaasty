@@ -39,9 +39,10 @@ FlowsModel::FlowsModel(QObject* parent)
 {
     qDebug() << "FlowsModel";
 
-    setMode(Tasty::instance()->isAuthorized() ? MyMode : PopularMode);
+    setMode(pTasty->isAuthorized() ? MyMode : PopularMode);
 
-    Q_TEST(connect(Tasty::instance(), &Tasty::authorizedChanged, this, &FlowsModel::_resetIfMy));
+    Q_TEST(connect(pTasty, &Tasty::authorizedChanged, this, &FlowsModel::_resetIfMy));
+    Q_TEST(connect(pTasty, &Tasty::flowCreated,       this, &FlowsModel::_prepend));
 }
 
 
@@ -175,6 +176,24 @@ QHash<int, QByteArray> FlowsModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles[Qt::UserRole] = "flow";
     return roles;
+}
+
+
+
+void FlowsModel::_prepend(const QJsonObject& data)
+{
+    if (_mode != MyMode)
+        return;
+
+    beginInsertRows(QModelIndex(), 0, 0);
+
+    auto flow = new Flow(this);
+    flow->init(data);
+    _flows.prepend(flow);
+
+    emit rowCountChanged();
+
+    endInsertRows();
 }
 
 

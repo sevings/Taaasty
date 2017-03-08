@@ -53,6 +53,7 @@ public:
     bool isWritable() const;
 
     QString name() const;
+    QString picUrl() const;
 
 signals:
     void updated();

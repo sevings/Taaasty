@@ -319,6 +319,14 @@ ApplicationWindow {
     function pushFlows() {
         simplePush(stack.flows);
     }
+    function pushFlowEditor(flow) {
+        stack.push(stack.flowEditor,
+                   {
+                       editFlow: flow,
+                       poppable: true
+                   }
+                   )
+    }
     function pushEntryEditor(entry) {
         stack.push(stack.entryEditor,
                    {
@@ -486,6 +494,7 @@ ApplicationWindow {
             property Component hello:               Qt.createComponent("Hello.qml",             Component.Asynchronous, stack)
             property Component trainingProgress:    Qt.createComponent("TrainingProgress.qml",  Component.Asynchronous, stack)
             property Component entryEditor:         Qt.createComponent("EntryEditor.qml",       Component.Asynchronous, stack)
+            property Component flowEditor:          Qt.createComponent("FlowEditor.qml",        Component.Asynchronous, stack)
             property Component help:                Qt.createComponent("HelpPage.qml",          Component.Asynchronous, stack)
             property Component about:               Qt.createComponent("About.qml",             Component.Asynchronous, stack)
             property Component settings:            Qt.createComponent("SettingsPage.qml",      Component.Asynchronous, stack)
