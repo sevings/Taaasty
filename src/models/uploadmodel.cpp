@@ -41,8 +41,8 @@
 
 
 
-UploadModel::UploadModel(QObject* parent)
-    : QStringListModel(parent)
+UploadModel::UploadModel()
+    : QStringListModel()
     , _savable(false)
     , _name(QStringLiteral("files[]"))
 #ifdef Q_OS_ANDROID
@@ -56,6 +56,8 @@ UploadModel::UploadModel(QObject* parent)
 
 UploadModel::~UploadModel()
 {
+    Q_ASSERT(!parent());
+
     if (_savable)
         save();
 

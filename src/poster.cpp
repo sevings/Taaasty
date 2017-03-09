@@ -64,11 +64,11 @@ UploadModel* Poster::images()
 {
     if (!_images)
     {
-        _images = new UploadModel(this);
+        _images = UploadModelPtr::create();
         _images->load();
     }
     
-    return _images;
+    return _images.data();
 }
 
 

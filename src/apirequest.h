@@ -27,7 +27,7 @@
 #include <QJsonArray>
 #include <QHttpMultiPart>
 
-class UploadModel;
+#include "defines.h"
 
 
 
@@ -60,7 +60,7 @@ public:
     
     bool addFormData(const QString& name, int value);
     bool addFormData(const QString& name, const QString& content);
-    bool addImages(UploadModel* model);
+    bool addImages(UploadModelPtr model);
     
 public slots:
     bool get();
@@ -91,7 +91,7 @@ private:
     QNetworkRequest _request;
     QNetworkReply*  _reply; //-V122
     QHttpMultiPart* _data; //-V122
-    UploadModel*    _model; //-V122
+    UploadModelPtr  _model; //-V122
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ApiRequest::Options) //-V813

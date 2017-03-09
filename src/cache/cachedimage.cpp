@@ -148,7 +148,7 @@ QPixmap CachedImage::pixmap()
 
 QUrl CachedImage::source() const
 {
-    return _format == GifFormat ? QUrl::fromLocalFile(_filePath())
+    return _format == GifFormat ? sourceFileUrl()
                                 : "image://cached/" + _url;
 }
 
@@ -157,6 +157,13 @@ QUrl CachedImage::source() const
 QString CachedImage::sourceFileName() const
 {
     return QStringLiteral("%1.%2").arg(_fileName).arg(_extension);
+}
+
+
+
+QUrl CachedImage::sourceFileUrl() const
+{
+    return QUrl::fromLocalFile(_filePath());
 }
 
 

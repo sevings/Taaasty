@@ -28,7 +28,6 @@
 
 #include "models/uploadmodel.h"
 
-#include "defines.h"
 #include "tasty.h"
 
 
@@ -132,16 +131,14 @@ bool ApiRequest::addFormData(const QString& name, const QString& content)
 
 
 
-bool ApiRequest::addImages(UploadModel* model)
+bool ApiRequest::addImages(UploadModelPtr model)
 {
     if (isRunning() || !model)
         return false;
 
     _model = model;
 
-    _model->setParent(this);
-
-    Q_TEST(connect(_model, &UploadModel::loaded, this, &ApiRequest::_addImages));
+    Q_TEST(connect(_model.data(), &UploadModel::loaded, this, &ApiRequest::_addImages));
 
     _model->loadFiles();
 
@@ -174,7 +171,7 @@ bool ApiRequest::post()
 
     if (_model && _model->isLoading())
     {
-        Q_TEST(connect(_model, &UploadModel::loaded, this, &ApiRequest::post, Qt::QueuedConnection));
+        Q_TEST(connect(_model.data(), &UploadModel::loaded, this, &ApiRequest::post, Qt::QueuedConnection));
         return true;
     }
 
@@ -197,7 +194,7 @@ bool ApiRequest::put()
 
     if (_model && _model->isLoading())
     {
-        Q_TEST(connect(_model, &UploadModel::loaded, this, &ApiRequest::put, Qt::QueuedConnection));
+        Q_TEST(connect(_model.data(), &UploadModel::loaded, this, &ApiRequest::put, Qt::QueuedConnection));
         return true;
     }
 

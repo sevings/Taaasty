@@ -59,6 +59,7 @@ public:
 
     QUrl    source() const;
     QString sourceFileName() const;
+    QUrl    sourceFileUrl() const;
 
     int     received() const    { return _kbytesReceived; }
     int     total() const       { return _kbytesTotal; }

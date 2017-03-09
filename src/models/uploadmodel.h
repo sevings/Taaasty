@@ -45,7 +45,7 @@ class UploadModel : public QStringListModel
 #endif
 
 public:
-    UploadModel(QObject* parent = nullptr);
+    UploadModel();
     ~UploadModel();
 
     void setName(const QString& name);

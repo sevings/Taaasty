@@ -42,6 +42,6 @@ class ApiRequest;
 typedef QPointer<ApiRequest> ApiRequestPtr;
 
 class UploadModel;
-typedef QPointer<UploadModel> UploadModelPtr;
+typedef QSharedPointer<UploadModel> UploadModelPtr;
 
 #endif // DEFINES_H

@@ -39,7 +39,7 @@
 
 FlowEditor::FlowEditor(QObject* parent)
     : QObject(parent)
-    , _images(new UploadModel(this))
+    , _images(UploadModelPtr::create())
     , _kBytesSent(0)
     , _kBytesTotal(0)
 {
@@ -59,7 +59,7 @@ void FlowEditor::setFlow(Flow* flow)
 
     auto image = CacheManager::instance()->image(_picUrl);
     if (image->isAvailable())
-        _picUrl = image->source().toString();
+        _picUrl = image->sourceFileUrl().toString();
 
     emit picChanged();
 
@@ -137,7 +137,7 @@ void FlowEditor::changePic()
 {
     if (!_images)
     {
-        _images = new UploadModel(this);
+        _images = UploadModelPtr::create();
         _images->setName(QStringLiteral("flowpic"));
     }
 
@@ -154,7 +154,7 @@ void FlowEditor::clearPic()
 {
     if (!_images)
     {
-        _images = new UploadModel(this);
+        _images = UploadModelPtr::create();
         _images->setName(QStringLiteral("flowpic"));
     }
 
