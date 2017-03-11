@@ -27,6 +27,7 @@
 #include "models/uploadmodel.h"
 
 #include "data/Flow.h"
+#include "data/Tlog.h"
 
 #include "cache/cachedimage.h"
 #include "cache/cachemanager.h"
@@ -39,11 +40,11 @@
 
 FlowEditor::FlowEditor(QObject* parent)
     : QObject(parent)
-    , _images(UploadModelPtr::create())
+    , _images(nullptr)
     , _kBytesSent(0)
     , _kBytesTotal(0)
 {
-    _images->setName(QStringLiteral("flowpic"));
+    _createImages();
 
     Q_TEST(connect(this, &FlowEditor::created, pTasty, &Tasty::flowCreated));
 }
@@ -64,14 +65,25 @@ void FlowEditor::setFlow(Flow* flow)
     emit picChanged();
 
     Q_TEST(connect(this, &FlowEditor::edited, flow, &Flow::init));
+
+    auto tlog = qobject_cast<Tlog*>(flow->parent());
+    if (tlog)
+        Q_TEST(connect(this, SIGNAL(edited(QJsonObject)), tlog, SLOT(reload())));
 }
 
 
 
 QString FlowEditor::pic() const
 {
-    return _images && _images->rowCount()
-            ? _images->data(_images->index(0), Qt::DisplayRole).toString() : _picUrl;
+    if (!_images)
+        return _picUrl;
+
+    int rc = _images->rowCount();
+    if (!rc)
+        return _picUrl;
+
+    auto i = _images->index(rc - 1);
+    return _images->data(i, Qt::DisplayRole).toString();
 }
 
 
@@ -87,9 +99,12 @@ void FlowEditor::create(const QString& name, const QString& title)
 {
     if (!_images || !_images->rowCount())
     {
-        emit pTasty->error(0, QStringLiteral("Установите фон потока"));
+        emit pTasty->error(0, QStringLiteral("Выберите фон потока"));
         return;
     }
+
+    while (_images->rowCount() > 1)
+        _images->remove(0);
 
     _request = new ApiRequest(ApiRequest::AllOptions);
     _request->setUrl(QStringLiteral("v1/flows.json"));
@@ -111,6 +126,10 @@ void FlowEditor::create(const QString& name, const QString& title)
 void FlowEditor::update(int id, const QString& name, const QString& title,
     const QString& slug, bool privacy, bool premoderate)
 {
+    _createImages();
+    while (_images->rowCount() > 1)
+        _images->remove(0);
+
 #define STR(x) ((x) ? QStringLiteral("true") : QStringLiteral("false"))
 
     _request = new ApiRequest(ApiRequest::AllOptions);
@@ -135,33 +154,8 @@ void FlowEditor::update(int id, const QString& name, const QString& title,
 
 void FlowEditor::changePic()
 {
-    if (!_images)
-    {
-        _images = UploadModelPtr::create();
-        _images->setName(QStringLiteral("flowpic"));
-    }
-
-    _picUrl.clear();
-    _images->remove(0);
+    _createImages();
     _images->append();
-
-    emit picChanged();
-}
-
-
-
-void FlowEditor::clearPic()
-{
-    if (!_images)
-    {
-        _images = UploadModelPtr::create();
-        _images->setName(QStringLiteral("flowpic"));
-    }
-
-    _picUrl.clear();
-    _images->remove(0);
-
-    emit picChanged();
 }
 
 
@@ -181,4 +175,19 @@ void FlowEditor::_setProgress(qint64 bytes, qint64 bytesTotal)
         _kBytesTotal = total;
         emit kBytesTotalChanged();
     }
+}
+
+
+
+void FlowEditor::_createImages()
+{
+    if (_images)
+        return;
+
+    _images = UploadModelPtr::create();
+    _images->setName(QStringLiteral("flowpic"));
+
+
+    Q_TEST(connect(_images.data(), SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
+                   this, SIGNAL(picChanged())));
 }

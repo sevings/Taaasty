@@ -73,41 +73,28 @@ Pane {
                 autoTransform: true
                 fillMode: Image.PreserveAspectCrop
                 source: editor.pic
-                Rectangle {
-                    visible: removeImageButton.visible
-                    anchors.fill: removeImageButton
-                    color: window.backgroundColor
-                    opacity: 0.3
-                    radius: width / 2
+                onSourceChanged: {
+                        playing = true;
                 }
-                IconButton {
-                    id: removeImageButton
-                    enabled: !editor.loading
-                    visible: editor.pic
-                    anchors {
-                        top: parent.top
-                        right: parent.right
-                    }
-                    icon: (window.darkTheme ? '../icons/cross-white'
-                                            : '../icons/cross-black')
-                          + '-128.png'
-                    onClicked: editor.clearPic()
+                scale: imageMouse.pressed ? 0.9 : 1
+                Behavior on scale {
+                    NumberAnimation { easing.overshoot: 5; easing.type: Easing.OutBack; duration: 400; }
                 }
-                MouseArea {
-                    anchors.fill: parent
-                    visible: !editor.loading && !editor.pic
-                    enabled: visible
-                    scale: pressed ? 0.9 : 1
-                    onClicked: editor.changePic()
-                    Behavior on scale {
-                        NumberAnimation { easing.overshoot: 5; easing.type: Easing.OutBack; duration: 400; }
+                Poppable {
+                    id: imageMouse
+                    body: back
+                    onClicked: {
+                        if (!editor.loading)
+                            editor.changePic();
                     }
                     Rectangle {
                         anchors.fill: parent
+                        visible: !editor.pic
                         color: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
                     }
                     ThemedText {
                         anchors.centerIn: parent
+                        visible: !editor.pic
                         text: 'Выбрать фон'
                         font.pixelSize: window.fontBigger
                     }
