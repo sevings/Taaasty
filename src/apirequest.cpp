@@ -35,7 +35,6 @@
 ApiRequest::ApiRequest(const ApiRequest::Options& options)
     : _reply(nullptr)
     , _data(nullptr)
-    , _model(nullptr)
 {
     _setOptions(pTasty->settings()->accessToken(), options);
 }
@@ -46,7 +45,6 @@ ApiRequest::ApiRequest(const QString& url,
                        const ApiRequest::Options& options)
     : _reply(nullptr)
     , _data(nullptr)
-    , _model(nullptr)
 {
     _setOptions(pTasty->settings()->accessToken(), options);    
     setUrl(url);
@@ -59,7 +57,6 @@ ApiRequest::ApiRequest(const QString& url,
                        const ApiRequest::Options& options)
     : _reply(nullptr)
     , _data(nullptr)
-    , _model(nullptr)
 {
     _setOptions(accessToken, options);    
     setUrl(url);
@@ -294,7 +291,9 @@ void ApiRequest::_addImages()
     foreach (auto part, parts)
         _data->append(part);
 
-    _model->clear();
+    Q_TEST(connect(this, SIGNAL(success(QJsonObject)), _model.data(), SLOT(clear())));
+    Q_TEST(connect(this, SIGNAL(success(QJsonArray)),  _model.data(), SLOT(clear())));
+    Q_TEST(connect(this, SIGNAL(success(QString)),     _model.data(), SLOT(clear())));
 }
 
 
