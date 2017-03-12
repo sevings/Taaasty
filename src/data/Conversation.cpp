@@ -429,6 +429,39 @@ void Conversation::sendMessage(const QString& text)
 
 
 
+void Conversation::readTo(int id)
+{
+    if (_readRequest || _unreadCount <= 0 || _id <= 0 || id <= 0)// || !isInvolved())
+        return;
+
+    const auto& messages = _messages->messages();
+    auto it = messages.crbegin();
+    for (; it != messages.crend(); it++)
+        if ((*it)->id() == id)
+            break;
+
+    QStringList ids;
+    QList<Message*> readMessages;
+    for (; it != messages.crend() && !(*it)->isRead(); it++)
+    {
+        ids << QString::number((*it)->id());
+        readMessages << *it;
+    }
+
+    if (ids.isEmpty())
+        return;
+
+    auto url  = QStringLiteral("v2/messenger/conversations/by_id/%1/messages/read.json").arg(_id);
+    _readRequest  = new ApiRequest(url, ApiRequest::AllOptions);
+    _readRequest->addFormData("ids", ids.join(','));
+    _readRequest->put();
+
+    foreach (auto msg, readMessages)
+        Q_TEST(connect(_readRequest, SIGNAL(success(QJsonObject)), msg, SLOT(_markRead(QJsonObject))));
+}
+
+
+
 void Conversation::readAll()
 {
     if (_readRequest || _unreadCount <= 0 || _id <= 0)// || !isInvolved())

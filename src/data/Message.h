@@ -35,6 +35,7 @@ class Message: public MessageBase
     Q_OBJECT
 
     friend class PusherClient;
+    friend class Conversation;
 
     Q_PROPERTY(int      userId          MEMBER _userId         NOTIFY updated)
     Q_PROPERTY(int      recipientId     MEMBER _recipientId    NOTIFY updated)

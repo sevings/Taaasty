@@ -117,7 +117,7 @@ Pane {
                 }
             }
             Component.onCompleted: {
-                if (!message.isRead)
+                if (!message.isRead && Settings.readMessages)
                     message.read();
 
                 if (index < 10)
@@ -164,7 +164,7 @@ Pane {
                         right: parent.right
                         margins: 1.5 * mm
                     }
-                    height: active ? item.height : - 1.5 * mm
+                    height: item ? item.height : - 1.5 * mm
                     asynchronous: false
                     Component.onDestruction: sourceComponent = undefined
                     readonly property AttachedImagesModel imagesModel: message.attachedImagesModel
@@ -302,7 +302,7 @@ Pane {
     }
     Popup {
         id: menu
-        height: menuColumn.height + 2 * mm
+        height: menuColumn.height + 3 * mm
         anchors.margins: 2 * mm
         property Message message: Message { }
         function close() {
@@ -330,6 +330,15 @@ Pane {
                     addGreeting(menu.message.user.slug);
                     menu.close();
                     listView.positionViewAtEnd();
+                }
+            }
+            MenuItem {
+                visible: menu.message && !menu.message.isRead
+                         && chat.userId !== menu.message.userId
+                text: 'Прочитано'
+                onTriggered: {
+                    chat.readTo(menu.message.id);
+                    menu.close();
                 }
             }
         }

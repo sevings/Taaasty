@@ -57,6 +57,8 @@ public:
 
     Message* lastMessage() const;
 
+    const QList<Message*>& messages() const { return _messages; }
+
 signals:
     void hasMoreChanged();
     void loadingChanged();

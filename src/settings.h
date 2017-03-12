@@ -51,6 +51,7 @@ class Settings : public QObject
     Q_PROPERTY(quint8       fontZoom            READ fontZoom               WRITE setFontZoom               NOTIFY fontZoomChanged)
     Q_PROPERTY(bool         systemNotifications READ systemNotifications    WRITE setSystemNotifications    NOTIFY systemNotificationsChanged)
     Q_PROPERTY(bool         predictiveText      READ predictiveText         WRITE setPredictiveText         NOTIFY predictiveTextChanged)
+    Q_PROPERTY(bool         readMessages        READ readMessages           WRITE setReadMessages           NOTIFY readMessagesChanged)
 
     Q_PROPERTY(QString      lastTitle           READ lastTitle              WRITE setLastTitle              NOTIFY lastTitleChanged)
     Q_PROPERTY(QString      lastText            READ lastText               WRITE setLastText               NOTIFY lastTextChanged)
@@ -137,6 +138,9 @@ public:
     bool predictiveText() const;
     void setPredictiveText(bool enable);
 
+    bool readMessages() const;
+    void setReadMessages(bool read);
+
     QString lastTitle() const;
     void setLastTitle(const QString& title);
 
@@ -185,6 +189,7 @@ signals:
     void fontZoomChanged();
     void systemNotificationsChanged();
     void predictiveTextChanged();
+    void readMessagesChanged();
 
     void lastTitleChanged();
     void lastTextChanged();

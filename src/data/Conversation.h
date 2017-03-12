@@ -124,6 +124,7 @@ public slots:
 
     void update();
     void sendMessage(const QString& text);
+    void readTo(int id);
     void readAll();
     void leave();
     void remove();

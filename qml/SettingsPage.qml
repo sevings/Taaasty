@@ -99,6 +99,12 @@ Pane {
                 onCheckedChanged: { Settings.predictiveText = checked; }
                 checked: Settings.predictiveText
             }
+            ThemedCheckBox {
+                id: readMessagesBox
+                text: 'Помечать сообщения как прочитанные'
+                onCheckedChanged: { Settings.readMessages = checked; }
+                checked: Settings.readMessages
+            }
             MenuSeparator {
                 width: implicitWidth - parent.padding * 2
             }

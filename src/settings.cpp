@@ -514,6 +514,25 @@ void Settings::setPredictiveText(bool enable)
 
 
 
+bool Settings::readMessages() const
+{
+    return _settings.value("read_messages", true).toBool();
+}
+
+
+
+void Settings::setReadMessages(bool read)
+{
+    if (read == readMessages())
+        return;
+
+    _settings.setValue("read_messages", read);
+
+    emit readMessagesChanged();
+}
+
+
+
 QString Settings::lastTitle() const
 {
     return _settings.value(QStringLiteral("last_title")).toString();

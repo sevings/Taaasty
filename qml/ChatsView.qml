@@ -51,7 +51,7 @@ PopupFill {
                 id: pop
                 anchors.fill: parent
                 onClicked: {
-                    if (model.chat.unreadCount > 0)
+                    if (model.chat.unreadCount > 0 && Settings.readMessages)
                         model.chat.readAll();
 
                     back.hide();
