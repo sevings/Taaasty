@@ -114,6 +114,26 @@ void Message::read()
 
 
 
+void Message::remove(bool forAll)
+{
+    if (isLoading())
+        return;
+
+    auto url = QStringLiteral("v2/messenger/conversations/by_id/%1/messages/delete_by_ids.json?ids=%2")
+                .arg(_conversationId).arg(_id);
+    if (forAll)
+        url += QStringLiteral("&all=true");
+
+    _request = new ApiRequest(url, ApiRequest::AllOptions);
+    _request->deleteResource();
+
+    Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_remove(QJsonObject))));
+
+    _initRequest();
+}
+
+
+
 void Message::_init(const QJsonObject& data)
 {
     _id             = data.value(QStringLiteral("id")).toInt();
@@ -177,6 +197,24 @@ void Message::_markRead(const QJsonObject& data)
 
     _read = true;
     emit readChanged(true);
+}
+
+
+
+void Message::_remove(const QJsonObject& data)
+{
+    if (data.value(QStringLiteral("status")).toString() != "success")
+    {
+        qDebug() << "error remove message" << _id;
+        return;
+    }
+
+    _text = _user ? _user->name() + QStringLiteral(" удалил сообщение")
+                  : QStringLiteral("Сообщение удалено");
+    _type = SystemMessage;
+    _setTruncatedText();
+
+    emit textUpdated();
 }
 
 

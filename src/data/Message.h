@@ -66,11 +66,13 @@ signals:
 
 public slots:
     void read();
+    void remove(bool forAll = false);
 
 private slots:
     void _init(const QJsonObject& data);
     void _correctHtml();
     void _markRead(const QJsonObject& data);
+    void _remove(const QJsonObject& data);
     void _updateUser();
 
 private:
