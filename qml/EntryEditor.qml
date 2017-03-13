@@ -106,7 +106,10 @@ Pane {
         bottomMargin: 1.5 * mm
         contentWidth: parent.width
         contentHeight: column.height
-        onContentHeightChanged: returnToBounds()
+        onContentHeightChanged: {
+            if (!poster.loading)
+                returnToBounds();
+        }
         Poppable {
             body: back
         }
