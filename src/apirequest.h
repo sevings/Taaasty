@@ -60,7 +60,7 @@ public:
     
     bool addFormData(const QString& name, int value);
     bool addFormData(const QString& name, const QString& content);
-    bool addImages(UploadModelPtr model);
+    bool addImages(const UploadModelPtr& model);
     
 public slots:
     bool get();

@@ -210,7 +210,7 @@ TextHandler::ListFormat TextHandler::list() const
     if (!list)
         return ListNone;
 
-    return (ListFormat)list->format().style();
+    return (ListFormat)list->format().style(); //-V2005
 }
 
 
@@ -258,14 +258,14 @@ void TextHandler::setList(ListFormat list)
         if (!textList)
         {
             auto tl = b.textList();
-            if (tl && tl->format().style() == (QTextListFormat::Style)list)
+            if (tl && tl->format().style() == (QTextListFormat::Style)list) //-V2005
                 textList = tl;
         }
-        else if (textList->format().style() != (QTextListFormat::Style)list)
+        else if (textList->format().style() != (QTextListFormat::Style)list) //-V2005
             removeList();
 
         if (!textList)
-            textList = cursor.createList((QTextListFormat::Style)list);
+            textList = cursor.createList((QTextListFormat::Style)list); //-V2005
 
         while (block.position() < cursor.selectionEnd())
         {

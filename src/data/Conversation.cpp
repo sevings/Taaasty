@@ -440,6 +440,12 @@ void Conversation::readTo(int id)
         if ((*it)->id() == id)
             break;
 
+    if (it == messages.crbegin())
+    {
+        readAll();
+        return;
+    }
+
     QStringList ids;
     QList<Message*> readMessages;
     for (; it != messages.crend() && !(*it)->isRead(); it++)

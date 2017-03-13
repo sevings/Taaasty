@@ -128,7 +128,7 @@ bool ApiRequest::addFormData(const QString& name, const QString& content)
 
 
 
-bool ApiRequest::addImages(UploadModelPtr model)
+bool ApiRequest::addImages(const UploadModelPtr& model)
 {
     if (isRunning() || !model)
         return false;
