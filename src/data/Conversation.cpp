@@ -213,7 +213,7 @@ User* Conversation::user(int id, bool reloadUsers)
     if (id == _recipientId && _recipient)
         return _recipient;
 
-    if (id == Tasty::instance()->settings()->userId())
+    if (id == pTasty->settings()->userId())
     {
         auto user = new User(this);
         *user = *Tasty::instance()->me();
@@ -247,12 +247,12 @@ MessageBase* Conversation::lastMessage() const
     if (_entry)
     {
         auto lst = _entry->commentsModel()->lastComment();
-        if (!last || (lst && lst->createdDate() > last->createdDate()))
+        if (!last || (lst && lst->createdDate() >= last->createdDate()))
             last = lst;
     }
 
     auto lst = _messages ? _messages->lastMessage() : nullptr;
-    if (!last || (lst && lst->createdDate() > last->createdDate()))
+    if (!last || (lst && lst->createdDate() >= last->createdDate()))
         last = lst;
 
     return last;
