@@ -352,6 +352,17 @@ Q.Drawer {
                 visible: chatTopic.visible
             }
             MenuItem {
+                text: 'Прочитать все'
+                onTriggered: {
+                    page.chat.readAll();
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isMessagesView === true
+                         && page.chat.unreadCount > 0
+            }
+            MenuItem {
                 text: 'Перезагрузить'
                 onTriggered: {
                     page.chat.messages.reset();
