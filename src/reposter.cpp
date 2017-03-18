@@ -168,13 +168,7 @@ void Reposter::_addRepost(const QJsonObject& data)
 {
     emit pTasty->info(QStringLiteral("Репост добавлен"));
 
-    int id = data.value(QStringLiteral("id")).toInt();
-    auto entry = pTasty->dataCache()->entry(id);
-    if (!entry)
-        entry = EntryPtr::create(nullptr);
-
-    entry->init(data);
-
+    auto entry = pTasty->dataCache()->initEntry(data);
     emit reposted(entry);
 }
 

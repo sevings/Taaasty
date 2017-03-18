@@ -386,15 +386,9 @@ void FeedModel::_addItems(const QJsonObject& data)
         auto obj = item.toObject();
         auto json = obj.contains(QStringLiteral("entry")) ? obj.value(QStringLiteral("entry")).toObject()
                                           : obj;
-        auto id = json.value(QStringLiteral("id")).toInt();
-        if (_idEntries.contains(id))
+        auto entry = pTasty->dataCache()->initEntry(json);
+        if (_idEntries.contains(entry->id()))
             continue;
-
-        auto entry = pTasty->dataCache()->entry(id);
-        if (!entry)
-            entry = EntryPtr::create(nullptr);
-
-        entry->init(json);
 
         if (fixMode && entry->isFixed())
             fixed << entry;

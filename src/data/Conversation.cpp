@@ -317,13 +317,8 @@ void Conversation::init(const QJsonObject& data)
      if (!_entry && data.contains(QStringLiteral("entry")))
      {
          auto entryData = data.value(QStringLiteral("entry")).toObject();
-         _entryId = entryData.value(QStringLiteral("id")).toInt();
-         _entry = dataCache->entry(_entryId);
-         if (!_entry)
-         {
-             _entry = EntryPtr::create(this);
-             _entry->init(entryData);
-         }
+         _entry = dataCache->initEntry(entryData, false);
+         _entryId = _entry->id();
 
          dataCache->addChat(sharedFromThis());
 

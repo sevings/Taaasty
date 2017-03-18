@@ -27,6 +27,8 @@ public:
     void addEntry(const EntryPtr& entry);
     void removeEntry(int id);
 
+    EntryPtr initEntry(const QJsonObject& data, bool reinit = true);
+    EntryPtr createEntry(int id);
     EntryPtr entry(int id) const;
 
     void addMessage(Message* msg);

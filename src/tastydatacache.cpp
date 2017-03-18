@@ -99,6 +99,34 @@ void TastyDataCache::removeEntry(int id)
 
 
 
+EntryPtr TastyDataCache::initEntry(const QJsonObject& data, bool reinit)
+{
+    auto id = data.value(QStringLiteral("id")).toInt();
+    auto entry = this->entry(id);
+    if (!entry)
+        entry = EntryPtr::create(nullptr);
+    else if (!reinit)
+        return entry;
+
+    entry->init(data);
+    return entry;
+}
+
+
+
+EntryPtr TastyDataCache::createEntry(int id)
+{
+    auto entry = this->entry(id);
+    if (entry)
+        return entry;
+
+    entry = EntryPtr::create(nullptr);
+    entry->setId(id);
+    return entry;
+}
+
+
+
 EntryPtr TastyDataCache::entry(int id) const
 {
     auto entry = _entries.value(id);

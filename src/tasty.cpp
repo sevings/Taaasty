@@ -490,13 +490,7 @@ void Tasty::_setUnreadNotifications(int count)
 
 void Tasty::_addUnreadFriendEntry(int entryId)
 {
-    auto entry = _dataCache->entry(entryId);
-    if (!entry)
-    {
-        entry = EntryPtr::create(nullptr);
-        entry->setId(entryId);
-    }
-
+    auto entry = _dataCache->createEntry(entryId);
     _unreadFriendsEntries << entry;
     emit unreadFriendsEntriesChanged();
 }

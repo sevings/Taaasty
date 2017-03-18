@@ -66,8 +66,8 @@ Notification::Notification(const QJsonObject& data, QObject *parent)
         
         if (data.contains(QStringLiteral("entity")))
         {
-            _entry = EntryPtr::create(nullptr);
-            _entry->init(data.value(QStringLiteral("entity")).toObject());
+            auto entryData = data.value(QStringLiteral("entity")).toObject();
+            _entry = pTasty->dataCache()->initEntry(entryData);
         }
     }
     else if (entityType == "Relationship")
@@ -168,12 +168,7 @@ Entry* Notification::entry()
     if (id <= 0)
         return nullptr;
 
-    _entry = pTasty->dataCache()->entry(id);
-    if (_entry)
-        return _entry.data();
-
-    _entry = EntryPtr::create(nullptr);
-    _entry->setId(id);
+    _entry = pTasty->dataCache()->createEntry(id);
     return _entry.data();
 }
 

@@ -82,15 +82,8 @@ Entry* CalendarEntry::fullEntry()
 
 EntryPtr CalendarEntry::full()
 {
-    if (_entry)
-        return _entry;
-
-    _entry = pTasty->dataCache()->entry(_id);
-    if (_entry)
-        return _entry;
-
-    _entry = EntryPtr::create(nullptr);
-    _entry->setId(_id);
+    if (!_entry)
+        _entry = pTasty->dataCache()->createEntry(_id);
     return _entry;
 }
 

@@ -243,8 +243,7 @@ void Poster::_setProgress(qint64 bytes, qint64 bytesTotal)
 
 void Poster::_createPostedEntry(const QJsonObject& data)
 {
-    _entry = EntryPtr::create(nullptr);
-    _entry->init(data);
+    _entry = pTasty->dataCache()->initEntry(data);
 
     emit posted(_entry);
 
