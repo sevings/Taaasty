@@ -20,6 +20,7 @@ public:
     void addChat(const ChatPtr& chat);
     void removeChat(Conversation* chat);
 
+    ChatPtr initChat(const QJsonObject& data);
     ChatPtr chat(int id) const;
     ChatPtr chatByEntry(int entryId) const;
     ChatPtr chatByTlog(int tlogId) const;

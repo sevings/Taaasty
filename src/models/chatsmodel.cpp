@@ -310,14 +310,8 @@ void ChatsModel::_addLast(const QJsonArray& data)
     QList<ChatPtr> chats;
     foreach(auto item, data)
     {
-        auto id = item.toObject().value(QStringLiteral("id")).toInt();
-        auto chat = pTasty->dataCache()->chat(id);
-        if (!chat)
-            chat = ChatPtr::create(nullptr);
-
-        chat->init(item.toObject());
-
-        if (_ids.contains(id))
+        auto chat = pTasty->dataCache()->initChat(item.toObject());
+        if (_ids.contains(chat->id()))
             continue;
 
         _allChats << chat;
@@ -359,14 +353,8 @@ void ChatsModel::_addUnread(const QJsonArray& data)
     QList<ChatPtr> chats;
     foreach(auto item, data)
     {
-        auto id = item.toObject().value(QStringLiteral("id")).toInt();
-        auto chat = pTasty->dataCache()->chat(id);
-        if (!chat)
-            chat = ChatPtr::create(nullptr);
-
-        chat->init(item.toObject());
-
-        if (_ids.contains(id))
+        auto chat = pTasty->dataCache()->initChat(item.toObject());
+        if (_ids.contains(chat->id()))
         {
             if (_mode == AllChatsMode
                     || (_mode == PrivateChatsMode && chat->type() != Conversation::PublicConversation)
@@ -424,15 +412,9 @@ void ChatsModel::_addChats(const QJsonArray& data)
     QList<ChatPtr> chats;
     foreach(auto item, data)
     {
-        auto id = item.toObject().value(QStringLiteral("id")).toInt();
-        if (_ids.contains(id))
+        auto chat = pTasty->dataCache()->initChat(item.toObject());
+        if (_ids.contains(chat->id()))
             continue;
-
-        auto chat = pTasty->dataCache()->chat(id);
-        if (!chat)
-            chat = ChatPtr::create(nullptr);
-
-        chat->init(item.toObject());
 
         _ids << chat->id();
         _allChats << chat;

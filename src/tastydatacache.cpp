@@ -47,6 +47,19 @@ void TastyDataCache::removeChat(Conversation* chat)
 
 
 
+ChatPtr TastyDataCache::initChat(const QJsonObject& data)
+{
+    auto id = data.value(QStringLiteral("id")).toInt();
+    auto chat = this->chat(id);
+    if (!chat)
+        chat = ChatPtr::create(nullptr);
+
+    chat->init(data);
+    return chat;
+}
+
+
+
 ChatPtr TastyDataCache::chat(int id) const
 {
     auto chat = _chats.value(id);
