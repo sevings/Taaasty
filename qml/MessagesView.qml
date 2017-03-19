@@ -241,7 +241,9 @@ Pane {
                     right: parent.right
                     top: parent.top
                 }
-                text: chat.typedUsers
+                text: chat.isTyped ? chat.typedUsers
+                                   : chat.type === Chat.PrivateConversation
+                                     ? chat.recipient.lastSeenAt : ''
                 font.pixelSize: window.fontSmallest
                 color: window.secondaryTextColor
             }
