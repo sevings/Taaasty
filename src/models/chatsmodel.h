@@ -31,6 +31,7 @@
 #include "tastylistmodel.h"
 
 class Tasty;
+class StatusChecker;
 
 
 
@@ -92,6 +93,7 @@ private:
     QSet<int>       _ids;
     QHash<int, int> _entryChats;
     Mode            _mode;
+    StatusChecker*  _statusChecker;
 
     QString         _url;
     int             _page;

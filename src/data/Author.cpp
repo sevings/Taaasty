@@ -155,15 +155,21 @@ void Author::_initStatus(const QJsonArray& data)
 
 void Author::_initStatus(const QJsonObject& data)
 {
-    _isOnline  = data.value(QStringLiteral("is_online")).toBool();
+    auto online = data.value(QStringLiteral("is_online")).toBool();
     auto last = data.value(QStringLiteral("last_seen_at")).toString();
-    if (_isOnline)
-        _lastSeenAt = "Онлайн";
+    if (online)
+        last = "Онлайн";
     else if (last.isEmpty())
-        _lastSeenAt = "Не в сети";
+        last = "Не в сети";
     else
-        _lastSeenAt = QStringLiteral("Был%1 в сети %2").arg(_isFemale ? "а" : "")
+        last = QStringLiteral("Был%1 в сети %2").arg(_isFemale ? "а" : QString())
                 .arg(Tasty::parseDate(last, false));
+
+    if (online == _isOnline && last == _lastSeenAt)
+        return;
+
+    _isOnline = online;
+    _lastSeenAt = last;
 
     emit statusUpdated();
 }

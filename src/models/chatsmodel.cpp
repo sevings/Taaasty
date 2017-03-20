@@ -31,6 +31,7 @@
 #include "../apirequest.h"
 #include "../pusherclient.h"
 #include "../tastydatacache.h"
+#include "../statuschecker.h"
 #include "../data/Author.h"
 #include "../data/Entry.h"
 #include "../data/Conversation.h"
@@ -48,6 +49,7 @@ ChatsModel* ChatsModel::instance(Tasty* tasty)
 ChatsModel::ChatsModel(Tasty* tasty)
     : TastyListModel(tasty)
     , _mode(AllChatsMode)
+    , _statusChecker(new StatusChecker(this))
     , _url(QStringLiteral("v2/messenger/conversations.json?limit=10&page=%1"))
     , _page(1)
 {
@@ -191,6 +193,7 @@ void ChatsModel::addChat(const ChatPtr& chat)
     _allChats.prepend(chat);
     _chats.prepend(chat);
     _ids << chat->id();
+    _statusChecker->add(chat->recipient());
 
     emit rowCountChanged();
 
@@ -279,6 +282,7 @@ void ChatsModel::reset()
     _chats.clear();
     _ids.clear();
     _entryChats.clear();
+    _statusChecker->clear();
 
     emit rowCountChanged();
 
@@ -316,6 +320,7 @@ void ChatsModel::_addLast(const QJsonArray& data)
 
         _allChats << chat;
         _ids << chat->id();
+        _statusChecker->add(chat->recipient());
 
         _insertEntryChat(chat);
 
@@ -366,6 +371,7 @@ void ChatsModel::_addUnread(const QJsonArray& data)
 
         _allChats << chat;
         _ids << chat->id();
+        _statusChecker->add(chat->recipient());
 
         _insertEntryChat(chat);
 
@@ -418,6 +424,7 @@ void ChatsModel::_addChats(const QJsonArray& data)
 
         _ids << chat->id();
         _allChats << chat;
+        _statusChecker->add(chat->recipient());
 
         _insertEntryChat(chat);
 
@@ -456,6 +463,7 @@ void ChatsModel::_removeChat(int id)
         return;
 
     _ids.remove(id);
+    _statusChecker->remove(chat->recipient());
 
     int i;
     for (i = 0; i < _allChats.size(); i++)

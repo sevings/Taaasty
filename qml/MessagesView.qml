@@ -40,6 +40,9 @@ Pane {
         chat.messages.check();
         listView.positionViewAtEnd();
         listView.atYBegin = listView.atYBeginning;
+
+        if (chat.recipient)
+            chat.recipient.checkStatus();
     }
     Connections {
         target: chat

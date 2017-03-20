@@ -61,7 +61,7 @@ class Conversation: public TastyData, public QEnableSharedFromThis<Conversation>
     Q_PROPERTY(Entry*           entry           READ entry              NOTIFY updated)
 //    Q_PROPERTY(QList<User*>     users           MEMBER _users           NOTIFY updated)
 //    Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
-    Q_PROPERTY(Author*          recipient       MEMBER _recipient       NOTIFY updated)
+    Q_PROPERTY(Author*          recipient       READ recipient          NOTIFY updated)
     Q_PROPERTY(MessagesModel*   messages        READ messages           CONSTANT)
     Q_PROPERTY(bool  isMyLastMessageUnread   READ isMyLastMessageUnread NOTIFY isMyLastMessageUnreadChanged)
     Q_PROPERTY(MessageBase*     lastMessage     READ lastMessage        NOTIFY lastMessageChanged)
@@ -111,6 +111,8 @@ public:
 
     int userId() const;
     int recipientId() const;
+
+    Author* recipient() const;
 
     QString typedUsers();
     bool isTyped() const;

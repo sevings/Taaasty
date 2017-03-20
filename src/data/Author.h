@@ -46,6 +46,8 @@ class Author: public User
     Q_PROPERTY(QString followingsCount     MEMBER _followingsCount     NOTIFY authorUpdated)
     Q_PROPERTY(QString lastSeenAt          MEMBER _lastSeenAt          NOTIFY statusUpdated)
 
+    friend class StatusChecker;
+
 public:
     Author(QObject* parent = nullptr);
     Author(const QJsonObject& data, QObject* parent = nullptr);

@@ -79,12 +79,28 @@ PopupFill {
                     top: parent.top
                     left: chatAvatar.right
                     right: date.left
+                    rightMargin: recipientStatus.visible
+                        ? recipientStatus.width + recipientStatus.anchors.margins * 2
+                        : leftMargin
                 }
                 text: model.chat.topic
                 font.pixelSize: window.fontSmaller
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 horizontalAlignment: Text.AlignLeft
+            }
+            Rectangle {
+                id: recipientStatus
+                anchors: {
+                    verticalCenter: chatNick.verticalCenter
+                    left: chatNick.right
+                    margins: 1 * mm
+                }
+                width: 1 * mm
+                height: width
+                radius: width / 2
+                color: "#4caf50"
+                visible: chat.recipient && chat.recipient.isOnline
             }
             ThemedText {
                 id: date

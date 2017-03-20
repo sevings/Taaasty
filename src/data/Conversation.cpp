@@ -642,6 +642,12 @@ int Conversation::recipientId() const
 
 
 
+Author* Conversation::recipient() const
+{
+    return _recipient;
+}
+
+
 
 QString Conversation::typedUsers()
 {
