@@ -28,7 +28,6 @@ private slots:
     void _initStatuses(const QJsonArray& data);
 
 private:
-    QList<QPointer<Author>>           _unchecked;
     QMultiHash<int, QPointer<Author>> _authors;
     QTimer _timer;
 };

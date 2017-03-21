@@ -463,7 +463,6 @@ void ChatsModel::_removeChat(int id)
         return;
 
     _ids.remove(id);
-    _statusChecker->remove(chat->recipient());
 
     int i;
     for (i = 0; i < _allChats.size(); i++)
@@ -484,6 +483,7 @@ void ChatsModel::_removeChat(int id)
 
     auto chat = _chats.takeAt(i);
     _entryChats.remove(chat->entryId());
+    _statusChecker->remove(chat->recipient());
 
     emit rowCountChanged();
 

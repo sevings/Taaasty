@@ -78,11 +78,10 @@ PopupFill {
                 anchors {
                     top: parent.top
                     left: chatAvatar.right
-                    right: date.left
-                    rightMargin: recipientStatus.visible
-                        ? recipientStatus.width + recipientStatus.anchors.margins * 2
-                        : leftMargin
                 }
+                width: Math.min(implicitWidth, parent.width - x - date.width - anchors.margins
+                                - (recipientStatus.visible ? recipientStatus.width + recipientStatus.anchors.margins * 2
+                                                           : anchors.margins))
                 text: model.chat.topic
                 font.pixelSize: window.fontSmaller
                 elide: Text.ElideRight
@@ -91,7 +90,7 @@ PopupFill {
             }
             Rectangle {
                 id: recipientStatus
-                anchors: {
+                anchors {
                     verticalCenter: chatNick.verticalCenter
                     left: chatNick.right
                     margins: 1 * mm

@@ -8,7 +8,7 @@
 StatusChecker::StatusChecker(QObject* parent)
     : QObject(parent)
 {
-    _timer.setInterval(300'000);
+    _timer.setInterval(300000);
     _timer.setSingleShot(false);
     _timer.start();
 
@@ -22,19 +22,16 @@ void StatusChecker::add(Author* author)
     if (!author || _authors.values(author->id()).contains(author))
         return;
 
-    _unchecked << author;
-
-    Q_TEST(QMetaObject::invokeMethod(this, "_checkStatuses", Qt::QueuedConnection));
+    _authors.insert(author->id(), author);
 }
 
 
 
-void StatusChecker::remove(Author* author);
+void StatusChecker::remove(Author* author)
 {
     if (!author)
         return;
 
-    _unchecked.removeAll(author);
     _authors.remove(author->id(), author);
 }
 
@@ -42,9 +39,7 @@ void StatusChecker::remove(Author* author);
 
 void StatusChecker::clear()
 {
-    _unchecked.clear();
     _authors.clear();
-
     _timer.start();
 }
 
@@ -53,20 +48,9 @@ void StatusChecker::clear()
 void StatusChecker::_checkStatuses()
 {
     QSet<int> ids;
-    while (!_unchecked.isEmpty())
-    {
-        auto author = _unchecked.takeLast();
-        if (!author)
-            continue;
-
-        ids << author->id();
-        _authors.insert(author->id(), author);
-    }
-
-    if (ids.isEmpty())
-        for (auto author: _authors)
-            if (author)
-                ids << author->id();
+    for (auto author: _authors)
+        if (author)
+            ids << author->id();
 
     if (ids.isEmpty())
         return;
@@ -74,12 +58,9 @@ void StatusChecker::_checkStatuses()
     QString arg;
     arg.reserve(qMin(ids.size(), 100) * 8);
     int i = 0;
-    for (auto id: ids)
-    {
-        arg += QString::number(id) + ',';
-        if (++i < 100)
-            continue;
 
+    auto check = [&]()
+    {
         arg.remove(arg.size() - 1, 1);
         auto request = new ApiRequest(QStringLiteral("v1/online_statuses.json?user_ids=") + arg);
         request->get();
@@ -88,7 +69,17 @@ void StatusChecker::_checkStatuses()
 
         i = 0;
         arg.clear();
+    };
+
+    for (auto id: ids)
+    {
+        arg += QString::number(id) + ',';
+        if (++i >= 100)
+            check();
     }
+
+    if (i > 0)
+        check();
 }
 
 
