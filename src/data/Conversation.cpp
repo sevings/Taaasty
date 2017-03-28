@@ -64,6 +64,9 @@ Conversation::Conversation(QObject* parent)
 {
     Q_TEST(connect(this, &Conversation::lastMessageChanged,
         this, &Conversation::isMyLastMessageUnreadChanged));
+
+    Q_TEST(connect(_messages, &MessagesModel::lastMessageChanged,
+                   this, &Conversation::lastMessageChanged));
 }
 
 

@@ -22,7 +22,6 @@
 
 #include "messagesmodel.h"
 
-// #include <QDateTime>
 #include <QJsonArray>
 #include <QDebug>
 
@@ -45,7 +44,6 @@
 
 MessagesModel::MessagesModel(Conversation* chat)
     : TastyListModel(chat)
-    , _chat(chat)
     , _chatId(0)
     , _url(QStringLiteral("v2/messenger/conversations/by_id/%1/messages.json?limit=%2&order=desc"))
 #ifdef Q_OS_ANDROID
@@ -62,7 +60,7 @@ void MessagesModel::init(Conversation* chat)
     if (!chat || !chat->id() || _chatId)
         return;
 
-    _chat = chat;
+    _chat = chat->sharedFromThis();
     _chatId = chat->id();
     _totalCount = chat->totalCount();
 
@@ -74,7 +72,7 @@ void MessagesModel::init(Conversation* chat)
 
 
 
-int MessagesModel::rowCount(const QModelIndex &parent) const
+int MessagesModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
 
@@ -83,7 +81,7 @@ int MessagesModel::rowCount(const QModelIndex &parent) const
 
 
 
-QVariant MessagesModel::data(const QModelIndex &index, int role) const
+QVariant MessagesModel::data(const QModelIndex& index, int role) const
 {
     if (index.row() < 0 || index.row() >= _messages.size())
         return QVariant();
@@ -262,7 +260,7 @@ void MessagesModel::_addMessage(const QJsonObject& data)
     if (_ids.contains(id))
         return;
 
-    auto msg = new Message(data, _chat, this);
+    auto msg = new Message(data, _chat.data(), this);
 
     _totalCount++;
 
@@ -272,7 +270,7 @@ void MessagesModel::_addMessage(const QJsonObject& data)
     _ids << msg->id();
 
     Q_TEST(connect(msg, &QObject::destroyed, this, &MessagesModel::_removeMessage));
-    Q_TEST(connect(msg, &MessageBase::readChanged, _chat, &Conversation::_decUnread));
+    Q_TEST(connect(msg, &MessageBase::readChanged, _chat.data(), &Conversation::_decUnread));
 
     endInsertRows();
 
@@ -333,7 +331,7 @@ QList<Message*> MessagesModel::_messagesList(const QJsonArray& feed)
     QList<Message*> msgs;
     for (int i = 0; i < feed.size(); i++)
     {
-        auto msg = new Message(feed.at(i).toObject(), _chat, this);
+        auto msg = new Message(feed.at(i).toObject(), _chat.data(), this);
         if (_ids.contains(msg->id()))
             continue;
 
@@ -341,7 +339,7 @@ QList<Message*> MessagesModel::_messagesList(const QJsonArray& feed)
         msgs.insert(i, msg);
 
         Q_TEST(connect(msg, &QObject::destroyed, this, &MessagesModel::_removeMessage));
-        Q_TEST(connect(msg, &MessageBase::readChanged, _chat, &Conversation::_decUnread));
+        Q_TEST(connect(msg, &MessageBase::readChanged, _chat.data(), &Conversation::_decUnread));
     }
 
     return msgs;

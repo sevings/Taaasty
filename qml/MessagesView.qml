@@ -249,6 +249,7 @@ Pane {
                                      ? chat.recipient.lastSeenAt : ''
                 font.pixelSize: window.fontSmallest
                 color: window.secondaryTextColor
+                horizontalAlignment: chat.isTyped ? Text.AlignLeft : Text.AlignHCenter
             }
             Rectangle {
                 anchors.fill: messageEditor

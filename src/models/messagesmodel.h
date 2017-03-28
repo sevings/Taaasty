@@ -87,7 +87,7 @@ private:
 
     QList<Message*> _messages;
     QSet<int>       _ids;
-    Conversation*   _chat; //-V122
+    ChatPtr         _chat;
     
     int             _chatId;
     int             _totalCount;
