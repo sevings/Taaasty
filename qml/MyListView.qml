@@ -25,7 +25,6 @@ import org.binque.taaasty 1.0
 ListView {
     id: list
     highlightFollowsCurrentItem: false
-    cacheBuffer: window.height * 2
     flickableDirection: Flickable.VerticalFlick
     maximumFlickVelocity: 1000 * mm
     interactive: parent.x <= 0

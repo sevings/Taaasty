@@ -104,6 +104,10 @@ Pane {
             id: entryView
             width: window.width
             height: 7 * mm + entryVoteButton.y + entryVoteButton.height
+            Component.onCompleted: {
+                if (index > feedModel.size - 50 && feedModel.hasMore)
+                    feedModel.loadMore();
+            }
             Poppable {
                 body: back
                 onClicked: {

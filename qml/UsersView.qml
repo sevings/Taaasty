@@ -49,12 +49,17 @@ Pane {
         visible: model.size > 0
         height: contentHeight > parent.height ? parent.height : contentHeight
         model: UsersModel {
+            id: usersModel
             mode: back.mode
             tlog: back.tlogId
         }
         delegate: Item {
             width: window.width
             height: usersAvatar.height + 3 * mm
+            Component.onCompleted: {
+                if (index > usersModel.size - 50 && usersModel.hasMore)
+                    usersModel.loadMore();
+            }
             Rectangle {
                 id: fillRect
                 anchors {

@@ -72,13 +72,12 @@ void TastyListModel::_setErrorString(int errorCode, QString str)
 
 
 
-void TastyListModel::_initLoad(bool emitting)
+void TastyListModel::_initLoad()
 {
-    if (emitting)
-        emit loadingChanged();
-
     if (!_loadRequest)
         return;
+
+    emit loadingChanged();
 
     _errorString.clear();
     emit errorStringChanged();
@@ -110,13 +109,12 @@ void TastyListModel::_initLoad(bool emitting)
 
 
 
-void TastyListModel::_initCheck(bool emitting)
+void TastyListModel::_initCheck()
 {
-    if (emitting)
-        emit checkingChanged();
-
     if (!_checkRequest)
         return;
+
+    emit checkingChanged();
 
     Q_TEST(connect(_checkRequest, &QObject::destroyed,
                    this, &TastyListModel::checkingChanged, Qt::QueuedConnection));

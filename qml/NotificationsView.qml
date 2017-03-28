@@ -81,6 +81,10 @@ PopupFill {
                     window.pushTlog(entityTlogId);
                 }
             }
+            Component.onCompleted: {
+                if (index > notifsView.model.size - 50 && notifsView.model.hasMore)
+                     notifsView.model.loadMore();
+            }
             Rectangle {
                 anchors {
                     top: parent.top

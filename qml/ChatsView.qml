@@ -47,6 +47,10 @@ PopupFill {
             readonly property int textHeight: lastMessage.y + lastMessage.height - 3 * mm
             height: (textHeight > chatAvatar.height ? textHeight : chatAvatar.height) + 3 * mm
             color: pop.pressed ? Material.primary : 'transparent'
+            Component.onCompleted: {
+                if (index > ChatsModel.size - 50 && ChatsModel.hasMore)
+                    ChatsModel.loadMore();
+            }
             MouseArea {
                 id: pop
                 anchors.fill: parent

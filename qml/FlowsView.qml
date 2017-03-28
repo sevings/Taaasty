@@ -52,6 +52,10 @@ Pane {
         delegate: Item {
             width: window.width
             height: 7 * mm + flowPosts.y + flowPosts.height
+            Component.onCompleted: {
+                if (index > flowsModel.size - 50 && flowsModel.hasMore)
+                    flowsModel.loadMore();
+            }
             Poppable {
                 body: back
                 onClicked: {

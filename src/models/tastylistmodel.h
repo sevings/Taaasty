@@ -17,7 +17,7 @@ class TastyListModel : public QAbstractListModel
     Q_PROPERTY(bool loading         READ isLoading      NOTIFY loadingChanged)
     Q_PROPERTY(bool checking        READ isChecking     NOTIFY checkingChanged)
     Q_PROPERTY(bool hasMore         READ hasMore        NOTIFY hasMoreChanged)
-    Q_PROPERTY(int size             READ rowCount       NOTIFY rowCountChanged)
+    Q_PROPERTY(int  size            READ rowCount       NOTIFY rowCountChanged)
     Q_PROPERTY(bool networkError    READ networkError   NOTIFY networkErrorChanged)
     Q_PROPERTY(QString errorString  READ errorString    NOTIFY errorStringChanged)
 
@@ -47,8 +47,8 @@ protected slots:
     void _setErrorString(int errorCode, QString str);
 
 protected:
-    void                 _initLoad(bool emitting = true);
-    void                 _initCheck(bool emitting = true);
+    void                 _initLoad();
+    void                 _initCheck();
 
     ApiRequest::Options  _optionsForFetchMore(bool accessTokenRequired = true) const;
 

@@ -123,7 +123,7 @@ Pane {
                 if (!message.isRead && Settings.readMessages)
                     message.read();
 
-                if (index < 10)
+                if (index < 50 && listView.model.hasMore)
                     listView.model.loadMore();
             }
             SmallAvatar {
