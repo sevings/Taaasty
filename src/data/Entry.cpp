@@ -74,9 +74,9 @@ void EntryBase::load(int id)
 
 void EntryBase::_initBase(const QJsonObject& data)
 {
-    _id     = data.value(QStringLiteral("id")).toInt();
+    _id     = data.value(QLatin1String("id")).toInt();
 
-    auto authorData = data.value(QStringLiteral("author")).toObject();
+    auto authorData = data.value(QLatin1String("author")).toObject();
     if (_author && authorData.contains(QStringLiteral("slug")))
         _author->init(authorData);
     else if (!authorData.isEmpty())
@@ -84,7 +84,7 @@ void EntryBase::_initBase(const QJsonObject& data)
     else
         _author = new Author(this);
 
-    auto type = data.value(QStringLiteral("type")).toString();
+    auto type = data.value(QLatin1String("type")).toString();
     if (     type == "image"     || type == "ImageEntry")
         _type = ImageEntry;
     else if (type == "quote"     || type == "QuoteEntry")
@@ -100,8 +100,8 @@ void EntryBase::_initBase(const QJsonObject& data)
 
     Q_ASSERT(_type != UnknownEntryType);
 
-    _text   = data.value(QStringLiteral("text")).toString().trimmed();
-    _title  = data.value(QStringLiteral("title")).toString().trimmed();
+    _text   = data.value(QLatin1String("text")).toString().trimmed();
+    _title  = data.value(QLatin1String("title")).toString().trimmed();
 
     emit idChanged();
     emit loaded();
@@ -243,26 +243,26 @@ void Entry::init(const QJsonObject& data, bool force)
 {
     _initBase(data);
 
-    _createdAt       = Tasty::parseDate(data.value(QStringLiteral("created_at")).toString());
-    _isVotable       = data.value(QStringLiteral("is_voteable")).toBool();
-    _isFavoritable   = data.value(QStringLiteral("can_favorite")).toBool(pTasty->isAuthorized());
-    _isFavorited     = data.value(QStringLiteral("is_favorited")).toBool();
-    _isWatchable     = data.value(QStringLiteral("can_watch")).toBool();
-    _isWatched       = data.value(QStringLiteral("is_watching")).toBool();
-    _isPrivate       = data.value(QStringLiteral("is_private")).toBool();
-    _isFixed         = data.value(QStringLiteral("fixed_state")).toString() == "fixed";
-    _isReportable    = data.value(QStringLiteral("can_report")).toBool(pTasty->isAuthorized());
+    _createdAt       = Tasty::parseDate(data.value(QLatin1String("created_at")).toString());
+    _isVotable       = data.value(QLatin1String("is_voteable")).toBool();
+    _isFavoritable   = data.value(QLatin1String("can_favorite")).toBool(pTasty->isAuthorized());
+    _isFavorited     = data.value(QLatin1String("is_favorited")).toBool();
+    _isWatchable     = data.value(QLatin1String("can_watch")).toBool();
+    _isWatched       = data.value(QLatin1String("is_watching")).toBool();
+    _isPrivate       = data.value(QLatin1String("is_private")).toBool();
+    _isFixed         = data.value(QLatin1String("fixed_state")).toString() == "fixed";
+    _isReportable    = data.value(QLatin1String("can_report")).toBool(pTasty->isAuthorized());
 
-    auto fixDate = data.value(QStringLiteral("fixed_up_at")).toString();
+    auto fixDate = data.value(QLatin1String("fixed_up_at")).toString();
     _fixedAt         = QDateTime::fromString(fixDate.left(19), "yyyy-MM-ddTHH:mm:ss");
 
-    auto tlogData = data.value(QStringLiteral("tlog")).toObject();
+    auto tlogData = data.value(QLatin1String("tlog")).toObject();
     if (!_tlog)
         _tlog        = new Tlog(tlogData, this);
     else if (_tlog->slug().isEmpty() || tlogData.contains(QStringLiteral("slug")))
         _tlog->init(tlogData);
 
-    _url             = data.value(QStringLiteral("entry_url")).toString();
+    _url             = data.value(QLatin1String("entry_url")).toString();
     if (_url.isEmpty())
     {
         if (_type == AnonymousEntry)
@@ -273,33 +273,33 @@ void Entry::init(const QJsonObject& data, bool force)
 
     auto isMy = _author->id() == pTasty->settings()->userId();
     auto isModer = _tlog->flow() && _tlog->flow()->isEditable();
-    _isDeletable     = data.value(QStringLiteral("can_delete")).toBool(isMy || isModer);
-    _isEditable      = data.value(QStringLiteral("can_edit")).toBool(isMy);
+    _isDeletable     = data.value(QLatin1String("can_delete")).toBool(isMy || isModer);
+    _isEditable      = data.value(QLatin1String("can_edit")).toBool(isMy);
 
     if (!_rating->id())
-        _rating->init(data.value(QStringLiteral("rating")).toObject());
+        _rating->init(data.value(QLatin1String("rating")).toObject());
 
-    _commentsCount   = data.value(QStringLiteral("comments_count")).toInt();
+    _commentsCount   = data.value(QLatin1String("comments_count")).toInt();
 
     if (data.contains(QStringLiteral("title_truncated")))
-        _truncatedTitle = data.value(QStringLiteral("title_truncated")).toString();
+        _truncatedTitle = data.value(QLatin1String("title_truncated")).toString();
     else if (_truncatedTitle.isEmpty() || force)
         _truncatedTitle = Tasty::truncateHtml(_title, 100);
 
     if (data.contains(QStringLiteral("text_truncated")))
-        _truncatedText  = data.value(QStringLiteral("text_truncated")).toString();
+        _truncatedText  = data.value(QLatin1String("text_truncated")).toString();
     else if (_truncatedText.isEmpty() || force)
         _truncatedText = Tasty::truncateHtml(_text, 300);
 
-    _source          = data.value(QStringLiteral("source")).toString(); // quote author
+    _source          = data.value(QLatin1String("source")).toString(); // quote author
 
     delete _media;
     if (_type == VideoEntry)
-        _media = new Media(data.value(QStringLiteral("iframely")).toObject(), this);
+        _media = new Media(data.value(QLatin1String("iframely")).toObject(), this);
     else
         _media = nullptr;
 
-//    _imagePreview    = data.value(QStringLiteral("preview_image")).toObject();
+//    _imagePreview    = data.value(QLatin1String("preview_image")).toObject();
 
     _wordCount   = _countWords(_title + ' ' + _text);
 
@@ -307,14 +307,14 @@ void Entry::init(const QJsonObject& data, bool force)
 
     pTasty->dataCache()->addEntry(sharedFromThis());
 
-    _commentsData    = data.value(QStringLiteral("comments")).toArray();
+    _commentsData    = data.value(QLatin1String("comments")).toArray();
     if (_commentsModel && _commentsModel->entryId() == _id)
     {
         _commentsModel->init(_commentsData, _commentsCount);
         _commentsData = QJsonArray();
     }
 
-    auto imageAttach = data.value(QStringLiteral("image_attachments")).toArray();
+    auto imageAttach = data.value(QLatin1String("image_attachments")).toArray();
     delete _attachedImagesModel;
     _attachedImagesModel = new AttachedImagesModel(imageAttach, this);
 
@@ -444,7 +444,7 @@ void Entry::report()
         if (!ptr)
             return;
 
-        ptr->_isReportable = data.value(QStringLiteral("can_report")).toBool();
+        ptr->_isReportable = data.value(QLatin1String("can_report")).toBool();
         emit ptr->isReportableChanged();
 
         emit pTasty->info(QStringLiteral("Жалоба на пост отправлена"));
@@ -471,7 +471,7 @@ void Entry::deleteEntry()
 
 void Entry::_changeWatched(const QJsonObject& data)
 {
-    if (data.value(QStringLiteral("status")).toString() != "success")
+    if (data.value(QLatin1String("status")).toString() != "success")
     {
         qDebug() << data;
         return;
@@ -485,7 +485,7 @@ void Entry::_changeWatched(const QJsonObject& data)
 
 void Entry::_changeFavorited(const QJsonObject& data)
 {
-    if (data.value(QStringLiteral("status")).toString() != "success")
+    if (data.value(QLatin1String("status")).toString() != "success")
     {
         qDebug() << data;
         return;
@@ -542,7 +542,7 @@ void Entry::_setChatId()
 
 void Entry::_deleteEntry(const QJsonObject& data)
 {
-    if (data.value(QStringLiteral("status")) == "success")
+    if (data.value(QLatin1String("status")) == "success")
     {
         emit entryDeleted();
         emit Tasty::instance()->entryDeleted(_id);

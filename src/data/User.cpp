@@ -134,29 +134,29 @@ User& User::operator=(User other)
 
 void User::_init(const QJsonObject& data)
 {
-    _id         = data.value(QStringLiteral("id")).toInt();
-    _tlogUrl    = data.value(QStringLiteral("tlog_url")).toString();
-    _name       = data.value(QStringLiteral("name")).toString();
-    _slug       = data.value(QStringLiteral("slug")).toString();
+    _id         = data.value(QLatin1String("id")).toInt();
+    _tlogUrl    = data.value(QLatin1String("tlog_url")).toString();
+    _name       = data.value(QLatin1String("name")).toString();
+    _slug       = data.value(QLatin1String("slug")).toString();
 
-    auto userpic = data.value(QStringLiteral("userpic")).toObject();
+    auto userpic = data.value(QLatin1String("userpic")).toObject();
 
-    _originalPic    = userpic.value(QStringLiteral("original_url")).toString();
+    _originalPic    = userpic.value(QLatin1String("original_url")).toString();
     if (!_originalPic.isEmpty())
     {
-        _largePic   = userpic.contains(QStringLiteral("large_url"))    ? userpic.value(QStringLiteral("large_url")).toString()
+        _largePic   = userpic.contains(QStringLiteral("large_url"))    ? userpic.value(QLatin1String("large_url")).toString()
                         : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/800x800/%1").arg(_originalPic);
-        _thumb128   = userpic.contains(QStringLiteral("thumb128_url")) ? userpic.value(QStringLiteral("thumb128_url")).toString()
+        _thumb128   = userpic.contains(QStringLiteral("thumb128_url")) ? userpic.value(QLatin1String("thumb128_url")).toString()
                         : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/128x128/%1").arg(_originalPic);
-        _thumb64    = userpic.contains(QStringLiteral("thumb64_url"))  ? userpic.value(QStringLiteral("thumb64_url")).toString()
+        _thumb64    = userpic.contains(QStringLiteral("thumb64_url"))  ? userpic.value(QLatin1String("thumb64_url")).toString()
                         : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/64x64/%1").arg(_originalPic);
     }
-    _symbol         = userpic.value(QStringLiteral("symbol")).toString();
+    _symbol         = userpic.value(QLatin1String("symbol")).toString();
 
-    auto colors = userpic.value(QStringLiteral("default_colors")).toObject();
+    auto colors = userpic.value(QLatin1String("default_colors")).toObject();
 
-    _backgroundColor = colors.value(QStringLiteral("background")).toString();
-    _nameColor       = colors.value(QStringLiteral("name")).toString();
+    _backgroundColor = colors.value(QLatin1String("background")).toString();
+    _nameColor       = colors.value(QLatin1String("name")).toString();
 
     emit idChanged();
     emit updated();
@@ -166,6 +166,6 @@ void User::_init(const QJsonObject& data)
 
 void User::_initFromTlog(const QJsonObject& data)
 {
-    auto author = data.value(QStringLiteral("author")).toObject();
+    auto author = data.value(QLatin1String("author")).toObject();
     _init(author);
 }

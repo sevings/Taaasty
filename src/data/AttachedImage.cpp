@@ -42,15 +42,15 @@ AttachedImage::AttachedImage(QObject* parent)
 AttachedImage::AttachedImage(const QJsonObject& data, QObject *parent)
     : QObject(parent)
 {
-    auto image = data.contains(QStringLiteral("image")) ? data.value(QStringLiteral("image")).toObject() : data;
-    _url = image.value(QStringLiteral("url")).toString();
+    auto image = data.contains(QStringLiteral("image")) ? data.value(QLatin1String("image")).toObject() : data;
+    _url = image.value(QLatin1String("url")).toString();
 
-    auto type = data.value(QStringLiteral("content_type")).toString();
+    auto type = data.value(QLatin1String("content_type")).toString();
     _type = type.split(QStringLiteral("/")).last();
 
-    auto geometry = image.value(QStringLiteral("geometry")).toObject();
-    _width = geometry.value(QStringLiteral("width")).toInt();
-    _height = geometry.value(QStringLiteral("height")).toInt();
+    auto geometry = image.value(QLatin1String("geometry")).toObject();
+    _width = geometry.value(QLatin1String("width")).toInt();
+    _height = geometry.value(QLatin1String("height")).toInt();
 }
 
 
@@ -58,12 +58,12 @@ AttachedImage::AttachedImage(const QJsonObject& data, QObject *parent)
 AttachedImage::AttachedImage(const QJsonObject& data, Media* parent)
     : QObject(parent)
 {
-    _url = data.value(QStringLiteral("href")).toString();
+    _url = data.value(QLatin1String("href")).toString();
 
-    auto type = data.value(QStringLiteral("type")).toString();
+    auto type = data.value(QLatin1String("type")).toString();
     _type = type.split(QStringLiteral("/")).last();
 
-    auto geometry = data.value(QStringLiteral("media")).toObject();
-    _width = geometry.value(QStringLiteral("width")).toInt();
-    _height = geometry.value(QStringLiteral("height")).toInt();
+    auto geometry = data.value(QLatin1String("media")).toObject();
+    _width = geometry.value(QLatin1String("width")).toInt();
+    _height = geometry.value(QLatin1String("height")).toInt();
 }

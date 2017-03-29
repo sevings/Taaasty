@@ -127,8 +127,8 @@ void TagsModel::_setData(const QJsonArray& data)
 
     foreach (auto tag, data)
     {
-        _names << tag.toObject().value(QStringLiteral("name")).toString();
-        _counts << tag.toObject().value(QStringLiteral("taggings_count")).toInt();
+        _names << tag.toObject().value(QLatin1String("name")).toString();
+        _counts << tag.toObject().value(QLatin1String("taggings_count")).toInt();
     }
 
     emit rowCountChanged();

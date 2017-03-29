@@ -53,8 +53,8 @@ CalendarEntry::CalendarEntry(const QJsonObject& data, QObject *parent)
 {
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 
-    _id              = data.value(QStringLiteral("entry_id")).toInt();
-    auto d = data.value(QStringLiteral("created_at")).toString();
+    _id              = data.value(QLatin1String("entry_id")).toInt();
+    auto d = data.value(QLatin1String("created_at")).toString();
     _createdAt       = Tasty::parseDate(d);
 
     _dateTime = QDateTime::fromString(d.left(19), "yyyy-MM-ddTHH:mm:ss");
@@ -63,12 +63,12 @@ CalendarEntry::CalendarEntry(const QJsonObject& data, QObject *parent)
     _month           = QStringLiteral("%1, %2").arg(date.year()).arg(month);
 
     _date            = d.left(10);
-    _url             = data.value(QStringLiteral("entry_url")).toString();
-    _type            = data.value(QStringLiteral("type_symbol")).toString();
-    _isPrivate       = data.value(QStringLiteral("is_private")).toBool();
-    _commentsCount   = data.value(QStringLiteral("comments_count")).toInt();
-    _truncatedTitle  = data.value(QStringLiteral("title_truncated")).toString();
-    _isFlow          = data.value(QStringLiteral("is_flow")).toBool();
+    _url             = data.value(QLatin1String("entry_url")).toString();
+    _type            = data.value(QLatin1String("type_symbol")).toString();
+    _isPrivate       = data.value(QLatin1String("is_private")).toBool();
+    _commentsCount   = data.value(QLatin1String("comments_count")).toInt();
+    _truncatedTitle  = data.value(QLatin1String("title_truncated")).toString();
+    _isFlow          = data.value(QLatin1String("is_flow")).toBool();
 }
 
 

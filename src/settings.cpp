@@ -100,7 +100,7 @@ void Settings::setLogin(const QString& login)
     if (login == this->login())
         return;
 
-    _settings.setValue("login", login);
+    _settings.setValue(QStringLiteral("login"), login);
 
     emit loginChanged();
 }
@@ -119,7 +119,7 @@ void Settings::setAccessToken(const QString& token)
     if (token == accessToken())
         return;
 
-    _settings.setValue("access_token", token);
+    _settings.setValue(QStringLiteral("access_token"), token);
 
     emit accessTokenChanged();
 }
@@ -138,7 +138,7 @@ void Settings::setExpiresAt(const QDateTime& date)
     if (date == expiresAt())
         return;
 
-    _settings.setValue("expires_at", date);
+    _settings.setValue(QStringLiteral("expires_at"), date);
 }
 
 
@@ -163,7 +163,7 @@ void Settings::setUserId(const int id)
     if (id == userId())
         return;
 
-    _settings.setValue("user_id", id);
+    _settings.setValue(QStringLiteral("user_id"), id);
 
     emit userIdChanged();
 }
@@ -182,7 +182,7 @@ void Settings::setSaveProfile(const bool save)
     if (save == saveProfile())
         return;
 
-    _settings.setValue("save_profile", save);
+    _settings.setValue(QStringLiteral("save_profile"), save);
 }
 
 
@@ -199,7 +199,7 @@ void Settings::setPrevLogin(const QString& login)
     if (login == this->prevLogin())
         return;
 
-    _settings.setValue("prev_login", login);
+    _settings.setValue(QStringLiteral("prev_login"), login);
 
     emit prevLoginChanged();
 }
@@ -218,7 +218,7 @@ void Settings::setPrevAccessToken(const QString& token)
     if (token == prevAccessToken())
         return;
 
-    _settings.setValue("prev_access_token", token);
+    _settings.setValue(QStringLiteral("prev_access_token"), token);
 
     emit prevAccessTokenChanged();
 }
@@ -237,7 +237,7 @@ void Settings::setPrevExpiresAt(const QDateTime& date)
     if (date == prevExpiresAt())
         return;
 
-    _settings.setValue("prev_expires_at", date);
+    _settings.setValue(QStringLiteral("prev_expires_at"), date);
 }
 
 
@@ -262,7 +262,7 @@ void Settings::setPrevUserId(const int id)
     if (id == prevUserId())
         return;
 
-    _settings.setValue("prev_user_id", id);
+    _settings.setValue(QStringLiteral("prev_user_id"), id);
 
     emit prevUserIdChanged();
 }
@@ -281,7 +281,7 @@ void Settings::setPrevSaveProfile(const bool save)
     if (save == prevSaveProfile())
         return;
 
-    _settings.setValue("prev_save_profile", save);
+    _settings.setValue(QStringLiteral("prev_save_profile"), save);
 }
 
 
@@ -298,7 +298,7 @@ void Settings::setMaxImageWidth(const int width)
     if (width == maxImageWidth())
         return;
 
-    _settings.setValue("max_image_width", width);
+    _settings.setValue(QStringLiteral("max_image_width"), width);
 
     emit maxImageWidthChanged();
 }
@@ -317,7 +317,7 @@ void Settings::setAutoloadImages(bool load)
     if (load == autoloadImages())
         return;
 
-    _settings.setValue("autoload_images", load);
+    _settings.setValue(QStringLiteral("autoload_images"), load);
 
     emit autoloadImagesChanged(load);
 }
@@ -336,7 +336,7 @@ void Settings::setLoadImagesOverWifi(bool load)
     if (load == loadImagesOverWifi())
         return;
 
-    _settings.setValue("autoload_images_over_wifi", load);
+    _settings.setValue(QStringLiteral("autoload_images_over_wifi"), load);
 
     emit loadImagesOverWifiChanged(load);
 }
@@ -357,7 +357,7 @@ void Settings::setMaxLoadImageSize(int size)
     if (size == maxLoadImageSize())
         return;
 
-    _settings.setValue("autoload_images_max_size", size);
+    _settings.setValue(QStringLiteral("autoload_images_max_size"), size);
 
     emit maxLoadImageSizeChanged(size);
 }
@@ -376,7 +376,7 @@ void Settings::setMaxCacheSize(int size)
     if (size == maxCacheSize())
         return;
 
-    _settings.setValue("max_cache_size", size);
+    _settings.setValue(QStringLiteral("max_cache_size"), size);
 
     emit maxCacheSizeChanged(size);
 }
@@ -395,7 +395,7 @@ void Settings::setCacheVersion(quint8 v)
     if (v == cacheVersion())
         return;
 
-    _settings.setValue("cache_version", v);
+    _settings.setValue(QStringLiteral("cache_version"), v);
 }
 
 
@@ -412,7 +412,7 @@ void Settings::setHideShortPosts(bool hide)
     if (hide == hideShortPosts())
         return;
 
-    _settings.setValue("hide_short_posts", hide);
+    _settings.setValue(QStringLiteral("hide_short_posts"), hide);
 
     emit hideShortPostsChanged();
 }
@@ -431,7 +431,7 @@ void Settings::setHideNegativeRated(bool hide)
     if (hide == hideNegativeRated())
         return;
 
-    _settings.setValue("hide_negative_rated", hide);
+    _settings.setValue(QStringLiteral("hide_negative_rated"), hide);
 
     emit hideNegativeRatedChanged();
 }
@@ -450,7 +450,7 @@ void Settings::setDarkTheme(bool dark)
     if (dark == darkTheme())
         return;
 
-    _settings.setValue("dark_theme", dark);
+    _settings.setValue(QStringLiteral("dark_theme"), dark);
 
     emit darkThemeChanged();
 }
@@ -469,7 +469,7 @@ void Settings::setFontZoom(quint8 zoom)
     if (zoom == fontZoom())
         return;
 
-    _settings.setValue("font_zoom", zoom);
+    _settings.setValue(QStringLiteral("font_zoom"), zoom);
 
     emit fontZoomChanged();
 }
@@ -488,7 +488,7 @@ void Settings::setSystemNotifications(bool enable)
     if (enable == systemNotifications())
         return;
 
-    _settings.setValue("system_notifications", enable);
+    _settings.setValue(QStringLiteral("system_notifications"), enable);
 
     emit systemNotificationsChanged();
 }
@@ -507,7 +507,7 @@ void Settings::setPredictiveText(bool enable)
     if (enable == predictiveText())
         return;
 
-    _settings.setValue("predictive_text", enable);
+    _settings.setValue(QStringLiteral("predictive_text"), enable);
 
     emit predictiveTextChanged();
 }
@@ -526,7 +526,7 @@ void Settings::setReadMessages(bool read)
     if (read == readMessages())
         return;
 
-    _settings.setValue("read_messages", read);
+    _settings.setValue(QStringLiteral("read_messages"), read);
 
     emit readMessagesChanged();
 }
@@ -545,7 +545,7 @@ void Settings::setLastTitle(const QString& title)
     if (title == lastTitle())
         return;
 
-    _settings.setValue("last_title", title);
+    _settings.setValue(QStringLiteral("last_title"), title);
 
     emit lastTitleChanged();
 }
@@ -564,7 +564,7 @@ void Settings::setLastText(const QString& text)
     if (text == lastText())
         return;
 
-    _settings.setValue("last_text", text);
+    _settings.setValue(QStringLiteral("last_text"), text);
 
     emit lastTextChanged();
 }
@@ -583,7 +583,7 @@ void Settings::setLastSource(const QString& source)
     if (source == lastSource())
         return;
 
-    _settings.setValue("last_source", source);
+    _settings.setValue(QStringLiteral("last_source"), source);
 
     emit lastSourceChanged();
 }
@@ -602,7 +602,7 @@ void Settings::setLastUrl(const QString& url)
     if (url == lastUrl())
         return;
 
-    _settings.setValue("last_url", url);
+    _settings.setValue(QStringLiteral("last_url"), url);
 
     emit lastUrlChanged();
 }
@@ -621,7 +621,7 @@ void Settings::setLastImages(const QStringList& images)
     if (images == lastImages())
         return;
 
-    _settings.setValue("last_images", images);
+    _settings.setValue(QStringLiteral("last_images"), images);
 
     emit lastImagesChanged();
 }
@@ -640,7 +640,7 @@ void Settings::setLastOptimizeImages(bool opt)
     if (opt == lastOptimizeImages())
         return;
 
-    _settings.setValue("last_optimize_image", opt);
+    _settings.setValue(QStringLiteral("last_optimize_image"), opt);
 
     emit lastOptimizeImagesChanged();
 }
@@ -659,7 +659,7 @@ void Settings::setLastPrivacy(int privacy)
     if (privacy == lastPrivacy())
         return;
 
-    _settings.setValue("last_privacy", privacy);
+    _settings.setValue(QStringLiteral("last_privacy"), privacy);
 
     emit lastPrivacyChanged();
 }
@@ -678,7 +678,7 @@ void Settings::setLastPostingTlog(int tlog)
     if (tlog == lastPostingTlog())
         return;
 
-    _settings.setValue("last_posting_tlog", tlog);
+    _settings.setValue(QStringLiteral("last_posting_tlog"), tlog);
 
     emit lastPostingTlogChanged();
 }
@@ -697,7 +697,7 @@ void Settings::setLastEntryType(quint8 type)
     if (type == lastEntryType())
         return;
 
-    _settings.setValue("last_entry_type", type);
+    _settings.setValue(QStringLiteral("last_entry_type"), type);
 
     emit lastEntryTypeChanged();
 }

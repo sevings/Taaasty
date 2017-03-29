@@ -49,7 +49,7 @@ void TastyDataCache::removeChat(Conversation* chat)
 
 ChatPtr TastyDataCache::initChat(const QJsonObject& data)
 {
-    auto id = data.value(QStringLiteral("id")).toInt();
+    auto id = data.value(QLatin1String("id")).toInt();
     auto chat = this->chat(id);
     if (!chat)
         chat = ChatPtr::create(nullptr);
@@ -114,7 +114,7 @@ void TastyDataCache::removeEntry(int id)
 
 EntryPtr TastyDataCache::initEntry(const QJsonObject& data, bool reinit)
 {
-    auto id = data.value(QStringLiteral("id")).toInt();
+    auto id = data.value(QLatin1String("id")).toInt();
     auto entry = this->entry(id);
     if (!entry)
         entry = EntryPtr::create(nullptr);

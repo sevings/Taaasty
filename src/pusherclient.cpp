@@ -128,7 +128,7 @@ void PusherClient::_getFriendsAuth()
 
 void PusherClient::_subscribeToMessaging(const QJsonObject& data)
 {
-    auto auth = data.value(QStringLiteral("auth")).toString();
+    auto auth = data.value(QLatin1String("auth")).toString();
     _pusher->channel(_messagingChannel)->subscribeToPrivate(auth);
 }
 
@@ -136,7 +136,7 @@ void PusherClient::_subscribeToMessaging(const QJsonObject& data)
 
 void PusherClient::_subscribeToFriends(const QJsonObject& data)
 {
-    auto auth = data.value(QStringLiteral("auth")).toString();
+    auto auth = data.value(QLatin1String("auth")).toString();
     _pusher->channel(_friendsChannel)->subscribeToPrivate(auth);
 }
 
@@ -157,13 +157,13 @@ void PusherClient::_handleMessagingEvent(const QString& event, const QString& da
 
     if (event.endsWith(QStringLiteral("status")))
     {
-        auto chats = json.value(QStringLiteral("unreadConversationsCount")).toInt();
+        auto chats = json.value(QLatin1String("unreadConversationsCount")).toInt();
         emit unreadChats(chats);
 
-        auto notifs = json.value(QStringLiteral("unreadNotificationsCount")).toInt();
+        auto notifs = json.value(QLatin1String("unreadNotificationsCount")).toInt();
         emit unreadNotifications(notifs);
 
-//        auto active = json.value(QStringLiteral("activeConversationsCount")).toInt();
+//        auto active = json.value(QLatin1String("activeConversationsCount")).toInt();
 
         return;
     }
@@ -176,8 +176,8 @@ void PusherClient::_handleMessagingEvent(const QString& event, const QString& da
 
     if (event == "typed")
     {
-        auto chatId = json.value(QStringLiteral("conversation_id")).toInt();
-        auto userId = json.value(QStringLiteral("user_id")).toInt();
+        auto chatId = json.value(QLatin1String("conversation_id")).toInt();
+        auto userId = json.value(QLatin1String("user_id")).toInt();
         auto chat = pTasty->dataCache()->chat(chatId);
         if (chat)
             chat.data()->addTyped(userId);
@@ -186,7 +186,7 @@ void PusherClient::_handleMessagingEvent(const QString& event, const QString& da
 
     if (event.endsWith(QStringLiteral("update_conversation")))
     {
-        auto chatId = json.value(QStringLiteral("id")).toInt();
+        auto chatId = json.value(QLatin1String("id")).toInt();
         auto chat = pTasty->dataCache()->chat(chatId);
         if (chat)
             chat.data()->init(json);
@@ -195,7 +195,7 @@ void PusherClient::_handleMessagingEvent(const QString& event, const QString& da
 
     if (event.endsWith(QStringLiteral("push_message")))
     {
-        auto chatId = json.value(QStringLiteral("conversation_id")).toInt();
+        auto chatId = json.value(QLatin1String("conversation_id")).toInt();
         auto chat = pTasty->dataCache()->chat(chatId);
         if (chat)
             emit chat.data()->messageReceived(json);
@@ -206,15 +206,15 @@ void PusherClient::_handleMessagingEvent(const QString& event, const QString& da
 
     if (event.endsWith(QStringLiteral("update_messages")))
     {
-        auto chatId = json.value(QStringLiteral("conversation_id")).toInt();
+        auto chatId = json.value(QLatin1String("conversation_id")).toInt();
         auto chat = pTasty->dataCache()->chat(chatId);
         if (!chat)
             return;
 
-        auto messages = json.value(QStringLiteral("messages")).toArray();
+        auto messages = json.value(QLatin1String("messages")).toArray();
         foreach (auto msgData, messages)
         {
-            auto msgId = msgData.toObject().value(QStringLiteral("id")).toInt();
+            auto msgId = msgData.toObject().value(QLatin1String("id")).toInt();
             auto msg = pTasty->dataCache()->message(msgId);
             if (msg)
                 msg->_updateRead(msgData.toObject());
@@ -225,15 +225,15 @@ void PusherClient::_handleMessagingEvent(const QString& event, const QString& da
 
     if (event.endsWith(QStringLiteral("delete_user_messages")))
     {
-        auto chatId = json.value(QStringLiteral("conversation_id")).toInt();
+        auto chatId = json.value(QLatin1String("conversation_id")).toInt();
         auto chat = pTasty->dataCache()->chat(chatId);
         if (!chat)
             return;
 
-        auto messages = json.value(QStringLiteral("messages")).toArray();
+        auto messages = json.value(QLatin1String("messages")).toArray();
         foreach (auto msgData, messages)
         {
-            auto msgId = msgData.toObject().value(QStringLiteral("id")).toInt();
+            auto msgId = msgData.toObject().value(QLatin1String("id")).toInt();
             auto msg = pTasty->dataCache()->message(msgId);
             if (msg)
                 msg->_markRemoved(msgData.toObject());
@@ -244,10 +244,10 @@ void PusherClient::_handleMessagingEvent(const QString& event, const QString& da
 
     if (event == "update_notifications")
     {
-        auto notifs = json.value(QStringLiteral("notifications")).toArray();
+        auto notifs = json.value(QLatin1String("notifications")).toArray();
         foreach (auto notifData, notifs)
         {
-            auto notifId = notifData.toObject().value(QStringLiteral("id")).toInt();
+            auto notifId = notifData.toObject().value(QLatin1String("id")).toInt();
             auto notif = pTasty->dataCache()->notification(notifId);
             if (notif)
                 notif->_updateRead(notifData.toObject());
@@ -276,9 +276,9 @@ void PusherClient::_handleFriendsEvent(const QString& event, const QString& data
     
     if (event == "new_entry")
     {
-        auto entry = json.value(QStringLiteral("entry")).toObject();
-        auto id = entry.value(QStringLiteral("id")).toInt();
-//        auto type = entry.value(QStringLiteral("type")).toString(); // TextEntry
+        auto entry = json.value(QLatin1String("entry")).toObject();
+        auto id = entry.value(QLatin1String("id")).toInt();
+//        auto type = entry.value(QLatin1String("type")).toString(); // TextEntry
         emit unreadFriendsEntry(id);
         return;
     }

@@ -176,7 +176,7 @@ void Reposter::_addRepost(const QJsonObject& data)
 
 void Reposter::_removeRepost(const QJsonObject& data)
 {
-    if (data.value(QStringLiteral("status")).toString() == "success")
+    if (data.value(QLatin1String("status")).toString() == "success")
     {
         emit pTasty->info(QStringLiteral("Репост удален"));
         emit unreposted(_entryId);

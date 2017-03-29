@@ -123,27 +123,27 @@ void Tlog::setSlug(const QString& slug)
 
 void Tlog::init(const QJsonObject& data)
 {
-    _id = data.value(QStringLiteral("id")).toInt();
-    _slug = data.value(QStringLiteral("slug")).toString();
-    _title = data.value(QStringLiteral("title")).toString();
-    _tag = data.value(QStringLiteral("tag")).toString();
-    _entriesCount = "<h1>" + Tasty::num2str(data.value(QStringLiteral("total_entries_count")).toInt(),
+    _id = data.value(QLatin1String("id")).toInt();
+    _slug = data.value(QLatin1String("slug")).toString();
+    _title = data.value(QLatin1String("title")).toString();
+    _tag = data.value(QLatin1String("tag")).toString();
+    _entriesCount = "<h1>" + Tasty::num2str(data.value(QLatin1String("total_entries_count")).toInt(),
                                             "</h1>запись", "</h1>записи", "</h1>записей");
-    _publicEntriesCount = "<h1>" + Tasty::num2str(data.value(QStringLiteral("public_entries_count")).toInt(),
+    _publicEntriesCount = "<h1>" + Tasty::num2str(data.value(QLatin1String("public_entries_count")).toInt(),
                                                   "</h1>запись", "</h1>записи", "</h1>записей");
-    _privateEntriesCount = "<h1>" + Tasty::num2str(data.value(QStringLiteral("private_entries_count")).toInt(),
+    _privateEntriesCount = "<h1>" + Tasty::num2str(data.value(QLatin1String("private_entries_count")).toInt(),
                                                    "</h1>скрыта", "</h1>скрыто", "</h1>скрыто");
 
     if (data.contains(QStringLiteral("stats")))
     {
-        auto stats = data.value(QStringLiteral("stats")).toObject();
+        auto stats = data.value(QLatin1String("stats")).toObject();
         _favoritesCount = QStringLiteral("<h1>%1</h1>в избранном")
-                .arg(stats.value(QStringLiteral("favorites_count")).toInt());
-        _commentsCount = Tasty::num2str(stats.value(QStringLiteral("comments_count")).toInt(),
+                .arg(stats.value(QLatin1String("favorites_count")).toInt());
+        _commentsCount = Tasty::num2str(stats.value(QLatin1String("comments_count")).toInt(),
                                         "комментарий", "комментария", "комментариев");
-        _tagsCount = "<h1>" + Tasty::num2str(stats.value(QStringLiteral("tags_count")).toInt(),
+        _tagsCount = "<h1>" + Tasty::num2str(stats.value(QLatin1String("tags_count")).toInt(),
                                     "</h1>тег", "</h1>тега", "</h1>тегов");
-        _daysCount = Tasty::num2str(stats.value(QStringLiteral("days_count")).toInt(),
+        _daysCount = Tasty::num2str(stats.value(QLatin1String("days_count")).toInt(),
                                     "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
     }
     else
@@ -152,36 +152,36 @@ void Tlog::init(const QJsonObject& data)
         _commentsCount.clear();
         _tagsCount = "Теги";
 
-        auto date = QDateTime::fromString(data.value(QStringLiteral("created_at")).toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+        auto date = QDateTime::fromString(data.value(QLatin1String("created_at")).toString().left(19), "yyyy-MM-ddTHH:mm:ss");
         auto today = QDateTime::currentDateTime();
         int days = (today.toMSecsSinceEpoch() - date.toMSecsSinceEpoch()) / (24 * 60 * 60 * 1000);
         _daysCount = Tasty::num2str(days, "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
     }
 
-    auto relations = data.value(QStringLiteral("relationships_summary")).toObject();
-    _followersCount = "<h1>" + Tasty::num2str(relations.value(QStringLiteral("followers_count")).toInt(),
+    auto relations = data.value(QLatin1String("relationships_summary")).toObject();
+    _followersCount = "<h1>" + Tasty::num2str(relations.value(QLatin1String("followers_count")).toInt(),
                                               "</h1>подписчик", "</h1>подписчика", "</h1>подписчиков");
-    _followingsCount = "<h1>" + Tasty::num2str(relations.value(QStringLiteral("followings_count")).toInt(),
+    _followingsCount = "<h1>" + Tasty::num2str(relations.value(QLatin1String("followings_count")).toInt(),
                                                "</h1>подписка", "</h1>подписки", "</h1>подписок");
-    _ignoredCount = "<h1>" + Tasty::num2str(relations.value(QStringLiteral("ignored_count")).toInt(),
+    _ignoredCount = "<h1>" + Tasty::num2str(relations.value(QLatin1String("ignored_count")).toInt(),
                                             "</h1>блокирован", "</h1>блокировано", "</h1>блокировано");
 
     _hisRelation = _relationship(data, "his_relationship");
     _myRelation =  _relationship(data, "my_relationship");
 
     auto authorData = data.contains(QStringLiteral("author"))
-            ? data.value(QStringLiteral("author")).toObject() : data;
+            ? data.value(QLatin1String("author")).toObject() : data;
     if (_author)
         _author->init(authorData);
     else
         _author = new Author(authorData, this);
 
-    auto myRelationObj = data.value(QStringLiteral("my_relationship_object")).toObject();
+    auto myRelationObj = data.value(QLatin1String("my_relationship_object")).toObject();
     if (myRelationObj.contains(QStringLiteral("flow")))
     {
         if (!_flow)
             _flow = new Flow(this);
-        _flow->init(myRelationObj.value(QStringLiteral("flow")).toObject());
+        _flow->init(myRelationObj.value(QLatin1String("flow")).toObject());
     }
     
     if (_chat)

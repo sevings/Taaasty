@@ -361,15 +361,15 @@ void FeedModel::_addItems(const QJsonObject& data)
 {
     qDebug() << "FeedModel::_addItems";
 
-    auto feed =  data.contains(QStringLiteral("items")) ? data.value(QStringLiteral("items")).toArray()
-                                        : data.value(QStringLiteral("entries")).toArray();
+    auto feed =  data.contains(QStringLiteral("items")) ? data.value(QLatin1String("items")).toArray()
+                                        : data.value(QLatin1String("entries")).toArray();
 
     auto more = (data.contains(QStringLiteral("prev_date"))
-                 && !data.value(QStringLiteral("prev_date")).isNull())
+                 && !data.value(QLatin1String("prev_date")).isNull())
             || (data.contains(QStringLiteral("has_more"))
-                ? data.value(QStringLiteral("has_more")).toBool()
+                ? data.value(QLatin1String("has_more")).toBool()
                 : (data.contains(QStringLiteral("next_since_entry_id"))
-                   && !data.value(QStringLiteral("next_since_entry_id")).isNull()));
+                   && !data.value(QLatin1String("next_since_entry_id")).isNull()));
 
     if (more != _hasMore)
     {
@@ -384,7 +384,7 @@ void FeedModel::_addItems(const QJsonObject& data)
     foreach(auto item, feed)
     {
         auto obj = item.toObject();
-        auto json = obj.contains(QStringLiteral("entry")) ? obj.value(QStringLiteral("entry")).toObject()
+        auto json = obj.contains(QStringLiteral("entry")) ? obj.value(QLatin1String("entry")).toObject()
                                           : obj;
         auto entry = pTasty->dataCache()->initEntry(json);
         if (_idEntries.contains(entry->id()))
@@ -404,13 +404,13 @@ void FeedModel::_addItems(const QJsonObject& data)
 
     // in live modes next_since_entry_id may be incorrect
     if (fixed.isEmpty() && data.contains(QStringLiteral("next_since_entry_id")))
-        _lastEntry = data.value(QStringLiteral("next_since_entry_id")).toInt();
+        _lastEntry = data.value(QLatin1String("next_since_entry_id")).toInt();
     else if (_prevDate.isEmpty() && !all.isEmpty())
         _lastEntry = all.last()->entryId();
 
     if (data.contains(QStringLiteral("prev_date")))
     {
-        auto prev = data.value(QStringLiteral("prev_date"));
+        auto prev = data.value(QLatin1String("prev_date"));
         if (prev.isNull())
             _prevDate.clear();
         else
@@ -533,7 +533,7 @@ void FeedModel::_setRatings(const QJsonArray& data)
 
     for (auto rating: data)
     {
-        auto id = rating.toObject().value(QStringLiteral("entry_id")).toInt();
+        auto id = rating.toObject().value(QLatin1String("entry_id")).toInt();
         auto entry = _idEntries.value(id);
         Q_ASSERT(entry);
         if (!entry)

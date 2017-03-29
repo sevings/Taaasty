@@ -151,7 +151,7 @@ void Conversation::setEntryId(int entryId)
 
 void Conversation::_markRead(const QJsonObject& data)
 {
-    if (data.value(QStringLiteral("status")).toString() != "success")
+    if (data.value(QLatin1String("status")).toString() != "success")
     {
         qDebug() << "error read chat" << _id;
         return;
@@ -279,9 +279,9 @@ int Conversation::totalCount() const
 
 void Conversation::init(const QJsonObject& data)
 {
-     _id                = data.value(QStringLiteral("id")).toInt();
+     _id                = data.value(QLatin1String("id")).toInt();
 
-     auto type = data.value(QStringLiteral("type")).toString();
+     auto type = data.value(QLatin1String("type")).toString();
      if (type == "PublicConversation")
          _type = PublicConversation;
      else if (type == "PrivateConversation")
@@ -294,16 +294,16 @@ void Conversation::init(const QJsonObject& data)
          _type = UninitializedConversation;
      }
 
-     _unreadCount       = data.value(QStringLiteral("unread_messages_count")).toInt();
-     _unreceivedCount   = data.value(QStringLiteral("unreceived_messages_count")).toInt();
-     _totalCount        = data.value(QStringLiteral("messages_count")).toInt();
-     _userId            = data.value(QStringLiteral("user_id")).toInt();
-     _recipientId       = data.value(QStringLiteral("recipient_id")).toInt();
-     _isDisabled        = data.value(QStringLiteral("is_disabled")).toBool();
-     _notDisturb        = data.value(QStringLiteral("not_disturb")).toBool();
-     _canTalk           = data.value(QStringLiteral("can_talk")).toBool(true);
-     _canDelete         = data.value(QStringLiteral("can_delete")).toBool(true);
-     _isAnonymous       = data.value(QStringLiteral("is_anonymous")).toBool();
+     _unreadCount       = data.value(QLatin1String("unread_messages_count")).toInt();
+     _unreceivedCount   = data.value(QLatin1String("unreceived_messages_count")).toInt();
+     _totalCount        = data.value(QLatin1String("messages_count")).toInt();
+     _userId            = data.value(QLatin1String("user_id")).toInt();
+     _recipientId       = data.value(QLatin1String("recipient_id")).toInt();
+     _isDisabled        = data.value(QLatin1String("is_disabled")).toBool();
+     _notDisturb        = data.value(QLatin1String("not_disturb")).toBool();
+     _canTalk           = data.value(QLatin1String("can_talk")).toBool(true);
+     _canDelete         = data.value(QLatin1String("can_delete")).toBool(true);
+     _isAnonymous       = data.value(QLatin1String("is_anonymous")).toBool();
 
      auto dataCache = pTasty->dataCache();
      dataCache->addChat(sharedFromThis());
@@ -319,7 +319,7 @@ void Conversation::init(const QJsonObject& data)
 
      if (!_entry && data.contains(QStringLiteral("entry")))
      {
-         auto entryData = data.value(QStringLiteral("entry")).toObject();
+         auto entryData = data.value(QLatin1String("entry")).toObject();
          _entry = dataCache->initEntry(entryData, false);
          _entryId = _entry->id();
 
@@ -329,10 +329,10 @@ void Conversation::init(const QJsonObject& data)
      }
 
      if (!_recipient && data.contains(QStringLiteral("recipient")))
-         _recipient     = new Author(data.value(QStringLiteral("recipient")).toObject(), this);
+         _recipient     = new Author(data.value(QLatin1String("recipient")).toObject(), this);
 
      if (data.contains(QStringLiteral("topic")))
-         _topic         = data.value(QStringLiteral("topic")).toString();
+         _topic         = data.value(QLatin1String("topic")).toString();
      else if (_recipient)
          _topic         = _recipient->name();
      else if (_entryId)
@@ -346,25 +346,25 @@ void Conversation::init(const QJsonObject& data)
      else
          _topic.clear();
 
-     auto users = data.value(QStringLiteral("users")).toArray();
+     auto users = data.value(QLatin1String("users")).toArray();
      _initUsers(users);
 
-     users = data.value(QStringLiteral("users_deleted")).toArray();
+     users = data.value(QLatin1String("users_deleted")).toArray();
      foreach(auto userData, users)
      {
         auto user = new User(userData.toObject(), this);
         _deletedUsers.insert(user->id(), user);
      }
 
-     users = data.value(QStringLiteral("users_left")).toArray();
+     users = data.value(QLatin1String("users_left")).toArray();
      foreach(auto userData, users)
      {
         auto user = new User(userData.toObject(), this);
         _leftUsers.insert(user->id(), user);
      }
 
-     auto last = data.value(QStringLiteral("last_message")).toObject();
-     auto lastId = last.value(QStringLiteral("id")).toInt();
+     auto last = data.value(QLatin1String("last_message")).toObject();
+     auto lastId = last.value(QLatin1String("id")).toInt();
      _lastMessage = dataCache->message(lastId);
      if (!_lastMessage)
      {
@@ -541,7 +541,7 @@ void Conversation::sendTyped()
 
 void Conversation::_emitLeft(const QJsonObject& data)
 {
-    if (data.value(QStringLiteral("status")).toString() != "success")
+    if (data.value(QLatin1String("status")).toString() != "success")
     {
         qDebug() << "error leave chat" << _id;
         return;
@@ -605,7 +605,7 @@ void Conversation::_sendTyped()
     Q_TEST(connect(_typedRequest, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
                    [](const QJsonObject& data)
     {
-        auto status = data.value(QStringLiteral("status")).toString();
+        auto status = data.value(QLatin1String("status")).toString();
         if (status != "success")
             qDebug() << "Error sending typed:" << data;
     }));
@@ -618,7 +618,7 @@ void Conversation::_initUsers(const QJsonArray& data)
 {
     foreach(auto userData, data)
     {
-        auto id = userData.toObject().value(QStringLiteral("id")).toInt();
+        auto id = userData.toObject().value(QLatin1String("id")).toInt();
         if (_users.contains(id))
             continue;
 

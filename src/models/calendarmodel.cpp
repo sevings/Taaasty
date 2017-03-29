@@ -193,10 +193,10 @@ void CalendarModel::_setCalendar(const QJsonObject& data)
 {
     beginResetModel();
 
-    auto periods = data.value(QStringLiteral("periods")).toArray();
+    auto periods = data.value(QLatin1String("periods")).toArray();
     for (int i = periods.size() - 1; i >= 0; i--)
     {
-        auto markers = periods.at(i).toObject().value(QStringLiteral("markers")).toArray();
+        auto markers = periods.at(i).toObject().value(QLatin1String("markers")).toArray();
         for (int j = 0; j < markers.size(); j++)
         {
             auto entry = new CalendarEntry(markers.at(j).toObject(), this);
@@ -230,7 +230,7 @@ void CalendarModel::_setRatings(const QJsonArray& data)
 {
     for (auto rating: data)
     {
-        auto id = rating.toObject().value(QStringLiteral("entry_id")).toInt();
+        auto id = rating.toObject().value(QLatin1String("entry_id")).toInt();
         auto entry = _idEntries.value(id);
         Q_ASSERT(entry);
         if (!entry)

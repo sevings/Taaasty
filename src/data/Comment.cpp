@@ -98,18 +98,18 @@ void Comment::remove()
 
 void Comment::_init(const QJsonObject& data)
 {
-    _id             = data.value(QStringLiteral("id")).toInt();
+    _id             = data.value(QLatin1String("id")).toInt();
 
     delete _user;
-    _user           = new User(data.value(QStringLiteral("user")).toObject(), this);
+    _user           = new User(data.value(QLatin1String("user")).toObject(), this);
 
-    _text           = data.value(QStringLiteral("comment_html")).toString();
-    auto d = data.value(QStringLiteral("created_at")).toString();
+    _text           = data.value(QLatin1String("comment_html")).toString();
+    auto d = data.value(QLatin1String("created_at")).toString();
     _createdAt      = Tasty::parseDate(d);
     _setDate(d);
-    _isEditable     = data.value(QStringLiteral("can_edit")).toBool();
-    _isReportable   = data.value(QStringLiteral("can_report")).toBool();
-    _isDeletable    = data.value(QStringLiteral("can_delete")).toBool();
+    _isEditable     = data.value(QLatin1String("can_edit")).toBool();
+    _isReportable   = data.value(QLatin1String("can_report")).toBool();
+    _isDeletable    = data.value(QLatin1String("can_delete")).toBool();
 
     _correctHtml();
     _setTruncatedText();
@@ -126,7 +126,7 @@ void Comment::_init(const QJsonObject& data)
 
 void Comment::_update(const QJsonObject& data)
 {
-    auto list = data.value(QStringLiteral("comments")).toArray();
+    auto list = data.value(QLatin1String("comments")).toArray();
     if (list.isEmpty())
         return;
 

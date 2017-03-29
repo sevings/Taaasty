@@ -192,7 +192,7 @@ QHash<int, QByteArray> MessagesModel::roleNames() const
 
 void MessagesModel::_addMessages(const QJsonObject& data)
 {
-    auto feed = data.value(QStringLiteral("messages")).toArray();
+    auto feed = data.value(QLatin1String("messages")).toArray();
     if (feed.isEmpty())
     {
         _totalCount = _messages.size();
@@ -208,7 +208,7 @@ void MessagesModel::_addMessages(const QJsonObject& data)
 
     beginInsertRows(QModelIndex(), 0, msgs.size() - 1);
 
-    _totalCount = data.value(QStringLiteral("total_count")).toInt();
+    _totalCount = data.value(QLatin1String("total_count")).toInt();
 
     _messages = msgs + _messages;
 
@@ -229,7 +229,7 @@ void MessagesModel::_addMessages(const QJsonObject& data)
 
 void MessagesModel::_addLastMessages(const QJsonObject& data)
 {
-    auto feed = data.value(QStringLiteral("messages")).toArray();
+    auto feed = data.value(QLatin1String("messages")).toArray();
     if (feed.isEmpty())
         return;
 
@@ -239,7 +239,7 @@ void MessagesModel::_addLastMessages(const QJsonObject& data)
 
     beginInsertRows(QModelIndex(), _messages.size(), _messages.size() + msgs.size() - 1);
 
-    _totalCount = data.value(QStringLiteral("total_count")).toInt();
+    _totalCount = data.value(QLatin1String("total_count")).toInt();
 
     _messages << msgs;
 
@@ -256,7 +256,7 @@ void MessagesModel::_addLastMessages(const QJsonObject& data)
 
 void MessagesModel::_addMessage(const QJsonObject& data)
 {
-    auto id = data.value(QStringLiteral("id")).toInt();
+    auto id = data.value(QLatin1String("id")).toInt();
     if (_ids.contains(id))
         return;
 

@@ -136,22 +136,22 @@ void Message::remove(bool forAll)
 
 void Message::_init(const QJsonObject& data)
 {
-    _id             = data.value(QStringLiteral("id")).toInt();
-    _userId         = data.value(QStringLiteral("user_id")).toInt();
-    _recipientId    = data.value(QStringLiteral("recipient_id")).toInt();
-    _conversationId = data.value(QStringLiteral("conversation_id")).toInt();
-    _read           = !data.value(QStringLiteral("read_at")).isNull();
-    auto d = data.value(QStringLiteral("created_at")).toString();
+    _id             = data.value(QLatin1String("id")).toInt();
+    _userId         = data.value(QLatin1String("user_id")).toInt();
+    _recipientId    = data.value(QLatin1String("recipient_id")).toInt();
+    _conversationId = data.value(QLatin1String("conversation_id")).toInt();
+    _read           = !data.value(QLatin1String("read_at")).isNull();
+    auto d = data.value(QLatin1String("created_at")).toString();
     _createdAt      = Tasty::parseDate(d, _chat && _chat->type() == Conversation::PrivateConversation);
     _setDate(d);
-    _text           = data.value(QStringLiteral("content_html")).toString().replace("&amp;", "&"); // TODO: SystemMessage
+    _text           = data.value(QLatin1String("content_html")).toString().replace("&amp;", "&"); // TODO: SystemMessage
 
     _user = _chat->user(_userId);
     Q_ASSERT(_user);
 
     _setType(data);
 
-    auto imageAttach = data.value(QStringLiteral("attachments")).toArray();
+    auto imageAttach = data.value(QLatin1String("attachments")).toArray();
     delete _attachedImagesModel;
     if (_type == SystemMessage || imageAttach.isEmpty())
         _attachedImagesModel = nullptr;
@@ -164,8 +164,8 @@ void Message::_init(const QJsonObject& data)
     if (_attachedImagesModel)
         _containsImage = true;
 
-    auto reply = data.value(QStringLiteral("reply_message")).toObject();
-    _replyUserId = reply.value(QStringLiteral("user_id")).toInt();
+    auto reply = data.value(QLatin1String("reply_message")).toObject();
+    _replyUserId = reply.value(QLatin1String("user_id")).toInt();
 
     pTasty->dataCache()->addMessage(this);
 
@@ -189,7 +189,7 @@ void Message::_correctHtml()
 
 void Message::_markRead(const QJsonObject& data)
 {
-    if (data.value(QStringLiteral("status")).toString() != "success")
+    if (data.value(QLatin1String("status")).toString() != "success")
     {
         qDebug() << "error read message" << _id;
         return;
@@ -203,7 +203,7 @@ void Message::_markRead(const QJsonObject& data)
 
 void Message::_remove(const QJsonObject& data)
 {
-    if (data.value(QStringLiteral("status")).toString() != "success")
+    if (data.value(QLatin1String("status")).toString() != "success")
     {
         qDebug() << "error remove message" << _id;
         return;
@@ -243,10 +243,10 @@ void Message::_updateUser()
 
 void Message::_updateRead(const QJsonObject& data)
 {
-    if (_read || data.value(QStringLiteral("id")).toInt() != _id)
+    if (_read || data.value(QLatin1String("id")).toInt() != _id)
         return;
 
-    _read = !data.value(QStringLiteral("read_at")).isNull();
+    _read = !data.value(QLatin1String("read_at")).isNull();
     emit readChanged(_read);
 }
 
@@ -254,10 +254,10 @@ void Message::_updateRead(const QJsonObject& data)
 
 void Message::_markRemoved(const QJsonObject& data)
 {
-    if (data.value(QStringLiteral("id")).toInt() != _id)
+    if (data.value(QLatin1String("id")).toInt() != _id)
         return;
 
-    _text = data.value(QStringLiteral("content")).toString();
+    _text = data.value(QLatin1String("content")).toString();
     _setType(data);
     _setTruncatedText();
 
@@ -268,7 +268,7 @@ void Message::_markRemoved(const QJsonObject& data)
 
 void Message::_setType(const QJsonObject& data)
 {
-    auto type = data.value(QStringLiteral("type")).toString();
+    auto type = data.value(QLatin1String("type")).toString();
     if (type == "Message")
         _type = NormalMessage;
     else if (type == "SystemMessage")

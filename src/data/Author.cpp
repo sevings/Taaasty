@@ -83,26 +83,26 @@ void Author::init(const QJsonObject& data)
 {
     User::_init(data);
 
-    _isFemale  = data.value(QStringLiteral("is_female")).toBool();
-    _isPrivacy = data.value(QStringLiteral("is_privacy")).toBool();
-    _isFlow    = data.value(QStringLiteral("is_flow")).toBool();
-    _isPremium = data.value(QStringLiteral("is_premium")).toBool();
-    _isDaylog  = data.value(QStringLiteral("is_daylog")).toBool();
-    _title     = data.value(QStringLiteral("title")).toString();
+    _isFemale  = data.value(QLatin1String("is_female")).toBool();
+    _isPrivacy = data.value(QLatin1String("is_privacy")).toBool();
+    _isFlow    = data.value(QLatin1String("is_flow")).toBool();
+    _isPremium = data.value(QLatin1String("is_premium")).toBool();
+    _isDaylog  = data.value(QLatin1String("is_daylog")).toBool();
+    _title     = data.value(QLatin1String("title")).toString();
 
-    _entriesCount = Tasty::num2str(data.value(QStringLiteral("total_entries_count")).toInt(),
+    _entriesCount = Tasty::num2str(data.value(QLatin1String("total_entries_count")).toInt(),
                                    "запись", "записи", "записей");
-    _publicEntriesCount = Tasty::num2str(data.value(QStringLiteral("public_entries_count")).toInt(),
+    _publicEntriesCount = Tasty::num2str(data.value(QLatin1String("public_entries_count")).toInt(),
                                          "запись", "записи", "записей");
-    _privateEntriesCount = Tasty::num2str(data.value(QStringLiteral("private_entries_count")).toInt(),
+    _privateEntriesCount = Tasty::num2str(data.value(QLatin1String("private_entries_count")).toInt(),
                                           "скрытая запись", "скрытые записи", "скрытых записей");
 
-    auto date = QDateTime::fromString(data.value(QStringLiteral("created_at")).toString().left(19), "yyyy-MM-ddTHH:mm:ss");
+    auto date = QDateTime::fromString(data.value(QLatin1String("created_at")).toString().left(19), "yyyy-MM-ddTHH:mm:ss");
     auto today = QDateTime::currentDateTime();
     int days = qRound(double(today.toMSecsSinceEpoch() - date.toMSecsSinceEpoch()) / (24 * 60 * 60 * 1000)); //-V2005
     _daysCount = Tasty::num2str(days, "день на Тейсти", "дня на Тейсти", "дней на Тейсти");
 
-    _followingsCount = Tasty::num2str(data.value(QStringLiteral("followings_count")).toInt(), "подписка", "подписки", "подписок");
+    _followingsCount = Tasty::num2str(data.value(QLatin1String("followings_count")).toInt(), "подписка", "подписки", "подписок");
 
     emit authorUpdated();
 
@@ -139,7 +139,7 @@ void Author::reload()
 
 void Author::_initFromTlog(const QJsonObject& data)
 {
-    auto author = data.value(QStringLiteral("author")).toObject();
+    auto author = data.value(QLatin1String("author")).toObject();
     init(author);
 }
 
@@ -155,8 +155,8 @@ void Author::_initStatus(const QJsonArray& data)
 
 void Author::_initStatus(const QJsonObject& data)
 {
-    auto online = data.value(QStringLiteral("is_online")).toBool();
-    auto last = data.value(QStringLiteral("last_seen_at")).toString();
+    auto online = data.value(QLatin1String("is_online")).toBool();
+    auto last = data.value(QLatin1String("last_seen_at")).toString();
     if (online)
         last = "Онлайн";
     else if (last.isEmpty())

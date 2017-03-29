@@ -191,7 +191,7 @@ QHash<int, QByteArray> CommentsModel::roleNames() const
 
 void CommentsModel::_addComments(const QJsonObject& data)
 {
-    auto feed = data.value(QStringLiteral("comments")).toArray();
+    auto feed = data.value(QLatin1String("comments")).toArray();
     if (feed.isEmpty())
     {
         _setTotalCount(_comments.size());
@@ -199,7 +199,7 @@ void CommentsModel::_addComments(const QJsonObject& data)
         return;
     }
 
-    _setTotalCount(data.value(QStringLiteral("total_count")).toInt());
+    _setTotalCount(data.value(QLatin1String("total_count")).toInt());
 
     _addComments(feed);
 }
@@ -231,7 +231,7 @@ void CommentsModel::_addComments(const QJsonArray& feed)
 
 void CommentsModel::_addLastComments(const QJsonObject& data)
 {
-    auto feed = data.value(QStringLiteral("comments")).toArray();
+    auto feed = data.value(QLatin1String("comments")).toArray();
     if (feed.isEmpty())
         return;
 
@@ -239,7 +239,7 @@ void CommentsModel::_addLastComments(const QJsonObject& data)
     if (cmts.isEmpty())
         return;
     
-    _setTotalCount(data.value(QStringLiteral("total_count")).toInt());
+    _setTotalCount(data.value(QLatin1String("total_count")).toInt());
 
     beginInsertRows(QModelIndex(), _comments.size(), _comments.size() + cmts.size() - 1);
 

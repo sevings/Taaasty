@@ -44,18 +44,18 @@ Media::Media(QObject* parent)
 Media::Media(const QJsonObject& data, QObject* parent)
     : QObject(parent)
 {
-    auto meta = data.value(QStringLiteral("meta")).toObject();
-    _title    = meta.value(QStringLiteral("title")).toString();
-    _duration = meta.value(QStringLiteral("duration")).toInt();
+    auto meta = data.value(QLatin1String("meta")).toObject();
+    _title    = meta.value(QLatin1String("title")).toString();
+    _duration = meta.value(QLatin1String("duration")).toInt();
 
-    auto links = data.value(QStringLiteral("links")).toObject();
-    _url = links.value(QStringLiteral("player")).toArray().first().toObject().value(QStringLiteral("href")).toString();
+    auto links = data.value(QLatin1String("links")).toObject();
+    _url = links.value(QLatin1String("player")).toArray().first().toObject().value(QLatin1String("href")).toString();
 
     auto imageData = links.contains(QStringLiteral("thumbnail"))
-            ? links.value(QStringLiteral("thumbnail")) : links.value(QStringLiteral("image"));
+            ? links.value(QLatin1String("thumbnail")) : links.value(QLatin1String("image"));
     auto thumb = imageData.toArray().first().toObject();
     _thumbnail = new AttachedImage(thumb, this);
 
-    auto icon = links.value(QStringLiteral("icon")).toArray().first().toObject();
+    auto icon = links.value(QLatin1String("icon")).toArray().first().toObject();
     _icon     = new AttachedImage(icon, this);
 }

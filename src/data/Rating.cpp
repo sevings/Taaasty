@@ -210,17 +210,17 @@ void Rating::voteAgainst()
 
 void Rating::init(const QJsonObject& data)
 {
-    int id = data.value(QStringLiteral("entry_id")).toInt();
+    int id = data.value(QLatin1String("entry_id")).toInt();
     if (id && id != _id)
     {
         _id = id;
         emit idChanged();
     }
 
-    _votes      = data.value(QStringLiteral("votes")).toInt();
-    _rating     = data.value(QStringLiteral("rating")).toInt();
-    _isVoted    = data.value(QStringLiteral("is_voted")).toBool();
-    _isVotable  = data.value(QStringLiteral("is_voteable")).toBool() && (!_parent || (_parent->isVotable()
+    _votes      = data.value(QLatin1String("votes")).toInt();
+    _rating     = data.value(QLatin1String("rating")).toInt();
+    _isVoted    = data.value(QLatin1String("is_voted")).toBool();
+    _isVotable  = data.value(QLatin1String("is_voteable")).toBool() && (!_parent || (_parent->isVotable()
             && _parent->type() != EntryBase::AnonymousEntry
             && _parent->author()->id() != pTasty->settings()->userId()));
 

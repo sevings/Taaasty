@@ -89,19 +89,19 @@ QString Flow::picUrl() const
 
 void Flow::init(const QJsonObject& data)
 {
-    _id             = data.value(QStringLiteral("id")).toInt();
-    _name           = data.value(QStringLiteral("name")).toString();
-    _slug           = data.value(QStringLiteral("slug")).toString();
-    _title          = data.value(QStringLiteral("title")).toString();
-    _url            = data.value(QStringLiteral("tlog_url")).toString();
-    _pic            = data.value(QStringLiteral("flowpic")).toObject().value(QStringLiteral("original_url")).toString();
-    _isPrivate      = data.value(QStringLiteral("is_privacy")).toBool();
-    _isPremoderate  = data.value(QStringLiteral("is_premoderate")).toBool();
-    _isEditable     = data.value(QStringLiteral("can_edit")).toBool();
-    _isWritable     = data.value(QStringLiteral("can_write")).toBool();
-    _followersCount = Tasty::num2str(data.value(QStringLiteral("followers_count")).toInt(),
+    _id             = data.value(QLatin1String("id")).toInt();
+    _name           = data.value(QLatin1String("name")).toString();
+    _slug           = data.value(QLatin1String("slug")).toString();
+    _title          = data.value(QLatin1String("title")).toString();
+    _url            = data.value(QLatin1String("tlog_url")).toString();
+    _pic            = data.value(QLatin1String("flowpic")).toObject().value(QLatin1String("original_url")).toString();
+    _isPrivate      = data.value(QLatin1String("is_privacy")).toBool();
+    _isPremoderate  = data.value(QLatin1String("is_premoderate")).toBool();
+    _isEditable     = data.value(QLatin1String("can_edit")).toBool();
+    _isWritable     = data.value(QLatin1String("can_write")).toBool();
+    _followersCount = Tasty::num2str(data.value(QLatin1String("followers_count")).toInt(),
                                      "подписчик", "подписчика", "подписчиков");
-    _entriesCount   = Tasty::num2str(data.value(QStringLiteral("public_tlog_entries_count")).toInt(),
+    _entriesCount   = Tasty::num2str(data.value(QLatin1String("public_tlog_entries_count")).toInt(),
                                      "запись", "записи", "записей");
 
     emit idChanged();

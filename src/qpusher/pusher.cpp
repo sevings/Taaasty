@@ -222,9 +222,9 @@ void Pusher::_handleEvent(const QString& message)
     }
 
     auto json = doc.object();
-    auto event = json.value(QStringLiteral("event")).toString();
-    auto channel = json.value(QStringLiteral("channel")).toString();
-    auto data = json.value(QStringLiteral("data")).toString();
+    auto event = json.value(QLatin1String("event")).toString();
+    auto channel = json.value(QLatin1String("channel")).toString();
+    auto data = json.value(QLatin1String("data")).toString();
 
     auto ch = _channels.value(channel);
 
@@ -249,14 +249,14 @@ void Pusher::_handleEvent(const QString& message)
 
     if (event == "pusher:connection_established")
     {
-        _socketId = json.value(QStringLiteral("socket_id")).toString();
+        _socketId = json.value(QLatin1String("socket_id")).toString();
 
 #ifdef QT_DEBUG
         qDebug() << "connected to pusher at" << QTime::currentTime().toString();
         qDebug() << "socket id:" << _socketId;
 #endif
 
-        auto activityTimeout = json.value(QStringLiteral("activity_timeout")).toInt();
+        auto activityTimeout = json.value(QLatin1String("activity_timeout")).toInt();
         if (activityTimeout > 0)
         {
             auto interval = qMin(activityTimeout * 1000, _pingTimer->interval());
@@ -280,7 +280,7 @@ void Pusher::_handleEvent(const QString& message)
 
         qDebug() << "Subscribed to" << channel;
 
-        auto ids = json.value(QStringLiteral("presence")).toObject().value(QStringLiteral("ids")).toArray();
+        auto ids = json.value(QLatin1String("presence")).toObject().value(QLatin1String("ids")).toArray();
         foreach (auto id, ids)
             ch->_presenceMemberIds << id.toString();
 
@@ -295,7 +295,7 @@ void Pusher::_handleEvent(const QString& message)
         if (!ch)
             return;
 
-        auto id = json.value(QStringLiteral("user_id")).toString();
+        auto id = json.value(QLatin1String("user_id")).toString();
         ch->_presenceMemberIds << id;
         emit ch->memberAdded(id);
 
@@ -307,7 +307,7 @@ void Pusher::_handleEvent(const QString& message)
         if (!ch)
             return;
 
-        auto id = json.value(QStringLiteral("user_id")).toString();
+        auto id = json.value(QLatin1String("user_id")).toString();
         ch->_presenceMemberIds.remove(id);
         emit ch->memberRemoved(id);
 
@@ -322,8 +322,8 @@ void Pusher::_handleEvent(const QString& message)
 
     if (event == "pusher:error")
     {
-        auto code = json.value(QStringLiteral("code")).toInt();
-        auto message = json.value(QStringLiteral("message")).toString();
+        auto code = json.value(QLatin1String("code")).toInt();
+        auto message = json.value(QLatin1String("message")).toString();
 
         qDebug() << "Pusher error:" << code << message;
 

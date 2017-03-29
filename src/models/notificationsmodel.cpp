@@ -227,12 +227,12 @@ QHash<int, QByteArray> NotificationsModel::roleNames() const
 
 void NotificationsModel::_addItems(const QJsonObject& data)
 {
-    auto array = data.value(QStringLiteral("notifications")).toArray();
+    auto array = data.value(QLatin1String("notifications")).toArray();
     QList<Notification*> notifs;
     for (auto notifData: array)
     {
         auto notifObj = notifData.toObject();
-        auto id = notifObj.value(QStringLiteral("id")).toInt();
+        auto id = notifObj.value(QLatin1String("id")).toInt();
         if (_ids.contains(id))
             continue;
 
@@ -249,7 +249,7 @@ void NotificationsModel::_addItems(const QJsonObject& data)
         return;
     }
 
-    _totalCount = data.value(QStringLiteral("total_count")).toInt();
+    _totalCount = data.value(QLatin1String("total_count")).toInt();
 
     beginInsertRows(QModelIndex(), size, size + notifs.size() - 1);
 
@@ -269,7 +269,7 @@ void NotificationsModel::_addItems(const QJsonObject& data)
 
 void NotificationsModel::_addPush(QJsonObject data)
 {
-    auto id = data.value(QStringLiteral("id")).toInt();
+    auto id = data.value(QLatin1String("id")).toInt();
     if (_ids.contains(id))
         return;
 
@@ -299,17 +299,17 @@ void NotificationsModel::_addPush(QJsonObject data)
 
 void NotificationsModel::_addNewest(const QJsonObject& data)
 {
-    auto list = data.value(QStringLiteral("notifications")).toArray();
+    auto list = data.value(QLatin1String("notifications")).toArray();
     if (list.isEmpty())
         return;
 
-    _totalCount = data.value(QStringLiteral("total_count")).toInt();
+    _totalCount = data.value(QLatin1String("total_count")).toInt();
 
     QList<Notification*> notifs;
     foreach(auto notif, list)
     {
         auto obj = notif.toObject();
-        auto id = obj.value(QStringLiteral("id")).toInt();
+        auto id = obj.value(QLatin1String("id")).toInt();
         if (!_ids.contains(id))
         {
             notifs << new Notification(obj, this);

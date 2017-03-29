@@ -267,9 +267,9 @@ void ApiRequest::_handleResult()
     else
     {
         auto jsonObject = json.object();
-        auto errorString = jsonObject.contains(QStringLiteral("long_message")) ? jsonObject.value(QStringLiteral("long_message")).toString()
-                                                               : jsonObject.value(QStringLiteral("error")).toString();
-        auto code = jsonObject.value(QStringLiteral("response_code")).toInt();
+        auto errorString = jsonObject.contains(QStringLiteral("long_message")) ? jsonObject.value(QLatin1String("long_message")).toString()
+                                                               : jsonObject.value(QLatin1String("error")).toString();
+        auto code = jsonObject.value(QLatin1String("response_code")).toInt();
 
         emit error(code, errorString);
 

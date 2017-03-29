@@ -439,11 +439,11 @@ void Tasty::_readAccessToken(const QJsonObject& data)
     if (_settings->saveProfile())
         _settings->swapProfiles();
 
-    auto apiKey      = data.value(QStringLiteral("api_key")).toObject();
-    auto accessToken = apiKey.value(QStringLiteral("access_token")).toString();
-    auto expiresAt   = apiKey.value(QStringLiteral("expires_at")).toString();
-    auto userId      = apiKey.value(QStringLiteral("user_id")).toInt();
-    auto login       = data.value(QStringLiteral("slug")).toString();
+    auto apiKey      = data.value(QLatin1String("api_key")).toObject();
+    auto accessToken = apiKey.value(QLatin1String("access_token")).toString();
+    auto expiresAt   = apiKey.value(QLatin1String("expires_at")).toString();
+    auto userId      = apiKey.value(QLatin1String("user_id")).toInt();
+    auto login       = data.value(QLatin1String("slug")).toString();
 
     _settings->setAccessToken(accessToken);
     _settings->setExpiresAt(expiresAt);

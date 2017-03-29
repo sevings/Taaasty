@@ -183,9 +183,9 @@ void UsersModel::downloadAll()
 
 void UsersModel::_addItems(const QJsonObject& data)
 {
-    _total = data.value(QStringLiteral("total_count")).toInt();
+    _total = data.value(QLatin1String("total_count")).toInt();
 
-    auto list = data.value(QStringLiteral("relationships")).toArray();
+    auto list = data.value(QLatin1String("relationships")).toArray();
     if (list.isEmpty())
     {
         _total = _users.size();
@@ -200,7 +200,7 @@ void UsersModel::_addItems(const QJsonObject& data)
         return;
     }
 
-    _lastPosition = list.last().toObject().value(QStringLiteral("position")).toInt();
+    _lastPosition = list.last().toObject().value(QLatin1String("position")).toInt();
 
     QList<User*> users;
     users.reserve(list.size());

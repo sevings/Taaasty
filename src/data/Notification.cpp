@@ -50,23 +50,23 @@ Notification::Notification(const QJsonObject& data, QObject *parent)
     : TastyData(parent)
     , _entityUser(nullptr)
 {
-    _id         = data.value(QStringLiteral("id")).toInt();
-    _createdAt  = Tasty::parseDate(data.value(QStringLiteral("created_at")).toString());
-    _sender     = new User(data.value(QStringLiteral("sender")).toObject(), this);
-    _read       = !data.value(QStringLiteral("read_at")).isNull();
-    _action     = data.value(QStringLiteral("action")).toString();
-    _actionText = data.value(QStringLiteral("action_text")).toString();
-    _text       = data.value(QStringLiteral("text")).toString();
-    _entityId   = data.value(QStringLiteral("entity_id")).toInt();
+    _id         = data.value(QLatin1String("id")).toInt();
+    _createdAt  = Tasty::parseDate(data.value(QLatin1String("created_at")).toString());
+    _sender     = new User(data.value(QLatin1String("sender")).toObject(), this);
+    _read       = !data.value(QLatin1String("read_at")).isNull();
+    _action     = data.value(QLatin1String("action")).toString();
+    _actionText = data.value(QLatin1String("action_text")).toString();
+    _text       = data.value(QLatin1String("text")).toString();
+    _entityId   = data.value(QLatin1String("entity_id")).toInt();
 
-    auto entityType = data.value(QStringLiteral("entity_type")).toString();
+    auto entityType = data.value(QLatin1String("entity_type")).toString();
     if (entityType == "Entry")
     {
         _entityType = EntryType;
         
         if (data.contains(QStringLiteral("entity")))
         {
-            auto entryData = data.value(QStringLiteral("entity")).toObject();
+            auto entryData = data.value(QLatin1String("entity")).toObject();
             _entry = pTasty->dataCache()->initEntry(entryData);
         }
     }
@@ -76,7 +76,7 @@ Notification::Notification(const QJsonObject& data, QObject *parent)
         
         if (data.contains(QStringLiteral("entity")))
         {
-            auto userData = data.value(QStringLiteral("entity")).toObject().value(QStringLiteral("user")).toObject();
+            auto userData = data.value(QLatin1String("entity")).toObject().value(QLatin1String("user")).toObject();
             _entityUser = new Author(userData, this);
         }
     }
@@ -88,8 +88,8 @@ Notification::Notification(const QJsonObject& data, QObject *parent)
         _entityType = UnknownType;
     }
 
-    _parentId   = data.value(QStringLiteral("parent_id")).toInt();
-    _parentType = data.value(QStringLiteral("parent_type")).toString();
+    _parentId   = data.value(QLatin1String("parent_id")).toInt();
+    _parentType = data.value(QLatin1String("parent_type")).toString();
 
     pTasty->dataCache()->addNotification(this);
 
@@ -199,9 +199,9 @@ void Notification::read()
 
 void Notification::_updateRead(const QJsonObject& data)
 {
-    if (_read || data.value(QStringLiteral("id")).toInt() != _id)
+    if (_read || data.value(QLatin1String("id")).toInt() != _id)
         return;
 
-    _read = !data.value(QStringLiteral("read_at")).isNull();
+    _read = !data.value(QLatin1String("read_at")).isNull();
     emit readChanged();
 }
