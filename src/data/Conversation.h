@@ -159,6 +159,7 @@ private slots:
     void _removeTypedUser();
     void _sendTyped();
     void _initUsers(const QJsonArray& data);
+    void _setLastMessage();
 
 private:
     ConversationType    _type;

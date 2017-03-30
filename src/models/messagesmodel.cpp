@@ -313,7 +313,6 @@ void MessagesModel::_removeMessage(QObject* msg)
     _messages.removeAt(i);
     _ids.remove(message->id());
 
-
     endRemoveRows();
 
     emit rowCountChanged();

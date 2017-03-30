@@ -66,7 +66,7 @@ Conversation::Conversation(QObject* parent)
         this, &Conversation::isMyLastMessageUnreadChanged));
 
     Q_TEST(connect(_messages, &MessagesModel::lastMessageChanged,
-                   this, &Conversation::lastMessageChanged));
+                   this, &Conversation::_setLastMessage));
 }
 
 
@@ -245,20 +245,7 @@ User* Conversation::user(int id, bool reloadUsers)
 
 MessageBase* Conversation::lastMessage() const
 {
-    MessageBase* last = _lastMessage;
-
-    if (_entry)
-    {
-        auto lst = _entry->commentsModel()->lastComment();
-        if (!last || (lst && lst->createdDate() >= last->createdDate()))
-            last = lst;
-    }
-
-    auto lst = _messages ? _messages->lastMessage() : nullptr;
-    if (!last || (lst && lst->createdDate() >= last->createdDate()))
-        last = lst;
-
-    return last;
+    return _lastMessage;
 }
 
 
@@ -314,7 +301,8 @@ void Conversation::init(const QJsonObject& data)
      {
          _messages = new MessagesModel(this);
 
-         Q_TEST(connect(_messages, SIGNAL(lastMessageChanged()), this, SIGNAL(lastMessageChanged())));
+         Q_TEST(connect(_messages, &MessagesModel::lastMessageChanged,
+                        this, &Conversation::_setLastMessage));
      }
 
      if (!_entry && data.contains(QStringLiteral("entry")))
@@ -325,7 +313,7 @@ void Conversation::init(const QJsonObject& data)
 
          dataCache->addChat(sharedFromThis());
 
-         Q_TEST(connect(_entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
+//         Q_TEST(connect(_entry->commentsModel(), SIGNAL(lastCommentChanged()), this, SIGNAL(lastMessageChanged())));
      }
 
      if (!_recipient && data.contains(QStringLiteral("recipient")))
@@ -365,6 +353,7 @@ void Conversation::init(const QJsonObject& data)
 
      auto last = data.value(QLatin1String("last_message")).toObject();
      auto lastId = last.value(QLatin1String("id")).toInt();
+     bool lastMsgChanged = !_lastMessage || _lastMessage->id() != lastId;
      _lastMessage = dataCache->message(lastId);
      if (!_lastMessage)
      {
@@ -373,10 +362,12 @@ void Conversation::init(const QJsonObject& data)
          Q_TEST(connect(_lastMessage, &MessageBase::readChanged, this, &Conversation::isMyLastMessageUnreadChanged));
      }
 
+     if (lastMsgChanged)
+         emit lastMessageChanged();
+
      emit idChanged();
      emit isInvolvedChanged();
      emit unreadCountChanged();
-     emit lastMessageChanged();
      emit updated();
 }
 
@@ -551,7 +542,7 @@ void Conversation::_emitLeft(const QJsonObject& data)
     if (!user)
     {
         user = new User(this);
-        *user = *Tasty::instance()->me();
+        *user = *pTasty->me();
     }
 
     _leftUsers.insert(user->id(), user);
@@ -627,6 +618,21 @@ void Conversation::_initUsers(const QJsonArray& data)
     }
 
     emit usersUpdated();
+}
+
+
+
+void Conversation::_setLastMessage()
+{
+    auto last = _messages ? _messages->lastMessage() : nullptr;
+    if (!last)
+        return;
+
+    if (_lastMessage && _lastMessage->id() == last->id())
+        return;
+
+    _lastMessage = last;
+    emit lastMessageChanged();
 }
 
 
