@@ -276,11 +276,8 @@ Pane {
                         chat.sendTyped()
                 }
                 onActiveFocusChanged: {
-                    if (!focus)
-                        return;
-
-                    listView.positionViewAtEnd();
-                    window.hideFooter();
+                    if (focus)
+                        listView.positionViewAtEnd();
                 }
                 Connections {
                     target: chat

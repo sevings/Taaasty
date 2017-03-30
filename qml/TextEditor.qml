@@ -76,8 +76,9 @@ TextArea {
                 return;
 
             if (!Qt.inputMethod.visible)
-                Qt.inputMethod.show()
+                Qt.inputMethod.show();
 
+            window.hideFooter();
             moveCursor(mouse.x, mouse.y);
             mouse.accepted = true;
         }

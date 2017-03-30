@@ -400,11 +400,8 @@ Pane {
                 entry.addComment(commentEditor.message);
             }
             onActiveFocusChanged: {
-                if (!focus)
-                    return;
-
-                fullEntry.positionViewAtEnd();
-                window.hideFooter();
+                if (focus)
+                    fullEntry.positionViewAtEnd();
             }
             Connections {
                 target: entry

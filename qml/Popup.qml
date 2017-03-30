@@ -92,6 +92,7 @@ Rectangle {
             to: "closed"
             AnchorAnimation {
                 duration: 200
+                easing.type: Easing.InQuad
             }
         },
         Transition {
@@ -99,6 +100,7 @@ Rectangle {
             to: "opened"
             AnchorAnimation {
                 duration: 200
+                easing.type: Easing.OutQuad
             }
         }
     ]

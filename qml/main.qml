@@ -416,70 +416,48 @@ ApplicationWindow {
             id: stack
             anchors.fill: parent
             initialItem: feed
+            readonly property int animationTime: 200
             popEnter: Transition {
                 PropertyAnimation {
                     property: "opacity"
-                    duration: 300
+                    duration: stack.animationTime
                     from: 0
                     to: 1
                 }
                 PropertyAnimation {
                     property: "scale"
-                    duration: 300
+                    duration: stack.animationTime
                     from: 0.8
                     to: 1
                 }
             }
             popExit: Transition {
-                PropertyAnimation {
-                    property: "opacity"
-                    duration: 300
-                    to: 0
-                }
                 NumberAnimation {
                     property: "x"
-                    duration: 300
-                    easing.type: Easing.InOutQuad
+                    duration: stack.animationTime
+                    easing.type: Easing.InQuad
                     to: window.width
-                }
-                PropertyAnimation {
-                    property: "scale"
-                    duration: 300
-                    from: 1
-                    to: 1.2
                 }
             }
             pushEnter: Transition {
-                PropertyAnimation {
-                    property: "opacity"
-                    duration: 300
-                    from: 0
-                    to: 1
-                }
                 NumberAnimation {
                     property: "x"
-                    duration: 300
-                    easing.type: Easing.InOutQuad
+                    duration: stack.animationTime
+                    easing.type: Easing.OutQuad
                     from: window.width
                     to: 0
-                }
-                PropertyAnimation {
-                    property: "scale"
-                    duration: 300
-                    from: 1.2
-                    to: 1
                 }
             }
             pushExit: Transition {
                 PropertyAnimation {
                     property: "opacity"
-                    duration: 300
+                    duration: stack.animationTime
                     from: 1
                     to: 0
                 }
                 PropertyAnimation {
                     property: "scale"
-                    duration: 300
+                    duration: stack.animationTime
                     from: 1
                     to: 0.8
                 }
