@@ -2,14 +2,31 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "tastylistmodel.h"
 
+#include <QTimer>
+
 
 
 TastyListModel::TastyListModel(QObject* parent)
     : QAbstractListModel(parent)
     , _hasMore(true)
     , _networkError(false)
+    , _filter(nullptr)
+    , _sorted(true)
 {
 
+}
+
+
+
+void TastyListModel::setFilter(QSortFilterProxyModel* filter)
+{
+    _filter = filter;
+    if (!_filter)
+        return;
+
+    filter->setSourceModel(this);
+    filter->setDynamicSortFilter(false);
+    pendingSort();
 }
 
 
@@ -56,6 +73,18 @@ void TastyListModel::loadMore()
 
 
 
+void TastyListModel::pendingSort()
+{
+    if (!_sorted || !_filter)
+        return;
+
+    _sorted = false;
+
+    QTimer::singleShot(500, this, SLOT(_sort()));
+}
+
+
+
 void TastyListModel::_setErrorString(int errorCode, QString str)
 {
     qDebug() << "TastyListModel error code" << errorCode;
@@ -68,6 +97,19 @@ void TastyListModel::_setErrorString(int errorCode, QString str)
         _networkError = false;
         emit networkErrorChanged();
     }
+}
+
+
+
+void TastyListModel::_sort()
+{
+    qDebug() << "TastyListModel::_sort()";
+
+    if (_sorted || !_filter)
+        return;
+
+    _filter->sort(0, Qt::DescendingOrder);
+    _sorted = true;
 }
 
 

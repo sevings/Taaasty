@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QPointer>
+#include <QSortFilterProxyModel>
 
 #include "../defines.h"
 #include "../apirequest.h"
@@ -24,6 +25,8 @@ class TastyListModel : public QAbstractListModel
 public:
     TastyListModel(QObject* parent = nullptr);
 
+    void setFilter(QSortFilterProxyModel* filter);
+
     bool isLoading() const;
     bool isChecking() const;
 
@@ -42,9 +45,13 @@ signals:
 
 public slots:
     virtual void loadMore();
+    void pendingSort();
     
 protected slots:
     void _setErrorString(int errorCode, QString str);
+
+private slots:
+    void _sort();
 
 protected:
     void                 _initLoad();
@@ -57,6 +64,9 @@ protected:
     bool                 _hasMore;
     bool                 _networkError;
     QString              _errorString;
+
+    QSortFilterProxyModel* _filter; //-V122
+    bool _sorted;
 };
 
 #endif // TASTYLISTMODEL_H

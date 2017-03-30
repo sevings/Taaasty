@@ -48,6 +48,7 @@
 #include "models/usersmodel.h"
 #include "models/notificationsmodel.h"
 #include "models/chatsmodel.h"
+#include "models/chatsproxyfiltermodel.h"
 #include "models/messagesmodel.h"
 #include "models/flowsmodel.h"
 #include "models/availabletlogsmodel.h"
@@ -360,8 +361,9 @@ void Tasty::_init()
     auto friendActivity = NotificationsModel::friendActivity(this);
     root->setContextProperty("FriendActivityModel", friendActivity);
 
-    auto chats = ChatsModel::instance(this);
-    root->setContextProperty("ChatsModel", chats);
+    ChatsModel::instance(this);
+    auto chatsProxy = new ChatsProxyFilterModel(this);
+    root->setContextProperty("ChatsModel", chatsProxy);
 
     auto cache = CacheManager::instance(_settings->maxCacheSize(), _manager);
     cache->setMaxWidth(_settings->maxImageWidth());

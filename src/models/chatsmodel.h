@@ -30,6 +30,8 @@
 #include "../defines.h"
 #include "tastylistmodel.h"
 
+#define pChats ChatsModel::instance()
+
 class Tasty;
 class StatusChecker;
 
@@ -39,17 +41,7 @@ class ChatsModel : public TastyListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(Mode mode     READ mode WRITE setMode  NOTIFY modeChanged)
-
 public:
-    enum Mode {
-        AllChatsMode     = 0,
-        PrivateChatsMode = 1,
-        EntryChatsMode   = 2
-    };
-
-    Q_ENUMS(Mode)
-
     static ChatsModel* instance(Tasty* tasty = nullptr);
 
     ChatsModel(Tasty* tasty = nullptr);
@@ -59,20 +51,13 @@ public:
     virtual bool canFetchMore(const QModelIndex& parent) const override;
     virtual void fetchMore(const QModelIndex& parent) override;
 
-    void setMode(const Mode mode);
-    Mode mode() const {return _mode; }
-
     void addChat(const EntryPtr& entry);
     void addChat(const ChatPtr& chat);
-    void bubbleChat(int id);
 
 public slots:
     void loadLast();
     void loadUnread();
     void reset();
-
-signals:
-    void modeChanged();
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
@@ -87,13 +72,14 @@ private slots:
 
 private:
     void _insertEntryChat(const ChatPtr& chat);
+    bool _insertChat(const ChatPtr& chat);
+    QList<ChatPtr> _chatList(const QJsonArray& data);
 
-    QList<ChatPtr>  _allChats;
+
     QList<ChatPtr>  _chats;
     QSet<int>       _ids;
     QHash<int, int> _entryChats;
-    Mode            _mode;
-    StatusChecker*  _statusChecker;
+    StatusChecker*  _statusChecker; //-V122
 
     QString         _url;
     int             _page;

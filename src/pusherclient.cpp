@@ -155,7 +155,7 @@ void PusherClient::_handleMessagingEvent(const QString& event, const QString& da
         return;
     }
 
-    if (event.endsWith(QStringLiteral("status")))
+    if (event.endsWith(QLatin1String("status")))
     {
         auto chats = json.value(QLatin1String("unreadConversationsCount")).toInt();
         emit unreadChats(chats);
@@ -180,31 +180,31 @@ void PusherClient::_handleMessagingEvent(const QString& event, const QString& da
         auto userId = json.value(QLatin1String("user_id")).toInt();
         auto chat = pTasty->dataCache()->chat(chatId);
         if (chat)
-            chat.data()->addTyped(userId);
+            chat->addTyped(userId);
         return;
     }
 
-    if (event.endsWith(QStringLiteral("update_conversation")))
+    if (event.endsWith(QLatin1String("update_conversation")))
     {
         auto chatId = json.value(QLatin1String("id")).toInt();
         auto chat = pTasty->dataCache()->chat(chatId);
         if (chat)
-            chat.data()->init(json);
+            chat->init(json);
         return;
     }
 
-    if (event.endsWith(QStringLiteral("push_message")))
+    if (event.endsWith(QLatin1String("push_message")))
     {
         auto chatId = json.value(QLatin1String("conversation_id")).toInt();
         auto chat = pTasty->dataCache()->chat(chatId);
         if (chat)
-            emit chat.data()->messageReceived(json);
+            emit chat->messageReceived(json);
         else
             emit unreadChat();
         return;
     }
 
-    if (event.endsWith(QStringLiteral("update_messages")))
+    if (event.endsWith(QLatin1String("update_messages")))
     {
         auto chatId = json.value(QLatin1String("conversation_id")).toInt();
         auto chat = pTasty->dataCache()->chat(chatId);
@@ -223,7 +223,7 @@ void PusherClient::_handleMessagingEvent(const QString& event, const QString& da
         return;
     }
 
-    if (event.endsWith(QStringLiteral("delete_user_messages")))
+    if (event.endsWith(QLatin1String("delete_user_messages")))
     {
         auto chatId = json.value(QLatin1String("conversation_id")).toInt();
         auto chat = pTasty->dataCache()->chat(chatId);
