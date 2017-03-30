@@ -410,8 +410,7 @@ void Conversation::sendMessage(const QString& text)
     Q_TEST(connect(_sendRequest, SIGNAL(networkError(QNetworkReply::NetworkError)), this, SIGNAL(sendingMessageError())));
     Q_TEST(connect(_sendRequest, SIGNAL(error(const int, const QString)),           this, SIGNAL(sendingMessageError())));
 
-    if (_unreadCount > 0)
-        Q_TEST(connect(_sendRequest, SIGNAL(success(QJsonObject)),   this, SLOT(readAll())));
+    readAll();
 
     ChatsModel::instance()->addChat(sharedFromThis());
 }
@@ -468,6 +467,17 @@ void Conversation::readAll()
 
     Q_TEST(connect(_readRequest, SIGNAL(success(const QJsonObject)), this, SIGNAL(allMessagesRead(const QJsonObject))));
     Q_TEST(connect(_readRequest, SIGNAL(success(QJsonObject)),       this, SLOT(_markRead(QJsonObject))));
+}
+
+
+
+void Conversation::syncRead()
+{
+    if (!_lastMessage)
+        return;
+
+    if (_lastMessage->isRead() || _lastMessage->userId() == _userId)
+        readAll();
 }
 
 

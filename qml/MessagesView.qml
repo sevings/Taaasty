@@ -43,6 +43,8 @@ Pane {
 
         if (chat.recipient)
             chat.recipient.checkStatus();
+
+        chat.syncRead();
     }
     Connections {
         target: chat
@@ -75,7 +77,7 @@ Pane {
             left: parent.left
             right: parent.right
         }
-        height: contentHeight > parent.height ? parent.height : contentHeight
+        height: Math.min(contentHeight, parent.height)
         visible: !chat.loading && (model.size > 0 || !model.hasMore)
         model: chat.messages
         readonly property int headerHeight: headerItem.visibleHeight
@@ -274,8 +276,11 @@ Pane {
                         chat.sendTyped()
                 }
                 onActiveFocusChanged: {
-                    if (focus)
-                        listView.positionViewAtEnd();
+                    if (!focus)
+                        return;
+
+                    listView.positionViewAtEnd();
+                    window.hideFooter();
                 }
                 Connections {
                     target: chat
