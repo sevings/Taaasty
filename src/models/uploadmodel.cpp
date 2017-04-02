@@ -130,6 +130,7 @@ void UploadModel::remove(int i)
     delete _readers.take(fileName);
 
     removeRow(i);
+    emit rowCountChanged();
 }
 
 
@@ -163,6 +164,7 @@ void UploadModel::clear()
     _readers.clear();
 
     setStringList(QStringList());
+    emit rowCountChanged();
 
     if (_savable)
         save();
@@ -189,6 +191,7 @@ void UploadModel::_append(const QString& fileName)
         return;
 
     _readers.insert(fileName, reader.take());
+    emit rowCountChanged();
 
     if (_savable)
         save();

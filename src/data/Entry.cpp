@@ -375,6 +375,11 @@ void Entry::addComment(const QString& text)
     Q_TEST(connect(_entryRequest, SIGNAL(error(const int, const QString)),           this,   SIGNAL(addingCommentError())));
     Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)),                this,   SLOT(_setWatched())));
 
+    Q_TEST(connect(_entryRequest, &QObject::destroyed,
+                   this, &Entry::sendingChanged, Qt::QueuedConnection));
+
+    emit sendingChanged();
+
     ChatsModel::instance()->addChat(sharedFromThis());
 }
 
@@ -400,6 +405,11 @@ void Entry::watch()
     }
 
     Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_changeWatched(QJsonObject))));
+
+    Q_TEST(connect(_entryRequest, &QObject::destroyed,
+                   this, &Entry::sendingChanged, Qt::QueuedConnection));
+
+    emit sendingChanged();
 }
 
 
@@ -424,6 +434,11 @@ void Entry::favorite()
     }
 
     Q_TEST(connect(_entryRequest, SIGNAL(success(const QJsonObject)), this, SLOT(_changeFavorited(QJsonObject))));
+
+    Q_TEST(connect(_entryRequest, &QObject::destroyed,
+                   this, &Entry::sendingChanged, Qt::QueuedConnection));
+
+    emit sendingChanged();
 }
 
 
@@ -436,6 +451,11 @@ void Entry::report()
     auto url      = QStringLiteral("v1/entries/%1/report.json").arg(_id);
     _entryRequest = new ApiRequest(url, ApiRequest::AllOptions);
     _entryRequest->post();
+
+    Q_TEST(connect(_entryRequest, &QObject::destroyed,
+                   this, &Entry::sendingChanged, Qt::QueuedConnection));
+
+    emit sendingChanged();
 
     auto ptr = sharedFromThis();
     Q_TEST(connect(_entryRequest, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
@@ -598,6 +618,13 @@ QDateTime Entry::fixedAt() const
 int Entry::chatId() const
 {
     return _chatId;
+}
+
+
+
+bool Entry::isSending() const
+{
+    return _entryRequest;
 }
 
 

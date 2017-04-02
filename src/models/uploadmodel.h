@@ -40,6 +40,8 @@ class UploadModel : public QStringListModel
 {
     Q_OBJECT
 
+    Q_PROPERTY(int size READ rowCount NOTIFY rowCountChanged)
+
 #ifdef Q_OS_ANDROID
     friend class AndroidImagePicker;
 #endif
@@ -58,6 +60,7 @@ public:
 
 signals:
     void loaded();
+    void rowCountChanged();
 
 public slots:
     void append();

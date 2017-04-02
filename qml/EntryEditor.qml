@@ -26,6 +26,7 @@ import org.binque.taaasty 1.0
 Pane {
     id: back
     hasMenu: !editEntry
+    innerFlick: flick
     readonly property bool isEntryEditor: true
     property int entryType: Settings.lastEntryType;
     readonly property int privacy: lockButton.locked && lockButton.visible
@@ -117,83 +118,12 @@ Pane {
             id: column
             width: window.width
             spacing: 1.5 * mm
-            ListView {
+            UploadView {
                 id: images
-                width: parent.width
                 visible: entryType == TlogEntry.ImageEntry
-                interactive: false
-                spacing: 1.5 * mm
-                height: visible ? contentHeight : 0
                 model: poster.images
-                add: Transition {
-                    NumberAnimation { property: "opacity"; from: 0;   to: 1.0; duration: 300 }
-                    NumberAnimation { property: "scale";   from: 0.8; to: 1.0; duration: 300 }
-                }
-                displaced: Transition {
-                    NumberAnimation { property: "y"; duration: 300 }
-                }
-                delegate: AnimatedImage {
-                    id: picture
-                    width: images.width
-                    cache: true
-                    smooth: true
-                    asynchronous: false
-                    autoTransform: true
-                    fillMode: Image.PreserveAspectFit
-                    source: model.display
-                    Rectangle {
-                        anchors.fill: removeImageButton
-                        color: window.backgroundColor
-                        opacity: 0.3
-                        radius: width / 2
-                    }
-                    IconButton {
-                        id: removeImageButton
-                        enabled: !poster.loading
-                        anchors {
-                            top: parent.top
-                            right: parent.right
-                        }
-                        icon: (window.darkTheme ? '../icons/cross-white'
-                                                : '../icons/cross-black')
-                              + '-128.png'
-                        onClicked: removeAnimation.start()
-                    }
-                    ParallelAnimation {
-                        id: removeAnimation
-                        onStopped: poster.images.remove(model.index)
-                        NumberAnimation { target: picture; property: "opacity"; from: 1.0; to: 0;   duration: 300 }
-                        NumberAnimation { target: picture; property: "scale";   from: 1.0; to: 0.8; duration: 300 }
-                    }
-                }
-                footer: Item {
-                    width: images.width
-                    height: addImageButton.height + optimizeBox.height + 4.5 * mm
-                    ThemedButton {
-                        id: addImageButton
-                        enabled: !poster.loading
-                        anchors {
-                            top: parent.top
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                        width: implicitWidth + 5 * mm
-                        text: 'Добавить'
-                        onClicked: poster.images.append()
-                    }
-                    ThemedCheckBox {
-                        id: optimizeBox
-                        enabled: !poster.loading
-                        anchors {
-                            top: addImageButton.bottom
-                            left: parent.left
-                            right: parent.right
-                            margins: 1.5 * mm
-                        }
-                        text: 'Оптимизировать размер'
-                        onCheckedChanged: { Settings.lastOptimizeImages = checked; }
-                        checked: Settings.lastOptimizeImages
-                    }
-                }
+                interactive: false
+                editable: !poster.loading
             }
             Item {
                 id: urlItem

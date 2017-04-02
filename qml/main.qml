@@ -335,6 +335,14 @@ ApplicationWindow {
                    }
                    )
     }
+    function pushUploadView(images) {
+        stack.push(stack.upload,
+                   {
+                       model: images,
+                       poppable: true
+                   }
+                   )
+    }
     function popFromStack() {
         stack.pop();
 
@@ -464,6 +472,7 @@ ApplicationWindow {
             }
             property Component feed:                Qt.createComponent("FeedView.qml",     Component.PreferSynchronous, stack)
             property Component messages:            Qt.createComponent("MessagesView.qml",      Component.Asynchronous, stack)
+            property Component upload:              Qt.createComponent("UploadPage.qml",        Component.Asynchronous, stack)
             property Component fullEntry:           Qt.createComponent("FullEntryView.qml",     Component.Asynchronous, stack)
             property Component profile:             Qt.createComponent("ProfileView.qml",       Component.Asynchronous, stack)
             property Component calendar:            Qt.createComponent("CalendarView.qml",      Component.Asynchronous, stack)

@@ -259,6 +259,9 @@ void ApiRequest::_handleResult()
 
     if (_reply->error() == QNetworkReply::NoError)
     {
+        if (_model)
+            _model->clear();
+
         if (json.isObject())
             emit success(json.object());
         else
@@ -267,8 +270,9 @@ void ApiRequest::_handleResult()
     else
     {
         auto jsonObject = json.object();
-        auto errorString = jsonObject.contains(QStringLiteral("long_message")) ? jsonObject.value(QLatin1String("long_message")).toString()
-                                                               : jsonObject.value(QLatin1String("error")).toString();
+        auto errorString = jsonObject.contains(QLatin1String("long_message"))
+                ? jsonObject.value(QLatin1String("long_message")).toString()
+                : jsonObject.value(QLatin1String("error")).toString();
         auto code = jsonObject.value(QLatin1String("response_code")).toInt();
 
         emit error(code, errorString);

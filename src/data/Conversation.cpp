@@ -40,6 +40,7 @@
 #include "../models/messagesmodel.h"
 #include "../models/commentsmodel.h"
 #include "../models/chatsmodel.h"
+#include "../models/uploadmodel.h"
 
 
 
@@ -394,6 +395,9 @@ void Conversation::sendMessage(const QString& text)
     if (_sendRequest || _id <= 0)
         return;
 
+    if (text.isEmpty() && (!_images || !_images->rowCount()))
+        return;
+
     _hadTyped = false;
     if (_typedTimer)
         _typedTimer->stop();
@@ -404,11 +408,17 @@ void Conversation::sendMessage(const QString& text)
     _sendRequest = new ApiRequest(url, ApiRequest::AllOptions);
     _sendRequest->addFormData("uuid", uuid);
     _sendRequest->addFormData("content", text.trimmed());
+    _sendRequest->addImages(_images);
     _sendRequest->post();
 
     Q_TEST(connect(_sendRequest, SIGNAL(success(const QJsonObject)),                this, SIGNAL(messageSent(const QJsonObject))));
     Q_TEST(connect(_sendRequest, SIGNAL(networkError(QNetworkReply::NetworkError)), this, SIGNAL(sendingMessageError())));
     Q_TEST(connect(_sendRequest, SIGNAL(error(const int, const QString)),           this, SIGNAL(sendingMessageError())));
+
+    Q_TEST(connect(_sendRequest, &QObject::destroyed,
+                   this, &Conversation::sendingChanged, Qt::QueuedConnection));
+
+    emit sendingChanged();
 
     readAll();
 
@@ -751,6 +761,23 @@ void Conversation::updateUsers()
     _usersRequest->get();
 
     Q_TEST(connect(_usersRequest, SIGNAL(success(QJsonArray)), this, SLOT(_initUsers(QJsonArray))));
+}
+
+
+
+UploadModel*Conversation::images()
+{
+    if (!_images)
+        _images = UploadModelPtr::create();
+
+    return _images.data();
+}
+
+
+
+bool Conversation::isSending() const
+{
+    return _sendRequest;
 }
 
 

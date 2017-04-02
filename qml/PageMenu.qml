@@ -352,6 +352,18 @@ Q.Drawer {
                 visible: chatTopic.visible
             }
             MenuItem {
+                text: 'Прикрепить'
+                onTriggered: {
+                    window.pushUploadView(page.chat.images);
+                    drawer.close();
+                }
+                visible: !window.chatsShows
+                         && !window.notifsShows
+                         && page.isMessagesView === true
+                         && !page.chat.sending
+            }
+            MenuSeparator { }
+            MenuItem {
                 text: 'Прочитать все'
                 onTriggered: {
                     page.chat.readAll();

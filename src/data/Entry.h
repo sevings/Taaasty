@@ -115,6 +115,7 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(Media*      media          MEMBER _media             NOTIFY updated)
 //    Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      NOTIFY updated)
     Q_PROPERTY(int         wordCount      MEMBER _wordCount         NOTIFY updated)
+    Q_PROPERTY(bool        sending        READ isSending            NOTIFY sendingChanged)
 
     Q_PROPERTY(Conversation*  chat        READ chat                 NOTIFY updated)
     Q_PROPERTY(CommentsModel* comments    READ commentsModel        NOTIFY updated)
@@ -145,6 +146,8 @@ public:
     QDateTime fixedAt() const;
     int       chatId() const;
 
+    bool isSending() const;
+
 public slots:
     void init(const QJsonObject& data, bool force = false);
 
@@ -169,6 +172,7 @@ signals:
     void isReportableChanged();
     void commentAdded(const QJsonObject& data);
     void addingCommentError();
+    void sendingChanged();
 
     void entryDeleted();
 

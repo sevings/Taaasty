@@ -68,6 +68,8 @@ class Conversation: public TastyData, public QEnableSharedFromThis<Conversation>
     Q_PROPERTY(bool             isInvolved      READ isInvolved         NOTIFY isInvolvedChanged)
     Q_PROPERTY(QString          typedUsers      READ typedUsers         NOTIFY typedUsersChanged)
     Q_PROPERTY(bool             isTyped         READ isTyped            NOTIFY typedUsersChanged)
+    Q_PROPERTY(UploadModel*     images          READ images             CONSTANT)
+    Q_PROPERTY(bool             sending         READ isSending          NOTIFY sendingChanged)
 
 public:
     enum ConversationType {
@@ -121,6 +123,9 @@ public:
 
     void updateUsers();
 
+    UploadModel* images();
+    bool isSending() const;
+
 public slots:
     void init(const QJsonObject& data);
 
@@ -152,6 +157,7 @@ signals:
     void isInvolvedChanged();
 
     void typedUsersChanged();
+    void sendingChanged();
 
 private slots:
     void _markRead(const QJsonObject& data);
@@ -183,6 +189,8 @@ private:
     MessagesModel*      _messages; //-V122
     QPointer<Message>   _lastMessage;
     QMap<int, QTimer*>  _typedUsers;
+
+    UploadModelPtr      _images;
 
     EntryPtr _entry;
 

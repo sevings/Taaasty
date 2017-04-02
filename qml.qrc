@@ -84,5 +84,7 @@
         <file>qml/MyScrollIndicator.qml</file>
         <file>qml/Toast.qml</file>
         <file>qml/FlowEditor.qml</file>
+        <file>qml/UploadView.qml</file>
+        <file>qml/UploadPage.qml</file>
     </qresource>
 </RCC>

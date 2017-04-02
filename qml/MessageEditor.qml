@@ -30,6 +30,7 @@ FocusScope {
     property alias popBody: input.popBody
     property alias message: input.text
     property bool uploading: false
+    property int attach: 0
     signal sent
     onActiveFocusChanged: {
         if (!activeFocus)
@@ -39,7 +40,6 @@ FocusScope {
     }
     function clear() {
         input.clear();
-        uploading = false;
     }
     function addGreeting(slug) {
         input.addGreeting(slug);
@@ -90,10 +90,29 @@ FocusScope {
         icon: (window.darkTheme ? '../icons/send-light-'
                                 : '../icons/send-dark-')
               + '128.png'
-        enabled: !editor.uploading && input.text
+        enabled: !editor.uploading && (input.text || editor.attach > 0)
         onClicked: {
-            editor.uploading = true;
             editor.sent();
+        }
+    }
+    Rectangle {
+        id: attachCount
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: button.horizontalCenter
+            margins: 1.5 * mm
+        }
+        width: 4 * mm
+        height: width
+        radius: height / 2
+        color: Material.primary
+        visible: attach > 0
+        Q.Label {
+            visible: attach > 0
+            anchors.centerIn: attachCount
+            text: attach
+            font.pixelSize: window.fontSmallest
+            color: 'white'
         }
     }
     Q.BusyIndicator {
