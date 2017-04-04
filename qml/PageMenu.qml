@@ -352,6 +352,7 @@ Q.Drawer {
                 visible: chatTopic.visible
             }
             MenuItem {
+                id: attachImage
                 text: 'Прикрепить'
                 onTriggered: {
                     window.pushUploadView(page.chat.images);
@@ -362,7 +363,9 @@ Q.Drawer {
                          && page.isMessagesView === true
                          && !page.chat.sending
             }
-            MenuSeparator { }
+            MenuSeparator {
+                visible: attachImage.visible
+            }
             MenuItem {
                 text: 'Прочитать все'
                 onTriggered: {
