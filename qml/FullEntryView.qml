@@ -392,6 +392,7 @@ Pane {
             visible: Tasty.isAuthorized
             height: visible ? (commentsModel.size ? implicitHeight : 18 * mm) : 1.5 * mm
             z: commentsModel.size + 10
+            uploading: entry && entry.isSending
             onHeightChanged: {
                 if (commentEditor.focus)
                     fullEntry.positionViewAtEnd();
@@ -407,9 +408,6 @@ Pane {
                 target: entry
                 onCommentAdded: {
                     commentEditor.clear();
-                }
-                onAddingCommentError: {
-                    commentEditor.uploading = false;
                 }
             }
             Connections {

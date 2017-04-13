@@ -286,9 +286,6 @@ Pane {
                     onMessageSent: {
                         messageEditor.clear();
                     }
-                    onSendingMessageError: {
-                        messageEditor.uploading = false;
-                    }
                 }
                 Connections {
                     target: back

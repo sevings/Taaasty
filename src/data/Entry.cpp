@@ -629,7 +629,6 @@ bool Entry::isSending() const
 
 
 
-
 int Entry::commentsCount() const
 {
     return _commentsCount;
