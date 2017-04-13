@@ -144,7 +144,7 @@ void Message::_init(const QJsonObject& data)
     auto d = data.value(QLatin1String("created_at")).toString();
     _createdAt      = Tasty::parseDate(d, _chat && _chat->type() == Conversation::PrivateConversation);
     _setDate(d);
-    _text           = data.value(QLatin1String("content_html")).toString().replace("&amp;", "&"); // TODO: SystemMessage
+    _text           = data.value(QLatin1String("content_html")).toString().replace("&amp;", "&"); //! \todo SystemMessage
 
     _user = _chat->user(_userId);
     Q_ASSERT(_user);

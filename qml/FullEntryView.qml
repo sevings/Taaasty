@@ -173,6 +173,11 @@ Pane {
                 textFormat: Text.RichText
                 onLinkActivated: window.openLink(link)
             }
+            Rectangle {
+                anchors.fill: parent
+                color: '#80808080'
+                visible: comment.loading
+            }
         }
         header: Item {
             id: fullEntryContent
@@ -392,7 +397,7 @@ Pane {
             visible: Tasty.isAuthorized
             height: visible ? (commentsModel.size ? implicitHeight : 18 * mm) : 1.5 * mm
             z: commentsModel.size + 10
-            uploading: entry && entry.isSending
+            uploading: entry && entry.sending
             onHeightChanged: {
                 if (commentEditor.focus)
                     fullEntry.positionViewAtEnd();
@@ -433,11 +438,14 @@ Pane {
         id: menu
         height: menuColumn.height + 2 * mm
         anchors.margins: 2 * mm
-        property Comment comment: Comment { }
+        property Comment comment
         function close() {
             state = "closed";
         }
         function show(cmt) {
+            if (cmt.loading || !Tasty.isAuthorized)
+                return;
+
             menu.comment = cmt;
             window.hideFooter();
             state = "opened";
@@ -461,28 +469,22 @@ Pane {
                     fullEntry.positionViewAtEnd();
                 }
             }
-//            ThemedButton {
-//                anchors.left: parent.left
-//                anchors.right: parent.right
-//                text: 'Править'
-//                onClicked: {
-//    //                    addGreeting(menu.comment.user.slug);
-//                    menu.close();
-//                }
-//                visible: menu.comment && menu.comment.isEditable === true
-//            }
-//            ThemedButton {
-//                anchors {
-//                    left: parent.left
-//                    right: parent.right
-//                }
-//                text: 'Удалить'
-//                onClicked: {
-//                    menu.comment.remove();
-//                    menu.close();
-//                }
-//                visible: menu.comment && menu.comment.isDeletable === true
-//            }
+            // MenuItem {
+            //     visible: menu.comment && menu.comment.isEditable === true
+            //     text: 'Править'
+            //     onTriggered: {
+            //         menu.close();
+            //         fullEntry.positionViewAtEnd();
+            //     }
+            // }
+            MenuItem {
+                visible: menu.comment && menu.comment.isDeletable === true
+                text: 'Удалить'
+                onTriggered: {
+                    menu.comment.remove();
+                    menu.close();
+                }
+            }
         }
     }
 }

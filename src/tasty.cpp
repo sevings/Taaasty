@@ -91,7 +91,7 @@ Tasty::Tasty()
     , _commentImageWidth(0)
     , _unreadChats(0)
     , _unreadNotifications(0)
-    , _me(nullptr)
+    , _myTlog(nullptr)
     , _saveProfile(false)
 {
     qDebug() << "Tasty";
@@ -213,15 +213,24 @@ void Tasty::setImageWidth(int entry, int comment)
 
 User* Tasty::me()
 {
-    if (_me)
-        return _me;
+    auto tlog = myTlog();
+    return tlog ? tlog->author() : nullptr;
+}
 
+
+
+Tlog* Tasty::myTlog()
+{
     if (!isAuthorized())
         return nullptr;
 
-    _me = new User(this);
-    _me->setId(_settings->userId());
-    return _me;
+    if (!_myTlog)
+    {
+        _myTlog = new Tlog(this);
+        _myTlog->setId(_settings->userId());
+    }
+
+    return _myTlog;
 }
 
 
@@ -531,8 +540,8 @@ void Tasty::_finishLogin()
     _unreadFriendsEntries.clear();
     emit unreadFriendsEntriesChanged();
 
-    if (_me)
-        _me->setId(_settings->userId());
+    if (_myTlog)
+        _myTlog->setId(_settings->userId());
 
     emit authorizedChanged();
 }

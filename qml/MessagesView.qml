@@ -118,7 +118,7 @@ Pane {
             Poppable {
                 body: back
                 onClicked: {
-                    menu.show(message);
+                    menu.show(message, isMyMessage);
                 }
             }
             Component.onCompleted: {
@@ -229,6 +229,11 @@ Pane {
                     color: Material.primary
                     visible: !message.isRead
                 }
+                Rectangle {
+                    anchors.fill: parent
+                    color: '#80808080'
+                    visible: message.loading
+                }
             }
         }
         footer: Item {
@@ -311,12 +316,17 @@ Pane {
         id: menu
         height: menuColumn.height + 3 * mm
         anchors.margins: 2 * mm
-        property Message message: Message { }
+        property Message message
+        property bool isMyMessage: false
         function close() {
             state = "closed";
         }
-        function show(msg) {
+        function show(msg, my) {
+            if (msg.loading || !Tasty.isAuthorized)
+                return;
+
             menu.message = msg;
+            menu.isMyMessage = my;
             window.hideFooter();
             state = "opened";
         }
@@ -341,10 +351,27 @@ Pane {
             }
             MenuItem {
                 visible: menu.message && !menu.message.isRead
-                         && chat.userId !== menu.message.userId
+                         && !menu.isMyMessage
                 text: 'Прочитано'
                 onTriggered: {
                     chat.readTo(menu.message.id);
+                    menu.close();
+                }
+            }
+            MenuItem {
+                text: 'Удалить для меня'
+                onTriggered: {
+                    menu.message.remove();
+                    menu.close();
+                }
+            }
+            MenuItem {
+                visible: menu.isMyMessage
+                         && Tasty.myTlog && Tasty.myTlog.author
+                         && Tasty.myTlog.author.isPremium
+                text: 'Удалить для всех'
+                onTriggered: {
+                    menu.message.remove(true);
                     menu.close();
                 }
             }

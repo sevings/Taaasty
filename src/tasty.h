@@ -36,6 +36,7 @@
 class ApiRequest;
 class PusherClient;
 class User;
+class Tlog;
 class TastyDataCache;
 
 
@@ -49,6 +50,7 @@ class Tasty : public QObject
     Q_PROPERTY(int   unreadNotifications  READ unreadNotifications  NOTIFY unreadNotificationsChanged)
     Q_PROPERTY(int   unreadFriendsEntries READ unreadFriendsEntries NOTIFY unreadFriendsEntriesChanged)
     Q_PROPERTY(User* me                   READ me                   NOTIFY authorizedChanged)
+    Q_PROPERTY(Tlog* myTlog               READ myTlog               NOTIFY authorizedChanged)
 
 public:
     explicit Tasty();
@@ -78,6 +80,7 @@ public:
     Q_INVOKABLE void setImageWidth(int entry, int comment);
 
     User* me();
+    Tlog* myTlog();
 
 signals:
     void authorizationNeeded();
@@ -137,7 +140,7 @@ private:
 
     QList<EntryPtr> _unreadFriendsEntries;
 
-    User* _me; //-V122
+    Tlog* _myTlog; //-V122
 
     bool _saveProfile;
 
