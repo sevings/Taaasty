@@ -481,7 +481,10 @@ Pane {
                 visible: menu.comment && menu.comment.isDeletable === true
                 text: 'Удалить'
                 onTriggered: {
-                    menu.comment.remove();
+                    window.askUser('Удалить комментарий? Соответствующее сообщение в чате останется.',
+                                   function() {
+                                       menu.comment.remove();
+                                   });
                     menu.close();
                 }
             }

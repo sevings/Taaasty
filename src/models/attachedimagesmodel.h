@@ -41,6 +41,8 @@ public:
     Q_INVOKABLE int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
+    void clear();
+
     AttachedImage* first() const;
 
 protected:

@@ -28,7 +28,7 @@ Dialog {
     y: (parent.height - height) / 2
     font.pixelSize: window.fontNormal
     modal: true
-    width: label.width + 3 * mm
+    width: label.width + 5 * mm
     property alias text: label.text
     property bool isQuestion
     footer: DialogButtonBox {

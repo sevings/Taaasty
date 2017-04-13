@@ -158,11 +158,10 @@ void Message::_init(const QJsonObject& data)
     else
         _attachedImagesModel = new AttachedImagesModel(imageAttach, this);
 
+    _containsImage = _attachedImagesModel;
+
     _correctHtml();
     _setTruncatedText();
-
-    if (_attachedImagesModel)
-        _containsImage = true;
 
     auto reply = data.value(QLatin1String("reply_message")).toObject();
     _replyUserId = reply.value(QLatin1String("user_id")).toInt();
@@ -209,11 +208,19 @@ void Message::_remove(const QJsonObject& data)
         return;
     }
 
-    _text = _user ? _user->name() + QStringLiteral(" удалил сообщение")
-                  : QStringLiteral("Сообщение удалено");
+    if (_type == SystemMessage)
+        return;
+
+    delete _attachedImagesModel;
+    _attachedImagesModel = nullptr;
+    _containsImage = false;
+
+    _text = QStringLiteral("Сообщение удалено");
     _type = SystemMessage;
     _setTruncatedText();
 
+    emit baseUpdated();
+    emit updated();
     emit textUpdated();
 }
 
@@ -257,10 +264,16 @@ void Message::_markRemoved(const QJsonObject& data)
     if (data.value(QLatin1String("id")).toInt() != _id)
         return;
 
+    delete _attachedImagesModel;
+    _attachedImagesModel = nullptr;
+    _containsImage = false;
+
     _text = data.value(QLatin1String("content")).toString();
     _setType(data);
     _setTruncatedText();
 
+    emit baseUpdated();
+    emit updated();
     emit textUpdated();
 }
 

@@ -220,7 +220,7 @@ User* Conversation::user(int id, bool reloadUsers)
     if (id == pTasty->settings()->userId())
     {
         auto user = new User(this);
-        *user = *Tasty::instance()->me();
+        *user = pTasty->me();
         _users.insert(id, user);
         return user;
     }
@@ -562,7 +562,7 @@ void Conversation::_emitLeft(const QJsonObject& data)
     if (!user)
     {
         user = new User(this);
-        *user = *pTasty->me();
+        *user = pTasty->me();
     }
 
     _leftUsers.insert(user->id(), user);

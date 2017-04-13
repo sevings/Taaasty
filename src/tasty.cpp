@@ -211,7 +211,7 @@ void Tasty::setImageWidth(int entry, int comment)
 
 
 
-User* Tasty::me()
+Author* Tasty::me()
 {
     auto tlog = myTlog();
     return tlog ? tlog->author() : nullptr;

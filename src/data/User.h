@@ -26,6 +26,7 @@
 #include "TastyData.h"
 
 class ApiRequest;
+class Author;
 
 
 
@@ -58,6 +59,7 @@ public:
 
     void  swap(User& other);
     User& operator=(User other);
+    User& operator=(Author* other);
 
 signals:
     void updated();

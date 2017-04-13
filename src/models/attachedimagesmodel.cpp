@@ -71,6 +71,18 @@ QVariant AttachedImagesModel::data(const QModelIndex& index, int role) const
 
 
 
+void AttachedImagesModel::clear()
+{
+    beginResetModel();
+
+    qDeleteAll(_images);
+    _images.clear();
+
+    endResetModel();
+}
+
+
+
 AttachedImage* AttachedImagesModel::first() const
 {
     return _images.isEmpty() ? nullptr : _images.first();

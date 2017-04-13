@@ -29,7 +29,7 @@
 #include "../tasty.h"
 #include "../apirequest.h"
 #include "../data/Flow.h"
-#include "../data/User.h"
+#include "../data/Author.h"
 
 
 

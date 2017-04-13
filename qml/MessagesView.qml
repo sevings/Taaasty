@@ -359,19 +359,24 @@ Pane {
                 }
             }
             MenuItem {
-                text: 'Удалить для меня'
+                text: 'Удалить'
                 onTriggered: {
-                    menu.message.remove();
+                    window.askUser('Удалить сообщение? Другие пользователи все равно будут его видеть.',
+                                   function() {
+                                       menu.message.remove();
+                                   });
                     menu.close();
                 }
             }
             MenuItem {
                 visible: menu.isMyMessage
-                         && Tasty.myTlog && Tasty.myTlog.author
-                         && Tasty.myTlog.author.isPremium
+//                         && Tasty.me && Tasty.me.isPremium
                 text: 'Удалить для всех'
                 onTriggered: {
-                    menu.message.remove(true);
+                    window.askUser('Удалить сообщение для всех пользователей?',
+                                   function() {
+                                       menu.message.remove(true);
+                                   });
                     menu.close();
                 }
             }

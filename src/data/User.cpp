@@ -23,8 +23,9 @@
 #include "User.h"
 
 #include "../defines.h"
-
 #include "../apirequest.h"
+
+#include "Author.h"
 
 
 
@@ -120,6 +121,7 @@ void User::swap(User& other)
         Q_TEST(connect(_request, SIGNAL(success(QJsonObject)), this, SLOT(_initFromTlog(QJsonObject))));
 
     emit idChanged();
+    emit updated();
 }
 
 
@@ -127,6 +129,24 @@ void User::swap(User& other)
 User& User::operator=(User other)
 {
     swap(other);
+    return *this;
+}
+
+
+
+User& User::operator=(Author* other)
+{
+    if (!other)
+        return *this;
+
+    User user(*other);
+    swap(user);
+
+    Q_TEST(connect(other, &Author::authorUpdated, this, [this]()
+    {
+        *this = qobject_cast<Author*>(sender());
+    }, Qt::UniqueConnection));
+
     return *this;
 }
 

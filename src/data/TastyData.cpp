@@ -110,16 +110,12 @@ void TastyData::_initRequest()
     Q_TEST(connect(_request, SIGNAL(error(int,QString)),
                    this, SLOT(_setErrorString(int,QString))));
 
-    QPointer<TastyData> that(this);
-    Q_TEST(connect(_request, &ApiRequest::networkError, [that]()
+    Q_TEST(connect(_request, &ApiRequest::networkError, this, [this]()
     {
-        if (!that)
-            return;
+        _errorString = "Сетевая ошибка";
+        emit errorStringChanged();
 
-        that->_errorString = "Сетевая ошибка";
-        emit that->errorStringChanged();
-
-        that->_networkError = true;
-        emit that->networkErrorChanged();
+        _networkError = true;
+        emit networkErrorChanged();
     }));
 }
