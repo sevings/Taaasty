@@ -56,16 +56,12 @@ Pane {
             Q.Label {
                 id: mailLabel
                 text: 'E-mail или ник'
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
+                anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: window.fontBigger
             }
             LineInput {
                 id: mail
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
+                anchors.horizontalCenter: parent.horizontalCenter
                 width: 40 * mm
                 onAccepted: {
                     if (loginButton.enabled)
@@ -77,17 +73,13 @@ Pane {
             Q.Label {
                 id: passwordLabel
                 text: 'Пароль'
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
+                anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: window.fontBigger
             }
             LineInput {
                 id: password
                 echoMode: TextInput.Password
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
+                anchors.horizontalCenter: parent.horizontalCenter
                 width: 40 * mm
                 onAccepted: {
                     if (loginButton.enabled)
@@ -96,27 +88,33 @@ Pane {
             }
             ThemedCheckBox {
                 id: saveBox
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
+                anchors.horizontalCenter: parent.horizontalCenter
                 width: 40 * mm
                 text: 'Сохранить'
                 checked: true
             }
             ThemedButton {
                 id: loginButton
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
+                anchors.horizontalCenter: parent.horizontalCenter
                 text: 'Войти'
                 width: 40 * mm
                 onClicked: Tasty.authorize(mail.text, password.text, saveBox.checked)
                 enabled: mail.text && password.text
             }
-            HelpPageItem {
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
+            ThemedButton {
+                id: resetButton
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: 'Сбросить пароль'
+                width: 40 * mm
+                enabled: mail.text
+                onClicked: Tasty.resetPassword(mail.text)
+                Connections {
+                    target: Tasty
+                    onResetMailSent: resetDialog.open()
                 }
+            }
+            HelpPageItem {
+                anchors.horizontalCenter: parent.horizontalCenter
                 width: 40 * mm
                 popBody: dialog
                 text: 'ВКонтакте или Facebook'
@@ -133,5 +131,15 @@ Pane {
                 //onClicked: Ctrl.signup()
         //    }
         }
+    }
+    Dialog {
+        id: resetDialog
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        font.pixelSize: window.fontNormal
+        standardButtons: Dialog.Ok
+        modal: true
+        title: 'На указанную при регистрации почту отправлено '
+                + 'письмо с информацией для восстановления пароля.'
     }
 }

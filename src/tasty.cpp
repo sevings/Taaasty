@@ -265,6 +265,24 @@ void Tasty::logout()
 
 
 
+void Tasty::resetPassword(const QString& email)
+{
+    auto request = new ApiRequest(QStringLiteral("v1/users/password/recovery.json"), ApiRequest::ShowMessageOnError);
+    request->addFormData("slug_or_email", email);
+    request->post();
+
+    Q_TEST(connect(request, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
+                   [](const QJsonObject& data)
+               {
+                    if (data.value(QLatin1String("status")).toString() == "success")
+                        emit pTasty->resetMailSent();
+                    else
+                        qDebug() << data;
+               }))
+}
+
+
+
 void Tasty::swapProfiles()
 {
     auto token = _settings->prevAccessToken();

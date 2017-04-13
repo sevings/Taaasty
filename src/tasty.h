@@ -85,6 +85,7 @@ public:
 signals:
     void authorizationNeeded();
     void authorizedChanged();
+    void resetMailSent();
 
     void unreadChatsChanged();
     void unreadNotificationsChanged();
@@ -106,6 +107,7 @@ signals:
 public slots:
     void authorize(const QString& login, const QString& password, bool save);
     void logout();
+    void resetPassword(const QString& email);
     void swapProfiles();
     void reconnectToPusher();
 
