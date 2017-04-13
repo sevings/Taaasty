@@ -647,6 +647,7 @@ bool FeedModel::_addSome(QList<EntryPtr>& all, int& from, int& allFrom)
     foreach (auto e, all)
     {
         _allEntries.insert(allFrom++, e);
+        _idEntries.insert(e->id(), e);
 
         if ((!s || e->wordCount() >= 100)
             && (!n || e->rating()->bayesRating() >= 0))

@@ -128,7 +128,7 @@ ApplicationWindow {
         inputDialog.clear();
     }
     function askUser(question, action) {
-        dialog.title = question;
+        dialog.text = question;
         dialog.action = action;
         dialog.open();
     }
@@ -565,14 +565,10 @@ ApplicationWindow {
             }
         }
     }
-    Dialog {
+    PopupDialog {
         id: dialog
+        isQuestion: true
         property var action
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        font.pixelSize: window.fontNormal
-        standardButtons: Dialog.Ok | Dialog.Cancel
-        modal: true
         onAccepted: if (action) action()
     }
 }

@@ -132,14 +132,10 @@ Pane {
         //    }
         }
     }
-    Dialog {
+    PopupDialog {
         id: resetDialog
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        font.pixelSize: window.fontNormal
-        standardButtons: Dialog.Ok
-        modal: true
-        title: 'На указанную при регистрации почту отправлено '
-                + 'письмо с информацией для восстановления пароля.'
+        isQuestion: false
+        text: 'На указанную при регистрации почту отправлено '
+              + 'письмо с информацией для восстановления пароля.'
     }
 }

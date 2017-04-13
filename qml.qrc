@@ -86,5 +86,6 @@
         <file>qml/FlowEditor.qml</file>
         <file>qml/UploadView.qml</file>
         <file>qml/UploadPage.qml</file>
+        <file>qml/PopupDialog.qml</file>
     </qresource>
 </RCC>

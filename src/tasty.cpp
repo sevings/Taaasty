@@ -273,12 +273,12 @@ void Tasty::resetPassword(const QString& email)
 
     Q_TEST(connect(request, static_cast<void(ApiRequest::*)(const QJsonObject&)>(&ApiRequest::success),
                    [](const QJsonObject& data)
-               {
-                    if (data.value(QLatin1String("status")).toString() == "success")
-                        emit pTasty->resetMailSent();
-                    else
-                        qDebug() << data;
-               }))
+    {
+        if (data.value(QLatin1String("status")).toString() == "success")
+            emit pTasty->resetMailSent();
+        else
+            qDebug() << data;
+    }));
 }
 
 
