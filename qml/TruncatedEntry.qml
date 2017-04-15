@@ -102,7 +102,7 @@ Item {
             topMargin: 1.5 * mm
             bottomMargin: 1.5 * mm
         }
-        readonly property AttachedImage image: entry ? entry.attachedImagesModel.first : null
+        readonly property AttachedImage image: entry ? entry.preview : null
         active: image
         height: active ? (image.height / image.width * width) : 0
         asynchronous: false

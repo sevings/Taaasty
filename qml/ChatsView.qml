@@ -69,12 +69,16 @@ PopupFill {
                     top: parent.top
                     margins: 1.5 * mm
                 }
-                user: model.chat.entry ? model.chat.entry.author : model.chat.recipient
-                acceptClick: !model.chat.isAnonymous && (model.chat.recipient || model.chat.entry)
+                user: model.chat.avatar ? null : model.chat.entry ? model.chat.entry.author : model.chat.recipient
+                acceptClick: user || model.chat.entry
+                defaultSource:  model.chat.avatar
                 onClicked: {
                     back.hide();
                     window.showChatsOnPop = window.stackSize;
-                    window.pushProfileById(chatAvatar.user.id);
+                    if (model.chat.entry)
+                        window.pushFullEntry(model.chat.entry)
+                    else if (chatAvatar.user)
+                        window.pushProfileById(chatAvatar.user.id);
                 }
             }
             ThemedText {

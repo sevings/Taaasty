@@ -36,6 +36,7 @@
 #include "Author.h"
 #include "Tlog.h"
 #include "Comment.h"
+#include "AttachedImage.h"
 
 #include "../models/messagesmodel.h"
 #include "../models/commentsmodel.h"
@@ -334,6 +335,14 @@ void Conversation::init(const QJsonObject& data)
      }
      else
          _topic.clear();
+
+     if (data.contains(QLatin1String("avatar")))
+         _avatar = data.value(QLatin1String("avatar")).toObject()
+                 .value(QLatin1String("url")).toString();
+     else if(_entry && _entry->preview())
+         _avatar = _entry->preview()->url();
+     else
+         _avatar.clear();
 
      auto users = data.value(QLatin1String("users")).toArray();
      _initUsers(users);

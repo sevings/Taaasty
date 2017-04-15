@@ -33,6 +33,7 @@ class Author;
 class Tlog;
 class Rating;
 class Media;
+class AttachedImage;
 class CommentsModel;
 class AttachedImagesModel;
 class MessagesModel;
@@ -113,7 +114,7 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(QString     truncatedText  MEMBER _truncatedText     NOTIFY updated)
     Q_PROPERTY(QString     source         MEMBER _source            NOTIFY updated)
     Q_PROPERTY(Media*      media          MEMBER _media             NOTIFY updated)
-//    Q_PROPERTY(QJsonObject imagePreview   MEMBER _imagePreview      NOTIFY updated)
+    Q_PROPERTY(AttachedImage* preview     MEMBER _preview           NOTIFY updated)
     Q_PROPERTY(int         wordCount      MEMBER _wordCount         NOTIFY updated)
     Q_PROPERTY(bool        sending        READ isSending            NOTIFY sendingChanged)
 
@@ -134,6 +135,8 @@ public:
     Rating* rating() const;
 
     Tlog* tlog() const;
+
+    AttachedImage* preview() const;
 
     int commentsCount() const;
 
@@ -208,7 +211,7 @@ private:
     QString     _truncatedText;
     QString     _source;
     Media*      _media; //-V122
-//    QJsonObject _imagePreview;
+    AttachedImage* _preview;
     int         _wordCount;
     int         _chatId;
 

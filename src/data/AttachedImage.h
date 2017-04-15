@@ -44,6 +44,8 @@ public:
     AttachedImage(const QJsonObject& data, QObject* parent = nullptr);
     AttachedImage(const QJsonObject& data, Media* parent);
 
+    QString url() const { return _url; }
+
 private:
     QString _url;
     QString _type;

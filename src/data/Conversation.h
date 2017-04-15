@@ -58,6 +58,7 @@ class Conversation: public TastyData, public QEnableSharedFromThis<Conversation>
     Q_PROPERTY(bool             canDelete       MEMBER _canDelete       NOTIFY updated)
     Q_PROPERTY(bool             isAnonymous     MEMBER _isAnonymous     NOTIFY updated)
     Q_PROPERTY(QString          topic           MEMBER _topic           NOTIFY updated)
+    Q_PROPERTY(QString          avatar          MEMBER _avatar          NOTIFY updated)
     Q_PROPERTY(Entry*           entry           READ entry              NOTIFY updated)
 //    Q_PROPERTY(QList<User*>     users           MEMBER _users           NOTIFY updated)
 //    Q_PROPERTY(QList<User*>     deletedUsers    MEMBER _deletedUsers    NOTIFY updated)
@@ -181,6 +182,7 @@ private:
     bool                _canDelete;
     bool                _isAnonymous;
     QString             _topic;
+    QString             _avatar;
     int                 _entryId;
     QHash<int, User*>   _users;
     QHash<int, User*>   _deletedUsers;

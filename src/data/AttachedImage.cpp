@@ -42,11 +42,11 @@ AttachedImage::AttachedImage(QObject* parent)
 AttachedImage::AttachedImage(const QJsonObject& data, QObject *parent)
     : QObject(parent)
 {
-    auto image = data.contains(QStringLiteral("image")) ? data.value(QLatin1String("image")).toObject() : data;
+    auto image = data.contains(QLatin1String("image")) ? data.value(QLatin1String("image")).toObject() : data;
     _url = image.value(QLatin1String("url")).toString();
 
     auto type = data.value(QLatin1String("content_type")).toString();
-    _type = type.split(QStringLiteral("/")).last();
+    _type = type.split(QLatin1String("/")).last();
 
     auto geometry = image.value(QLatin1String("geometry")).toObject();
     _width = geometry.value(QLatin1String("width")).toInt();
@@ -61,7 +61,7 @@ AttachedImage::AttachedImage(const QJsonObject& data, Media* parent)
     _url = data.value(QLatin1String("href")).toString();
 
     auto type = data.value(QLatin1String("type")).toString();
-    _type = type.split(QStringLiteral("/")).last();
+    _type = type.split('/').last();
 
     auto geometry = data.value(QLatin1String("media")).toObject();
     _width = geometry.value(QLatin1String("width")).toInt();

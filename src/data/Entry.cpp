@@ -32,6 +32,7 @@
 #include "Media.h"
 #include "Conversation.h"
 #include "Flow.h"
+#include "AttachedImage.h"
 
 #include "../tasty.h"
 #include "../apirequest.h"
@@ -180,6 +181,7 @@ Entry::Entry()
     , _rating(new Rating(this))
     , _commentsCount(0)
     , _media(new Media(this))
+    , _preview(nullptr)
     , _wordCount(0)
     , _commentsModel(nullptr)
     , _attachedImagesModel(new AttachedImagesModel(this))
@@ -203,6 +205,7 @@ Entry::Entry(Conversation* chat)
     , _rating(new Rating(this))
     , _commentsCount(0)
     , _media(nullptr)
+    , _preview(nullptr)
     , _wordCount(0)
     , _commentsModel(nullptr)
     , _attachedImagesModel(nullptr)
@@ -299,7 +302,11 @@ void Entry::init(const QJsonObject& data, bool force)
     else
         _media = nullptr;
 
-//    _imagePreview    = data.value(QLatin1String("preview_image")).toObject();
+    delete _preview;
+    if (data.contains(QLatin1String("preview_image")))
+        _preview = new AttachedImage(data.value(QLatin1String("preview_image")).toObject(), this);
+    else
+        _preview = nullptr;
 
     _wordCount   = _countWords(_title + ' ' + _text);
 
@@ -668,6 +675,13 @@ Conversation* Entry::chat()
 Tlog* Entry::tlog() const
 {
     return _tlog;
+}
+
+
+
+AttachedImage*Entry::preview() const
+{
+    return _preview;
 }
 
 
