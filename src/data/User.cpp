@@ -174,9 +174,8 @@ void User::_init(const QJsonObject& data)
     _symbol         = userpic.value(QLatin1String("symbol")).toString();
 
     auto colors = userpic.value(QLatin1String("default_colors")).toObject();
-
-    _backgroundColor = colors.value(QLatin1String("background")).toString();
-    _nameColor       = colors.value(QLatin1String("name")).toString();
+    _setStringValue(_backgroundColor, colors, "background");
+    _setStringValue(_nameColor, colors, "name");
 
     emit idChanged();
     emit updated();

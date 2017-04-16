@@ -5,6 +5,7 @@
 #include "data/Message.h"
 #include "data/Comment.h"
 #include "data/Notification.h"
+#include "data/Author.h"
 
 
 
@@ -119,7 +120,11 @@ EntryPtr TastyDataCache::initEntry(const QJsonObject& data, bool reinit)
     if (!entry)
         entry = EntryPtr::create(nullptr);
     else if (!reinit)
+    {
+        if (entry->author())
+            entry->author()->init(data.value(QLatin1String("author")).toObject());
         return entry;
+    }
 
     entry->init(data);
     return entry;

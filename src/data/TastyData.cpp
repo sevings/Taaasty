@@ -91,6 +91,15 @@ void TastyData::_setErrorString(int errorCode, QString str)
 
 
 
+void TastyData::_setStringValue(QString& string, const QJsonObject& data, const char* name)
+{
+    auto value = data.value(QLatin1String(name));
+    if (!value.isUndefined())
+        string = value.toString();
+}
+
+
+
 void TastyData::_initRequest()
 {
     emit loadingChanged();

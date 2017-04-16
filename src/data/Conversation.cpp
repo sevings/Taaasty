@@ -339,7 +339,7 @@ void Conversation::init(const QJsonObject& data)
      if (data.contains(QLatin1String("avatar")))
          _avatar = data.value(QLatin1String("avatar")).toObject()
                  .value(QLatin1String("url")).toString();
-     else if(_entry && _entry->preview())
+     else if (_entry && _entry->preview())
          _avatar = _entry->preview()->url();
      else
          _avatar.clear();
@@ -791,7 +791,7 @@ bool Conversation::isSending() const
 
 
 
-Entry* Conversation::entry()
+Entry* Conversation::entry() const
 {
     return _entry.data();
 }

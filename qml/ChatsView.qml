@@ -21,6 +21,7 @@
 import QtQuick 2.8
 import QtQuick.Controls 2.1 as Q
 import QtQuick.Controls.Material 2.1
+import QtQuick.Window 2.2
 import org.binque.taaasty 1.0
 
 PopupFill {
@@ -69,9 +70,13 @@ PopupFill {
                     top: parent.top
                     margins: 1.5 * mm
                 }
-                user: model.chat.avatar.length ? null : model.chat.entry ? model.chat.entry.author : model.chat.recipient
-                acceptClick: user || model.chat.entry
-                defaultSource: model.chat.avatar
+                user: model.chat.entry ? model.chat.entry.author : model.chat.recipient
+                acceptClick: model.chat.type !== Chat.GroupConversation
+                url: model.chat.type === Chat.PrivateConversation
+                     ? Screen.pixelDensity <= 8 ? user.thumb64 : user.thumb128
+                     : model.chat.avatar
+                name: model.chat.type === Chat.PrivateConversation
+                        ? user.name : model.chat.topic
                 onClicked: {
                     window.showChatsOnPop = window.stackSize;
                     if (model.chat.entry)

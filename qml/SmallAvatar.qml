@@ -32,9 +32,8 @@ MyImage {
     width: 8 * mm
     height: width
     property User user
-    property string symbol: user && user.name ? user.name[0].toUpperCase() : '?'
-    property url defaultSource: ''
-    url: user && (Screen.pixelDensity <= 8 ? user.thumb64 : user.thumb128) || defaultSource
+    property string name: user ? user.name : ''
+    url: user ? (Screen.pixelDensity <= 8 ? user.thumb64 : user.thumb128) : ''
     backgroundColor: user && user.backgroundColor || '#373737'
     Text {
         id: letter
@@ -42,6 +41,6 @@ MyImage {
         anchors.centerIn: parent
         color: user && user.nameColor || Material.foreground
         font.pixelSize: avatar.width / 2
-        text: avatar.symbol.toUpperCase()
+        text: avatar.name.charAt(0).toUpperCase()
     }
 }

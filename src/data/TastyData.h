@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QPointer>
+#include <QJsonObject>
 
 class ApiRequest;
 
@@ -54,6 +55,7 @@ signals:
 
 protected slots:
     void _setErrorString(int errorCode, QString str);
+    void _setStringValue(QString& string, const QJsonObject& data, const char* name);
 
 protected:
     int _id;

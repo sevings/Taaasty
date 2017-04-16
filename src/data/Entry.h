@@ -136,6 +136,7 @@ public:
     Rating* rating() const;
 
     Tlog* tlog() const;
+    Author* author() const;
 
     AttachedImage* preview() const;
 

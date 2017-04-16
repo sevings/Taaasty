@@ -109,7 +109,7 @@ public:
 
     int unreadCount() const;
 
-    Entry* entry();
+    Entry* entry() const;
 
     int entryId() const;
 

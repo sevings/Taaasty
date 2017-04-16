@@ -679,6 +679,13 @@ Tlog* Entry::tlog() const
 
 
 
+Author*Entry::author() const
+{
+    return _author;
+}
+
+
+
 AttachedImage*Entry::preview() const
 {
     return _preview;
