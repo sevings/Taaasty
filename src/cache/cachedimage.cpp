@@ -121,6 +121,7 @@ void CachedImage::removeFile()
         return;
 
     QFile::remove(_filePath());
+    _source.clear();
 
     _available = false;
     emit availableChanged();
@@ -148,8 +149,8 @@ QPixmap CachedImage::pixmap()
 
 QUrl CachedImage::source() const
 {
-    return _format == GifFormat ? sourceFileUrl()
-                                : "image://cached/" + _url;
+    return _source;// _format == GifFormat ? sourceFileUrl()
+                     //           : QStringLiteral("image://cached/") + _url;
 }
 
 
@@ -471,6 +472,7 @@ void CachedImage::_readPixmap(const QPixmap& pm)
         if (_available)
         {
             _available = false;
+            _source.clear();
             emit availableChanged();
         }
     }
@@ -482,6 +484,8 @@ void CachedImage::_readPixmap(const QPixmap& pm)
         if (!_available && _fileSize)
         {
             _available = true;
+            _source = _format == GifFormat ? sourceFileUrl()
+                                           : QStringLiteral("image://cached/") + _url;
             emit availableChanged();
         }
     }

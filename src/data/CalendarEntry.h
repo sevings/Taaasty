@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QDateTime>
+#include <QUrl>
 
 #include "../defines.h"
 
@@ -39,7 +40,7 @@ class CalendarEntry: public QObject
     Q_PROPERTY(QString createdAt      MEMBER _createdAt      CONSTANT)
     Q_PROPERTY(QString month          MEMBER _month          CONSTANT)
     Q_PROPERTY(QString date           MEMBER _date           CONSTANT)
-    Q_PROPERTY(QString url            MEMBER _url            CONSTANT)
+    Q_PROPERTY(QUrl    url            MEMBER _url            CONSTANT)
     Q_PROPERTY(bool    isPrivate      MEMBER _isPrivate      CONSTANT)
     Q_PROPERTY(QString type           MEMBER _type           CONSTANT)
     Q_PROPERTY(int     commentsCount  MEMBER _commentsCount  CONSTANT)
@@ -70,7 +71,7 @@ private:
     QString _createdAt;
     QString _month;
     QString _date;
-    QString _url;
+    QUrl    _url;
     bool    _isPrivate;
     QString _type;
     int     _commentsCount;

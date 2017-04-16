@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QUrl>
 
 #include "TastyData.h"
 
@@ -34,14 +35,14 @@ class User: public TastyData
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString tlogUrl      MEMBER _tlogUrl     NOTIFY updated)
+    Q_PROPERTY(QUrl    tlogUrl      MEMBER _tlogUrl     NOTIFY updated)
     Q_PROPERTY(QString name         MEMBER _name        NOTIFY updated)
     Q_PROPERTY(QString slug         MEMBER _slug        NOTIFY updated)
 
-    Q_PROPERTY(QString originalPic     MEMBER _originalPic     NOTIFY updated)
-    Q_PROPERTY(QString largePic        MEMBER _largePic        NOTIFY updated)
-    Q_PROPERTY(QString thumb128        MEMBER _thumb128        NOTIFY updated)
-    Q_PROPERTY(QString thumb64         MEMBER _thumb64         NOTIFY updated)
+    Q_PROPERTY(QUrl    originalPic     MEMBER _originalPic     NOTIFY updated)
+    Q_PROPERTY(QUrl    largePic        MEMBER _largePic        NOTIFY updated)
+    Q_PROPERTY(QUrl    thumb128        MEMBER _thumb128        NOTIFY updated)
+    Q_PROPERTY(QUrl    thumb64         MEMBER _thumb64         NOTIFY updated)
     Q_PROPERTY(QString symbol          MEMBER _symbol          NOTIFY updated)
     Q_PROPERTY(QString backgroundColor MEMBER _backgroundColor NOTIFY updated)
     Q_PROPERTY(QString nameColor       MEMBER _nameColor       NOTIFY updated)
@@ -69,14 +70,14 @@ protected slots:
     void _initFromTlog(const QJsonObject& data);
 
 private:
-    QString _tlogUrl;
+    QUrl    _tlogUrl;
     QString _name;
     QString _slug;
 
-    QString _originalPic;
-    QString _largePic;
-    QString _thumb128;
-    QString _thumb64;
+    QUrl    _originalPic;
+    QUrl    _largePic;
+    QUrl    _thumb128;
+    QUrl    _thumb64;
     QString _symbol;
     QString _backgroundColor;
     QString _nameColor;

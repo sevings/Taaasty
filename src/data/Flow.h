@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QUrl>
 
 #include "TastyData.h"
 
@@ -35,8 +36,8 @@ class Flow : public TastyData
     Q_PROPERTY(QString name           MEMBER  _name           NOTIFY updated)
     Q_PROPERTY(QString slug           MEMBER  _slug           NOTIFY updated)
     Q_PROPERTY(QString title          MEMBER  _title          NOTIFY updated)
-    Q_PROPERTY(QString url            MEMBER  _url            NOTIFY updated)
-    Q_PROPERTY(QString picUrl         MEMBER  _pic            NOTIFY updated)
+    Q_PROPERTY(QUrl    url            MEMBER  _url            NOTIFY updated)
+    Q_PROPERTY(QUrl    picUrl         MEMBER  _pic            NOTIFY updated)
     Q_PROPERTY(bool    isPrivate      MEMBER  _isPrivate      NOTIFY updated)
     Q_PROPERTY(bool    isPremoderate  MEMBER  _isPremoderate  NOTIFY updated)
     Q_PROPERTY(bool    isEditable     MEMBER  _isEditable     NOTIFY updated)
@@ -53,7 +54,7 @@ public:
     bool isWritable() const;
 
     QString name() const;
-    QString picUrl() const;
+    QUrl    picUrl() const;
 
 signals:
     void updated();
@@ -65,8 +66,8 @@ private:
     QString _name;
     QString _slug;
     QString _title;
-    QString _url;
-    QString _pic;
+    QUrl    _url;
+    QUrl    _pic;
     bool    _isPrivate;
     bool    _isPremoderate;
     bool    _isEditable;

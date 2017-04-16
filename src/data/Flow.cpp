@@ -80,7 +80,7 @@ QString Flow::name() const
 
 
 
-QString Flow::picUrl() const
+QUrl Flow::picUrl() const
 {
     return _pic;
 }

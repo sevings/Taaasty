@@ -25,7 +25,7 @@ import ImageCache 2.0
 
 Item {
     id: image
-    property string url: ''
+    property url url: ''
     property string extension: ''
     property color backgroundColor: window.darkTheme ? Qt.darker('#9E9E9E') : '#9E9E9E'
     property bool savable: false

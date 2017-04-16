@@ -24,6 +24,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDateTime>
+#include <QUrl>
 #include <QEnableSharedFromThis>
 
 #include "../defines.h"
@@ -92,7 +93,7 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
 
     Q_PROPERTY(int         entryId        READ entryId WRITE setId  NOTIFY updated) //! \todo remove
     Q_PROPERTY(QString     createdAt      MEMBER _createdAt         NOTIFY updated)
-    Q_PROPERTY(QString     url            MEMBER _url               NOTIFY updated)
+    Q_PROPERTY(QUrl        url            MEMBER _url               NOTIFY updated)
     Q_PROPERTY(EntryType   type           MEMBER _type              NOTIFY updated)
     Q_PROPERTY(bool        isVotable      READ   isVotable          NOTIFY updated)
     Q_PROPERTY(bool        isWatchable    MEMBER _isWatchable       NOTIFY updated)
@@ -192,7 +193,7 @@ private:
     static int _countWords(QString content);
 
     QString     _createdAt;
-    QString     _url;
+    QUrl        _url;
     bool        _isVotable;
     bool        _isWatchable;
     bool        _isWatched;

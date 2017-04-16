@@ -56,7 +56,7 @@ void FlowEditor::setFlow(Flow* flow)
     if (!flow)
         return;
 
-    _picUrl = flow->picUrl();
+    _picUrl = flow->picUrl().toString();
 
     auto image = CacheManager::instance()->image(_picUrl);
     if (image->isAvailable())

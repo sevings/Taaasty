@@ -160,16 +160,16 @@ void User::_init(const QJsonObject& data)
     _slug       = data.value(QLatin1String("slug")).toString();
 
     auto userpic = data.value(QLatin1String("userpic")).toObject();
-
-    _originalPic    = userpic.value(QLatin1String("original_url")).toString();
-    if (!_originalPic.isEmpty())
+    auto origin = userpic.value(QLatin1String("original_url")).toString();
+    _originalPic = origin;
+    if (!origin.isEmpty())
     {
         _largePic   = userpic.contains(QStringLiteral("large_url"))    ? userpic.value(QLatin1String("large_url")).toString()
-                        : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/800x800/%1").arg(_originalPic);
+                        : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/800x800/%1").arg(origin);
         _thumb128   = userpic.contains(QStringLiteral("thumb128_url")) ? userpic.value(QLatin1String("thumb128_url")).toString()
-                        : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/128x128/%1").arg(_originalPic);
+                        : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/128x128/%1").arg(origin);
         _thumb64    = userpic.contains(QStringLiteral("thumb64_url"))  ? userpic.value(QLatin1String("thumb64_url")).toString()
-                        : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/64x64/%1").arg(_originalPic);
+                        : QStringLiteral("http://thumbor4.tasty0.ru/unsafe/64x64/%1").arg(origin);
     }
     _symbol         = userpic.value(QLatin1String("symbol")).toString();
 

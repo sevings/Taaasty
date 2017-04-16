@@ -124,6 +124,7 @@ private:
     ImageFormat _format;
 
     QString _url;
+    QUrl    _source;
 
     QChar   _folder;
     QString _fileName;
