@@ -232,6 +232,8 @@ void ChatsModel::_addLast(const QJsonArray& data)
         _chats.insert(i, chats.at(i));
 
     endInsertRows();
+
+    emit rowCountChanged();
 }
 
 

@@ -201,7 +201,7 @@ Pane {
                     text: (message.replyTo && message.replyTo.name.length > 0 ? '<b>' + message.replyTo.name + '</b>, ' : '') + message.text
                     textFormat: message.containsImage ? Text.RichText : Text.StyledText
                     onLinkActivated: window.openLink(link)
-                    height: message.text.length > 0 ? contentHeight : -1.5 * mm
+                    height: text.length > 0 ? contentHeight : -1.5 * mm
                 }
                 ThemedText {
                     id: messageDate
