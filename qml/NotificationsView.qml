@@ -57,7 +57,6 @@ PopupFill {
         visible: model.size > 0
         model: window.friendActivity ? FriendActivityModel : NotifsModel
         spacing: 3 * mm
-        cacheBuffer: back.visible ? 2 * window.height : 0
         delegate: MouseArea {
             id: notif
             width: window.width

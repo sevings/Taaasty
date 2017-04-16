@@ -42,7 +42,6 @@ PopupFill {
         visible: model.size > 0
         model: ChatsModel
         spacing: 2 * mm
-        cacheBuffer: back.visible ? 2 * window.height : 0
         delegate: Rectangle {
             width: window.width
             readonly property int textHeight: lastMessage.y + lastMessage.height - 3 * mm
