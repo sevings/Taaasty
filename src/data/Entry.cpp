@@ -78,8 +78,11 @@ void EntryBase::_initBase(const QJsonObject& data)
     _id     = data.value(QLatin1String("id")).toInt();
 
     auto authorData = data.value(QLatin1String("author")).toObject();
-    if (_author && authorData.contains(QStringLiteral("slug")))
-        _author->init(authorData);
+    if (_author)
+    {
+        if (authorData.contains(QLatin1String("slug")))
+            _author->init(authorData);
+    }
     else if (!authorData.isEmpty())
         _author = new Author(authorData, this);
     else
