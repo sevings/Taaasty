@@ -50,7 +50,7 @@ Pane {
             titleInput.text   = editEntry.title;
             textInput.text    = editEntry.media ? editEntry.title : editEntry.text;
             sourceInput.text  = editEntry.source;
-            urlText.text      = editEntry.media ? editEntry.media.url : '';
+            urlText.text      = editEntry.videoUrl;
             fireButton.voting = editEntry.isVotable;
             lockButton.locked = editEntry.isPrivate;
 

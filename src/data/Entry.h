@@ -114,6 +114,7 @@ class Entry: public EntryBase, public QEnableSharedFromThis<Entry>
     Q_PROPERTY(QString     text           MEMBER _text              NOTIFY htmlUpdated)
     Q_PROPERTY(QString     truncatedText  MEMBER _truncatedText     NOTIFY updated)
     Q_PROPERTY(QString     source         MEMBER _source            NOTIFY updated)
+    Q_PROPERTY(QUrl        videoUrl       MEMBER _videoUrl          NOTIFY updated)
     Q_PROPERTY(Media*      media          MEMBER _media             NOTIFY updated)
     Q_PROPERTY(AttachedImage* preview     MEMBER _preview           NOTIFY updated)
     Q_PROPERTY(int         wordCount      MEMBER _wordCount         NOTIFY updated)
@@ -212,6 +213,7 @@ private:
     QString     _truncatedTitle;
     QString     _truncatedText;
     QString     _source;
+    QUrl        _videoUrl;
     Media*      _media; //-V122
     AttachedImage* _preview;
     int         _wordCount;

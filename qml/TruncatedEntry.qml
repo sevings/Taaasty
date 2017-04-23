@@ -103,7 +103,7 @@ Item {
             bottomMargin: 1.5 * mm
         }
         readonly property AttachedImage image: entry ? entry.preview : null
-        active: image
+        active: image && entry.type === TlogEntry.ImageEntry
         height: active ? (image.height / image.width * width) : 0
         asynchronous: false
         Component.onDestruction: sourceComponent = undefined

@@ -298,6 +298,7 @@ void Entry::init(const QJsonObject& data, bool force)
         _truncatedText = Tasty::truncateHtml(_text, 300);
 
     _source          = data.value(QLatin1String("source")).toString(); // quote author
+    _videoUrl        = data.value(QLatin1String("video_url")).toString();
 
     delete _media;
     if (_type == VideoEntry)
