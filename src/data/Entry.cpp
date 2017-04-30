@@ -189,7 +189,7 @@ Entry::Entry()
     , _commentsModel(nullptr)
     , _attachedImagesModel(new AttachedImagesModel(this))
 {
-    Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
+    Q_TEST(connect(pTasty, SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
 }
 
 
@@ -216,7 +216,7 @@ Entry::Entry(Conversation* chat)
     if (chat)
         _chatId = chat->id();
 
-    Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
+    Q_TEST(connect(pTasty, SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
 }
 
 
@@ -373,7 +373,7 @@ void Entry::reload()
 
 void Entry::addComment(const QString& text)
 {
-    if (_entryRequest || _id <= 0 || !Tasty::instance()->isAuthorized())
+    if (_entryRequest || _id <= 0 || !pTasty->isAuthorized())
         return;
 
     _entryRequest = new ApiRequest("v1/comments.json", ApiRequest::AllOptions);
@@ -526,9 +526,9 @@ void Entry::_changeFavorited(const QJsonObject& data)
     emit favoritedChanged();
 
     if (_isFavorited)
-        emit Tasty::instance()->info(QStringLiteral("Запись добавлена в избранное"));
+        emit pTasty->info(QStringLiteral("Запись добавлена в избранное"));
     else
-        emit Tasty::instance()->info(QStringLiteral("Запись удалена из избранного"));
+        emit pTasty->info(QStringLiteral("Запись удалена из избранного"));
 }
 
 
@@ -576,8 +576,8 @@ void Entry::_deleteEntry(const QJsonObject& data)
     if (data.value(QLatin1String("status")) == "success")
     {
         emit entryDeleted();
-        emit Tasty::instance()->entryDeleted(_id);
-        emit Tasty::instance()->info(QStringLiteral("Запись удалена"));
+        emit pTasty->entryDeleted(_id);
+        emit pTasty->info(QStringLiteral("Запись удалена"));
 
         _chat.clear();
     }

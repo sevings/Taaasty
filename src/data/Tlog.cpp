@@ -266,7 +266,7 @@ void Tlog::unsubscribeHim()
     if (_hisRelation != Friend)
         return;
 
-    if (_relationRequest || !Tasty::instance()->isAuthorized())
+    if (_relationRequest || !pTasty->isAuthorized())
         return;
 
     auto url = QStringLiteral("v1/relationships/by/tlog/%1.json");
@@ -314,7 +314,7 @@ void Tlog::_setHisRelation(const QJsonObject& data)
 
 void Tlog::_changeMyRelation(const QString& url)
 {
-    if (_relationRequest || !Tasty::instance()->isAuthorized())
+    if (_relationRequest || !pTasty->isAuthorized())
         return;
 
     _relationRequest = new ApiRequest(url.arg(_id), ApiRequest::AllOptions);

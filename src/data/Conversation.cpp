@@ -577,7 +577,7 @@ void Conversation::_emitLeft(const QJsonObject& data)
     _leftUsers.insert(user->id(), user);
     emit isInvolvedChanged();
 
-    emit Tasty::instance()->info(QStringLiteral("Беседа удалена"));
+    emit pTasty->info(QStringLiteral("Беседа удалена"));
 
     emit left(_id);
 }

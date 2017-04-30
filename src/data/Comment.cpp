@@ -51,7 +51,7 @@ Comment::Comment(const QJsonObject& data, QObject *parent)
 
     _init(data);
 
-    Q_TEST(connect(Tasty::instance(), SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
+    Q_TEST(connect(pTasty, SIGNAL(htmlRecorrectionNeeded()), this, SLOT(_correctHtml())));
 }
 
 

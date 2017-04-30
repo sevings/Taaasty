@@ -114,7 +114,7 @@ Tasty::~Tasty()
 
 
 
-Tasty* Tasty::instance()
+Tasty* pTasty
 {
     static auto tasty = new Tasty;
     return tasty;

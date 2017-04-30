@@ -300,7 +300,7 @@ bool FeedModel::hideMode() const
 bool FeedModel::hideShort() const
 {
     return hideMode()
-            && Tasty::instance()->settings()->hideShortPosts();
+            && pTasty->settings()->hideShortPosts();
 }
 
 
@@ -308,7 +308,7 @@ bool FeedModel::hideShort() const
 bool FeedModel::hideNegative() const
 {
     return hideMode()
-            && Tasty::instance()->settings()->hideNegativeRated();
+            && pTasty->settings()->hideNegativeRated();
 }
 
 
@@ -497,7 +497,7 @@ void FeedModel::_resetOrReloadRatings()
             || _mode == MyPrivateMode
             || _mode == FriendsMode)
     {
-        if (Tasty::instance()->isAuthorized())
+        if (pTasty->isAuthorized())
             reset();
         else
             setMode(LiveMode);
@@ -701,18 +701,18 @@ void FeedModel::_setUrl(FeedModel::Mode mode)
     case MyTlogMode:
         if (_tag.isEmpty())
             _url = QStringLiteral("v1/tlog/%1/entries/tlogs.json")
-                    .arg(Tasty::instance()->settings()->userId());
+                    .arg(pTasty->settings()->userId());
         else
             _url = QStringLiteral("v1/tlog/%1/entries/tags_tlogs/%2.json")
-                    .arg(Tasty::instance()->settings()->userId()).arg(_tag);
+                    .arg(pTasty->settings()->userId()).arg(_tag);
         break;
     case MyFavoritesMode:
         _url = QStringLiteral("v1/tlog/%1/favorites/tlogs.json")
-                .arg(Tasty::instance()->settings()->userId());
+                .arg(pTasty->settings()->userId());
         break;
     case MyPrivateMode:
         _url = QStringLiteral("v1/tlog/%1/privates/tlogs.json")
-                .arg(Tasty::instance()->settings()->userId());
+                .arg(pTasty->settings()->userId());
         break;
     case FriendsMode:
         _url = "v1/my_feeds/friends/tlogs.json";

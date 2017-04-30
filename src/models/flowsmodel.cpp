@@ -234,7 +234,7 @@ void FlowsModel::_resetIfMy()
     if (_mode != MyMode && _mode != AvailableMode)
         return;
 
-    if (Tasty::instance()->isAuthorized())
+    if (pTasty->isAuthorized())
         reset();
     else
         setMode(PopularMode);

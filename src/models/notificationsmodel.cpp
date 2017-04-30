@@ -129,7 +129,7 @@ bool NotificationsModel::canFetchMore(const QModelIndex& parent) const
 void NotificationsModel::fetchMore(const QModelIndex& parent)
 {
     if (isLoading() || parent.isValid() || _notifs.size() >= _totalCount
-            || !Tasty::instance()->isAuthorized())
+            || !pTasty->isAuthorized())
         return;
 
     QString url = _url;
@@ -157,7 +157,7 @@ bool NotificationsModel::hasMore() const
 
 bool NotificationsModel::unread() const
 {
-    return !_notifs.isEmpty() && Tasty::instance()->unreadNotifications() > 0;
+    return !_notifs.isEmpty() && pTasty->unreadNotifications() > 0;
 }
 
 
