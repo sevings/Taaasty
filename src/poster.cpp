@@ -86,8 +86,8 @@ void Poster::postImage(QString title, Poster::Privacy privacy, int tlogId)
     _prepare(title, tlogId);
 
     _request->setUrl(QStringLiteral("v1/entries/image.json"));
-    _request->addFormData("privacy", _privacyValue(privacy));
     _request->addImages(_images);
+    _addPrivacy(privacy);
 
     _postPrepared();    
 }
@@ -102,8 +102,8 @@ void Poster::postQuote(QString text, QString source, Privacy privacy, int tlogId
     _prepareText(text);
 
     _request->setUrl(QStringLiteral("v1/entries/quote.json"));
-    _request->addFormData("source", source.trimmed());
-    _request->addFormData("privacy", _privacyValue(privacy));
+    _request->addFormData(QStringLiteral("source"), source.trimmed());
+    _addPrivacy(privacy);
     
     _postPrepared();        
 }
@@ -117,8 +117,8 @@ void Poster::postVideo(QString title, QString url, Privacy privacy, int tlogId)
     _prepare(title, tlogId);
 
     _request->setUrl(QStringLiteral("v1/entries/video.json"));
-    _request->addFormData("video_url", url);
-    _request->addFormData("privacy", _privacyValue(privacy));
+    _request->addFormData(QStringLiteral("video_url"), url);
+    _addPrivacy(privacy);
     
     _postPrepared();      
 }
@@ -136,7 +136,7 @@ void Poster::postText(QString title, QString content, Poster::Privacy privacy, i
     _prepare(title, content, tlogId);
 
     _request->setUrl(QStringLiteral("v1/entries/text.json"));
-    _request->addFormData("privacy", _privacyValue(privacy));
+    _addPrivacy(privacy);
     
     _postPrepared();
 }
@@ -165,8 +165,8 @@ void Poster::putImage(int id, QString title, Poster::Privacy privacy)
     _prepareTitle(title);
 
     _request->setUrl(QStringLiteral("v1/entries/image/%1.json").arg(id));
-    _request->addFormData("privacy", _privacyValue(privacy));
     _request->addImages(_images);
+    _addPrivacy(privacy);
 
     _putPrepared();
 }
@@ -178,8 +178,8 @@ void Poster::putQuote(int id, QString text, QString source, Poster::Privacy priv
     _prepareText(text);
 
     _request->setUrl(QStringLiteral("v1/entries/quote/%1.json").arg(id));
-    _request->addFormData("source", source.trimmed());
-    _request->addFormData("privacy", _privacyValue(privacy));
+    _request->addFormData(QStringLiteral("source"), source.trimmed());
+    _addPrivacy(privacy);
 
     _putPrepared();
 }
@@ -191,8 +191,8 @@ void Poster::putVideo(int id, QString title, QString url, Poster::Privacy privac
     _prepareTitle(title);
 
     _request->setUrl(QStringLiteral("v1/entries/video/%1.json").arg(id));
-    _request->addFormData("video_url", url);
-    _request->addFormData("privacy", _privacyValue(privacy));
+    _request->addFormData(QStringLiteral("video_url"), url);
+    _addPrivacy(privacy);
 
     _putPrepared();
 }
@@ -204,7 +204,7 @@ void Poster::putText(int id, QString title, QString content, Poster::Privacy pri
     _prepare(title, content);
 
     _request->setUrl(QStringLiteral("v1/entries/text/%1.json").arg(id));
-    _request->addFormData("privacy", _privacyValue(privacy));
+    _addPrivacy(privacy);
 
     _putPrepared();
 }
@@ -266,19 +266,20 @@ void Poster::_updateEditedEntry(const QJsonObject& data)
 
 
 
-QString Poster::_privacyValue(const Privacy& privacy) const
+void Poster::_addPrivacy(Privacy privacy)
 {
-    switch (privacy) 
+    QString val;
+    switch (privacy)
     {
     case Voting:
-        return "public_with_voting";
+        val = QStringLiteral("public_with_voting");
     case Public:
-        return "public";
+        val = QStringLiteral("public");
     case Private:
-        return "private";
-    default:
-        return QString();
+        val = QStringLiteral("private");
     }
+
+    _request->addFormData("privacy", val);
 }
 
 

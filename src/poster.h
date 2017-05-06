@@ -83,8 +83,7 @@ private slots:
     void _updateEditedEntry(const QJsonObject& data);
 
 private:
-    QString _privacyValue(const Privacy& privacy) const;
-
+    void    _addPrivacy(Privacy privacy);
     void    _clearHtml(QString& text) const;
 
     void    _prepare();
