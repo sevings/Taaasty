@@ -33,7 +33,7 @@ PopupFill {
     Splash {
         id: splash
         model: ChatsModel
-        visible: !listView.visible
+        active: !listView.visible
         emptyString: 'Нет бесед'
     }
     MyListView {

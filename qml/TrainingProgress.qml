@@ -28,7 +28,7 @@ Pane {
         shiftable: false
     }
     Splash {
-        visible: tlogBar.to <= 0
+        active: tlogBar.to <= 0
     }
     ThemedProgressBar {
         id: tlogBar

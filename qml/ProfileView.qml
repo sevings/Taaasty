@@ -41,7 +41,7 @@ Pane {
     Splash {
         id: splash
         model: tlog
-        visible: !column.visible
+        active: !column.visible
     }
     Component.onCompleted: {
         if (!tlog.slug.length)

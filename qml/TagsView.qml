@@ -34,7 +34,7 @@ Pane {
     Splash {
         id: splash
         model: tagsModel
-        visible: !listView.visible
+        active: !listView.visible
         emptyString: 'Нет тегов'
     }
     TagsModel {

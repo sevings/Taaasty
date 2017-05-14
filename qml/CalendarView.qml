@@ -37,7 +37,7 @@ Pane {
     Splash {
         id: splash
         model: calendarModel
-        visible: !listView.visible
+        active: !listView.visible
         running: calendarModel.loading || calendarModel.loadingRatings
         emptyString: 'Нет записей'
     }

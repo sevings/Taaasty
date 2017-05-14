@@ -65,7 +65,7 @@ Pane {
     Splash {
         id: splash
         model: chat.messages
-        visible: !listView.visible || !chat.messages.size
+        active: !listView.visible || !chat.messages.size
         running: !listView.visible && (chat.loading || chat.messages.loading
                                        || (!chat.messages.size && chat.messages.checking))
         emptyString: 'Нет сообщений'

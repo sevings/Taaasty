@@ -33,7 +33,7 @@ Pane {
     }
     Splash {
         model: flowsModel
-        visible: !listView.visible
+        active: !listView.visible
         emptyString: 'Нет потоков'
     }
     MyListView {

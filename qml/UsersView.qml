@@ -36,7 +36,7 @@ Pane {
     }
     Splash {
         model: users.model
-        visible: !users.visible
+        active: !users.visible
         emptyString: 'Список пуст'
     }
     MyListView {

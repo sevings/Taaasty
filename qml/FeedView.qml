@@ -69,7 +69,7 @@ Pane {
     }
     Splash {
         model: feedModel
-        visible: !listView.visible
+        active: !listView.visible
         emptyString: 'Нет записей'
     }
     MyListView {

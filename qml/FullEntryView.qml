@@ -96,7 +96,7 @@ Pane {
     }
     Splash {
         model: back.entry
-        visible: !fullEntry.visible
+        active: !fullEntry.visible
     }
     MyListView {
         id: fullEntry
