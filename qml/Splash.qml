@@ -30,6 +30,7 @@ Loader {
     property string text: model ? model.errorString : ''
     property string emptyString: ''
     anchors.centerIn: parent
+    asynchronous: false
     sourceComponent: Item {
         width: window.width - 3 * mm
         height: busy.height + loadingText.height + 1.5 * mm
