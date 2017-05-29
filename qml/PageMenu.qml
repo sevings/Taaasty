@@ -436,7 +436,7 @@ Q.Drawer {
                 visible: !window.chatsShows
                          && !window.notifsShows
                          && page.isFullEntryView === true
-                         && page.entry.url.length > 0
+                         && page.entry.url
             }
             MenuSeparator {
                 visible: !window.chatsShows
