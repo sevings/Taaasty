@@ -534,6 +534,7 @@ Q.Drawer {
                          && !window.notifsShows
                          && page.isFullEntryView === true
                          && page.isUnrepostable
+                         && Tasty.isAuthorized
             }
 
             // FLOWS SECTION
