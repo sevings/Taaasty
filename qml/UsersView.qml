@@ -19,6 +19,7 @@
  */
 
 import QtQuick 2.8
+import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.1 as Q
 import QtQuick.Controls.Material 2.1
 import org.binque.taaasty 1.0
@@ -62,12 +63,7 @@ Pane {
             }
             Rectangle {
                 id: fillRect
-                anchors {
-                    top: parent.top
-                    bottom: parent.bottom
-                    left: parent.left
-                }
-                width: parent.width
+                anchors.fill: parent
                 color: Material.primary
                 visible: usersMouse.pressed
             }
@@ -80,31 +76,28 @@ Pane {
                     window.pushTlog(user.id);
                 }
             }
-            SmallAvatar {
-                id: usersAvatar
+            RowLayout {
                 anchors {
-                    top: undefined
-                    verticalCenter: parent.verticalCenter
+                    fill: parent
                     margins: 1.5 * mm
                 }
-                user: model.user
-                popBody: back
-                onClicked: {
-                    window.pushProfileById(user.id);
+                spacing: 1.5 * mm
+                SmallAvatar {
+                    id: usersAvatar
+                    user: model.user
+                    popBody: back
+                    onClicked: {
+                        window.pushProfileById(user.id);
+                    }
                 }
-            }
-            Q.Label {
-                id: usersName
-                font.pixelSize: window.fontBigger
-                text: user.name
-                anchors {
-                    verticalCenter: parent.verticalCenter
-                    left: usersAvatar.right
-                    right: parent.right
-                    leftMargin: 1.5 * mm
-                    rightMargin: 1.5 * mm
+                Q.Label {
+                    id: usersName
+                    font.pixelSize: window.fontBigger
+                    text: user.name
+                    elide: Text.ElideRight
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.fillWidth: true
                 }
-                elide: Text.ElideRight
             }
         }
         header: Item {

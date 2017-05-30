@@ -19,6 +19,7 @@
  */
 
 import QtQuick 2.8
+import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.1
 import org.binque.taaasty 1.0
 
@@ -70,30 +71,29 @@ Pane {
                     window.pushTlogTag(back.tlog, model.tagName);
                 }
             }
-            ThemedText {
-                id: tagName
+            RowLayout {
                 anchors {
-                    verticalCenter: parent.verticalCenter
-                    left: parent.left
-                    right: tagCount.left
+                    fill: parent
                     margins: 1.5 * mm
                 }
-                text: '#' + model.tagName
-                elide: Text.ElideRight
-                wrapMode: Text.NoWrap
-                font.pixelSize: window.fontBigger
-                font.italic: true
-            }
-            ThemedText {
-                id: tagCount
-                anchors {
-                    verticalCenter: parent.verticalCenter
-                    right: parent.right
-                    margins: 1.5 * mm
+                spacing: 1.5 * mm
+                ThemedText {
+                    id: tagName
+                    text: '#' + model.tagName
+                    elide: Text.ElideRight
+                    wrapMode: Text.NoWrap
+                    font.pixelSize: window.fontBigger
+                    font.italic: true
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.fillWidth: true
                 }
-                text: model.tagCount
-                color: window.secondaryTextColor
-                font.pixelSize: window.fontBigger
+                ThemedText {
+                    id: tagCount
+                    text: model.tagCount
+                    color: window.secondaryTextColor
+                    font.pixelSize: window.fontBigger
+                    Layout.alignment: Qt.AlignVCenter
+                }
             }
         }
     }
