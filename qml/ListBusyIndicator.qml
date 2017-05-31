@@ -19,7 +19,7 @@
  */
 
 import QtQuick 2.0
-import QtQuick.Controls 2.1 as Q
+import QtQuick.Controls 2.2 as Q
 
 Item {
     property alias running: busy.running

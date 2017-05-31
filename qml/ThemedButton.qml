@@ -19,8 +19,8 @@
  */
 
 import QtQuick 2.6
-import QtQuick.Controls 2.1
-import QtQuick.Controls.Material 2.1
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 
 ToolButton {
     id: control

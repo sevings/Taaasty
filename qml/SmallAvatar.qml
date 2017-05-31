@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.8
-import QtQuick.Controls.Material 2.1
+import QtQuick 2.9
+import QtQuick.Controls.Material 2.2
 import org.binque.taaasty 1.0
 import QtQuick.Window 2.2
 

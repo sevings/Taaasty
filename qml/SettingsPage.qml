@@ -18,9 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.8
-import QtQuick.Controls 2.1 as Q
-import QtQuick.Controls.Material 2.1
+import QtQuick 2.9
+import QtQuick.Controls 2.2 as Q
+import QtQuick.Controls.Material 2.2
 import org.binque.taaasty 1.0
 
 Pane {
@@ -74,7 +74,7 @@ Pane {
             ThemedText {
                 id: fontText
                 width: parent.width - parent.padding * 2
-                text: 'Размер текста: ' + fontSlider.zoom + '%'
+                text: 'Размер текста: ' + Math.round(fontSlider.value) + '%'
             }
             Q.Slider {
                 id: fontSlider
@@ -84,8 +84,7 @@ Pane {
                 from: 50
                 to: 200
                 value: Settings.fontZoom
-                onValueChanged: { Settings.fontZoom = value; }
-                readonly property int zoom: position * 150 + 50
+                onPressedChanged: { if (!pressed) Settings.fontZoom = value; }
             }
             ThemedCheckBox {
                 id: notiBox
@@ -127,8 +126,7 @@ Pane {
                 id: imageSlider
                 width: parent.width - parent.padding * 2
                 snapMode: Q.Slider.SnapAlways
-//                stepSize: 0.02
-                onValueChanged: { Settings.maxLoadImageSize = value < 1 ? size : -1; }
+                onPressedChanged: { if (!pressed) Settings.maxLoadImageSize = value < 1 ? size : -1; }
                 readonly property int size: Math.pow(position, 2) * 10000
                 function setSize(v) {
                     if (v < 0)
@@ -148,7 +146,7 @@ Pane {
             ThemedText {
                 id: cacheSize
                 width: parent.width - parent.padding * 2
-                text: 'Размер кэша: ' + cacheSizeSlider.size + ' МБ'
+                text: 'Размер кэша: ' + Math.round(cacheSizeSlider.value) + ' МБ'
             }
             Q.Slider {
                 id: cacheSizeSlider
@@ -158,8 +156,7 @@ Pane {
                 from: 50
                 to: 500
                 value: Settings.maxCacheSize
-                onValueChanged: { Settings.maxCacheSize = value; }
-                readonly property int size: position * 450 + 50
+                onPressedChanged: { if (!pressed) Settings.maxCacheSize = value; }
             }
             ThemedText {
                 id: curCacheSize
