@@ -272,14 +272,14 @@ void Poster::_addPrivacy(Privacy privacy)
     switch (privacy)
     {
     case Voting:
-        val = QStringLiteral("public_with_voting");
+        val = QStringLiteral("public_with_voting"); break;
     case Public:
-        val = QStringLiteral("public");
+        val = QStringLiteral("public"); break;
     case Private:
-        val = QStringLiteral("private");
+        val = QStringLiteral("private"); break;
     }
 
-    _request->addFormData("privacy", val);
+    _request->addFormData(QStringLiteral("privacy"), val);
 }
 
 

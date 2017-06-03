@@ -215,7 +215,7 @@ private:
     QString     _source;
     QUrl        _videoUrl;
     Media*      _media; //-V122
-    AttachedImage* _preview;
+    AttachedImage* _preview; //-V122
     int         _wordCount;
     int         _chatId;
 

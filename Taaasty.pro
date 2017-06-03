@@ -144,17 +144,17 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
 }
 
 #unix:{
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/QtConcurrent/
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/QtCore/
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/QtGui/
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/QtNetwork/
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/QtQml/
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/QtQuick/
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/QtQuickControls2/
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/QtSql/
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/QtWebSockets/
-#    INCLUDEPATH += /home/binque/.Qt5/5.8/gcc_64/include/QtWidgets/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/QtConcurrent/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/QtCore/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/QtGui/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/QtNetwork/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/QtQml/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/QtQuick/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/QtQuickControls2/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/QtSql/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/QtWebSockets/
+#    INCLUDEPATH += /home/binque/.Qt5/5.9/gcc_64/include/QtWidgets/
 
 #    pvs_studio.target = Taaasty
 #    pvs_studio.output = true
