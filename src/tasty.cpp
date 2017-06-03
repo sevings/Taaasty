@@ -247,7 +247,22 @@ void Tasty::authorize(const QString& login, const QString& password, bool save)
     request->post();
 
     connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readAccessToken(const QJsonObject)));
+}
 
+
+
+void Tasty::signup(const QString& login, const QString& password, bool save)
+{
+    qDebug() << "sign up";
+
+    _saveProfile = save;
+
+    auto request = new ApiRequest("v1/users.json", ApiRequest::ShowMessageOnError);
+    request->addFormData("email", login);
+    request->addFormData("password", password);
+    request->post();
+
+    connect(request, SIGNAL(success(const QJsonObject)), this, SLOT(_readAccessToken(const QJsonObject)));
 }
 
 
@@ -465,6 +480,8 @@ void Tasty::_swapProfiles()
 
 void Tasty::_readAccessToken(const QJsonObject& data)
 {
+    qDebug() << data;
+
     if (_settings->saveProfile())
         _settings->swapProfiles();
 

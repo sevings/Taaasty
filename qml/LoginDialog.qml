@@ -102,6 +102,14 @@ Pane {
                 enabled: mail.text && password.text
             }
             ThemedButton {
+                id: registerButton
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: 'Зарегистрироваться'
+                width: 40 * mm
+                onClicked: Tasty.signup(mail.text, password.text, saveBox.checked)
+                enabled: mail.text && password.text
+            }
+            ThemedButton {
                 id: resetButton
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: 'Сбросить пароль'
@@ -120,16 +128,6 @@ Pane {
                 text: 'ВКонтакте или Facebook'
                 entryId: 21623665
             }
-        //    ThemedButton {
-        //        id: registerButton
-        //        text: 'Зарегистрироваться'
-        //        anchors.top: loginButton.bottom
-        //        anchors.left: parent.left
-        //        anchors.right: parent.right
-        //        anchors.margins: 2 * mm
-        //        enabled: mail.text && password.text
-                //onClicked: Ctrl.signup()
-        //    }
         }
     }
     PopupDialog {
