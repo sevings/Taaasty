@@ -99,8 +99,8 @@ void Rating::reCalcBayes()
 
     emit bayesVoteChanged();
 
-    _bayesRating = Bayes::instance()->classify(_parent);
-    emit bayesChanged();
+    auto future = QtConcurrent::run(this, &Rating::_changeBayesRating);
+    _watcher.setFuture(future);
 }
 
 
@@ -226,6 +226,13 @@ void Rating::init(const QJsonObject& data)
 
     emit dataChanged();
     emit voteChanged();
+}
+
+
+
+void Rating::_changeBayesRating()
+{
+    _bayesRating = Bayes::instance()->classify(_parent);
 }
 
 

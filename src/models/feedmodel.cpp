@@ -31,6 +31,7 @@
 #include "../settings.h"
 #include "../apirequest.h"
 #include "../reposter.h"
+#include "../signalsynchronizer.h"
 
 #include "../data/Rating.h"
 #include "../data/Tlog.h"
@@ -377,9 +378,9 @@ void FeedModel::_addItems(const QJsonObject& data)
         emit hasMoreChanged();
     }
 
-    QList<EntryPtr> all;
+    QList<EntryPtr> nonfixed;
     QList<EntryPtr> fixed;
-    all.reserve(feed.size());
+    nonfixed.reserve(feed.size());
     auto fixMode = showFixed();
     foreach(auto item, feed)
     {
@@ -393,7 +394,7 @@ void FeedModel::_addItems(const QJsonObject& data)
         if (fixMode && entry->isFixed())
             fixed << entry;
         else
-            all << entry;
+            nonfixed << entry;
     }
 
     std::sort(fixed.begin(), fixed.end(),
@@ -405,8 +406,8 @@ void FeedModel::_addItems(const QJsonObject& data)
     // in live modes next_since_entry_id may be incorrect
     if (fixed.isEmpty() && data.contains(QStringLiteral("next_since_entry_id")))
         _lastEntry = data.value(QLatin1String("next_since_entry_id")).toInt();
-    else if (_prevDate.isEmpty() && !all.isEmpty())
-        _lastEntry = all.last()->entryId();
+    else if (_prevDate.isEmpty() && !nonfixed.isEmpty())
+        _lastEntry = nonfixed.last()->entryId();
 
     if (data.contains(QStringLiteral("prev_date")))
     {
@@ -417,7 +418,7 @@ void FeedModel::_addItems(const QJsonObject& data)
             _prevDate = prev.toString();
     }
 
-    if (all.isEmpty() && fixed.isEmpty())
+    if (nonfixed.isEmpty() && fixed.isEmpty())
     {
         _loadRequest = nullptr;
 
@@ -429,29 +430,42 @@ void FeedModel::_addItems(const QJsonObject& data)
         return;
     }
 
-    if (reloadRatingsMode())
-        _loadRatings(QList<EntryPtr>() << fixed << all);
-
-    bool loadMore = false;
-    if (hideShort() || hideNegative())
+    const auto all = QList<EntryPtr>() << fixed << nonfixed;
+    auto sync = new SignalSynchronizer(this);
+    for (auto e: all)
     {
-        _addSome(fixed, _fixedCount, _allFixedCount);
-        int fc = -1, afc = -1;
-        loadMore = _addSome(all, fc, afc);
-    }
-    else
-    {
-        _addAll(fixed, _allFixedCount);
-        int afc = -1;
-        _addAll(all, afc);
+        sync->add(e->rating());
+        Q_TEST(connect(e->rating(), &Rating::bayesChanged, sync, &SignalSynchronizer::sync));
     }
 
-    _loadRequest = nullptr;
+    Q_TEST(connect(sync, &SignalSynchronizer::finished, sync, &QObject::deleteLater));
+    Q_TEST(connect(sync, &SignalSynchronizer::finished,
+                   this, [this, fixed, nonfixed, all]()
+    {
+        if (reloadRatingsMode())
+            _loadRatings(all);
 
-    if (loadMore)
-        fetchMore(QModelIndex());
-    else
-        emit loadingChanged();
+        bool loadMore = false;
+        if (hideShort() || hideNegative())
+        {
+            _addSome(fixed, _fixedCount, _allFixedCount);
+            int fc = -1, afc = -1;
+            loadMore = _addSome(nonfixed, fc, afc);
+        }
+        else
+        {
+            _addAll(fixed, _allFixedCount);
+            int afc = -1;
+            _addAll(nonfixed, afc);
+        }
+
+        _loadRequest = nullptr;
+
+        if (loadMore)
+            fetchMore(QModelIndex());
+        else
+            emit loadingChanged();
+    }));
 }
 
 
@@ -615,14 +629,14 @@ void FeedModel::_prepend(const EntryPtr& entry)
 
 
 
-void FeedModel::_addAll(QList<EntryPtr>& all, int& from)
+void FeedModel::_addAll(const QList<EntryPtr>& all, int& from)
 {
     if (from < 0)
         from = _entries.size();
 
     beginInsertRows(QModelIndex(), from, from + all.size() - 1);
 
-    foreach (auto e, all)
+    for (auto e: all)
     {
         _entries.insert(from++, e);
         _idEntries.insert(e->id(), e);
@@ -635,7 +649,7 @@ void FeedModel::_addAll(QList<EntryPtr>& all, int& from)
 
 
 
-bool FeedModel::_addSome(QList<EntryPtr>& all, int& from, int& allFrom)
+bool FeedModel::_addSome(const QList<EntryPtr>& all, int& from, int& allFrom)
 {
     if (allFrom < 0)
         allFrom = _allEntries.size();
@@ -644,7 +658,7 @@ bool FeedModel::_addSome(QList<EntryPtr>& all, int& from, int& allFrom)
     bool n = hideNegative();
 
     QList<EntryPtr> some;
-    foreach (auto e, all)
+    for (auto e: all)
     {
         _allEntries.insert(allFrom++, e);
         _idEntries.insert(e->id(), e);

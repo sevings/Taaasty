@@ -74,6 +74,7 @@ signals:
     void bayesVoteChanged();
 
 private slots:
+    void _changeBayesRating();
     void _changeBayesRating(Bayes::Type type);
     void _reinit(const QJsonArray& data);
     void _returnVotedState();

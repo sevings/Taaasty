@@ -55,7 +55,8 @@ SOURCES += src/main.cpp \
     src/models/availabletlogsmodel.cpp \
     src/floweditor.cpp \
     src/statuschecker.cpp \
-    src/models/chatsproxyfiltermodel.cpp
+    src/models/chatsproxyfiltermodel.cpp \
+    src/signalsynchronizer.cpp
 
 android: SOURCES += src/android/androidimagepicker.cpp \
     src/android/androidnotifier.cpp
@@ -117,7 +118,8 @@ HEADERS += \
     src/cache/lrucache.hpp \
     src/floweditor.h \
     src/statuschecker.h \
-    src/models/chatsproxyfiltermodel.h
+    src/models/chatsproxyfiltermodel.h \
+    src/signalsynchronizer.h
 
 android: HEADERS += src/android/androidimagepicker.h \
     src/android/androidnotifier.h

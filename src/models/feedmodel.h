@@ -141,8 +141,8 @@ private slots:
     void _prepend(const EntryPtr& entry);
 
 private:
-    void _addAll(QList<EntryPtr>& all, int& from);
-    bool _addSome(QList<EntryPtr>& all, int& from, int& allFrom);
+    void _addAll(const QList<EntryPtr>& all, int& from);
+    bool _addSome(const QList<EntryPtr>& all, int& from, int& allFrom);
     void _clear();
 
     void _loadRatings(const QList<EntryPtr>& entries);
