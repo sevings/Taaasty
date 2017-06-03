@@ -63,20 +63,21 @@ PopupFill {
             height: (window.friendActivity ? notifAvatar.height + 4.5 * mm
                                            : Math.max(notifAvatar.height, notifName.height + notifAction.height))
                     + notifContent.height + 1.5 * mm
+            readonly property Notification thisNotification: model.notification
             onClicked: {
-                var fullEntry = model.notification.entry;
+                var fullEntry = thisNotification.entry;
                 if (fullEntry)
                 {
                     back.hideNotifs();
                     window.pushFullEntry(fullEntry);
                 }
-                else if (model.notification.entityType == 3)//Notification.RelationshipType)
+                else if (thisNotification.entityType == 3)//Notification.RelationshipType)
                 {
                     back.hideNotifs();
                     
-                    var entityUser = model.notification.entityUser;
+                    var entityUser = thisNotification.entityUser;
                     var entityTlogId = entityUser ? entityUser.id
-                                                  : model.notification.sender.id;
+                                                  : thisNotification.sender.id;
                     window.pushTlog(entityTlogId);
                 }
             }
@@ -97,16 +98,16 @@ PopupFill {
             SmallAvatar {
                 id: notifAvatar
                 anchors.margins: 1.5 * mm
-                user: model.notification.sender
-                acceptClick: back.y <= 0 && model.notification.parentType !== 'AnonymousEntry'
+                user: thisNotification.sender
+                acceptClick: back.y <= 0 && thisNotification.parentType !== 'AnonymousEntry'
                 onClicked: {
                     back.hideNotifs();
-                    window.pushProfileById(model.notification.sender.id);
+                    window.pushProfileById(thisNotification.sender.id);
                 }
             }
             ThemedText {
                 id: notifName
-                text: model.notification.sender.name
+                text: thisNotification.sender.name
                 anchors {
                     top: parent.top
                     left: notifAvatar.right
@@ -123,14 +124,14 @@ PopupFill {
                     verticalCenter: notifName.verticalCenter
                     right: parent.right
                 }
-                text: notification.createdAt
+                text: thisNotification.createdAt
                 color: window.secondaryTextColor
                 font.pixelSize: window.fontSmallest
                 wrapMode: Text.NoWrap
             }
             ThemedText {
                 id: notifAction
-                text: model.notification.actionText
+                text: thisNotification.actionText
                 anchors {
                     top: notifName.bottom
                     left: notifAvatar.right
@@ -150,7 +151,7 @@ PopupFill {
                 height: width
                 radius: height / 2
                 color: Material.primary
-                visible: !model.notification.isRead
+                visible: !thisNotification.isRead
             }
             Loader {
                 id: notifContent
@@ -164,11 +165,11 @@ PopupFill {
                 }
                 asynchronous: false
                 Component.onDestruction: sourceComponent = undefined
-                readonly property string textContent: window.friendActivity ? '' : notification.text
-                readonly property User notificationUser: window.friendActivity && notification.entityType === Notification.RelationshipType
-                                                         ? notification.entityUser : null
-                readonly property TlogEntry notificationEntry: window.friendActivity && notification.entityType === Notification.EntryType
-                                                               ? notification.entry : null
+                readonly property string textContent: window.friendActivity ? '' : thisNotification.text
+                readonly property User notificationUser: window.friendActivity && thisNotification.entityType === Notification.RelationshipType
+                                                         ? thisNotification.entityUser : null
+                readonly property TlogEntry notificationEntry: window.friendActivity && thisNotification.entityType === Notification.EntryType
+                                                               ? thisNotification.entry : null
                 sourceComponent: {
                     if (!window.friendActivity)
                         notifText;

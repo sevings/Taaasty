@@ -114,16 +114,17 @@ Pane {
             width: window.width
             height: (messageAvatar.height > messageBack.height
                      ? messageAvatar.height : messageBack.height) + 2 * mm
-            readonly property bool isMyMessage: chat.userId === message.userId
+            readonly property Message thisMessage: model.message
+            readonly property bool isMyMessage: chat.userId === thisMessage.userId
             Poppable {
                 body: back
                 onClicked: {
-                    menu.show(message, isMyMessage);
+                    menu.show(thisMessage, isMyMessage);
                 }
             }
             Component.onCompleted: {
-                if (!message.isRead && Settings.readMessages)
-                    message.read();
+                if (!thisMessage.isRead && Settings.readMessages)
+                    thisMessage.read();
 
                 if (index < 50 && listView.model.hasMore)
                     listView.model.loadMore();
@@ -137,11 +138,11 @@ Pane {
                     right: isMyMessage ? parent.right : undefined
                 }
                 width: 6.5 * mm
-                user: message.user
+                user: thisMessage.user
                 popBody: back
                 acceptClick: !chat.isAnonymous
                 onClicked: {
-                    window.pushProfileById(message.user.id);
+                    window.pushProfileById(thisMessage.user.id);
                 }
             }
             Rectangle {
@@ -172,7 +173,7 @@ Pane {
                     height: item ? item.height : - 1.5 * mm
                     asynchronous: false
                     Component.onDestruction: sourceComponent = undefined
-                    readonly property AttachedImagesModel imagesModel: message.attachedImagesModel
+                    readonly property AttachedImagesModel imagesModel: thisMessage.attachedImagesModel
                     active: imagesModel && imagesModel.rowCount() > 0
                     sourceComponent: ListView {
                         interactive: false
@@ -198,8 +199,9 @@ Pane {
                     }
                     width: messageBack.maxWidth - 3 * mm
                     font.pixelSize: window.fontSmaller
-                    text: (message.replyTo && message.replyTo.name.length > 0 ? '<b>' + message.replyTo.name + '</b>, ' : '') + message.text
-                    textFormat: message.containsImage ? Text.RichText : Text.StyledText
+                    text: (thisMessage.replyTo && thisMessage.replyTo.name.length > 0
+                           ? '<b>' + thisMessage.replyTo.name + '</b>, ' : '') + thisMessage.text
+                    textFormat: thisMessage.containsImage ? Text.RichText : Text.StyledText
                     onLinkActivated: window.openLink(link)
                     height: text.length > 0 ? contentHeight : -1.5 * mm
                 }
@@ -211,9 +213,9 @@ Pane {
                     }
                     width: messageBack.maxWidth - 3 * mm - (unreadMessage.visible ? unreadMessage.width + 1.5 * mm : 0)
                     font.pixelSize: window.fontSmallest
-                    text: (chat.type == Chat.PrivateConversation || !message.user.name.length
-                           ? '' : message.user.name + ', ')
-                          + message.createdAt
+                    text: (chat.type == Chat.PrivateConversation || !thisMessage.user.name.length
+                           ? '' : thisMessage.user.name + ', ')
+                          + thisMessage.createdAt
                     color: window.secondaryTextColor
                 }
                 Rectangle {
@@ -227,12 +229,12 @@ Pane {
                     height: width
                     radius: height / 2
                     color: Material.primary
-                    visible: !message.isRead
+                    visible: !thisMessage.isRead
                 }
                 Rectangle {
                     anchors.fill: parent
                     color: '#80808080'
-                    visible: message.loading
+                    visible: thisMessage.loading
                 }
             }
         }

@@ -104,6 +104,7 @@ Pane {
             id: entryView
             width: window.width
             height: 7 * mm + entryVoteButton.y + entryVoteButton.height
+            readonly property TlogEntry tlogEntry: model.entry
             Component.onCompleted: {
                 if (index > feedModel.size - 50 && feedModel.hasMore)
                     feedModel.loadMore();
@@ -117,7 +118,7 @@ Pane {
                     }
 
                     mouse.accepted = true;
-                    window.pushFullEntry(entry, false, false, feedModel);
+                    window.pushFullEntry(tlogEntry, false, false, feedModel);
                 }
             }
             Loader {
@@ -129,8 +130,8 @@ Pane {
                     leftMargin: 5 * mm
                     rightMargin: anchors.leftMargin
                 }
-                active: entry.author.id !== entry.tlog.tlogId
-                        && entry.tlog.tlogId !== tlog.tlogId
+                active: tlogEntry && tlogEntry.author.id !== tlogEntry.tlog.tlogId
+                        && tlogEntry.tlog.tlogId !== tlog.tlogId
                 asynchronous: false
                 Component.onDestruction: sourceComponent = undefined
                 sourceComponent: ThemedText {
@@ -138,8 +139,8 @@ Pane {
                     font.pixelSize: window.fontSmaller
                     height: contentHeight
                     horizontalAlignment: Text.AlignHCenter
-                    text: entry.tlog.author.name
-                          + (entry.tlog.author.title ? '\n' + entry.tlog.author.title : '')
+                    text: tlogEntry && tlogEntry.tlog.author.name
+                          + (tlogEntry.tlog.author.title ? '\n' + tlogEntry.tlog.author.title : '')
                     Poppable {
                         body: back
                         onClicked: {
@@ -149,7 +150,7 @@ Pane {
                             }
 
                             mouse.accepted = true;
-                            window.pushTlog(entry.tlog.author.id);
+                            window.pushTlog(tlogEntry.tlog.author.id);
                         }
                     }
                 }
@@ -161,9 +162,9 @@ Pane {
                     left: parent.left
                     right: parent.right
                 }
-                entry: model.entry
+                entry: tlogEntry
                 popBody: back
-                pinVisible: model.entry.isFixed && feedModel.showFixed
+                pinVisible: tlogEntry && tlogEntry.isFixed && feedModel.showFixed
             }
             IconButton {
                 id: commentsButton
@@ -172,7 +173,7 @@ Pane {
                     left: parent.left
                 }
                 visible: text
-                text: entry.commentsCount || ''
+                text: tlogEntry ? tlogEntry.commentsCount : ''
                 icon: (window.darkTheme ? '../icons/comment-light-'
                                         : '../icons/comment-dark-')
                       + '128.png'
@@ -180,7 +181,7 @@ Pane {
                     if (back.x > 0)
                         backAnimation.start();
                     else
-                        window.pushFullEntry(entry, false, true);
+                        window.pushFullEntry(tlogEntry, false, true);
                 }
             }
             IconButton {
@@ -189,15 +190,15 @@ Pane {
                     top: truncEntry.bottom
                     right: parent.right
                 }
-                readonly property bool votable: entry.rating.isVotable && Tasty.isAuthorized
-                icon: (((votable === entry.rating.isVoted)
-                       && (entry.rating.isBayesVoted || entry.rating.isVotedAgainst)
-                       && (votable || entry.rating.isBayesVoted))
+                readonly property bool votable: tlogEntry && tlogEntry.rating.isVotable && Tasty.isAuthorized
+                icon: (tlogEntry && ((votable === tlogEntry.rating.isVoted)
+                       && (tlogEntry.rating.isBayesVoted || tlogEntry.rating.isVotedAgainst)
+                       && (votable || tlogEntry.rating.isBayesVoted))
                        ? '../icons/flame-solid-' : '../icons/flame-outline-')
                       + '72.png'
-                enabled: !entry.rating.isVotedAgainst || entry.rating.isVotable
+                enabled: tlogEntry && (!tlogEntry.rating.isVotedAgainst || tlogEntry.rating.isVotable)
                 onClicked: {
-                    entry.rating.vote();
+                    tlogEntry.rating.vote();
                 }
             }
             IconButton {
@@ -206,12 +207,12 @@ Pane {
                     top: truncEntry.bottom
                     right: entryRating.left
                 }
-                icon: (entry.rating.isVotedAgainst ? '../icons/drop-solid-'
+                icon: (tlogEntry && tlogEntry.rating.isVotedAgainst ? '../icons/drop-solid-'
                                                    : '../icons/drop-outline-')
                       + '72.png'
-                enabled: !entry.rating.isBayesVoted
+                enabled: tlogEntry && !tlogEntry.rating.isBayesVoted
                 onClicked: {
-                    entry.rating.voteAgainst();
+                    tlogEntry.rating.voteAgainst();
                 }
             }
             ThemedText {
@@ -220,24 +221,25 @@ Pane {
                     top: truncEntry.bottom
                     right: entryVoteButton.left
                 }
-                text: entry.isVotable ? '+ ' + entry.rating.votes : ''
+                text: tlogEntry && tlogEntry.isVotable ? '+ ' + tlogEntry.rating.votes : ''
                 height: entryVoteButton.height
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                visible: entry.isVotable
+                visible: tlogEntry && tlogEntry.isVotable
             }
             Rectangle {
                 id: br
                 anchors {
                     left: entryVoteAgainstButton.right
                     right: entryVoteButton.left
-                    bottom: entry.isVotable ? entryVoteButton.bottom : undefined
-                    verticalCenter: entry.isVotable ? undefined : entryVoteButton.verticalCenter
-                    margins: entry.isVotable ? 0 : 0.7 * mm
+                    bottom:tlogEntry &&  tlogEntry.isVotable ? entryVoteButton.bottom : undefined
+                    verticalCenter: tlogEntry && tlogEntry.isVotable ? undefined : entryVoteButton.verticalCenter
+                    margins: tlogEntry && tlogEntry.isVotable ? 0 : 0.7 * mm
                 }
-                height: entry.isVotable ? 0.5 * mm : width
+                height: tlogEntry && tlogEntry.isVotable ? 0.5 * mm : width
                 radius: height / 2
-                color: entry.rating.bayesRating > 5 ? '#FF5722' : entry.rating.bayesRating < -5
+                color:tlogEntry &&  tlogEntry.rating.bayesRating > 5 ? '#FF5722'
+                                                    : tlogEntry && tlogEntry.rating.bayesRating < -5
                                                     ? '#03A9F4' : window.secondaryTextColor
                 Behavior on color {
                     ColorAnimation {

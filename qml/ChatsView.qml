@@ -45,6 +45,7 @@ PopupFill {
         delegate: Rectangle {
             width: window.width
             readonly property int textHeight: lastMessage.y + lastMessage.height - 3 * mm
+            readonly property Chat thisChat: model.chat
             height: (textHeight > chatAvatar.height ? textHeight : chatAvatar.height) + 3 * mm
             color: pop.pressed ? Material.primary : 'transparent'
             Component.onCompleted: {
@@ -55,12 +56,12 @@ PopupFill {
                 id: pop
                 anchors.fill: parent
                 onClicked: {
-                    if (model.chat.unreadCount > 0 && Settings.readMessages)
-                        model.chat.readAll();
+                    if (thisChat.unreadCount > 0 && Settings.readMessages)
+                        thisChat.readAll();
 
                     back.hide();
                     window.showChatsOnPop = window.stackSize;
-                    window.pushMessages(model.chat, true);
+                    window.pushMessages(thisChat, true);
                 }
             }
             SmallAvatar {
@@ -69,17 +70,17 @@ PopupFill {
                     top: parent.top
                     margins: 1.5 * mm
                 }
-                user: model.chat.entry ? model.chat.entry.author : model.chat.recipient
-                acceptClick: model.chat.type !== Chat.GroupConversation
-                url: model.chat.type === Chat.PrivateConversation
+                user: thisChat.entry ? thisChat.entry.author : thisChat.recipient
+                acceptClick: thisChat.type !== Chat.GroupConversation
+                url: thisChat.type === Chat.PrivateConversation
                      ? Screen.pixelDensity <= 8 ? user.thumb64 : user.thumb128
-                     : model.chat.avatar
-                name: model.chat.type === Chat.PrivateConversation
-                        ? user.name : model.chat.topic
+                     : thisChat.avatar
+                name: thisChat.type === Chat.PrivateConversation
+                        ? user.name : thisChat.topic
                 onClicked: {
                     window.showChatsOnPop = window.stackSize;
-                    if (model.chat.entry)
-                        window.pushFullEntry(model.chat.entry)
+                    if (thisChat.entry)
+                        window.pushFullEntry(thisChat.entry)
                     else if (chatAvatar.user)
                         window.pushProfileById(chatAvatar.user.id);
                     back.hide();
@@ -94,7 +95,7 @@ PopupFill {
                 width: Math.min(implicitWidth, parent.width - x - date.width - anchors.margins
                                 - (recipientStatus.visible ? recipientStatus.width + recipientStatus.anchors.margins * 2
                                                            : anchors.margins))
-                text: model.chat.topic
+                text: thisChat.topic
                 font.pixelSize: window.fontSmaller
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
@@ -119,7 +120,7 @@ PopupFill {
                     right: parent.right
                     baseline: chatNick.baseline
                 }
-                text: model.chat.lastMessage.createdAt
+                text: thisChat.lastMessage.createdAt
                 font.pixelSize: window.fontSmallest
                 color: window.secondaryTextColor
                 elide: Text.AlignRight
@@ -132,8 +133,7 @@ PopupFill {
                     left: chatAvatar.right
                     margins: 1.5 * mm
                 }
-                active: !model.chat.isAnonymous && model.chat.lastMessage.userId !== model.chat.recipientId
-                         && (model.chat.entry ? model.chat.lastMessage.userId !== model.chat.entry.author.id : true)
+                active: !thisChat.isAnonymous && thisChat.lastMessage.userId !== thisChat.recipientId
                 asynchronous: false
                 Component.onDestruction: sourceComponent = undefined
                 sourceComponent: SmallAvatar {
@@ -143,7 +143,7 @@ PopupFill {
                     }
                     width: 4 * mm
                     height: 4 * mm
-                    user: lastMessageAvatar.active ? model.chat.lastMessage.user
+                    user: lastMessageAvatar.active ? thisChat.lastMessage.user
                                                    : chatAvatar.user
                 }
             }
@@ -156,7 +156,7 @@ PopupFill {
                 }
                 font.pixelSize: window.fontSmallest
                 color: window.secondaryTextColor
-                text: model.chat.lastMessage.truncatedText || (model.chat.lastMessage.containsImage ? '(изображение)' : '')
+                text: thisChat.lastMessage.truncatedText || (thisChat.lastMessage.containsImage ? '(изображение)' : '')
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
                 textFormat: Text.PlainText
@@ -168,16 +168,16 @@ PopupFill {
                     right: parent.right
                     margins: 2 * mm
                 }
-                width: model.chat.unreadCount > 0 ? 4 * mm : 1.5 * mm
+                width: thisChat.unreadCount > 0 ? 4 * mm : 1.5 * mm
                 height: width
                 radius: height / 2
                 color: Material.primary
-                visible: model.chat.unreadCount > 0
-                         || model.chat.isMyLastMessageUnread
-                         || model.chat.isTyped
+                visible: thisChat.unreadCount > 0
+                         || thisChat.isMyLastMessageUnread
+                         || thisChat.isTyped
                 SequentialAnimation
                 {
-                    running: model.chat.isTyped
+                    running: thisChat.isTyped
                     alwaysRunToEnd : true
                     loops: Animation.Infinite
                     NumberAnimation {
@@ -197,9 +197,9 @@ PopupFill {
                 }
             }
             Q.Label {
-                visible: model.chat.unreadCount > 0
+                visible: thisChat.unreadCount > 0
                 anchors.centerIn: unreadMessages
-                text: model.chat.unreadCount
+                text: thisChat.unreadCount
                 font.pixelSize: window.fontSmallest
                 color: 'white'
             }

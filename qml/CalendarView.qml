@@ -96,6 +96,7 @@ Pane {
             width: window.width
             height: 5 * mm + date.height + entryTitle.height + comments.height
             color: pop.pressed ? Material.primary : 'transparent'
+            readonly property CalendarEntry thisEntry: model.entry
             Poppable {
                 id: pop
                 body: back
@@ -105,7 +106,7 @@ Pane {
                         return;
                     }
 
-                    window.pushFullEntry(entry.fullEntry);
+                    window.pushFullEntry(thisEntry.fullEntry);
                 }
             }
             ThemedText {
@@ -116,7 +117,7 @@ Pane {
                     right: parent.right
                     topMargin: 2 * mm
                 }
-                text: entry.truncatedTitle || '(без заголовка)'
+                text: thisEntry.truncatedTitle || '(без заголовка)'
                 textFormat: Text.RichText
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -127,7 +128,7 @@ Pane {
                     left: parent.left
                     right: rating.visible ? rating.left : comments.left
                 }
-                text: entry.createdAt
+                text: thisEntry.createdAt
                 color: window.secondaryTextColor
                 font.pixelSize: window.fontSmallest
                 elide: Text.AlignRight
@@ -139,9 +140,9 @@ Pane {
                     verticalCenter: date.verticalCenter
                     horizontalCenter: parent.horizontalCenter
                 }
-                text: '+ ' + entry.rating.votes
+                text: '+ ' + thisEntry.rating.votes
                 font.pixelSize: window.fontSmaller
-                visible: back.sortOrder == CalendarModel.BestFirst && entry.rating.votes
+                visible: back.sortOrder == CalendarModel.BestFirst && thisEntry.rating.votes
             }
             ThemedText {
                 id: comments
@@ -150,7 +151,7 @@ Pane {
                     left: rating.visible ? rating.right : undefined
                     right: parent.right
                 }
-                text: entry.commentsCount + ' коммент.'
+                text: thisEntry.commentsCount + ' коммент.'
                 font.pixelSize: window.fontSmallest
                 color: window.secondaryTextColor
                 horizontalAlignment: Text.AlignRight
