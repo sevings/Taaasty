@@ -223,10 +223,7 @@ void UsersModel::_addItems(const QJsonObject& data)
     _loadRequest = nullptr;
 
     if (!_loadAll)
-    {
-        emit loadingChanged();
         return;
-    }
 
     if (_users.size() < _total)
         fetchMore(QModelIndex());
@@ -234,8 +231,6 @@ void UsersModel::_addItems(const QJsonObject& data)
     {
         _loadAll = false;
         emit downloadCompleted();
-
-        emit loadingChanged();
     }
 }
 

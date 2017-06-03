@@ -25,6 +25,7 @@
 #include <QJsonArray>
 
 #include "../defines.h"
+#include "../signalsynchronizer.h"
 
 #include "tastylistmodel.h"
 #include "../data/Entry.h"
@@ -73,6 +74,8 @@ public:
 
     FeedModel(QObject* parent = nullptr);
     ~FeedModel();
+
+    virtual bool isLoading() const override;
 
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -141,6 +144,7 @@ private slots:
     void _prepend(const EntryPtr& entry);
 
 private:
+    void _addWithRatings();
     void _addAll(const QList<EntryPtr>& all, int& from);
     bool _addSome(const QList<EntryPtr>& all, int& from, int& allFrom);
     void _clear();
@@ -153,6 +157,10 @@ private:
     QHash<int, EntryPtr> _idEntries;
     int                  _fixedCount;
     int                  _allFixedCount;
+
+    SignalSynchronizer   _bayesSync;
+    QList<EntryPtr>      _nextFixed;
+    QList<EntryPtr>      _nextNonFixed;
 
     QString              _url;
     Tlog*                _tlog; //-V122

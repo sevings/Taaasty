@@ -27,6 +27,14 @@ void SignalSynchronizer::watch()
 
 
 
+void SignalSynchronizer::clear()
+{
+    _objects.clear();
+    _watching = false;
+}
+
+
+
 void SignalSynchronizer::sync()
 {
     auto obj = sender();

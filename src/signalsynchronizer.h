@@ -17,6 +17,9 @@ public:
 
     void add(const QObject* obj);
     void watch();
+    void clear();
+
+    bool isWatching() const { return _watching; }
 
 signals:
     void finished();

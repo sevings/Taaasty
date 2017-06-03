@@ -27,7 +27,7 @@ public:
 
     void setFilter(QSortFilterProxyModel* filter);
 
-    bool isLoading() const;
+    virtual bool isLoading() const;
     bool isChecking() const;
 
     virtual bool hasMore() const;

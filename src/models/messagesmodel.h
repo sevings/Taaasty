@@ -61,7 +61,6 @@ public:
 
 signals:
     void hasMoreChanged();
-    void loadingChanged();
     void lastMessageChanged();
 
     void itemsAboutToBePrepended();

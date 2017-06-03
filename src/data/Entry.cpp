@@ -223,6 +223,8 @@ Entry::Entry(Conversation* chat)
 
 Entry::~Entry()
 {
+    delete _rating;
+
     pTasty->dataCache()->removeEntry(_id);
 }
 

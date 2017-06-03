@@ -126,6 +126,7 @@ Item {
                 }
                 MouseArea {
                     anchors.fill: parent
+                    z: image.z + 1
                     onClicked: {
                         mouse.accepted = true;
 

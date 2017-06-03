@@ -71,6 +71,13 @@ FeedModel::~FeedModel()
 
 
 
+bool FeedModel::isLoading() const
+{
+    return _loadRequest || _bayesSync.isWatching();
+}
+
+
+
 int FeedModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
@@ -378,9 +385,7 @@ void FeedModel::_addItems(const QJsonObject& data)
         emit hasMoreChanged();
     }
 
-    QList<EntryPtr> nonfixed;
-    QList<EntryPtr> fixed;
-    nonfixed.reserve(feed.size());
+    _nextNonFixed.reserve(feed.size());
     auto fixMode = showFixed();
     foreach(auto item, feed)
     {
@@ -392,22 +397,22 @@ void FeedModel::_addItems(const QJsonObject& data)
             continue;
 
         if (fixMode && entry->isFixed())
-            fixed << entry;
+            _nextFixed << entry;
         else
-            nonfixed << entry;
+            _nextNonFixed << entry;
     }
 
-    std::sort(fixed.begin(), fixed.end(),
+    std::sort(_nextFixed.begin(), _nextFixed.end(),
               [](const EntryPtr& left, const EntryPtr& right)
     {
         return left->fixedAt() > right->fixedAt();
     });
 
     // in live modes next_since_entry_id may be incorrect
-    if (fixed.isEmpty() && data.contains(QStringLiteral("next_since_entry_id")))
+    if (_nextFixed.isEmpty() && data.contains(QStringLiteral("next_since_entry_id")))
         _lastEntry = data.value(QLatin1String("next_since_entry_id")).toInt();
-    else if (_prevDate.isEmpty() && !nonfixed.isEmpty())
-        _lastEntry = nonfixed.last()->entryId();
+    else if (_prevDate.isEmpty() && !_nextNonFixed.isEmpty())
+        _lastEntry = _nextNonFixed.last()->entryId();
 
     if (data.contains(QStringLiteral("prev_date")))
     {
@@ -418,54 +423,26 @@ void FeedModel::_addItems(const QJsonObject& data)
             _prevDate = prev.toString();
     }
 
-    if (nonfixed.isEmpty() && fixed.isEmpty())
+    if (_nextNonFixed.isEmpty() && _nextFixed.isEmpty())
     {
         _loadRequest = nullptr;
 
         if (_hasMore)
             fetchMore(QModelIndex());
-        else
-            emit loadingChanged();
 
         return;
     }
 
-    const auto all = QList<EntryPtr>() << fixed << nonfixed;
-    auto sync = new SignalSynchronizer(this);
+    const auto all = QList<EntryPtr>() << _nextFixed << _nextNonFixed;
     for (auto e: all)
     {
-        sync->add(e->rating());
-        Q_TEST(connect(e->rating(), &Rating::bayesChanged, sync, &SignalSynchronizer::sync));
+        _bayesSync.add(e->rating());
+        Q_TEST(connect(e->rating(), &Rating::bayesChanged, &_bayesSync, &SignalSynchronizer::sync));
     }
 
-    Q_TEST(connect(sync, &SignalSynchronizer::finished, sync, &QObject::deleteLater));
-    Q_TEST(connect(sync, &SignalSynchronizer::finished,
-                   this, [this, fixed, nonfixed, all]()
-    {
-        if (reloadRatingsMode())
-            _loadRatings(all);
+    _bayesSync.watch();
 
-        bool loadMore = false;
-        if (hideShort() || hideNegative())
-        {
-            _addSome(fixed, _fixedCount, _allFixedCount);
-            int fc = -1, afc = -1;
-            loadMore = _addSome(nonfixed, fc, afc);
-        }
-        else
-        {
-            _addAll(fixed, _allFixedCount);
-            int afc = -1;
-            _addAll(nonfixed, afc);
-        }
-
-        _loadRequest = nullptr;
-
-        if (loadMore)
-            fetchMore(QModelIndex());
-        else
-            emit loadingChanged();
-    }));
+    Q_TEST(connect(&_bayesSync, &SignalSynchronizer::finished, this, &FeedModel::_addWithRatings));
 }
 
 
@@ -629,6 +606,39 @@ void FeedModel::_prepend(const EntryPtr& entry)
 
 
 
+void FeedModel::_addWithRatings()
+{
+    if (_nextFixed.isEmpty() && _nextNonFixed.isEmpty())
+        return;
+
+    if (reloadRatingsMode())
+        _loadRatings(QList<EntryPtr>() << _nextFixed << _nextNonFixed);
+
+    bool loadMore = false;
+    if (hideShort() || hideNegative())
+    {
+        _addSome(_nextFixed, _fixedCount, _allFixedCount);
+        int fc = -1, afc = -1;
+        loadMore = _addSome(_nextNonFixed, fc, afc);
+    }
+    else
+    {
+        _addAll(_nextFixed, _allFixedCount);
+        int afc = -1;
+        _addAll(_nextNonFixed, afc);
+    }
+
+    _nextFixed.clear();
+    _nextNonFixed.clear();
+
+    _loadRequest = nullptr;
+
+    if (loadMore)
+        fetchMore(QModelIndex());
+}
+
+
+
 void FeedModel::_addAll(const QList<EntryPtr>& all, int& from)
 {
     if (from < 0)
@@ -683,6 +693,10 @@ void FeedModel::_clear()
     _entries.clear();
     _allEntries.clear();
     _idEntries.clear();
+
+    _bayesSync.clear();
+    _nextFixed.clear();
+    _nextNonFixed.clear();
 
     emit rowCountChanged();
 
