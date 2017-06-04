@@ -113,8 +113,7 @@ Pane {
         }
         delegate: Item {
             width: window.width
-            height: (messageAvatar.height > messageBack.height
-                     ? messageAvatar.height : messageBack.height) + 2 * mm
+            height: Math.max(messageAvatar.height, messageBack.height) + 2 * mm
             readonly property Message thisMessage: model.message
             readonly property bool isMyMessage: chat.userId === thisMessage.userId
             Poppable {
@@ -130,13 +129,47 @@ Pane {
                 if (index < 50 && listView.model.hasMore)
                     listView.model.loadMore();
             }
+            states: [
+                State {
+                    when: isMyMessage
+                    AnchorChanges {
+                        target: messageAvatar
+                        anchors {
+                            left: undefined
+                            right: parent.right
+                        }
+                    }
+                    AnchorChanges {
+                        target: messageBack
+                        anchors {
+                            left: undefined
+                            right: messageAvatar.left
+                        }
+                    }
+                },
+                State {
+                    when: !isMyMessage
+                    AnchorChanges {
+                        target: messageAvatar
+                        anchors {
+                            left: parent.left
+                            right: undefined
+                        }
+                    }
+                    AnchorChanges {
+                        target: messageBack
+                        anchors {
+                            left: messageAvatar.right
+                            right: undefined
+                        }
+                    }
+                }
+            ]
             SmallAvatar {
                 id: messageAvatar
                 anchors {
                     top: parent.top
                     margins: 1.5 * mm
-                    left: isMyMessage ? undefined : parent.left
-                    right: isMyMessage ? parent.right : undefined
                 }
                 width: 6.5 * mm
                 user: thisMessage.user
@@ -149,12 +182,7 @@ Pane {
             Rectangle {
                 id: messageBack
                 anchors {
-                    top: parent.top
-                    left: isMyMessage ? undefined : messageAvatar.right
-                    right: isMyMessage ? messageAvatar.left : undefined
-                    margins: 1.5 * mm
-                    leftMargin: isMyMessage ? 1.5 * mm : 0
-                    rightMargin: isMyMessage ? 0 : 1.5 * mm
+                    top: messageAvatar.top
                 }
                 readonly property int maxWidth: window.width - messageAvatar.width - 3 * mm
                 readonly property int dateWidth: messageDate.contentWidth
