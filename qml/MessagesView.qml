@@ -19,6 +19,7 @@
  */
 
 import QtQuick 2.9
+import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.2
 import org.binque.taaasty 1.0
 

@@ -54,7 +54,7 @@ QDateTime MessageBase::createdDate() const
 void MessageBase::_setTruncatedText()
 {
     _truncatedText = Tasty::truncateHtml(_text);    
-    _containsImage = _text.contains("<img", Qt::CaseInsensitive);
+    _containsImage = _text.contains(QStringLiteral("<img"), Qt::CaseInsensitive);
 }
 
 

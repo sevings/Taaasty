@@ -427,16 +427,16 @@ ApplicationWindow {
             initialItem: feed
             readonly property int animationTime: 200
             popEnter: Transition {
-//                PropertyAnimation {
-//                    property: "opacity"
-//                    duration: stack.animationTime
-//                    from: 0.8
-//                    to: 1
-//                }
+                PropertyAnimation {
+                    property: "opacity"
+                    duration: stack.animationTime
+                    from: 0.5
+                    to: 1
+                }
 //                PropertyAnimation {
 //                    property: "scale"
 //                    duration: stack.animationTime
-//                    from: 0.8
+//                    from: 0.9
 //                    to: 1
 //                }
             }
@@ -458,17 +458,17 @@ ApplicationWindow {
                 }
             }
             pushExit: Transition {
-//                PropertyAnimation {
-//                    property: "opacity"
-//                    duration: stack.animationTime
-//                    from: 1
-//                    to: 0.8
-//                }
+                PropertyAnimation {
+                    property: "opacity"
+                    duration: stack.animationTime
+                    from: 1
+                    to: 0.5
+                }
 //                PropertyAnimation {
 //                    property: "scale"
 //                    duration: stack.animationTime
 //                    from: 1
-//                    to: 0.8
+//                    to: 0.9
 //                }
             }
             property Component feed:                Qt.createComponent("FeedView.qml",     Component.PreferSynchronous, stack)

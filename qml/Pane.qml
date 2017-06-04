@@ -31,7 +31,7 @@ Rectangle {
     readonly property bool prelast: StackView.view && StackView.index + 2 === StackView.view.depth
     readonly property real topItemX: prelast ? StackView.view.currentItem.x : 0
     StackView.visible: StackView.status != StackView.Inactive || topItemX > 0
-    opacity: prelast ? 0.5 + topItemX / width / 2 : 1
+//    opacity: prelast ? 0.5 + topItemX / width / 2 : 1
     signal popped
     onPopped: window.popFromStack()
     Rectangle {
