@@ -19,6 +19,7 @@
  */
 
 import QtQuick 2.9
+import QtQuick.Controls 2.2
 import QtGraphicalEffects 1.0
 
 Rectangle {
@@ -27,17 +28,17 @@ Rectangle {
     property Flickable innerFlick
     property bool poppable
     property bool hasMenu: false
+    readonly property bool prelast: StackView.view && StackView.index + 2 === StackView.view.depth
+    readonly property real topItemX: prelast ? StackView.view.currentItem.x : 0
+    StackView.visible: StackView.status != StackView.Inactive || topItemX > 0
+    opacity: prelast ? 0.5 + topItemX / width / 2 : 1
     signal popped
     onPopped: window.popFromStack()
     Rectangle {
         id: pane
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            left: parent.left
-        }
         color: back.color
         width: 3 * mm
+        height: parent.height
     }
     DropShadow {
         enabled: !innerFlick || !innerFlick.movingVertically
@@ -49,5 +50,3 @@ Rectangle {
         source: pane
     }
 }
-
-

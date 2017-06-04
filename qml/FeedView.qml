@@ -173,7 +173,7 @@ Pane {
                     left: parent.left
                 }
                 visible: text
-                text: tlogEntry ? tlogEntry.commentsCount : ''
+                text: tlogEntry && tlogEntry.commentsCount || ''
                 icon: (window.darkTheme ? '../icons/comment-light-'
                                         : '../icons/comment-dark-')
                       + '128.png'

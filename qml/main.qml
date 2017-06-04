@@ -427,18 +427,18 @@ ApplicationWindow {
             initialItem: feed
             readonly property int animationTime: 200
             popEnter: Transition {
-                PropertyAnimation {
-                    property: "opacity"
-                    duration: stack.animationTime
-                    from: 0
-                    to: 1
-                }
-                PropertyAnimation {
-                    property: "scale"
-                    duration: stack.animationTime
-                    from: 0.8
-                    to: 1
-                }
+//                PropertyAnimation {
+//                    property: "opacity"
+//                    duration: stack.animationTime
+//                    from: 0.8
+//                    to: 1
+//                }
+//                PropertyAnimation {
+//                    property: "scale"
+//                    duration: stack.animationTime
+//                    from: 0.8
+//                    to: 1
+//                }
             }
             popExit: Transition {
                 NumberAnimation {
@@ -458,18 +458,18 @@ ApplicationWindow {
                 }
             }
             pushExit: Transition {
-                PropertyAnimation {
-                    property: "opacity"
-                    duration: stack.animationTime
-                    from: 1
-                    to: 0
-                }
-                PropertyAnimation {
-                    property: "scale"
-                    duration: stack.animationTime
-                    from: 1
-                    to: 0.8
-                }
+//                PropertyAnimation {
+//                    property: "opacity"
+//                    duration: stack.animationTime
+//                    from: 1
+//                    to: 0.8
+//                }
+//                PropertyAnimation {
+//                    property: "scale"
+//                    duration: stack.animationTime
+//                    from: 1
+//                    to: 0.8
+//                }
             }
             property Component feed:                Qt.createComponent("FeedView.qml",     Component.PreferSynchronous, stack)
             property Component messages:            Qt.createComponent("MessagesView.qml",      Component.Asynchronous, stack)
@@ -534,13 +534,18 @@ ApplicationWindow {
         height: window.height
         sourceComponent: ChatsView { }
     }
+    Footer {
+        id: footer
+    }
+    MouseArea {
+        anchors.fill: parent
+        visible: pageMenu.visible
+        onClicked: pageMenu.close()
+    }
     PageMenu {
         id: pageMenu
         page: stack.currentItem
         openable: !menu.visible
-    }
-    Footer {
-        id: footer
     }
     InputDialog {
         id: inputDialog
