@@ -105,10 +105,10 @@ int Bayes::classify(const EntryBase* entry, const int minLength) const
     if (length <= 0)
         return length;
 
-    double wordValues[Unclassified];
+    float wordValues[Unclassified];
     for (int type = 0; type < Unclassified; type++)
     {
-        auto k = (_total[Water] + _total[Fire]) / (double) _total[type]; //-V2005
+        auto k = static_cast<float>(_total[Water] + _total[Fire]) / _total[type];
 
         wordValues[type] = 0;
         foreach (auto word, features.keys())
@@ -237,7 +237,7 @@ void Bayes::_loadDb()
         _wordCounts[query.value(0).toInt()][query.value(1).toString()] //-V807
                 = FeatureCount(query.value(2).toInt());
 
-    Q_TEST(query.exec("SELECT type, sum(total) AS \"total\" FROM bayes GROUP BY type"));
+    Q_TEST(query.exec(QStringLiteral("SELECT type, sum(total) AS \"total\" FROM bayes GROUP BY type")));
     while (query.next())
         _total[query.value(0).toInt()] = query.value(1).toInt();
 
@@ -278,25 +278,25 @@ int Bayes::_calcText(QString text, QHash<QString, Bayes::FeatureCount>& wordCoun
     if (text.isEmpty())
         return 0;
 
-    text.replace(_imgRe, " \\1 ")
-            .replace(_tagRe, " ")
-            .replace(_htmlSeqRe, " ")
-            .replace(_linkExtRe, " \\1 \\2 ")
-            .replace(_linkRe, " \\1 ");
+    text.replace(_imgRe, QStringLiteral(" \\1 "))
+            .replace(_tagRe, QStringLiteral(" "))
+            .replace(_htmlSeqRe, QStringLiteral(" "))
+            .replace(_linkExtRe, QStringLiteral(" \\1 \\2 "))
+            .replace(_linkRe, QStringLiteral(" \\1 "));
 
     int length = 0;
     if (text.contains(_punctRe))
     {
         length = 2;
         if (text.contains(_caseRe1) || text.contains(_caseRe2))
-            ++wordCounts[".normal_case"];
+            ++wordCounts[QStringLiteral(".normal_case")];
         else
-            ++wordCounts[".lower_case"];
+            ++wordCounts[QStringLiteral(".lower_case")];
 
         if (text.contains(_spaceRe))
-            ++wordCounts[".correct_spaces"];
+            ++wordCounts[QStringLiteral(".correct_spaces")];
         else
-            ++wordCounts[".wrong_spaces"];
+            ++wordCounts[QStringLiteral(".wrong_spaces")];
     }
 
     auto words = _stemmer->stem(text);
@@ -318,9 +318,9 @@ int Bayes::_calcEntry(const EntryBase* entry, QHash<QString, FeatureCount>& word
         return -1;
 
     if (content > 100 || title > 100)
-        ++wordCounts[".long"];
+        ++wordCounts[QStringLiteral(".long")];
     else
-        ++wordCounts[".short"];
+        ++wordCounts[QStringLiteral(".short")];
 
     const auto author = entry->author();
 
@@ -328,24 +328,24 @@ int Bayes::_calcEntry(const EntryBase* entry, QHash<QString, FeatureCount>& word
     ++wordCounts[QStringLiteral(".author_%1").arg(author->slug())];
 
     if (author->isFemale())
-        ++wordCounts[".female"];
+        ++wordCounts[QStringLiteral(".female")];
     else
-        ++wordCounts[".male"];
+        ++wordCounts[QStringLiteral(".male")];
 
     if (author->isDaylog())
-        ++wordCounts[".daylog"];
+        ++wordCounts[QStringLiteral(".daylog")];
     else
-        ++wordCounts[".wholelog"];
+        ++wordCounts[QStringLiteral(".wholelog")];
 
     if (author->isFlow())
-        ++wordCounts[".flow"];
+        ++wordCounts[QStringLiteral(".flow")];
     else
-        ++wordCounts[".tlog"];
+        ++wordCounts[QStringLiteral(".tlog")];
 
     if (author->isPremium())
-        ++wordCounts[".premium"];
+        ++wordCounts[QStringLiteral(".premium")];
     else
-        ++wordCounts[".free"];
+        ++wordCounts[QStringLiteral(".free")];
 
     return content + title + 7;
 }

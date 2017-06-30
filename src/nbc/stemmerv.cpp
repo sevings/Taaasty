@@ -38,7 +38,7 @@ QString StemmerV::stemWord(const QString& word)
     if (word.isEmpty())
         return word;
 
-    auto stem = word.trimmed().toLower().replace("ё", "е");
+    auto stem = word.trimmed().toLower().replace(QStringLiteral("ё"), QStringLiteral("е"));
 
     if (!_pvre.match(stem).hasMatch())
         return stem;
@@ -72,7 +72,7 @@ QString StemmerV::stemWord(const QString& word)
     {
         stem.remove(_perfectivePrefix);
         stem.remove(_perfectiveSuffix);
-        stem.replace(_doubleN, "н");
+        stem.replace(_doubleN, QStringLiteral("н"));
     }
     else
         stem = test;
@@ -99,15 +99,15 @@ QStringList StemmerV::stem(const QString& text)
 StemmerV::StemmerV()
     : _pvre(QStringLiteral("^(.*?[уеыаоэяию])(.*)$"))
     , _reflexive(QStringLiteral("(с[яьи])$"))
-    , _suffix("([иы]?в(?:ши)?|[иыое][йме]|[ео]го|[ео]му|[ая]я|[еоую]?ю"
-              "|[иы]х|[иы]ми|[ие]шь|[ие]т|[ие]м|[ие]те|[уюя]т|л[аои]?"
-              "|[тч][ьи]|вши?|[ео]в|[ая]ми|еи|и|а|я|е|й|о|у|и?[ея]м"
-              "|[ао]м|ах|и?ях|ы|ию|ь[юя]?|ия|ени|енем|от)$")
+    , _suffix(QStringLiteral("([иы]?в(?:ши)?|[иыое][йме]|[ео]го|[ео]му|[ая]я|[еоую]?ю"
+                             "|[иы]х|[иы]ми|[ие]шь|[ие]т|[ие]м|[ие]те|[уюя]т|л[аои]?"
+                             "|[тч][ьи]|вши?|[ео]в|[ая]ми|еи|и|а|я|е|й|о|у|и?[ея]м"
+                             "|[ао]м|ах|и?ях|ы|ию|ь[юя]?|ия|ени|енем|от)$"))
     , _plural(QStringLiteral("и$"))
-    , _derivational("(е?[мн]?ост|лк|(?:ль)?[нчщ]?ик|и?к|льн|ь|енн|тор"
-                    "|тель|овец|ист|ец|ач|[аея]нт|[ая]не?ц|ч?[ая]н(?:ин)?"
-                    "|е?н[иь]|[ая]ци|фикаци|е?ств|изм|ур|аж|ч?ик|очк|"
-                    "[еи]?ц|[уыю]шк|[ео]нь?к|ищ|ующ)$")
+    , _derivational(QStringLiteral("(е?[мн]?ост|лк|(?:ль)?[нчщ]?ик|и?к|льн|ь|енн|тор"
+                                   "|тель|овец|ист|ец|ач|[аея]нт|[ая]не?ц|ч?[ая]н(?:ин)?"
+                                   "|е?н[иь]|[ая]ци|фикаци|е?ств|изм|ур|аж|ч?ик|очк|"
+                                   "[еи]?ц|[уыю]шк|[ео]нь?к|ищ|ующ)$"))
     , _perfectivePrefix(QStringLiteral("^(наи)"))
     , _perfectiveSuffix(QStringLiteral("([ае]йш)$"))
     , _softSign(QStringLiteral("ь$"))
